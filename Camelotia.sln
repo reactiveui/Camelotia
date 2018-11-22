@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camelotia.Services", "Camelotia.Services\Camelotia.Services.csproj", "{283B8F56-AB9F-4556-AB93-AAC54171841C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camelotia.Presentation", "Camelotia.Presentation\Camelotia.Presentation.csproj", "{777FBFA6-ECFA-42F5-AC5F-EFC4B2D4AE6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camelotia.Presentation.Avalonia", "Camelotia.Presentation.Avalonia\Camelotia.Presentation.Avalonia.csproj", "{557CB17D-8989-48E5-82FD-3C2106EE4BAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{283B8F56-AB9F-4556-AB93-AAC54171841C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{283B8F56-AB9F-4556-AB93-AAC54171841C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{283B8F56-AB9F-4556-AB93-AAC54171841C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{283B8F56-AB9F-4556-AB93-AAC54171841C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{777FBFA6-ECFA-42F5-AC5F-EFC4B2D4AE6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{777FBFA6-ECFA-42F5-AC5F-EFC4B2D4AE6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{777FBFA6-ECFA-42F5-AC5F-EFC4B2D4AE6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{777FBFA6-ECFA-42F5-AC5F-EFC4B2D4AE6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{557CB17D-8989-48E5-82FD-3C2106EE4BAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{557CB17D-8989-48E5-82FD-3C2106EE4BAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{557CB17D-8989-48E5-82FD-3C2106EE4BAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{557CB17D-8989-48E5-82FD-3C2106EE4BAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

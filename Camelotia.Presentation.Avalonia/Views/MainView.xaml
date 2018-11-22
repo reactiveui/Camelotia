@@ -1,0 +1,80 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        d:DataContext="{d:DesignInstance interfaces:IMainViewModel, IsDesignTimeCreatable=True}"
+        xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
+        xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Background="#f0f0f0" 
+        FontFamily="Ubuntu"
+        MinHeight="500" 
+        MinWidth="700">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" Background="#002171">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0"
+                       Text="Camelotia"
+                       Foreground="#ffffff"
+                       FontSize="17"
+                       Margin="12" />
+            <ListBox Grid.Row="1"
+                     Padding="0" BorderThickness="0"
+                     IsVisible="{Binding IsReady}"
+                     SelectedItem="{Binding SelectedProvider, Mode=TwoWay}"
+                     Items="{Binding Providers, Mode=OneWay}"
+                     Background="Transparent">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="interfaces:IProviderViewModel">
+                        <Grid>
+                        <StackPanel Margin="10">
+                            <TextBlock Text="{Binding Name, Mode=OneTime}"
+                                       Foreground="White" 
+                                       FontSize="15" />
+                            <StackPanel Orientation="Horizontal" Margin="0 5">
+                                <TextBlock Text="Size: " Foreground="#eeeeee" />
+                                <TextBlock Text="{Binding Size, Mode=OneTime}" Foreground="#eeeeee" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding Description}"
+                                       TextWrapping="Wrap"
+                                       Foreground="#eeeeee"/>
+                        </StackPanel>
+                            </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel Grid.Row="2">
+                <Button Grid.Column="1"
+                        BorderThickness="0"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding LoadProviders}"
+                        Background="Transparent"
+                        Foreground="#ffffff"
+                        Content="Refresh" 
+                        Margin="12"/>
+            </StackPanel>
+            <ProgressBar Grid.Row="0" 
+                         Grid.RowSpan="3"
+                         IsIndeterminate="True" 
+                         Orientation="Vertical"
+                         IsVisible="{Binding IsLoading}" />
+        </Grid>
+        <Grid Grid.Column="1">
+            <Carousel Items="{Binding Providers, Mode=OneWay}"
+                      SelectedItem="{Binding SelectedProvider, Mode=OneWay}">
+                <Carousel.DataTemplates>
+                    <DataTemplate DataType="interfaces:IProviderViewModel">
+                        <views:ProviderView DataContext="{Binding}"/>
+                    </DataTemplate>
+                </Carousel.DataTemplates>
+            </Carousel>
+        </Grid>
+    </Grid>
+</Window>

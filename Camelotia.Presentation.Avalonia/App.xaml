@@ -1,0 +1,19 @@
+<Application xmlns="https://github.com/avaloniaui">
+    <Application.Styles>
+        <StyleInclude Source="resm:Avalonia.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.Themes.Default"/>
+        <StyleInclude Source="resm:Avalonia.Themes.Default.Accents.BaseLight.xaml?assembly=Avalonia.Themes.Default"/>
+        <Style Selector="Button.Rounded /template/ ContentPresenter">
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style Selector="Button.Rounded">
+            <Setter Property="FontFamily" Value="Segoe UI, Ubuntu"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Background" Value="#002171"/>
+            <Setter Property="Foreground" Value="#ffffff"/>
+            <Setter Property="Padding" Value="7"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+    </Application.Styles>
+</Application>

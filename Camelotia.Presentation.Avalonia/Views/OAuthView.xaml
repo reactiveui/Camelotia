@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             d:DataContext="{d:DesignInstance interfaces:IOAuthViewModel, IsDesignTimeCreatable=True}"
+             xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" Background="#ffffff">
+    <StackPanel VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Width="300">
+        <TextBlock Text="OAuth" 
+                   Foreground="#002171"
+                   FontSize="16"
+                   Margin="0 10" />
+        
+        <ProgressBar HorizontalAlignment="Stretch"
+                     IsIndeterminate="{Binding IsBusy}" 
+                     IsVisible="{Binding IsBusy}"
+                     Margin="0 5"/>
+        
+        <StackPanel IsVisible="{Binding HasErrors}" 
+                    Background="#ffeeee"
+                    Margin="0 5">
+            <StackPanel Margin="10">
+                <TextBlock Text="{Binding ErrorMessage}" 
+                           Foreground="#990000"/>
+            </StackPanel>
+        </StackPanel>
+        
+        <Button Content="Login"
+                HorizontalAlignment="Stretch"
+                Command="{Binding Login}"
+                Classes="Rounded" 
+                Margin="0 10" />
+    </StackPanel>
+</UserControl>
