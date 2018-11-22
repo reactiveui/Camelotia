@@ -27,17 +27,13 @@ namespace Camelotia.Presentation.ViewModels
         {
             _loadProviders = ReactiveCommand.CreateFromTask(providerStorage.LoadProviders);
             _providers = _loadProviders
-                .Select(items => items
-                .Select(x => providerFactory(x, fileManager, authFactory(x)))
-                .ToList())
+                .Select(items => items.Select(x => providerFactory(x, fileManager, authFactory(x))).ToList())
                 .ToProperty(this, x => x.Providers);
             
-            _isLoading = _loadProviders
-                .IsExecuting
+            _isLoading = _loadProviders.IsExecuting
                 .ToProperty(this, x => x.IsLoading);
             
-            _isReady = _loadProviders
-                .IsExecuting
+            _isReady = _loadProviders.IsExecuting
                 .Select(executing => !executing)
                 .ToProperty(this, x => x.IsReady);
             

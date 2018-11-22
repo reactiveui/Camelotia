@@ -70,7 +70,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <Grid IsVisible="{Binding HasErrors}">
+                <Grid IsVisible="{Binding HasErrors}" Background="#ffffff">
                     <StackPanel VerticalAlignment="Center">
                         <Ellipse Width="10" Height="10" 
                                  HorizontalAlignment="Center" 
@@ -81,7 +81,7 @@
                                    Foreground="#000000"/>
                     </StackPanel>
                 </Grid>
-                <Grid IsVisible="{Binding IsCurrentPathEmpty}">
+                <Grid IsVisible="{Binding IsCurrentPathEmpty}" Background="#ffffff">
                     <StackPanel VerticalAlignment="Center">
                         <Ellipse Width="10" Height="10" 
                                  HorizontalAlignment="Center" 
@@ -92,7 +92,7 @@
                                    Foreground="#000000"/>
                     </StackPanel>
                 </Grid>
-                <Grid IsVisible="{Binding IsLoading}">
+                <Grid IsVisible="{Binding IsLoading}" Background="#ffffff">
                     <StackPanel VerticalAlignment="Center">
                         <ProgressBar HorizontalAlignment="Stretch"
                                      IsIndeterminate="{Binding IsLoading}" />

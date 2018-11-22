@@ -39,17 +39,15 @@ namespace Camelotia.Presentation.ViewModels
             _refresh = ReactiveCommand.CreateFromTask(() => provider.Get(CurrentPath));
             _files = _refresh
                 .Select(files => files
-                .OrderByDescending(file => file.IsFolder)
-                .ThenBy(file => file.Name)
-                .ToList())
+                    .OrderByDescending(file => file.IsFolder)
+                    .ThenBy(file => file.Name)
+                    .ToList())
                 .ToProperty(this, x => x.Files);
             
-            _isLoading = _refresh
-                .IsExecuting
+            _isLoading = _refresh.IsExecuting
                 .ToProperty(this, x => x.IsLoading);
             
-            _isReady = _refresh
-                .IsExecuting
+            _isReady = _refresh.IsExecuting
                 .Select(executing => !executing)
                 .ToProperty(this, x => x.IsReady);
             
@@ -86,8 +84,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(files => !files.Any())
                 .ToProperty(this, x => x.IsCurrentPathEmpty);
 
-            _hasErrors = _refresh
-                .ThrownExceptions
+            _hasErrors = _refresh.ThrownExceptions
                 .Select(exception => true)
                 .Merge(_refresh.Select(x => false))
                 .ToProperty(this, x => x.HasErrors);

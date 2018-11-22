@@ -1,4 +1,3 @@
-using System;
 using System.Reactive.Linq;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
@@ -23,7 +22,6 @@ namespace Camelotia.Presentation.ViewModels
             Activator = new ViewModelActivator();
             _isAuthenticated = _provider.IsAuthorized
                 .DistinctUntilChanged()
-                .Do(x => Console.WriteLine($"Authorized: {x}"))
                 .ToProperty(this, x => x.IsAuthenticated);
         }
         
