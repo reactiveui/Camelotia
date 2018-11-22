@@ -2,7 +2,7 @@
 
 The app runs on Windows, Linux and MacOS. Make sure you have latest [.NET Core SDK](https://dot.net/) installed.
 
-<img src="./Camelotia.png" width="400">
+<img src="./Camelotia.png" width="500">
 
 ```
 # Linux or MacOS shell
