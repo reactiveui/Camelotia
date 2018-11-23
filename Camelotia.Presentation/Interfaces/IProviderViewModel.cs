@@ -19,6 +19,8 @@ namespace Camelotia.Presentation.Interfaces
         
         ICommand Refresh { get; }
         
+        ICommand Logout { get; }
+        
         ICommand Back { get; }
         
         ICommand Open { get; }
@@ -30,6 +32,8 @@ namespace Camelotia.Presentation.Interfaces
         bool IsReady { get; }
         
         bool HasErrors { get; }
+        
+        bool CanLogout { get; }
         
         string CurrentPath { get; }
         

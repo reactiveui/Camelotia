@@ -15,7 +15,7 @@ namespace Camelotia.Services.Providers
     public sealed class VkontakteFileSystemProvider : IProvider
     {
         private readonly ReplaySubject<bool> _isAuthorized;
-        private readonly VkApi _api;
+        private VkApi _api;
         
         public VkontakteFileSystemProvider()
         {
@@ -26,7 +26,7 @@ namespace Camelotia.Services.Providers
 
         public string Size => "Unknown";
 
-        public string Name => nameof(VkontakteFileSystemProvider);
+        public string Name => "Vkontakte Documents";
 
         public string Description => "Vkontakte documents provider";
 
@@ -48,6 +48,13 @@ namespace Camelotia.Services.Providers
                 Settings = Settings.Documents
             });
             _isAuthorized.OnNext(_api.IsAuthorized);
+        }
+        
+        public Task Logout()
+        {
+            _api = new VkApi();
+            _isAuthorized.OnNext(_api.IsAuthorized);
+            return Task.CompletedTask;
         }
 
         public async Task<IEnumerable<FileModel>> Get(string path)

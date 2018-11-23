@@ -29,5 +29,7 @@ namespace Camelotia.Services.Interfaces
         Task DirectAuth(string login, string password);
 
         Task OAuth();
+
+        Task Logout();
     }
 }

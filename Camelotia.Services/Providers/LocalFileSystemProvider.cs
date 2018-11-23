@@ -13,7 +13,7 @@ namespace Camelotia.Services.Providers
     {
         public string Size => GetSizeOnAllDisks();
 
-        public string Name => nameof(LocalFileSystemProvider);
+        public string Name => "Local File System";
 
         public string Description => "Provides access to files stored locally.";
 
@@ -23,9 +23,11 @@ namespace Camelotia.Services.Providers
         
         public bool SupportsOAuth => false;
 
-        public Task DirectAuth(string login, string password) => Task.CompletedTask;
-
         public Task OAuth() => Task.CompletedTask;
+
+        public Task Logout() => Task.CompletedTask;
+
+        public Task DirectAuth(string login, string password) => Task.CompletedTask;
 
         public Task<IEnumerable<FileModel>> Get(string path) => Task.Run(() =>
         {

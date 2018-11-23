@@ -25,9 +25,11 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<string> _currentPath;
         private readonly ObservableAsPropertyHelper<bool> _hasErrors;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
+        private readonly ObservableAsPropertyHelper<bool> _canLogout;
         private readonly ObservableAsPropertyHelper<bool> _isReady;
         private readonly ReactiveCommand<Unit, string> _back;
         private readonly ReactiveCommand<Unit, string> _open;
+        private readonly ReactiveCommand<Unit, Unit> _logout;
         private readonly IProvider _provider;
 
         public ProviderViewModel(
@@ -126,6 +128,14 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(ignore => Unit.Default)
                 .InvokeCommand(_open);
             
+            var isAuthEnabled = provider.SupportsDirectAuth || provider.SupportsOAuth;
+            var canLogout = provider.IsAuthorized
+                .Select(loggedIn => loggedIn && isAuthEnabled)
+                .DistinctUntilChanged();
+                        
+            _canLogout = canLogout.ToProperty(this, x => x.CanLogout);
+            _logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
+            
             Auth = authViewModel;
             Activator = new ViewModelActivator();
             this.WhenActivated(disposable =>
@@ -156,6 +166,8 @@ namespace Camelotia.Presentation.ViewModels
         
         public string CurrentPath => _currentPath?.Value;
         
+        public bool CanLogout => _canLogout.Value;
+        
         public bool IsLoading => _isLoading.Value;
 
         public bool HasErrors => _hasErrors.Value;
@@ -167,6 +179,8 @@ namespace Camelotia.Presentation.ViewModels
         public string Size => _provider.Size;
 
         public ICommand Refresh => _refresh;
+        
+        public ICommand Logout => _logout;
 
         public ICommand Back => _back;
 

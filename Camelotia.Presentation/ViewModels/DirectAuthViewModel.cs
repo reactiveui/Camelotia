@@ -1,3 +1,4 @@
+using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
@@ -45,6 +46,9 @@ namespace Camelotia.Presentation.ViewModels
 
             _isBusy = _login.IsExecuting
                 .ToProperty(this, x => x.IsBusy);
+            
+            _login.Subscribe(x => Username = string.Empty);
+            _login.Subscribe(x => Password = string.Empty);            
         }
         
         [Reactive] public string Username { get; set; }
