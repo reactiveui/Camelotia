@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
              mc:Ignorable="d" Background="#ffffff">
-    <TabControl>
+    <TabControl SelectedIndex="{Binding SupportsOAuth}">
         <TabItem>
             <TabItem.Header>
                 <TextBlock Text="Direct Auth" IsVisible="{Binding SupportsDirectAuth}"/>
@@ -14,7 +14,7 @@
         </TabItem>
         <TabItem>
             <TabItem.Header>
-                <TextBlock Text="Direct Auth" IsVisible="{Binding SupportsOAuth}"/>
+                <TextBlock Text="OAuth" IsVisible="{Binding SupportsOAuth}"/>
             </TabItem.Header>
             <views:OAuthView DataContext="{Binding OAuth}"/>
         </TabItem>
