@@ -18,3 +18,11 @@ On Windows, run the `./run.bat` file.
 ### Adding Custom Providers
 
 File system providers are located at `./Camelotia.Services/Providers/`. To add a custom file system provider, you need to create a separate class and implement the [IProvider](https://github.com/worldbeater/Camelotia/blob/master/Camelotia.Services/Interfaces/IProvider.cs) interface. It'll get integrated into the UI automagically.
+
+### Technologies and Tools Used
+
+- <a href="https://reactiveui.net/">ReactiveUI</a>
+- <a href="http://github.com/avaloniaui">AvaloniaUI</a>
+- <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a>
+- <a href="https://github.com/fluentassertions/fluentassertions">FluentAssertions</a>
+- <a href="https://www.jetbrains.com/rider/">JetBrains Rider IDE</a>
