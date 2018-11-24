@@ -1,10 +1,12 @@
 # Compiling
 
+[![Build Status](https://worldbeater.visualstudio.com/Camelotia/_apis/build/status/Camelotia-CI)](https://worldbeater.visualstudio.com/Camelotia/_build/latest?definitionId=1)
+
 The app runs on Windows, Linux and MacOS. Make sure you have latest [.NET Core SDK](https://dot.net/) installed.
 
 <img src="./Camelotia.png" width="500">
 
-```
+```sh
 # Linux or MacOS shell
 git clone https://github.com/worldbeater/Camelotia
 cd Camelotia/Camelotia.Presentation.Avalonia
