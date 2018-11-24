@@ -7,8 +7,8 @@ jobs:
   steps:
   - script: dotnet build --configuration $(buildConfiguration)
     displayName: 'Linux Build'
-  - script: dotnet test
-    displayName: 'Linux Test'
+  - script: cd Camelotia.Presentation.Tests && dotnet test
+    displayName: 'Linux Presentation Unit Tests'
 - job: Windows
   pool:
     vmImage: 'vs2017-win2016'
@@ -17,5 +17,5 @@ jobs:
   steps:
   - script: dotnet build --configuration $(buildConfiguration)
     displayName: 'Windows Build'
-  - script: dotnet test
-    displayName: 'Windows Test'
+  - script: cd Camelotia.Presentation.Tests && dotnet test
+    displayName: 'Windows Presentation Unit Tests'
