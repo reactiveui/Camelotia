@@ -7,8 +7,13 @@ jobs:
   steps:
   - script: dotnet build --configuration $(buildConfiguration)
     displayName: 'Linux Build'
-  - script: cd Camelotia.Presentation.Tests && dotnet test
-    displayName: 'Linux Presentation Unit Tests'
+  - script: dotnet test --logger trx Camelotia.Presentation.Tests
+    displayName: 'Linux Unit Tests'
+  - task: PublishTestResults@2
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: '**/*.trx'
+
 - job: Windows
   pool:
     vmImage: 'vs2017-win2016'
@@ -17,5 +22,19 @@ jobs:
   steps:
   - script: dotnet build --configuration $(buildConfiguration)
     displayName: 'Windows Build'
-  - script: cd Camelotia.Presentation.Tests && dotnet test
-    displayName: 'Windows Presentation Unit Tests'
+  - script: |
+      mkdir $(Build.SourcesDirectory)\results
+      dotnet test --logger trx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura Camelotia.Presentation.Tests
+      copy $(Build.SourcesDirectory)\Camelotia.Presentation.Tests\coverage.cobertura.xml $(Build.SourcesDirectory)\results
+      dotnet tool install dotnet-reportgenerator-globaltool --tool-path . --version 4.0.0-rc4
+      reportgenerator "-reports:$(Build.SourcesDirectory)\results\coverage.cobertura.xml" "-targetdir:results" "-reporttypes:HTMLInline;HTMLChart"
+    displayName: 'Windows Unit Tests'
+  - task: PublishTestResults@2
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: '**/*.trx'
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      summaryFileLocation: $(Build.SourcesDirectory)\results\coverage.cobertura.xml
+      reportDirectory: $(Build.SourcesDirectory)\results
+      codecoverageTool: cobertura
