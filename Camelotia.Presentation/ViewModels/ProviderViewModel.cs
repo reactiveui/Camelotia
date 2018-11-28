@@ -12,6 +12,7 @@ using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
+using DynamicData;
 
 namespace Camelotia.Presentation.ViewModels
 {
@@ -44,6 +45,7 @@ namespace Camelotia.Presentation.ViewModels
                     .OrderByDescending(file => file.IsFolder)
                     .ThenBy(file => file.Name)
                     .ToList())
+                .StartWithEmpty()
                 .ToProperty(this, x => x.Files);
             
             _isLoading = _refresh.IsExecuting
@@ -51,6 +53,7 @@ namespace Camelotia.Presentation.ViewModels
             
             _isReady = _refresh.IsExecuting
                 .Select(executing => !executing)
+                .Skip(1)
                 .ToProperty(this, x => x.IsReady);
             
             var canOpenCurrentPath = this
@@ -77,11 +80,13 @@ namespace Camelotia.Presentation.ViewModels
                 .ToProperty(this, x => x.CurrentPath, "/");
 
             this.WhenAnyValue(x => x.CurrentPath)
+                .Skip(1)
                 .Select(path => Unit.Default)
                 .InvokeCommand(_refresh);
 
             _isCurrentPathEmpty = this
                 .WhenAnyValue(x => x.Files)
+                .Skip(1)
                 .Where(files => files != null)
                 .Select(files => !files.Any())
                 .ToProperty(this, x => x.IsCurrentPathEmpty);

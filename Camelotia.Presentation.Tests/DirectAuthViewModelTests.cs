@@ -27,7 +27,7 @@ namespace Camelotia.Presentation.Tests
         }
 
         [Fact]
-        public void HasErrorsShouldTriggerWhenProviderBreaks()
+        public async Task HasErrorsShouldTriggerWhenProviderBreaks()
         {
             _provider.DirectAuth("hello", "world").Returns(x => throw new Exception("example"));
             _directAuthViewModel.HasErrors.Should().BeFalse();
@@ -36,6 +36,7 @@ namespace Camelotia.Presentation.Tests
             _directAuthViewModel.Password = "world";
             _directAuthViewModel.Login.Execute(null);
 
+            await Task.Delay(100);
             _directAuthViewModel.HasErrors.Should().BeTrue();
             _directAuthViewModel.ErrorMessage.Should().Be("example");
         }

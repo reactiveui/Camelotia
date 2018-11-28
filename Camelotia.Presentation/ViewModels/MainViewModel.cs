@@ -9,6 +9,7 @@ using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
+using DynamicData;
 
 namespace Camelotia.Presentation.ViewModels
 {
@@ -28,6 +29,7 @@ namespace Camelotia.Presentation.ViewModels
             _loadProviders = ReactiveCommand.CreateFromTask(providerStorage.LoadProviders);
             _providers = _loadProviders
                 .Select(items => items.Select(x => providerFactory(x, fileManager, authFactory(x))).ToList())
+                .StartWithEmpty()
                 .ToProperty(this, x => x.Providers);
             
             _isLoading = _loadProviders.IsExecuting
@@ -35,17 +37,20 @@ namespace Camelotia.Presentation.ViewModels
             
             _isReady = _loadProviders.IsExecuting
                 .Select(executing => !executing)
+                .Skip(1)
                 .ToProperty(this, x => x.IsReady);
             
             this.WhenAnyValue(x => x.Providers)
                 .Where(providers => providers != null)
-                .Select(providers => providers.First())
+                .Select(providers => providers.FirstOrDefault())
                 .Subscribe(x => SelectedProvider = x);
 
             Activator = new ViewModelActivator();
-            this.WhenActivated((CompositeDisposable disposable) =>
+            this.WhenActivated(disposable =>
             {
-                _loadProviders.Execute().Subscribe();
+                _loadProviders.Execute()
+                    .Subscribe(x => { })
+                    .DisposeWith(disposable);
             });
         }
 
