@@ -27,7 +27,7 @@ namespace Camelotia.Presentation.Tests
         {
             _providerStorage.LoadProviders().Returns(async x =>
             {
-                await Task.Delay(100);
+                await Task.Delay(200);
                 return Enumerable.Empty<IProvider>();
             });
             
@@ -37,12 +37,12 @@ namespace Camelotia.Presentation.Tests
             _mainViewModel.LoadProviders.CanExecute(null).Should().BeTrue();
             _mainViewModel.LoadProviders.Execute(null);
 
-            await Task.Delay(50);
+            await Task.Delay(100);
             _mainViewModel.Providers.Should().BeEmpty();
             _mainViewModel.IsLoading.Should().BeTrue();
             _mainViewModel.IsReady.Should().BeFalse();
 
-            await Task.Delay(50);
+            await Task.Delay(200);
             _mainViewModel.Providers.Should().BeEmpty();
             _mainViewModel.IsLoading.Should().BeFalse();
             _mainViewModel.IsReady.Should().BeTrue();

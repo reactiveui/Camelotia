@@ -28,7 +28,7 @@ namespace Camelotia.Presentation.Tests
             await Task.Delay(100);
             _authViewModel.IsBusy.Should().BeTrue();
 
-            await Task.Delay(100);
+            await Task.Delay(200);
             _authViewModel.IsBusy.Should().BeFalse();
         }
 

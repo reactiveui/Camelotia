@@ -44,17 +44,17 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public async Task ShouldBeBusyWhenLoggingIn()
         {
-            _provider.DirectAuth("hello", "world").Returns(x => Task.Delay(100));
+            _provider.DirectAuth("hello", "world").Returns(x => Task.Delay(200));
             _directAuthViewModel.IsBusy.Should().BeFalse();
             
             _directAuthViewModel.Username = "hello";
             _directAuthViewModel.Password = "world";
             _directAuthViewModel.Login.Execute(null);
             
-            await Task.Delay(50);
+            await Task.Delay(100);
             _directAuthViewModel.IsBusy.Should().BeTrue();
 
-            await Task.Delay(100);
+            await Task.Delay(200);
             _directAuthViewModel.IsBusy.Should().BeFalse();
         }
     }

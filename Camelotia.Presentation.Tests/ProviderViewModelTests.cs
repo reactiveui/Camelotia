@@ -31,7 +31,7 @@ namespace Camelotia.Presentation.Tests
         {
             _provider.Get("/").Returns(async x =>
             {
-                await Task.Delay(100);
+                await Task.Delay(200);
                 return Enumerable.Empty<FileModel>();
             });
 
@@ -45,11 +45,11 @@ namespace Camelotia.Presentation.Tests
             _providerViewModel.Refresh.CanExecute(null).Should().BeTrue();
             _providerViewModel.Refresh.Execute(null);
 
-            await Task.Delay(50);
+            await Task.Delay(100);
             _providerViewModel.IsLoading.Should().BeTrue();
             _providerViewModel.IsReady.Should().BeFalse();
 
-            await Task.Delay(50);
+            await Task.Delay(200);
             _providerViewModel.IsLoading.Should().BeFalse();
             _providerViewModel.IsReady.Should().BeTrue();
             _providerViewModel.IsCurrentPathEmpty.Should().BeTrue();
