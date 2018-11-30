@@ -1,7 +1,7 @@
 # Compiling
 
 [![Build Status](https://worldbeater.visualstudio.com/Camelotia/_apis/build/status/Camelotia-CI)](https://worldbeater.visualstudio.com/Camelotia/_build/latest?definitionId=1)
-![Code Coverage](https://img.shields.io/azure-devops/coverage/worldbeater/Camelotia/1.svg) ![Issues](https://img.shields.io/github/issues/worldbeater/camelotia.svg) ![License](https://img.shields.io/github/license/worldbeater/camelotia.svg)
+![Code Coverage](https://img.shields.io/azure-devops/coverage/worldbeater/Camelotia/1.svg) ![Issues](https://img.shields.io/github/issues/worldbeater/camelotia.svg) ![License](https://img.shields.io/github/license/worldbeater/camelotia.svg) ![Size](https://img.shields.io/github/repo-size/worldbeater/camelotia.svg)
 
 The app runs on Windows, Linux and MacOS. Make sure you have latest [.NET Core SDK](https://dot.net/) installed.
 
