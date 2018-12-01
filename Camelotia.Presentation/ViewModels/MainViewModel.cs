@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
@@ -26,19 +27,20 @@ namespace Camelotia.Presentation.ViewModels
             IProviderStorage providerStorage, 
             IFileManager fileManager)
         {
+            var main = RxApp.MainThreadScheduler;
             _loadProviders = ReactiveCommand.CreateFromTask(providerStorage.LoadProviders);
             _providers = _loadProviders
                 .Select(items => items.Select(x => providerFactory(x, fileManager, authFactory(x))).ToList())
                 .StartWithEmpty()
-                .ToProperty(this, x => x.Providers);
+                .ToProperty(this, x => x.Providers, scheduler: main);
             
             _isLoading = _loadProviders.IsExecuting
-                .ToProperty(this, x => x.IsLoading);
+                .ToProperty(this, x => x.IsLoading, scheduler: main);
             
             _isReady = _loadProviders.IsExecuting
                 .Select(executing => !executing)
                 .Skip(1)
-                .ToProperty(this, x => x.IsReady);
+                .ToProperty(this, x => x.IsReady, scheduler: main);
             
             this.WhenAnyValue(x => x.Providers)
                 .Where(providers => providers != null)

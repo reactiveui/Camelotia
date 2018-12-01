@@ -1,10 +1,11 @@
 using System.Linq;
-using System.Threading.Tasks;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
+using Microsoft.Reactive.Testing;
 using NSubstitute;
+using ReactiveUI.Testing;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
@@ -13,65 +14,75 @@ namespace Camelotia.Presentation.Tests
     {
         private readonly IProviderStorage _providerStorage = Substitute.For<IProviderStorage>();
         private readonly IFileManager _fileManager = Substitute.For<IFileManager>();
-        private readonly IMainViewModel _mainViewModel;
 
-        public MainViewModelTests() => _mainViewModel = new MainViewModel(
+        [Fact]
+        public void ShouldIndicateWhenLoadingAndReady()
+        {
+            _providerStorage.LoadProviders().Returns(Enumerable.Empty<IProvider>());
+            new TestScheduler().With(scheduler =>
+            {
+                var model = BuildMainViewModel();
+                model.IsLoading.Should().BeFalse();
+                model.IsReady.Should().BeFalse();
+                
+                model.LoadProviders.CanExecute(null).Should().BeTrue();
+                model.LoadProviders.Execute(null);
+                scheduler.AdvanceBy(2);
+                
+                model.Providers.Should().BeEmpty();
+                model.IsLoading.Should().BeTrue();
+                model.IsReady.Should().BeFalse();
+                scheduler.AdvanceBy(2);
+                
+                model.Providers.Should().BeEmpty();
+                model.IsLoading.Should().BeFalse();
+                model.IsReady.Should().BeTrue();
+            });
+        }
+
+        [Fact]
+        public void ShouldSelectFirstProviderWhenProvidersGetLoaded()
+        {
+            var providers = Enumerable.Repeat(Substitute.For<IProvider>(), 1);
+            _providerStorage.LoadProviders().Returns(providers);
+            new TestScheduler().With(scheduler =>
+            {
+                var model = BuildMainViewModel();
+                scheduler.AdvanceBy(2);
+
+                model.Providers.Should().BeEmpty();
+                model.LoadProviders.Execute(null);
+                scheduler.AdvanceBy(3);
+                
+                model.Providers.Should().NotBeEmpty();
+                model.SelectedProvider.Should().NotBeNull();
+            });
+        }
+
+        [Fact]
+        public void ActivationShouldTriggerLoad()
+        {
+            var providers = Enumerable.Repeat(Substitute.For<IProvider>(), 1);
+            _providerStorage.LoadProviders().Returns(providers);
+            new TestScheduler().With(scheduler =>
+            {
+                var model = BuildMainViewModel();
+                scheduler.AdvanceBy(2);
+                
+                model.Providers.Should().BeEmpty();
+                model.Activator.Activate();
+                scheduler.AdvanceBy(4);
+                
+                model.Providers.Should().NotBeEmpty();
+                model.SelectedProvider.Should().NotBeNull();
+            });
+        }
+        
+        private IMainViewModel BuildMainViewModel() => new MainViewModel(
             (provider, files, auth) => Substitute.For<IProviderViewModel>(),
             provider => Substitute.For<IAuthViewModel>(),
             _providerStorage,
             _fileManager
         );
-
-        [Fact]
-        public async Task ShouldIndicateWhenLoadingAndReady()
-        {
-            _providerStorage.LoadProviders().Returns(async x =>
-            {
-                await Task.Delay(200);
-                return Enumerable.Empty<IProvider>();
-            });
-            
-            _mainViewModel.IsLoading.Should().BeFalse();
-            _mainViewModel.IsReady.Should().BeFalse();
-
-            _mainViewModel.LoadProviders.CanExecute(null).Should().BeTrue();
-            _mainViewModel.LoadProviders.Execute(null);
-
-            await Task.Delay(100);
-            _mainViewModel.Providers.Should().BeEmpty();
-            _mainViewModel.IsLoading.Should().BeTrue();
-            _mainViewModel.IsReady.Should().BeFalse();
-
-            await Task.Delay(200);
-            _mainViewModel.Providers.Should().BeEmpty();
-            _mainViewModel.IsLoading.Should().BeFalse();
-            _mainViewModel.IsReady.Should().BeTrue();
-        }
-
-        [Fact]
-        public async Task ShouldSelectFirstProviderWhenProvidersGetLoaded()
-        {
-            var providers = Enumerable.Repeat(Substitute.For<IProvider>(), 1);
-            _providerStorage.LoadProviders().Returns(providers);
-            _mainViewModel.LoadProviders.Execute(null);
-
-            await Task.Delay(100);
-            _mainViewModel.Providers.Should().NotBeEmpty();
-            _mainViewModel.SelectedProvider.Should().NotBeNull();
-        }
-
-        [Fact]
-        public async Task ActivationShouldTriggerLoad()
-        {
-            var providers = Enumerable.Repeat(Substitute.For<IProvider>(), 1);
-            _providerStorage.LoadProviders().Returns(providers);
-            _mainViewModel.Providers.Should().BeEmpty();
-            using (_mainViewModel.Activator.Activate())
-            {
-                await Task.Delay(100);
-                _mainViewModel.Providers.Should().NotBeEmpty();
-                _mainViewModel.SelectedProvider.Should().NotBeNull();
-            }
-        }
     }
 }

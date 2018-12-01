@@ -1,10 +1,11 @@
 using System;
-using System.Threading.Tasks;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
+using Microsoft.Reactive.Testing;
 using NSubstitute;
+using ReactiveUI.Testing;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
@@ -12,39 +13,45 @@ namespace Camelotia.Presentation.Tests
     public sealed class OAuthViewModelTests
     {
         private readonly IProvider _provider = Substitute.For<IProvider>();
-        private readonly IOAuthViewModel _authViewModel;
-
-        public OAuthViewModelTests() => _authViewModel = new OAuthViewModel(_provider);
 
         [Fact]
-        public async Task ShouldBeBusyWhenLoggingIn()
+        public void ShouldBeBusyWhenLoggingIn()
         {
-            _provider.OAuth().Returns(x => Task.Delay(200));
-            _authViewModel.IsBusy.Should().BeFalse();
+            new TestScheduler().With(scheduler =>
+            {
+                var model = BuildOAuthViewModel();
+                model.IsBusy.Should().BeFalse();
+                model.Login.CanExecute(null).Should().BeTrue();
+                model.Login.Execute(null);
+                scheduler.AdvanceBy(2);
+                
+                model.IsBusy.Should().BeTrue();
+                scheduler.AdvanceBy(2);
 
-            _authViewModel.Login.CanExecute(null).Should().BeTrue();
-            _authViewModel.Login.Execute(null);
-
-            await Task.Delay(100);
-            _authViewModel.IsBusy.Should().BeTrue();
-
-            await Task.Delay(200);
-            _authViewModel.IsBusy.Should().BeFalse();
+                model.IsBusy.Should().BeFalse();
+            });
         }
 
         [Fact]
         public void HasErrorsShouldTriggerWhenProviderBreaks()
         {
             _provider.OAuth().Returns(x => throw new Exception("example"));
-            _authViewModel.ErrorMessage.Should().BeNullOrEmpty();
-            _authViewModel.HasErrors.Should().BeFalse();
+            new TestScheduler().With(scheduler =>
+            {
+                var model = BuildOAuthViewModel();
+                model.ErrorMessage.Should().BeNullOrEmpty();
+                model.HasErrors.Should().BeFalse();
             
-            _authViewModel.Login.CanExecute(null).Should().BeTrue();
-            _authViewModel.Login.Execute(null);
+                model.Login.CanExecute(null).Should().BeTrue();
+                model.Login.Execute(null);
+                scheduler.AdvanceBy(2);
 
-            _authViewModel.HasErrors.Should().BeTrue();
-            _authViewModel.ErrorMessage.Should().NotBeNullOrEmpty();
-            _authViewModel.ErrorMessage.Should().Be("example");
+                model.HasErrors.Should().BeTrue();
+                model.ErrorMessage.Should().NotBeNullOrEmpty();
+                model.ErrorMessage.Should().Be("example");
+            });
         }
+        
+        private IOAuthViewModel BuildOAuthViewModel() => new OAuthViewModel(_provider);
     }
 }

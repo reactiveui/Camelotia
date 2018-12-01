@@ -1,12 +1,14 @@
 using System.Linq;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
+using System.Reactive.Threading.Tasks;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using FluentAssertions;
+using Microsoft.Reactive.Testing;
 using NSubstitute;
+using ReactiveUI.Testing;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
@@ -16,43 +18,61 @@ namespace Camelotia.Presentation.Tests
         private readonly IAuthViewModel _authViewModel = Substitute.For<IAuthViewModel>();
         private readonly IFileManager _fileManager = Substitute.For<IFileManager>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
-        private readonly IProviderViewModel _providerViewModel;
         
-        public ProviderViewModelTests()
+        [Fact]
+        public void ShouldDisplayLoadingReadyIndicatorsProperly()
         {
             _provider.IsAuthorized.Returns(Observable.Return(true));
-            _providerViewModel = new ProviderViewModel(
-                _authViewModel, _fileManager, _provider
-            );
+            _provider.Get("/").Returns(x => Observable
+                .Return(Enumerable.Empty<FileModel>())
+                .ToTask());
+
+            new TestScheduler().With(scheduler =>
+            {
+                var model = BuildProviderViewModel();
+                model.IsLoading.Should().BeFalse();
+                model.IsReady.Should().BeFalse();
+                
+                model.Refresh.Execute(null);
+                scheduler.AdvanceBy(2);
+                
+                model.IsLoading.Should().BeTrue();
+                model.IsReady.Should().BeFalse();
+                scheduler.AdvanceBy(2);
+                
+                model.IsLoading.Should().BeFalse();
+                model.IsReady.Should().BeTrue();
+            });
         }
 
         [Fact]
-        public async Task ShouldLoadProvidersProper()
+        public void ShouldDisplayCurrentPathProperly()
         {
-            _provider.Get("/").Returns(async x =>
+            _provider.IsAuthorized.Returns(Observable.Return(true));
+            _provider.Get("/").Returns(x => Observable
+                .Return(Enumerable.Empty<FileModel>())
+                .ToTask());
+
+            new TestScheduler().With(scheduler =>
             {
-                await Task.Delay(200);
-                return Enumerable.Empty<FileModel>();
+                var model = BuildProviderViewModel();
+                model.IsCurrentPathEmpty.Should().BeFalse();
+                model.CurrentPath.Should().Be("/");
+                scheduler.AdvanceBy(2);
+                
+                model.IsCurrentPathEmpty.Should().BeFalse();
+                model.Files.Should().BeEmpty();
+                model.Refresh.Execute(null);
+                scheduler.AdvanceBy(4);
+                
+                model.IsCurrentPathEmpty.Should().BeTrue();
+                model.CurrentPath.Should().Be("/");
+                model.Files.Should().BeEmpty();
             });
-
-            _providerViewModel.IsLoading.Should().BeFalse();
-            _providerViewModel.IsReady.Should().BeFalse();
-            
-            _providerViewModel.CurrentPath.Should().Be("/");
-            _providerViewModel.IsCurrentPathEmpty.Should().BeFalse();
-            _providerViewModel.Files.Should().BeEmpty();
-
-            _providerViewModel.Refresh.CanExecute(null).Should().BeTrue();
-            _providerViewModel.Refresh.Execute(null);
-
-            await Task.Delay(100);
-            _providerViewModel.IsLoading.Should().BeTrue();
-            _providerViewModel.IsReady.Should().BeFalse();
-
-            await Task.Delay(200);
-            _providerViewModel.IsLoading.Should().BeFalse();
-            _providerViewModel.IsReady.Should().BeTrue();
-            _providerViewModel.IsCurrentPathEmpty.Should().BeTrue();
         }
+
+        private IProviderViewModel BuildProviderViewModel() => new ProviderViewModel(
+            _authViewModel, _fileManager, _provider
+        );
     }
 }

@@ -16,20 +16,21 @@ namespace Camelotia.Presentation.ViewModels
         
         public OAuthViewModel(IProvider provider)
         {
+            var main = RxApp.MainThreadScheduler;
             Activator = new ViewModelActivator();
             _login = ReactiveCommand.CreateFromTask(provider.OAuth);
 
             _errorMessage = _login.ThrownExceptions
                 .Select(exception => exception.Message)
-                .ToProperty(this, x => x.ErrorMessage);
+                .ToProperty(this, x => x.ErrorMessage, scheduler: main);
 
             _hasErrors = _login.ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
-                .ToProperty(this, x => x.HasErrors);
+                .ToProperty(this, x => x.HasErrors, scheduler: main);
             
             _isBusy = _login.IsExecuting
-                .ToProperty(this, x => x.IsBusy);
+                .ToProperty(this, x => x.IsBusy, scheduler: main);
         }
         
         public ViewModelActivator Activator { get; }

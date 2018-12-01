@@ -3,7 +3,9 @@ using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
+using Microsoft.Reactive.Testing;
 using NSubstitute;
+using ReactiveUI.Testing;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
@@ -19,26 +21,33 @@ namespace Camelotia.Presentation.Tests
         {
             var authorized = new Subject<bool>();
             _provider.IsAuthorized.Returns(authorized);
-            
-            var authViewModel = new AuthViewModel(_directAuthViewModel, _oAuthViewModel, _provider);
-            authViewModel.IsAuthenticated.Should().BeFalse();
+            new TestScheduler().With(scheduler =>
+            {
+                var model = BuildAuthViewModel();
+                model.IsAuthenticated.Should().BeFalse();
 
-            authorized.OnNext(true);
-            authViewModel.IsAuthenticated.Should().BeTrue();
+                authorized.OnNext(true);
+                scheduler.AdvanceBy(2);
+                model.IsAuthenticated.Should().BeTrue();
+            });
         }
 
         [Fact]
         public void SupportsPropsShouldDependOnProvider()
         {
-            var authViewModel = new AuthViewModel(_directAuthViewModel, _oAuthViewModel, _provider);
-            authViewModel.SupportsDirectAuth.Should().BeFalse();
-            authViewModel.SupportsOAuth.Should().BeFalse();
+            var model = BuildAuthViewModel();
+            model.SupportsDirectAuth.Should().BeFalse();
+            model.SupportsOAuth.Should().BeFalse();
             
             _provider.SupportsDirectAuth.Returns(true);
             _provider.SupportsOAuth.Returns(true);
             
-            authViewModel.SupportsDirectAuth.Should().BeTrue();
-            authViewModel.SupportsOAuth.Should().BeTrue();
+            model.SupportsDirectAuth.Should().BeTrue();
+            model.SupportsOAuth.Should().BeTrue();
         }
+        
+        private IAuthViewModel BuildAuthViewModel() => new AuthViewModel(
+            _directAuthViewModel, _oAuthViewModel, _provider
+        );
     }
 }

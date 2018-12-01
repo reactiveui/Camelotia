@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Threading.Tasks;
@@ -38,23 +39,24 @@ namespace Camelotia.Presentation.ViewModels
             IFileManager fileManager,
             IProvider provider)
         {
-            _provider = provider;
+            var main = RxApp.MainThreadScheduler;
             _refresh = ReactiveCommand.CreateFromTask(() => provider.Get(CurrentPath));
+            _provider = provider;
             _files = _refresh
                 .Select(files => files
                     .OrderByDescending(file => file.IsFolder)
                     .ThenBy(file => file.Name)
                     .ToList())
                 .StartWithEmpty()
-                .ToProperty(this, x => x.Files);
+                .ToProperty(this, x => x.Files, scheduler: main);
             
             _isLoading = _refresh.IsExecuting
-                .ToProperty(this, x => x.IsLoading);
+                .ToProperty(this, x => x.IsLoading, scheduler: main);
             
             _isReady = _refresh.IsExecuting
                 .Select(executing => !executing)
                 .Skip(1)
-                .ToProperty(this, x => x.IsReady);
+                .ToProperty(this, x => x.IsReady, scheduler: main);
             
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
@@ -86,15 +88,15 @@ namespace Camelotia.Presentation.ViewModels
 
             _isCurrentPathEmpty = this
                 .WhenAnyValue(x => x.Files)
-                .Skip(1)
+                .Skip(2)
                 .Where(files => files != null)
                 .Select(files => !files.Any())
-                .ToProperty(this, x => x.IsCurrentPathEmpty);
+                .ToProperty(this, x => x.IsCurrentPathEmpty, scheduler: main);
 
             _hasErrors = _refresh.ThrownExceptions
                 .Select(exception => true)
                 .Merge(_refresh.Select(x => false))
-                .ToProperty(this, x => x.HasErrors);
+                .ToProperty(this, x => x.HasErrors, scheduler: main);
 
             var canUploadToCurrentPath = this
                 .WhenAnyValue(x => x.CurrentPath)
@@ -138,8 +140,9 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(loggedIn => loggedIn && isAuthEnabled)
                 .DistinctUntilChanged();
                         
-            _canLogout = canLogout.ToProperty(this, x => x.CanLogout);
             _logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
+            _canLogout = canLogout
+                .ToProperty(this, x => x.CanLogout, scheduler: main);
             
             Auth = authViewModel;
             Activator = new ViewModelActivator();
