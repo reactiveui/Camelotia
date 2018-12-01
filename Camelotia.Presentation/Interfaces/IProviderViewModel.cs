@@ -1,11 +1,11 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Input;
 using Camelotia.Services.Models;
-using ReactiveUI;
 
 namespace Camelotia.Presentation.Interfaces
 {
-    public interface IProviderViewModel : IReactiveObject, ISupportsActivation
+    public interface IProviderViewModel : INotifyPropertyChanged
     {
         IAuthViewModel Auth { get; }
         

@@ -1,5 +1,4 @@
 using System;
-using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
@@ -52,6 +51,6 @@ namespace Camelotia.Presentation.Tests
             });
         }
         
-        private IOAuthViewModel BuildOAuthViewModel() => new OAuthViewModel(_provider);
+        private OAuthViewModel BuildOAuthViewModel() => new OAuthViewModel(_provider);
     }
 }

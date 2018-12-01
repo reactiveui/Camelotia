@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Threading.Tasks;
@@ -17,7 +16,7 @@ using DynamicData;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel
+    public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, ISupportsActivation
     {
         private readonly ObservableAsPropertyHelper<IEnumerable<FileModel>> _files;
         private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
@@ -50,10 +49,12 @@ namespace Camelotia.Presentation.ViewModels
                 .StartWithEmpty()
                 .ToProperty(this, x => x.Files, scheduler: main);
             
-            _isLoading = _refresh.IsExecuting
+            _isLoading = _refresh
+                .IsExecuting
                 .ToProperty(this, x => x.IsLoading, scheduler: main);
             
-            _isReady = _refresh.IsExecuting
+            _isReady = _refresh
+                .IsExecuting
                 .Select(executing => !executing)
                 .Skip(1)
                 .ToProperty(this, x => x.IsReady, scheduler: main);
@@ -93,7 +94,8 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(files => !files.Any())
                 .ToProperty(this, x => x.IsCurrentPathEmpty, scheduler: main);
 
-            _hasErrors = _refresh.ThrownExceptions
+            _hasErrors = _refresh
+                .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_refresh.Select(x => false))
                 .ToProperty(this, x => x.HasErrors, scheduler: main);
@@ -122,7 +124,8 @@ namespace Camelotia.Presentation.ViewModels
                     .SelectMany(task => task.ToObservable()), 
                 canDownloadSelectedFile);
             
-            _uploadToCurrentPath.ThrownExceptions
+            _uploadToCurrentPath
+                .ThrownExceptions
                 .Merge(_downloadSelectedFile.ThrownExceptions)
                 .Subscribe(Console.WriteLine);
 
@@ -136,10 +139,11 @@ namespace Camelotia.Presentation.ViewModels
                 .InvokeCommand(_open);
             
             var isAuthEnabled = provider.SupportsDirectAuth || provider.SupportsOAuth;
-            var canLogout = provider.IsAuthorized
+            var canLogout = provider
+                .IsAuthorized
                 .Select(loggedIn => loggedIn && isAuthEnabled)
                 .DistinctUntilChanged();
-                        
+
             _logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
             _canLogout = canLogout
                 .ToProperty(this, x => x.CanLogout, scheduler: main);

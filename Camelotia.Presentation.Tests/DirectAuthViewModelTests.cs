@@ -1,5 +1,4 @@
 using System;
-using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
@@ -61,6 +60,6 @@ namespace Camelotia.Presentation.Tests
             });
         }
         
-        private IDirectAuthViewModel BuildDirectAuthViewModel() => new DirectAuthViewModel(_provider);
+        private DirectAuthViewModel BuildDirectAuthViewModel() => new DirectAuthViewModel(_provider);
     }
 }

@@ -71,7 +71,7 @@ namespace Camelotia.Presentation.Tests
             });
         }
 
-        private IProviderViewModel BuildProviderViewModel() => new ProviderViewModel(
+        private ProviderViewModel BuildProviderViewModel() => new ProviderViewModel(
             _authViewModel, _fileManager, _provider
         );
     }

@@ -78,7 +78,7 @@ namespace Camelotia.Presentation.Tests
             });
         }
         
-        private IMainViewModel BuildMainViewModel() => new MainViewModel(
+        private MainViewModel BuildMainViewModel() => new MainViewModel(
             (provider, files, auth) => Substitute.For<IProviderViewModel>(),
             provider => Substitute.For<IAuthViewModel>(),
             _providerStorage,

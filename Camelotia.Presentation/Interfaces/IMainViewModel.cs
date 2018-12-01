@@ -1,10 +1,10 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Input;
-using ReactiveUI;
 
 namespace Camelotia.Presentation.Interfaces
 {
-    public interface IMainViewModel : IReactiveObject, ISupportsActivation
+    public interface IMainViewModel : INotifyPropertyChanged
     {
         IProviderViewModel SelectedProvider { get; set; }
         

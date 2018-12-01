@@ -16,12 +16,12 @@ namespace Camelotia.Presentation.ViewModels
             IProvider provider)
         {
             var main = RxApp.MainThreadScheduler;
-            Activator = new ViewModelActivator();
             DirectAuth = directAuth;
             OAuth = oAuth;
             
             _provider = provider;
-            _isAuthenticated = _provider.IsAuthorized
+            _isAuthenticated = _provider
+                .IsAuthorized
                 .DistinctUntilChanged()
                 .ToProperty(this, x => x.IsAuthenticated, scheduler: main);
         }
@@ -33,8 +33,6 @@ namespace Camelotia.Presentation.ViewModels
         public bool SupportsOAuth => _provider.SupportsOAuth;
 
         public IDirectAuthViewModel DirectAuth { get; }
-        
-        public ViewModelActivator Activator { get; }
         
         public IOAuthViewModel OAuth { get; }
     }

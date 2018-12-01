@@ -19,7 +19,6 @@ namespace Camelotia.Presentation.ViewModels
         public DirectAuthViewModel(IProvider provider)
         {
             var main = RxApp.MainThreadScheduler;
-            Activator = new ViewModelActivator();
             var nameValid = this
                 .WhenAnyValue(x => x.Username)
                 .Select(name => !string.IsNullOrWhiteSpace(name));
@@ -36,16 +35,19 @@ namespace Camelotia.Presentation.ViewModels
                 () => provider.DirectAuth(Username, Password),
                 canLogin);
 
-            _errorMessage = _login.ThrownExceptions
+            _errorMessage = _login
+                .ThrownExceptions
                 .Select(exception => exception.Message)
                 .ToProperty(this, x => x.ErrorMessage, scheduler: main);
 
-            _hasErrors = _login.ThrownExceptions
+            _hasErrors = _login
+                .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
                 .ToProperty(this, x => x.HasErrors, scheduler: main);
 
-            _isBusy = _login.IsExecuting
+            _isBusy = _login
+                .IsExecuting
                 .ToProperty(this, x => x.IsBusy, scheduler: main);
             
             _login.Subscribe(x => Username = string.Empty);
@@ -55,8 +57,6 @@ namespace Camelotia.Presentation.ViewModels
         [Reactive] public string Username { get; set; }
         
         [Reactive] public string Password { get; set; }
-        
-        public ViewModelActivator Activator { get; }
         
         public string ErrorMessage => _errorMessage.Value;
 

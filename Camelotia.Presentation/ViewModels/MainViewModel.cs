@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
@@ -14,7 +13,7 @@ using DynamicData;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public sealed class MainViewModel : ReactiveObject, IMainViewModel
+    public sealed class MainViewModel : ReactiveObject, IMainViewModel, ISupportsActivation
     {
         private readonly ObservableAsPropertyHelper<IEnumerable<IProviderViewModel>> _providers;
         private readonly ReactiveCommand<Unit, IEnumerable<IProvider>> _loadProviders;
@@ -34,10 +33,12 @@ namespace Camelotia.Presentation.ViewModels
                 .StartWithEmpty()
                 .ToProperty(this, x => x.Providers, scheduler: main);
             
-            _isLoading = _loadProviders.IsExecuting
+            _isLoading = _loadProviders
+                .IsExecuting
                 .ToProperty(this, x => x.IsLoading, scheduler: main);
             
-            _isReady = _loadProviders.IsExecuting
+            _isReady = _loadProviders
+                .IsExecuting
                 .Select(executing => !executing)
                 .Skip(1)
                 .ToProperty(this, x => x.IsReady, scheduler: main);

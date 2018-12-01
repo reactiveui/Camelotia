@@ -1,9 +1,9 @@
+using System.ComponentModel;
 using System.Windows.Input;
-using ReactiveUI;
 
 namespace Camelotia.Presentation.Interfaces
 {
-    public interface IOAuthViewModel : IReactiveObject, ISupportsActivation
+    public interface IOAuthViewModel : INotifyPropertyChanged
     {
         ICommand Login { get; }
         

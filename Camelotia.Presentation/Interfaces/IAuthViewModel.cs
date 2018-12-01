@@ -1,8 +1,8 @@
-using ReactiveUI;
+using System.ComponentModel;
 
 namespace Camelotia.Presentation.Interfaces
 {
-    public interface IAuthViewModel : IReactiveObject, ISupportsActivation
+    public interface IAuthViewModel : INotifyPropertyChanged
     {
         IDirectAuthViewModel DirectAuth { get; }
         

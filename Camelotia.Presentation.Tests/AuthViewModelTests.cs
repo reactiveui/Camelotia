@@ -46,7 +46,7 @@ namespace Camelotia.Presentation.Tests
             model.SupportsOAuth.Should().BeTrue();
         }
         
-        private IAuthViewModel BuildAuthViewModel() => new AuthViewModel(
+        private AuthViewModel BuildAuthViewModel() => new AuthViewModel(
             _directAuthViewModel, _oAuthViewModel, _provider
         );
     }

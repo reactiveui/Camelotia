@@ -1,9 +1,9 @@
+using System.ComponentModel;
 using System.Windows.Input;
-using ReactiveUI;
 
 namespace Camelotia.Presentation.Interfaces
 {
-    public interface IDirectAuthViewModel : IReactiveObject, ISupportsActivation
+    public interface IDirectAuthViewModel : INotifyPropertyChanged
     {
         string Username { get; set; }
         
