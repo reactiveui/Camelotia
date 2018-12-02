@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
@@ -24,24 +25,30 @@ namespace Camelotia.Presentation.ViewModels
             Func<IProvider, IFileManager, IAuthViewModel, IProviderViewModel> providerFactory,
             Func<IProvider, IAuthViewModel> authFactory,
             IProviderStorage providerStorage, 
-            IFileManager fileManager)
+            IFileManager fileManager,
+            IScheduler currentThread,
+            IScheduler mainThread)
         {
-            var main = RxApp.MainThreadScheduler;
-            _loadProviders = ReactiveCommand.CreateFromTask(providerStorage.LoadProviders);
+            _loadProviders = ReactiveCommand.CreateFromTask(
+                providerStorage.LoadProviders,
+                outputScheduler: mainThread);
+            
             _providers = _loadProviders
-                .Select(items => items.Select(x => providerFactory(x, fileManager, authFactory(x))).ToList())
+                .Select(providers => providers
+                    .Select(x => providerFactory(x, fileManager, authFactory(x)))
+                    .ToList())
                 .StartWithEmpty()
-                .ToProperty(this, x => x.Providers, scheduler: main);
+                .ToProperty(this, x => x.Providers, scheduler: currentThread);
             
             _isLoading = _loadProviders
                 .IsExecuting
-                .ToProperty(this, x => x.IsLoading, scheduler: main);
+                .ToProperty(this, x => x.IsLoading, scheduler: currentThread);
             
             _isReady = _loadProviders
                 .IsExecuting
                 .Select(executing => !executing)
                 .Skip(1)
-                .ToProperty(this, x => x.IsReady, scheduler: main);
+                .ToProperty(this, x => x.IsReady, scheduler: currentThread);
             
             this.WhenAnyValue(x => x.Providers)
                 .Where(providers => providers != null)

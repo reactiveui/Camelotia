@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using Camelotia.Presentation.Interfaces;
@@ -20,59 +21,54 @@ namespace Camelotia.Presentation.Tests
         private readonly IProvider _provider = Substitute.For<IProvider>();
         
         [Fact]
-        public void ShouldDisplayLoadingReadyIndicatorsProperly()
+        public void ShouldDisplayLoadingReadyIndicatorsProperly() => new TestScheduler().With(scheduler =>
         {
             _provider.IsAuthorized.Returns(Observable.Return(true));
             _provider.Get("/").Returns(x => Observable
                 .Return(Enumerable.Empty<FileModel>())
                 .ToTask());
-
-            new TestScheduler().With(scheduler =>
-            {
-                var model = BuildProviderViewModel();
-                model.IsLoading.Should().BeFalse();
-                model.IsReady.Should().BeFalse();
                 
-                model.Refresh.Execute(null);
-                scheduler.AdvanceBy(2);
+            var model = BuildProviderViewModel(scheduler);
+            model.IsLoading.Should().BeFalse();
+            model.IsReady.Should().BeFalse();
                 
-                model.IsLoading.Should().BeTrue();
-                model.IsReady.Should().BeFalse();
-                scheduler.AdvanceBy(2);
+            model.Refresh.Execute(null);
+            scheduler.AdvanceBy(2);
                 
-                model.IsLoading.Should().BeFalse();
-                model.IsReady.Should().BeTrue();
-            });
-        }
+            model.IsLoading.Should().BeTrue();
+            model.IsReady.Should().BeFalse();
+            scheduler.AdvanceBy(2);
+                
+            model.IsLoading.Should().BeFalse();
+            model.IsReady.Should().BeTrue();
+        });
 
         [Fact]
-        public void ShouldDisplayCurrentPathProperly()
+        public void ShouldDisplayCurrentPathProperly() => new TestScheduler().With(scheduler =>
         {
             _provider.IsAuthorized.Returns(Observable.Return(true));
             _provider.Get("/").Returns(x => Observable
                 .Return(Enumerable.Empty<FileModel>())
                 .ToTask());
+                
+            var model = BuildProviderViewModel(scheduler);
+            model.IsCurrentPathEmpty.Should().BeFalse();
+            model.CurrentPath.Should().Be("/");
+            scheduler.AdvanceBy(2);
+                
+            model.IsCurrentPathEmpty.Should().BeFalse();
+            model.Files.Should().BeEmpty();
+            model.Refresh.Execute(null);
+            scheduler.AdvanceBy(4);
+                
+            model.IsCurrentPathEmpty.Should().BeTrue();
+            model.CurrentPath.Should().Be("/");
+            model.Files.Should().BeEmpty();
+        });
 
-            new TestScheduler().With(scheduler =>
-            {
-                var model = BuildProviderViewModel();
-                model.IsCurrentPathEmpty.Should().BeFalse();
-                model.CurrentPath.Should().Be("/");
-                scheduler.AdvanceBy(2);
-                
-                model.IsCurrentPathEmpty.Should().BeFalse();
-                model.Files.Should().BeEmpty();
-                model.Refresh.Execute(null);
-                scheduler.AdvanceBy(4);
-                
-                model.IsCurrentPathEmpty.Should().BeTrue();
-                model.CurrentPath.Should().Be("/");
-                model.Files.Should().BeEmpty();
-            });
+        private ProviderViewModel BuildProviderViewModel(IScheduler scheduler)
+        {
+            return new ProviderViewModel(_authViewModel, _fileManager, scheduler, scheduler, _provider);
         }
-
-        private ProviderViewModel BuildProviderViewModel() => new ProviderViewModel(
-            _authViewModel, _fileManager, _provider
-        );
     }
 }

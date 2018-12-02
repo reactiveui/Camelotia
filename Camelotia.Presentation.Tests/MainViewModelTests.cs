@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Reactive.Concurrency;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
@@ -16,73 +17,78 @@ namespace Camelotia.Presentation.Tests
         private readonly IFileManager _fileManager = Substitute.For<IFileManager>();
 
         [Fact]
-        public void ShouldIndicateWhenLoadingAndReady()
+        public void ShouldIndicateWhenLoadingAndReady() => new TestScheduler().With(scheduler =>
         {
-            _providerStorage.LoadProviders().Returns(Enumerable.Empty<IProvider>());
-            new TestScheduler().With(scheduler =>
-            {
-                var model = BuildMainViewModel();
-                model.IsLoading.Should().BeFalse();
-                model.IsReady.Should().BeFalse();
+            _providerStorage
+                .LoadProviders()
+                .Returns(Enumerable.Empty<IProvider>());
                 
-                model.LoadProviders.CanExecute(null).Should().BeTrue();
-                model.LoadProviders.Execute(null);
-                scheduler.AdvanceBy(2);
+            var model = BuildMainViewModel(scheduler);
+            model.IsLoading.Should().BeFalse();
+            model.IsReady.Should().BeFalse();
                 
-                model.Providers.Should().BeEmpty();
-                model.IsLoading.Should().BeTrue();
-                model.IsReady.Should().BeFalse();
-                scheduler.AdvanceBy(2);
+            model.LoadProviders.CanExecute(null).Should().BeTrue();
+            model.LoadProviders.Execute(null);
+            scheduler.AdvanceBy(2);
                 
-                model.Providers.Should().BeEmpty();
-                model.IsLoading.Should().BeFalse();
-                model.IsReady.Should().BeTrue();
-            });
-        }
+            model.Providers.Should().BeEmpty();
+            model.IsLoading.Should().BeTrue();
+            model.IsReady.Should().BeFalse();
+            scheduler.AdvanceBy(2);
+                
+            model.Providers.Should().BeEmpty();
+            model.IsLoading.Should().BeFalse();
+            model.IsReady.Should().BeTrue();
+        });
 
         [Fact]
-        public void ShouldSelectFirstProviderWhenProvidersGetLoaded()
+        public void ShouldSelectFirstProviderWhenProvidersGetLoaded() => new TestScheduler().With(scheduler =>
         {
             var providers = Enumerable.Repeat(Substitute.For<IProvider>(), 1);
-            _providerStorage.LoadProviders().Returns(providers);
-            new TestScheduler().With(scheduler =>
-            {
-                var model = BuildMainViewModel();
-                scheduler.AdvanceBy(2);
-
-                model.Providers.Should().BeEmpty();
-                model.LoadProviders.Execute(null);
-                scheduler.AdvanceBy(3);
+            _providerStorage
+                .LoadProviders()
+                .Returns(providers);
                 
-                model.Providers.Should().NotBeEmpty();
-                model.SelectedProvider.Should().NotBeNull();
-            });
-        }
+            var model = BuildMainViewModel(scheduler);
+            scheduler.AdvanceBy(2);
+
+            model.Providers.Should().BeEmpty();
+            model.LoadProviders.Execute(null);
+            scheduler.AdvanceBy(3);
+                
+            model.Providers.Should().NotBeEmpty();
+            model.SelectedProvider.Should().NotBeNull();
+        });
 
         [Fact]
-        public void ActivationShouldTriggerLoad()
+        public void ActivationShouldTriggerLoad() => new TestScheduler().With(scheduler =>
         {
             var providers = Enumerable.Repeat(Substitute.For<IProvider>(), 1);
-            _providerStorage.LoadProviders().Returns(providers);
-            new TestScheduler().With(scheduler =>
-            {
-                var model = BuildMainViewModel();
-                scheduler.AdvanceBy(2);
+            _providerStorage
+                .LoadProviders()
+                .Returns(providers);
                 
-                model.Providers.Should().BeEmpty();
-                model.Activator.Activate();
-                scheduler.AdvanceBy(4);
+            var model = BuildMainViewModel(scheduler);
+            scheduler.AdvanceBy(2);
                 
-                model.Providers.Should().NotBeEmpty();
-                model.SelectedProvider.Should().NotBeNull();
-            });
+            model.Providers.Should().BeEmpty();
+            model.Activator.Activate();
+            scheduler.AdvanceBy(4);
+                
+            model.Providers.Should().NotBeEmpty();
+            model.SelectedProvider.Should().NotBeNull();
+        });
+
+        private MainViewModel BuildMainViewModel(IScheduler scheduler)
+        {
+            return new MainViewModel(
+                (provider, files, auth) => Substitute.For<IProviderViewModel>(),
+                provider => Substitute.For<IAuthViewModel>(),
+                _providerStorage,
+                _fileManager,
+                scheduler,
+                scheduler
+            );
         }
-        
-        private MainViewModel BuildMainViewModel() => new MainViewModel(
-            (provider, files, auth) => Substitute.For<IProviderViewModel>(),
-            provider => Substitute.For<IAuthViewModel>(),
-            _providerStorage,
-            _fileManager
-        );
     }
 }

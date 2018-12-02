@@ -1,3 +1,4 @@
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
@@ -13,17 +14,16 @@ namespace Camelotia.Presentation.ViewModels
         public AuthViewModel(
             IDirectAuthViewModel directAuth,
             IOAuthViewModel oAuth,
+            IScheduler currentThread,
             IProvider provider)
         {
-            var main = RxApp.MainThreadScheduler;
-            DirectAuth = directAuth;
             OAuth = oAuth;
-            
+            DirectAuth = directAuth;
             _provider = provider;
             _isAuthenticated = _provider
                 .IsAuthorized
                 .DistinctUntilChanged()
-                .ToProperty(this, x => x.IsAuthenticated, scheduler: main);
+                .ToProperty(this, x => x.IsAuthenticated, scheduler: currentThread);
         }
         
         public bool IsAuthenticated => _isAuthenticated.Value;

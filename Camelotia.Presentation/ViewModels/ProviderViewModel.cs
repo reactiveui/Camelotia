@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Threading.Tasks;
@@ -36,28 +37,32 @@ namespace Camelotia.Presentation.ViewModels
         public ProviderViewModel(
             IAuthViewModel authViewModel,
             IFileManager fileManager,
+            IScheduler currentThread,
+            IScheduler mainThread,
             IProvider provider)
         {
-            var main = RxApp.MainThreadScheduler;
-            _refresh = ReactiveCommand.CreateFromTask(() => provider.Get(CurrentPath));
             _provider = provider;
+            _refresh = ReactiveCommand.CreateFromTask(
+                () => provider.Get(CurrentPath),
+                outputScheduler: mainThread);
+            
             _files = _refresh
                 .Select(files => files
                     .OrderByDescending(file => file.IsFolder)
                     .ThenBy(file => file.Name)
                     .ToList())
                 .StartWithEmpty()
-                .ToProperty(this, x => x.Files, scheduler: main);
+                .ToProperty(this, x => x.Files, scheduler: currentThread);
             
             _isLoading = _refresh
                 .IsExecuting
-                .ToProperty(this, x => x.IsLoading, scheduler: main);
+                .ToProperty(this, x => x.IsLoading, scheduler: currentThread);
             
             _isReady = _refresh
                 .IsExecuting
                 .Select(executing => !executing)
                 .Skip(1)
-                .ToProperty(this, x => x.IsReady, scheduler: main);
+                .ToProperty(this, x => x.IsReady, scheduler: currentThread);
             
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
@@ -66,7 +71,7 @@ namespace Camelotia.Presentation.ViewModels
             
             _open = ReactiveCommand.Create(
                 () => Path.Combine(CurrentPath, SelectedFile.Name), 
-                canOpenCurrentPath);
+                canOpenCurrentPath, mainThread);
 
             var canCurrentPathGoBack = this
                 .WhenAnyValue(x => x.CurrentPath)
@@ -75,12 +80,12 @@ namespace Camelotia.Presentation.ViewModels
             
             _back = ReactiveCommand.Create(
                 () => Path.GetDirectoryName(CurrentPath), 
-                canCurrentPathGoBack);
+                canCurrentPathGoBack, mainThread);
 
             _currentPath = _open
                 .Merge(_back)
                 .DistinctUntilChanged()
-                .ToProperty(this, x => x.CurrentPath, "/");
+                .ToProperty(this, x => x.CurrentPath, "/", scheduler: currentThread);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Skip(1)
@@ -92,13 +97,13 @@ namespace Camelotia.Presentation.ViewModels
                 .Skip(2)
                 .Where(files => files != null)
                 .Select(files => !files.Any())
-                .ToProperty(this, x => x.IsCurrentPathEmpty, scheduler: main);
+                .ToProperty(this, x => x.IsCurrentPathEmpty, scheduler: currentThread);
 
             _hasErrors = _refresh
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_refresh.Select(x => false))
-                .ToProperty(this, x => x.HasErrors, scheduler: main);
+                .ToProperty(this, x => x.HasErrors, scheduler: currentThread);
 
             var canUploadToCurrentPath = this
                 .WhenAnyValue(x => x.CurrentPath)
@@ -110,7 +115,8 @@ namespace Camelotia.Presentation.ViewModels
                     .FromAsync(fileManager.OpenRead)
                     .Select(stream => _provider.UploadFile(CurrentPath, stream))
                     .SelectMany(task => task.ToObservable()), 
-                canUploadToCurrentPath);
+                canUploadToCurrentPath,
+                mainThread);
 
             var canDownloadSelectedFile = this
                 .WhenAnyValue(x => x.SelectedFile)
@@ -122,7 +128,8 @@ namespace Camelotia.Presentation.ViewModels
                     .FromAsync(fileManager.OpenWrite)
                     .Select(stream => _provider.DownloadFile(SelectedFile.Path, stream))
                     .SelectMany(task => task.ToObservable()), 
-                canDownloadSelectedFile);
+                canDownloadSelectedFile,
+                mainThread);
             
             _uploadToCurrentPath
                 .ThrownExceptions
@@ -142,11 +149,12 @@ namespace Camelotia.Presentation.ViewModels
             var canLogout = provider
                 .IsAuthorized
                 .Select(loggedIn => loggedIn && isAuthEnabled)
-                .DistinctUntilChanged();
+                .DistinctUntilChanged()
+                .ObserveOn(mainThread);
 
             _logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
             _canLogout = canLogout
-                .ToProperty(this, x => x.CanLogout, scheduler: main);
+                .ToProperty(this, x => x.CanLogout, scheduler: currentThread);
             
             Auth = authViewModel;
             Activator = new ViewModelActivator();

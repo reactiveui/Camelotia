@@ -1,4 +1,5 @@
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using Camelotia.Presentation.Interfaces;
@@ -14,25 +15,29 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _isBusy;
         private readonly ReactiveCommand<Unit, Unit> _login;
         
-        public OAuthViewModel(IProvider provider)
+        public OAuthViewModel(
+            IScheduler currentThread,
+            IScheduler mainThread,
+            IProvider provider)
         {
-            var main = RxApp.MainThreadScheduler;
-            _login = ReactiveCommand.CreateFromTask(provider.OAuth);
+            _login = ReactiveCommand.CreateFromTask(
+                provider.OAuth,
+                outputScheduler: mainThread);
 
             _errorMessage = _login
                 .ThrownExceptions
                 .Select(exception => exception.Message)
-                .ToProperty(this, x => x.ErrorMessage, scheduler: main);
+                .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
 
             _hasErrors = _login
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
-                .ToProperty(this, x => x.HasErrors, scheduler: main);
+                .ToProperty(this, x => x.HasErrors, scheduler: currentThread);
             
             _isBusy = _login
                 .IsExecuting
-                .ToProperty(this, x => x.IsBusy, scheduler: main);
+                .ToProperty(this, x => x.IsBusy, scheduler: currentThread);
         }
         
         public string ErrorMessage => _errorMessage.Value;
