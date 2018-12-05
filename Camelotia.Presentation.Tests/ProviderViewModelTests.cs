@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Reactive.Threading.Tasks;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
@@ -10,6 +11,7 @@ using FluentAssertions;
 using Microsoft.Reactive.Testing;
 using NSubstitute;
 using ReactiveUI.Testing;
+using Splat;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
@@ -23,11 +25,6 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldDisplayLoadingReadyIndicatorsProperly() => new TestScheduler().With(scheduler =>
         {
-            _provider.IsAuthorized.Returns(Observable.Return(true));
-            _provider.Get("/").Returns(x => Observable
-                .Return(Enumerable.Empty<FileModel>())
-                .ToTask());
-                
             var model = BuildProviderViewModel(scheduler);
             model.IsLoading.Should().BeFalse();
             model.IsReady.Should().BeFalse();
@@ -46,11 +43,6 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldDisplayCurrentPathProperly() => new TestScheduler().With(scheduler =>
         {
-            _provider.IsAuthorized.Returns(Observable.Return(true));
-            _provider.Get("/").Returns(x => Observable
-                .Return(Enumerable.Empty<FileModel>())
-                .ToTask());
-                
             var model = BuildProviderViewModel(scheduler);
             model.IsCurrentPathEmpty.Should().BeFalse();
             model.CurrentPath.Should().Be("/");
@@ -64,6 +56,68 @@ namespace Camelotia.Presentation.Tests
             model.IsCurrentPathEmpty.Should().BeTrue();
             model.CurrentPath.Should().Be("/");
             model.Files.Should().BeEmpty();
+        });
+
+        [Fact]
+        public void ShouldInheritMetaDataFromProvider() => new TestScheduler().With(scheduler =>
+        {
+            _provider.Name.Returns("Foo");
+            _provider.Size.Returns("42 bytes");
+            _provider.Description.Returns("Bar");
+
+            var model = BuildProviderViewModel(scheduler);
+            model.Name.Should().Be("Foo");
+            model.Size.Should().Be("42 bytes");
+            model.Description.Should().Be("Bar");
+        });
+
+        [Fact]
+        public void LogoutShouldBeEnabledOnlyWhenAuthorized() => new TestScheduler().With(scheduler =>
+        {
+            var authorized = new BehaviorSubject<bool>(true);
+            _provider.IsAuthorized.Returns(authorized);
+            _provider.SupportsDirectAuth.Returns(true);
+
+            var model = BuildProviderViewModel(scheduler);
+            model.Logout.CanExecute(null).Should().BeFalse();
+            
+            scheduler.AdvanceBy(2);
+            model.Logout.CanExecute(null).Should().BeTrue();
+            model.Logout.Execute(null);
+            _provider.Received(1).Logout();
+            
+            authorized.OnNext(false);
+            scheduler.AdvanceBy(2);
+            model.Logout.CanExecute(null).Should().BeFalse();            
+        });
+
+        [Fact]
+        public void ShouldBeAbleToOpenSelectedPath() => new TestScheduler().With(scheduler =>
+        {
+            var file = new FileModel("foo", "/foo", true, string.Empty);
+            _provider.Get("/").Returns(Enumerable.Repeat(file, 1));
+            _authViewModel.IsAuthenticated.Returns(true);
+
+            var model = BuildProviderViewModel(scheduler);
+            using (model.Activator.Activate())
+            {
+                scheduler.AdvanceBy(3);
+                model.Files.Should().NotBeEmpty();
+                model.CurrentPath.Should().Be("/");
+                
+                model.SelectedFile = model.Files.First();
+                model.Open.CanExecute(null).Should().BeTrue();
+                model.Open.Execute(null);
+                
+                scheduler.AdvanceBy(3);
+                model.CurrentPath.Should().Be("/foo");
+
+                model.Back.CanExecute(null).Should().BeTrue();
+                model.Back.Execute(null);
+                
+                scheduler.AdvanceBy(3);
+                model.CurrentPath.Should().Be("/");
+            }
         });
 
         private ProviderViewModel BuildProviderViewModel(IScheduler scheduler)

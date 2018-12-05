@@ -45,6 +45,14 @@ namespace Camelotia.Presentation.Tests
             model.SupportsOAuth.Should().BeTrue();
         });
 
+        [Fact]
+        public void ShouldReturnInjectedAuthViewModelTypes() => new TestScheduler().With(scheduler =>
+        {
+            var model = BuildAuthViewModel(scheduler);
+            model.DirectAuth.Should().Be(_directAuthViewModel);
+            model.OAuth.Should().Be(_oAuthViewModel);
+        });
+
         private AuthViewModel BuildAuthViewModel(IScheduler scheduler)
         {
             return new AuthViewModel(_directAuthViewModel, _oAuthViewModel, scheduler, _provider);
