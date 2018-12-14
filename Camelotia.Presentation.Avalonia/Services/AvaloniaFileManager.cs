@@ -9,25 +9,27 @@ namespace Camelotia.Presentation.Avalonia.Services
 {
     public sealed class AvaloniaFileManager : IFileManager
     {
-        public async Task<Stream> OpenWrite()
+        public async Task<Stream> OpenWrite(string name)
         {
             var fileDialog = new OpenFolderDialog();
             var folder = await fileDialog.ShowAsync();
-            var path = Path.Combine(folder, DateTime.Now.Ticks.ToString());
+            var path = Path.Combine(folder, name);
             return File.Create(path);
         }
 
-        public async Task<Stream> OpenRead()
+        public async Task<(string Name, Stream Stream)> OpenRead()
         {
             var fileDialog = new OpenFileDialog {AllowMultiple = false};
             var files = await fileDialog.ShowAsync();
-            var file = files.First();
+            var path = files.First();
             
-            var attributes = File.GetAttributes(file);
+            var attributes = File.GetAttributes(path);
             var isFolder = attributes.HasFlag(FileAttributes.Directory);
             if (isFolder) throw new Exception("Folders are not supported.");
 
-            return File.OpenRead(file);
+            var stream = File.OpenRead(path);
+            var name = Path.GetFileName(path);
+            return (name, stream);
         }
     }
 }

@@ -59,13 +59,13 @@ namespace Camelotia.Services.Providers
             return Task.CompletedTask;
         }
 
-        public Task UploadFile(string to, Stream from)
+        public Task UploadFile(string to, Stream from, string name)
         {
             if (to == null) throw new ArgumentNullException(nameof(to));
             if (from == null) throw new ArgumentNullException(nameof(from));
             if (!IsDirectory(to)) throw new InvalidOperationException("Can't upload to a non-directory.");
 
-            var path = Path.Combine(to, DateTime.Now.Ticks.ToString());
+            var path = Path.Combine(to, name);
             using (var fileStream = File.Create(path))
             {
                 from.Seek(0, SeekOrigin.Begin);

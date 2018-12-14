@@ -5,8 +5,8 @@ namespace Camelotia.Services.Interfaces
 {
     public interface IFileManager
     {
-        Task<Stream> OpenWrite();
+        Task<Stream> OpenWrite(string name);
         
-        Task<Stream> OpenRead();
+        Task<(string Name, Stream Stream)> OpenRead();
     }
 }

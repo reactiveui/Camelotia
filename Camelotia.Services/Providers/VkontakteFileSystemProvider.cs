@@ -2,10 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reactive.Subjects;
+using System.Text;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
+using Newtonsoft.Json;
 using VkNet.Enums.Filters;
 using VkNet.Model;
 using VkNet;
@@ -65,13 +69,68 @@ namespace Camelotia.Services.Providers
                 var size = string.Empty;
                 if (document.Size.HasValue)
                     size = BytesToString(document.Size.Value);
-                return new FileModel(document.Title, string.Empty, false, size);
+                return new FileModel(document.Title, document.Uri, false, size);
             });
         }
 
-        public Task DownloadFile(string from, Stream to) => Task.CompletedTask;
+        public async Task DownloadFile(string from, Stream to)
+        {
+            var isValidUriString = Uri.IsWellFormedUriString(from, UriKind.Absolute);
+            if (!isValidUriString) throw new InvalidOperationException("Uri is invalid.");
+            
+            using (var downloader = new HttpClient())
+            using (var response = await downloader.GetAsync(from).ConfigureAwait(false))
+            using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                await stream.CopyToAsync(to).ConfigureAwait(false);
+        }
 
-        public Task UploadFile(string to, Stream from) => Task.CompletedTask;
+        public async Task UploadFile(string to, Stream from, string name)
+        {
+            var server = await _api.Docs.GetUploadServerAsync().ConfigureAwait(false);
+            var uri = new Uri(server.UploadUrl);
+            
+            var bytes = await StreamToArray(from).ConfigureAwait(false);
+            var ext = Path.GetFileNameWithoutExtension(name);
+            if (ext == null) throw new ArgumentNullException(nameof(name));
+            
+            using (var response = await PostSingleFileAsync(uri, bytes, ext.Trim('.'), name))
+            using (var reader = new StreamReader(response, Encoding.UTF8))
+            {
+                var message = await reader.ReadToEndAsync().ConfigureAwait(false);
+                var json = JsonConvert.DeserializeObject<DocUploadResponse>(message);
+                if (!string.IsNullOrWhiteSpace(json.File)) return;
+
+                var error = $"Unable to upload {name}{ext} \n{message}";
+                throw new Exception(error);
+            }                
+        }
+
+        private static async Task<byte[]> StreamToArray(Stream stream)
+        {
+            using (var memory = new MemoryStream())
+            {
+                await stream.CopyToAsync(memory);
+                return memory.ToArray();
+            }
+        }
+        
+        private static async Task<Stream> PostSingleFileAsync(Uri uri, byte[] bytes, string type, string name)
+        {
+            using (var http = new HttpClient())
+            using (var multipartFormDataContent = new MultipartFormDataContent())
+            using (var byteArrayContent = new ByteArrayContent(bytes))
+            {
+                byteArrayContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                {
+                    FileName = name, 
+                    Name = type
+                };
+                
+                multipartFormDataContent.Add(byteArrayContent);
+                var response = await http.PostAsync(uri, multipartFormDataContent).ConfigureAwait(false);
+                return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            }
+        }
 
         private static string BytesToString(long byteCount)
         {
@@ -83,6 +142,12 @@ namespace Camelotia.Services.Providers
             var place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
             var num = Math.Round(bytes / Math.Pow(1024, place), 1);
             return (Math.Sign(byteCount) * num) + suf[place];
+        }
+        
+        internal class DocUploadResponse
+        {
+            [JsonProperty("file")]
+            public string File { get; set; }
         }
     }
 }

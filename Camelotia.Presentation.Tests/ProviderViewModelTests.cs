@@ -1,9 +1,7 @@
 using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Reactive.Threading.Tasks;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
@@ -12,7 +10,6 @@ using FluentAssertions;
 using Microsoft.Reactive.Testing;
 using NSubstitute;
 using ReactiveUI.Testing;
-using Splat;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests

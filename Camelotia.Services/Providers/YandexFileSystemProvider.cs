@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +29,7 @@ namespace Camelotia.Services.Providers
 
         public Task DownloadFile(string from, Stream to) => Task.CompletedTask;
 
-        public Task UploadFile(string to, Stream from) => Task.CompletedTask;
+        public Task UploadFile(string to, Stream from, string name) => Task.CompletedTask;
 
         public IObservable<bool> IsAuthorized => _isAuthorized;
 

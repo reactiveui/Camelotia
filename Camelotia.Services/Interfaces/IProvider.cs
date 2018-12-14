@@ -15,10 +15,10 @@ namespace Camelotia.Services.Interfaces
         string Description { get; }
 
         Task<IEnumerable<FileModel>> Get(string path);
+        
+        Task UploadFile(string to, Stream from, string name);
 
         Task DownloadFile(string from, Stream to);
-        
-        Task UploadFile(string to, Stream from);
         
         IObservable<bool> IsAuthorized { get; }
         

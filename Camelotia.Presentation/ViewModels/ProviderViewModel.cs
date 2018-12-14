@@ -114,7 +114,7 @@ namespace Camelotia.Presentation.ViewModels
             _uploadToCurrentPath = ReactiveCommand.CreateFromObservable(
                 () => Observable
                     .FromAsync(fileManager.OpenRead)
-                    .Select(stream => _provider.UploadFile(CurrentPath, stream))
+                    .Select(x => _provider.UploadFile(CurrentPath, x.Stream, x.Name))
                     .SelectMany(task => task.ToObservable()), 
                 canUploadToCurrentPath,
                 mainThread);
@@ -126,7 +126,7 @@ namespace Camelotia.Presentation.ViewModels
                 
             _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
                 () => Observable
-                    .FromAsync(fileManager.OpenWrite)
+                    .FromAsync(() => fileManager.OpenWrite(SelectedFile.Name))
                     .Select(stream => _provider.DownloadFile(SelectedFile.Path, stream))
                     .SelectMany(task => task.ToObservable()), 
                 canDownloadSelectedFile,
