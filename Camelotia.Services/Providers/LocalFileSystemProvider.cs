@@ -79,6 +79,7 @@ namespace Camelotia.Services.Providers
         {
             var totalBytes = DriveInfo
                 .GetDrives()
+                .Where(p => p.DriveType != DriveType.CDRom)
                 .Select(x => x.AvailableFreeSpace)
                 .Sum();
             
