@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Camelotia.Services.Providers;
 using Xunit;
 
-namespace Camelotia.Services.Tests
+namespace Camelotia.Presentation.Tests
 {
     public sealed class ProviderStorageTests
     {
