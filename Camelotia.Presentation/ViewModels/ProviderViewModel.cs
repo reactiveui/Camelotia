@@ -82,10 +82,11 @@ namespace Camelotia.Presentation.ViewModels
                 () => Path.GetDirectoryName(CurrentPath), 
                 canCurrentPathGoBack, mainThread);
 
+            var separator = Path.DirectorySeparatorChar.ToString();
             _currentPath = _open
                 .Merge(_back)
                 .DistinctUntilChanged()
-                .ToProperty(this, x => x.CurrentPath, "/", scheduler: currentThread);
+                .ToProperty(this, x => x.CurrentPath, separator, scheduler: currentThread);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Skip(1)
