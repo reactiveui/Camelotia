@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camelotia.Presentation.Aval
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camelotia.Presentation.Tests", "Camelotia.Presentation.Tests\Camelotia.Presentation.Tests.csproj", "{AE41666B-41D1-4044-9752-7CD4460C1A90}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camelotia.Services.Tests", "Camelotia.Services.Tests\Camelotia.Services.Tests.csproj", "{95B8259C-363C-4342-94CE-A7719369BB45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{AE41666B-41D1-4044-9752-7CD4460C1A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE41666B-41D1-4044-9752-7CD4460C1A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE41666B-41D1-4044-9752-7CD4460C1A90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95B8259C-363C-4342-94CE-A7719369BB45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95B8259C-363C-4342-94CE-A7719369BB45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95B8259C-363C-4342-94CE-A7719369BB45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95B8259C-363C-4342-94CE-A7719369BB45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
