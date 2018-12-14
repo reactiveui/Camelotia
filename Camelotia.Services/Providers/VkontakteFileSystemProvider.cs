@@ -68,7 +68,7 @@ namespace Camelotia.Services.Providers
             {
                 var size = string.Empty;
                 if (document.Size.HasValue)
-                    size = BytesToString(document.Size.Value);
+                    size = ByteConverter.BytesToString(document.Size.Value);
                 return new FileModel(document.Title, document.Uri, false, size);
             });
         }
@@ -132,18 +132,6 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        private static string BytesToString(long byteCount)
-        {
-            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
-            if (byteCount == 0)
-                return "0" + suf[0];
-            
-            var bytes = Math.Abs(byteCount);
-            var place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
-            var num = Math.Round(bytes / Math.Pow(1024, place), 1);
-            return (Math.Sign(byteCount) * num) + suf[place];
-        }
-        
         internal class DocUploadResponse
         {
             [JsonProperty("file")]
