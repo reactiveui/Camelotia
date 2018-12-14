@@ -22,6 +22,7 @@
                     Margin="0 5">
             <StackPanel Margin="10">
                 <TextBlock Text="{Binding ErrorMessage}" 
+                           TextWrapping="Wrap"
                            Foreground="#990000"/>
             </StackPanel>
         </StackPanel>
