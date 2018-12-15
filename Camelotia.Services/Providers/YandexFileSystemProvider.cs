@@ -43,7 +43,10 @@ namespace Camelotia.Services.Providers
         
         public async Task<IEnumerable<FileModel>> Get(string path)
         {
-            var encodedPath = WebUtility.UrlEncode(path);
+            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentException(nameof(path));
+
+            var yaPath = path.Replace("\\", "/");
+            var encodedPath = WebUtility.UrlEncode(yaPath);
             var pathUrl = CloudApiGetPathBase + encodedPath;
             using (var response = await _http.GetAsync(pathUrl).ConfigureAwait(false))
             {
@@ -64,6 +67,9 @@ namespace Camelotia.Services.Providers
 
         public async Task DownloadFile(string from, Stream to)
         {
+            if (from == null) throw new ArgumentNullException(nameof(from));
+            if (to == null) throw new ArgumentNullException(nameof(to));
+
             var encodedPath = WebUtility.UrlEncode(from);
             var pathUrl = CloudApiDownloadFileUrl + encodedPath;
             using (var response = await _http.GetAsync(pathUrl).ConfigureAwait(false))
@@ -151,25 +157,25 @@ namespace Camelotia.Services.Providers
                    $"&client_id={ClientId}&redirect_url={redirect}";
         }
 
-        internal class YandexTokenAuthResponse
+        private class YandexTokenAuthResponse
         {
             [JsonProperty("access_token")]
             public string AccessToken { get; set; }
         }
 
-        internal class YandexContentResponse
+        private class YandexContentResponse
         {
             [JsonProperty("_embedded")]
             public YandexContentItemsResponse Embedded { get; set; }
         }
 
-        internal class YandexContentItemsResponse
+        private class YandexContentItemsResponse
         {
             [JsonProperty("items")]
             public IList<YandexContentItemResponse> Items { get; set; }
         }
 
-        internal class YandexContentItemResponse
+        private class YandexContentItemResponse
         {
             [JsonProperty("path")]
             public string Path { get; set; }
@@ -187,7 +193,7 @@ namespace Camelotia.Services.Providers
             public DateTime Created { get; set; }
         }
 
-        internal class YandexFileDownloadResponse
+        private class YandexFileDownloadResponse
         {
             [JsonProperty("href")]
             public string Href { get; set; }

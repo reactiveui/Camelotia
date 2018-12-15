@@ -44,6 +44,9 @@ namespace Camelotia.Services.Providers
 
         public async Task DirectAuth(string login, string password)
         {
+            if (login == null) throw new ArgumentNullException(nameof(login));
+            if (password == null) throw new ArgumentNullException(nameof(password));
+
             await _api.AuthorizeAsync(new ApiAuthParams
             {
                 ApplicationId = 5560698,
@@ -63,6 +66,8 @@ namespace Camelotia.Services.Providers
 
         public async Task<IEnumerable<FileModel>> Get(string path)
         {
+            if (path == null) throw new ArgumentNullException(nameof(path));
+
             var documents = await _api.Docs.GetAsync();
             return documents.Select(document =>
             {
@@ -75,17 +80,24 @@ namespace Camelotia.Services.Providers
 
         public async Task DownloadFile(string from, Stream to)
         {
+            if (from == null) throw new ArgumentNullException(nameof(from));
+            if (to == null) throw new ArgumentNullException(nameof(to));
+
             var isValidUriString = Uri.IsWellFormedUriString(from, UriKind.Absolute);
             if (!isValidUriString) throw new InvalidOperationException("Uri is invalid.");
             
-            using (var downloader = new HttpClient())
-            using (var response = await downloader.GetAsync(from).ConfigureAwait(false))
+            using (var http = new HttpClient())
+            using (var response = await http.GetAsync(from).ConfigureAwait(false))
             using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 await stream.CopyToAsync(to).ConfigureAwait(false);
         }
 
         public async Task UploadFile(string to, Stream from, string name)
         {
+            if (to == null) throw new ArgumentNullException(nameof(to));
+            if (from == null) throw new ArgumentNullException(nameof(from));
+            if (name == null) throw new ArgumentNullException(nameof(name));
+
             var server = await _api.Docs.GetUploadServerAsync().ConfigureAwait(false);
             var uri = new Uri(server.UploadUrl);
             
@@ -132,7 +144,7 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        internal class DocUploadResponse
+        private class DocUploadResponse
         {
             [JsonProperty("file")]
             public string File { get; set; }
