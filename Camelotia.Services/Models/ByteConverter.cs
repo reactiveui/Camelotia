@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Camelotia.Services.Models
 {
@@ -13,7 +14,8 @@ namespace Camelotia.Services.Models
             var bytes = Math.Abs(byteCount);
             var place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1000)));
             var num = Math.Round(bytes / Math.Pow(1000, place), decimalPrecision);
-            return (Math.Sign(byteCount) * num) + suf[place];
+            var digit = Math.Sign(byteCount) * num;
+            return digit.ToString(CultureInfo.InvariantCulture) + suf[place];
         }
     }
 }
