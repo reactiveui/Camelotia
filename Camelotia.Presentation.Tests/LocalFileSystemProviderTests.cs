@@ -35,18 +35,21 @@ namespace Camelotia.Presentation.Tests
                         .GetAttributes(path)
                         .HasFlag(FileAttributes.Directory));
         }
+        
         [Fact]
         public async Task ShouldReturnDrivesFromAnEmptyPath()
         {
             var real = await _provider.Get(_provider.InitialPath);
             var expected = DriveInfo
-                            .GetDrives()
-                            .Where(p => p.DriveType != DriveType.CDRom);
+                .GetDrives()
+                .Where(p => p.DriveType != DriveType.CDRom)
+                .ToList();
+            
             foreach (var model in real)
                 expected.Should().Contain(drive =>
                     model.Name == drive.Name &&
-                    model.IsFolder == false
-                    && model.IsDrive == true);
+                    model.IsFolder == false && 
+                    model.IsDrive);
         }
     }
 }
