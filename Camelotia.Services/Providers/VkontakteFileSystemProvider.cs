@@ -34,13 +34,13 @@ namespace Camelotia.Services.Providers
 
         public string Description => "Vkontakte documents provider";
 
-        public string InitialPath { get; } = "Documents";
-
         public IObservable<bool> IsAuthorized => _isAuthorized;
 
         public bool SupportsDirectAuth => true;
 
         public bool SupportsOAuth => false;
+
+        public string InitialPath => Path.DirectorySeparatorChar.ToString();
 
         public Task OAuth() => Task.CompletedTask;
 
@@ -76,7 +76,7 @@ namespace Camelotia.Services.Providers
                 var size = string.Empty;
                 if (document.Size.HasValue)
                     size = ByteConverter.BytesToString(document.Size.Value);
-                return new FileModel(document.Title, document.Uri, false, size);
+                return new FileModel(document.Title, document.Uri, false, false, size);
             });
         }
 

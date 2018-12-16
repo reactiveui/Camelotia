@@ -66,16 +66,16 @@ namespace Camelotia.Presentation.ViewModels
             
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file != null && file.IsFolder)
+                .Select(file => file != null && (file.IsFolder || file.IsDrive))
                 .CombineLatest(_refresh.IsExecuting, (folder, busy) => folder && !busy);
             
             _open = ReactiveCommand.Create(
-                () => Path.Combine(CurrentPath, SelectedFile.Name), 
+                () => Path.Combine(CurrentPath ?? string.Empty, SelectedFile.Name),
                 canOpenCurrentPath, mainThread);
 
             var canCurrentPathGoBack = this
                 .WhenAnyValue(x => x.CurrentPath)
-                .Select(path => path?.Length > 1)
+                .Select(path => path?.Length > provider.InitialPath.Length)
                 .CombineLatest(_refresh.IsExecuting, (valid, busy) => valid && !busy);
             
             _back = ReactiveCommand.Create(
@@ -120,7 +120,7 @@ namespace Camelotia.Presentation.ViewModels
 
             var canDownloadSelectedFile = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file != null && !file.IsFolder)
+                .Select(file => file != null && !file.IsFolder && !file.IsDrive)
                 .DistinctUntilChanged();
                 
             _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
@@ -137,7 +137,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Subscribe(Console.WriteLine);
 
             this.WhenAnyValue(x => x.SelectedFile)
-                .Where(file => file != null && file.IsFolder)
+                .Where(file => file != null && (file.IsFolder || file.IsDrive))
                 .Buffer(2, 1)
                 .Select(files => (files.First().Path, files.Last().Path))
                 .DistinctUntilChanged()
