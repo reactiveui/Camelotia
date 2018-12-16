@@ -13,6 +13,8 @@ namespace Camelotia.Services.Interfaces
         string Name { get; }
         
         string Description { get; }
+        
+        string InitialPath { get; }
 
         string InitialPath { get; }
 
