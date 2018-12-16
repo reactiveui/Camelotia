@@ -42,7 +42,7 @@ namespace Camelotia.Presentation.Tests
             var real = await _provider.Get(_provider.InitialPath);
             var expected = DriveInfo
                 .GetDrives()
-                .Where(p => p.DriveType != DriveType.CDRom)
+                .Where(p => p.DriveType != DriveType.CDRom && p.IsReady)
                 .ToList();
             
             foreach (var model in real)

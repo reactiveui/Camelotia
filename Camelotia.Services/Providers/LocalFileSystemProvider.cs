@@ -36,6 +36,7 @@ namespace Camelotia.Services.Providers
             if (string.IsNullOrWhiteSpace(path))
             {
                 var driveQuery = from entity in GetAllDrives()
+                                 where entity.IsReady
                                  let size = ByteConverter.BytesToString(entity.AvailableFreeSpace)
                                  select new FileModel(entity.Name, entity.Name, false, true, size);
                 return driveQuery
