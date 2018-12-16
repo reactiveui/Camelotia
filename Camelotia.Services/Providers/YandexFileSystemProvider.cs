@@ -38,7 +38,9 @@ namespace Camelotia.Services.Providers
         public bool SupportsDirectAuth => false;
 
         public bool SupportsOAuth => true;
-        
+
+        public string InitialPath => Path.DirectorySeparatorChar.ToString();
+
         public Task DirectAuth(string login, string password) => Task.CompletedTask;
         
         public async Task<IEnumerable<FileModel>> Get(string path)
@@ -59,6 +61,7 @@ namespace Camelotia.Services.Providers
                         file.Name,
                         file.Path.Replace("disk:", ""),
                         file.Type == "dir",
+                        false,
                         ByteConverter.BytesToString(file.Size)));
 
                 return models;

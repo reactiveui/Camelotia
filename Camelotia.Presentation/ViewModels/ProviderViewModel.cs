@@ -66,11 +66,11 @@ namespace Camelotia.Presentation.ViewModels
             
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file != null && file.IsFolder)
+                .Select(file => file != null && (file.IsFolder || file.IsDrive))
                 .CombineLatest(_refresh.IsExecuting, (folder, busy) => folder && !busy);
             
             _open = ReactiveCommand.Create(
-                () => Path.Combine(CurrentPath, SelectedFile.Name), 
+                () => Path.Combine(CurrentPath ?? _provider.InitialPath, SelectedFile.Name), 
                 canOpenCurrentPath, mainThread);
 
             var canCurrentPathGoBack = this
@@ -82,11 +82,10 @@ namespace Camelotia.Presentation.ViewModels
                 () => Path.GetDirectoryName(CurrentPath), 
                 canCurrentPathGoBack, mainThread);
 
-            var separator = Path.DirectorySeparatorChar.ToString();
             _currentPath = _open
                 .Merge(_back)
                 .DistinctUntilChanged()
-                .ToProperty(this, x => x.CurrentPath, separator, scheduler: currentThread);
+                .ToProperty(this, x => x.CurrentPath, provider.InitialPath, scheduler: currentThread);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Skip(1)
@@ -121,7 +120,7 @@ namespace Camelotia.Presentation.ViewModels
 
             var canDownloadSelectedFile = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file != null && !file.IsFolder)
+                .Select(file => file != null && !file.IsFolder && !file.IsDrive)
                 .DistinctUntilChanged();
                 
             _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
@@ -138,7 +137,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Subscribe(Console.WriteLine);
 
             this.WhenAnyValue(x => x.SelectedFile)
-                .Where(file => file != null && file.IsFolder)
+                .Where(file => file != null && (file.IsFolder || file.IsDrive))
                 .Buffer(2, 1)
                 .Select(files => (files.First().Path, files.Last().Path))
                 .DistinctUntilChanged()
