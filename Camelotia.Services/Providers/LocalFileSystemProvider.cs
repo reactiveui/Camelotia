@@ -17,8 +17,6 @@ namespace Camelotia.Services.Providers
 
         public string Description => "Provides access to files stored locally.";
 
-        public string InitialPath { get; } = Path.DirectorySeparatorChar.ToString();
-
         public IObservable<bool> IsAuthorized { get; } = Observable.Return(true);
 
         public bool SupportsDirectAuth => false;

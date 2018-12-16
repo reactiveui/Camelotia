@@ -16,8 +16,6 @@ namespace Camelotia.Services.Interfaces
         
         string InitialPath { get; }
 
-        string InitialPath { get; }
-
         Task<IEnumerable<FileModel>> Get(string path);
         
         Task UploadFile(string to, Stream from, string name);

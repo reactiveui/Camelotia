@@ -70,7 +70,7 @@ namespace Camelotia.Presentation.ViewModels
                 .CombineLatest(_refresh.IsExecuting, (folder, busy) => folder && !busy);
             
             _open = ReactiveCommand.Create(
-                () => Path.Combine(CurrentPath ?? _provider.InitialPath, SelectedFile.Name), 
+                () => Path.Combine(CurrentPath, SelectedFile.Name), 
                 canOpenCurrentPath, mainThread);
 
             var canCurrentPathGoBack = this

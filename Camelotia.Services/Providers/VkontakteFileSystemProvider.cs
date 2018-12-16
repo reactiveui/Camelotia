@@ -34,8 +34,6 @@ namespace Camelotia.Services.Providers
 
         public string Description => "Vkontakte documents provider";
 
-        public string InitialPath { get; } = "Documents";
-
         public IObservable<bool> IsAuthorized => _isAuthorized;
 
         public bool SupportsDirectAuth => true;

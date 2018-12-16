@@ -33,8 +33,6 @@ namespace Camelotia.Services.Providers
         
         public string Description => "Yandex Disk file provider";
 
-        public string InitialPath { get; } = Path.DirectorySeparatorChar.ToString();
-
         public IObservable<bool> IsAuthorized => _isAuthorized;
 
         public bool SupportsDirectAuth => false;
