@@ -1,3 +1,13 @@
+trigger:
+- master
+- rel/*
+- preview/*
+
+pr:
+- master
+- rel/*
+- preview/*
+
 jobs:
 - job: Linux
   pool:
