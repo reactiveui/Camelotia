@@ -59,7 +59,7 @@ namespace Camelotia.Services.Providers
                         file.Name,
                         file.Path.Replace("disk:", ""),
                         file.Type == "dir",
-                        file.Size));
+                        ByteConverter.BytesToString(file.Size)));
 
                 return models;
             }
@@ -187,7 +187,7 @@ namespace Camelotia.Services.Providers
             public string Name { get; set; }
             
             [JsonProperty("size")]
-            public string Size { get; set; }
+            public int Size { get; set; }
             
             [JsonProperty("created")]
             public DateTime Created { get; set; }
