@@ -16,7 +16,6 @@ namespace Camelotia.Presentation.Tests
 {
     public sealed class ProviderViewModelTests
     {
-        private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
         private readonly IAuthViewModel _authViewModel = Substitute.For<IAuthViewModel>();
         private readonly IFileManager _fileManager = Substitute.For<IFileManager>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
@@ -42,9 +41,11 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldDisplayCurrentPathProperly() => new TestScheduler().With(scheduler =>
         {
+            _provider.InitialPath.Returns("/");
+            
             var model = BuildProviderViewModel(scheduler);
             model.IsCurrentPathEmpty.Should().BeFalse();
-            model.CurrentPath.Should().Be(Separator);
+            model.CurrentPath.Should().Be("/");
             scheduler.AdvanceBy(2);
                 
             model.IsCurrentPathEmpty.Should().BeFalse();
@@ -53,7 +54,7 @@ namespace Camelotia.Presentation.Tests
             scheduler.AdvanceBy(4);
                 
             model.IsCurrentPathEmpty.Should().BeTrue();
-            model.CurrentPath.Should().Be(Separator);
+            model.CurrentPath.Should().Be("/");
             model.Files.Should().BeEmpty();
         });
 
@@ -93,29 +94,31 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldBeAbleToOpenSelectedPath() => new TestScheduler().With(scheduler =>
         {
-            var file = new FileModel("foo", Separator + "foo", true, string.Empty);
-            _provider.Get(Separator).Returns(Enumerable.Repeat(file, 1));
+            
+            var file = new FileModel("foo", "/foo", true, string.Empty);
+            _provider.Get("/").Returns(Enumerable.Repeat(file, 1));
             _authViewModel.IsAuthenticated.Returns(true);
+            _provider.InitialPath.Returns("/");
 
             var model = BuildProviderViewModel(scheduler);
             using (model.Activator.Activate())
             {
                 scheduler.AdvanceBy(3);
                 model.Files.Should().NotBeEmpty();
-                model.CurrentPath.Should().Be(Separator);
+                model.CurrentPath.Should().Be("/");
                 
                 model.SelectedFile = model.Files.First();
                 model.Open.CanExecute(null).Should().BeTrue();
                 model.Open.Execute(null);
                 
                 scheduler.AdvanceBy(3);
-                model.CurrentPath.Should().Be(Separator + "foo");
+                model.CurrentPath.Should().Be("/foo");
 
                 model.Back.CanExecute(null).Should().BeTrue();
                 model.Back.Execute(null);
                 
                 scheduler.AdvanceBy(3);
-                model.CurrentPath.Should().Be(Separator);
+                model.CurrentPath.Should().Be("/");
             }
         });
 
