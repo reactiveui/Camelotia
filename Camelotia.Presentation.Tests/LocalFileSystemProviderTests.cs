@@ -51,5 +51,12 @@ namespace Camelotia.Presentation.Tests
                     model.IsFolder == false && 
                     model.IsDrive);
         }
+
+        [Fact]
+        public void ShouldImplementNonNullInitialPath()
+        {
+            _provider.InitialPath.Should().NotBeNull();
+        }
+   
     }
 }
