@@ -42,6 +42,8 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldDisplayCurrentPathProperly() => new TestScheduler().With(scheduler =>
         {
+            _provider.InitialPath.Returns(Separator);
+            
             var model = BuildProviderViewModel(scheduler);
             model.IsCurrentPathEmpty.Should().BeFalse();
             model.CurrentPath.Should().Be(Separator);
@@ -93,9 +95,10 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldBeAbleToOpenSelectedPath() => new TestScheduler().With(scheduler =>
         {
-            var file = new FileModel("foo", Separator + "foo", true, string.Empty);
+            var file = new FileModel("foo", Separator + "foo", true, false, string.Empty);
             _provider.Get(Separator).Returns(Enumerable.Repeat(file, 1));
             _authViewModel.IsAuthenticated.Returns(true);
+            _provider.InitialPath.Returns(Separator);
 
             var model = BuildProviderViewModel(scheduler);
             using (model.Activator.Activate())

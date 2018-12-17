@@ -40,6 +40,8 @@ namespace Camelotia.Services.Providers
 
         public bool SupportsOAuth => false;
 
+        public string InitialPath => Path.DirectorySeparatorChar.ToString();
+
         public Task OAuth() => Task.CompletedTask;
 
         public async Task DirectAuth(string login, string password)
@@ -74,7 +76,7 @@ namespace Camelotia.Services.Providers
                 var size = string.Empty;
                 if (document.Size.HasValue)
                     size = ByteConverter.BytesToString(document.Size.Value);
-                return new FileModel(document.Title, document.Uri, false, size);
+                return new FileModel(document.Title, document.Uri, false, false, size);
             });
         }
 

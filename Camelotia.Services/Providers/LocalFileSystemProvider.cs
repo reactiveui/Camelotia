@@ -23,6 +23,8 @@ namespace Camelotia.Services.Providers
         
         public bool SupportsOAuth => false;
 
+        public string InitialPath => string.Empty;
+
         public Task OAuth() => Task.CompletedTask;
 
         public Task Logout() => Task.CompletedTask;
@@ -31,13 +33,24 @@ namespace Camelotia.Services.Providers
 
         public Task<IEnumerable<FileModel>> Get(string path) => Task.Run(() =>
         {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                var driveQuery = from entity in GetAllDrives()
+                                 where entity.IsReady
+                                 let size = ByteConverter.BytesToString(entity.AvailableFreeSpace)
+                                 select new FileModel(entity.Name, entity.Name, false, true, size);
+                return driveQuery
+                    .ToList()
+                    .AsEnumerable();
+            }
+            
             if (!Directory.Exists(path))
                 throw new ArgumentException("Directory doesn't exist.");
             
             var query = from entity in Directory.GetFileSystemEntries(path) 
                         let isDirectory = IsDirectory(entity) 
                         let size = isDirectory ? "*" : ByteConverter.BytesToString(new FileInfo(entity).Length) 
-                        select new FileModel(Path.GetFileName(entity), entity, isDirectory, size);
+                        select new FileModel(Path.GetFileName(entity), entity, isDirectory, false, size);
 
             return query
                 .ToList()
@@ -77,18 +90,26 @@ namespace Camelotia.Services.Providers
 
         private static string GetSizeOnAllDisks()
         {
-            var totalBytes = DriveInfo
-                .GetDrives()
-                .Where(p => p.DriveType != DriveType.CDRom)
+            var totalBytes = GetAllDrives()
                 .Select(x => x.AvailableFreeSpace)
                 .Sum();
             
             return ByteConverter.BytesToString(totalBytes);
         }
 
+        private static IEnumerable<DriveInfo> GetAllDrives()
+        {
+            var drives = DriveInfo
+                .GetDrives()
+                .Where(p => p.DriveType != DriveType.CDRom);
+
+            return drives;
+        }
+
         private static bool IsDirectory(string path)
         {
             var attributes = File.GetAttributes(path);
+
             return attributes.HasFlag(FileAttributes.Directory);
         }
     }
