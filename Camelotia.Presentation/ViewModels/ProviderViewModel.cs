@@ -70,12 +70,12 @@ namespace Camelotia.Presentation.ViewModels
                 .CombineLatest(_refresh.IsExecuting, (folder, busy) => folder && !busy);
             
             _open = ReactiveCommand.Create(
-                () => Path.Combine(CurrentPath ?? string.Empty, SelectedFile.Name),
+                () => Path.Combine(CurrentPath, SelectedFile.Name),
                 canOpenCurrentPath, mainThread);
 
             var canCurrentPathGoBack = this
                 .WhenAnyValue(x => x.CurrentPath)
-                .Select(path => path?.Length > provider.InitialPath.Length)
+                .Select(path => path.Length > provider.InitialPath.Length)
                 .CombineLatest(_refresh.IsExecuting, (valid, busy) => valid && !busy);
             
             _back = ReactiveCommand.Create(
@@ -184,7 +184,7 @@ namespace Camelotia.Presentation.ViewModels
 
         public string Description => _provider.Description;
         
-        public string CurrentPath => _currentPath?.Value;
+        public string CurrentPath => _currentPath?.Value ?? _provider.InitialPath;
         
         public bool CanLogout => _canLogout.Value;
         
