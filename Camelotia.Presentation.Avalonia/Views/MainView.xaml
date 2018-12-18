@@ -5,20 +5,20 @@
         xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Background="#f0f0f0" 
+        Background="#f0f0f0"
         FontFamily="Ubuntu"
-        MinHeight="500" 
+        MinHeight="500"
         MinWidth="700">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" Background="#002171">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0"
                        Text="Camelotia"
@@ -34,19 +34,19 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="interfaces:IProviderViewModel">
                         <Grid>
-                        <StackPanel Margin="10">
-                            <TextBlock Text="{Binding Name, Mode=OneTime}"
-                                       Foreground="White" 
-                                       FontSize="15" />
-                            <StackPanel Orientation="Horizontal" Margin="0 5">
-                                <TextBlock Text="Size: " Foreground="#eeeeee" />
-                                <TextBlock Text="{Binding Size, Mode=OneTime}" Foreground="#eeeeee" />
+                            <StackPanel Margin="10">
+                                <TextBlock Text="{Binding Name, Mode=OneTime}"
+                                           Foreground="White"
+                                           FontSize="15" />
+                                <StackPanel Orientation="Horizontal" Margin="0 5">
+                                    <TextBlock Text="Size: " Foreground="#eeeeee" />
+                                    <TextBlock Text="{Binding Size, Mode=OneTime}" Foreground="#eeeeee" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding Description}"
+                                           TextWrapping="Wrap"
+                                           Foreground="#eeeeee" />
                             </StackPanel>
-                            <TextBlock Text="{Binding Description}"
-                                       TextWrapping="Wrap"
-                                       Foreground="#eeeeee"/>
-                        </StackPanel>
-                            </Grid>
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
@@ -57,12 +57,12 @@
                         Command="{Binding LoadProviders}"
                         Background="Transparent"
                         Foreground="#ffffff"
-                        Content="Refresh" 
-                        Margin="12"/>
+                        Content="Refresh"
+                        Margin="12" />
             </StackPanel>
-            <ProgressBar Grid.Row="0" 
+            <ProgressBar Grid.Row="0"
                          Grid.RowSpan="3"
-                         IsIndeterminate="True" 
+                         IsIndeterminate="True"
                          Orientation="Vertical"
                          IsVisible="{Binding IsLoading}" />
         </Grid>
@@ -71,7 +71,7 @@
                       SelectedItem="{Binding SelectedProvider, Mode=OneWay}">
                 <Carousel.DataTemplates>
                     <DataTemplate DataType="interfaces:IProviderViewModel">
-                        <views:ProviderView DataContext="{Binding}"/>
+                        <views:ProviderView DataContext="{Binding}" />
                     </DataTemplate>
                 </Carousel.DataTemplates>
             </Carousel>

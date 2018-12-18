@@ -9,22 +9,22 @@
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="42"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="42" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
                         Command="{Binding Back}"
                         Classes="Rounded"
                         Content="Back" />
-                <TextBlock Grid.Column="1" 
+                <TextBlock Grid.Column="1"
                            Text="{Binding CurrentPath}"
                            VerticalAlignment="Center"
                            FontSize="14"
@@ -54,15 +54,15 @@
                                     <ColumnDefinition Width="1*" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Margin="8" Grid.Column="0">
-                                    <TextBlock Text="{Binding Name}" 
+                                    <TextBlock Text="{Binding Name}"
                                                TextWrapping="Wrap"
                                                FontSize="14" />
-                                    <TextBlock Text="Directory" 
+                                    <TextBlock Text="Directory"
                                                IsVisible="{Binding IsFolder}"
                                                Foreground="#777777"
                                                FontSize="12" />
                                 </StackPanel>
-                                <TextBlock Grid.Column="1" 
+                                <TextBlock Grid.Column="1"
                                            VerticalAlignment="Center"
                                            Foreground="#999999"
                                            Text="{Binding Size}" />
@@ -72,24 +72,24 @@
                 </ListBox>
                 <Grid IsVisible="{Binding HasErrors}" Background="#ffffff">
                     <StackPanel VerticalAlignment="Center">
-                        <Ellipse Width="10" Height="10" 
-                                 HorizontalAlignment="Center" 
+                        <Ellipse Width="10" Height="10"
+                                 HorizontalAlignment="Center"
                                  Fill="#ff0000"
                                  Margin="10" />
                         <TextBlock HorizontalAlignment="Center"
                                    Text="Can't perform the operation, an error has occured."
-                                   Foreground="#000000"/>
+                                   Foreground="#000000" />
                     </StackPanel>
                 </Grid>
                 <Grid IsVisible="{Binding IsCurrentPathEmpty}" Background="#ffffff">
                     <StackPanel VerticalAlignment="Center">
-                        <Ellipse Width="10" Height="10" 
-                                 HorizontalAlignment="Center" 
+                        <Ellipse Width="10" Height="10"
+                                 HorizontalAlignment="Center"
                                  Fill="#ff0000"
                                  Margin="10" />
                         <TextBlock HorizontalAlignment="Center"
                                    Text="Whoops, no files here!"
-                                   Foreground="#000000"/>
+                                   Foreground="#000000" />
                     </StackPanel>
                 </Grid>
                 <Grid IsVisible="{Binding IsLoading}" Background="#ffffff">
@@ -98,7 +98,7 @@
                                      IsIndeterminate="{Binding IsLoading}" />
                         <TextBlock HorizontalAlignment="Center"
                                    Text="Please, wait..."
-                                   Foreground="#000000"/>
+                                   Foreground="#000000" />
                     </StackPanel>
                 </Grid>
             </Grid>
@@ -113,16 +113,16 @@
                         Content="Logout"
                         Classes="Rounded"
                         IsVisible="{Binding CanLogout}"
-                        Command="{Binding Logout}"/>
+                        Command="{Binding Logout}" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
-                    <TextBlock Text="You selected: " Foreground="#aaaaaa"/>
-                    <TextBlock Text="{Binding SelectedFile.Name}" 
-                               Foreground="#888888"/>
+                    <TextBlock Text="You selected: " Foreground="#aaaaaa" />
+                    <TextBlock Text="{Binding SelectedFile.Name}"
+                               Foreground="#888888" />
                 </StackPanel>
                 <Button Grid.Column="2"
                         Content="Upload"
                         Classes="Rounded"
-                        Command="{Binding UploadToCurrentPath}"/>
+                        Command="{Binding UploadToCurrentPath}" />
                 <Button Grid.Column="3"
                         Content="Download"
                         Classes="Rounded"
@@ -130,7 +130,7 @@
             </Grid>
         </Grid>
         <Grid IsVisible="{Binding !Auth.IsAuthenticated}">
-            <views:AuthView DataContext="{Binding Auth}"/>
+            <views:AuthView DataContext="{Binding Auth}" />
         </Grid>
     </Grid>
 </UserControl>

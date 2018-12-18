@@ -8,15 +8,15 @@
     <TabControl SelectedIndex="{Binding SupportsOAuth}">
         <TabItem>
             <TabItem.Header>
-                <TextBlock Text="Direct Auth" IsVisible="{Binding SupportsDirectAuth}"/>
+                <TextBlock Text="Direct Auth" IsVisible="{Binding SupportsDirectAuth}" />
             </TabItem.Header>
-            <views:DirectAuthView DataContext="{Binding DirectAuth}"/>
+            <views:DirectAuthView DataContext="{Binding DirectAuth}" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
-                <TextBlock Text="OAuth" IsVisible="{Binding SupportsOAuth}"/>
+                <TextBlock Text="OAuth" IsVisible="{Binding SupportsOAuth}" />
             </TabItem.Header>
-            <views:OAuthView DataContext="{Binding OAuth}"/>
+            <views:OAuthView DataContext="{Binding OAuth}" />
         </TabItem>
     </TabControl>
 </UserControl>
