@@ -190,7 +190,7 @@ namespace Camelotia.Services.Providers
             public string Name { get; set; }
             
             [JsonProperty("size")]
-            public int Size { get; set; }
+            public long Size { get; set; }
             
             [JsonProperty("created")]
             public DateTime Created { get; set; }
