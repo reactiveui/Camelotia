@@ -113,10 +113,13 @@ namespace Camelotia.Presentation.ViewModels
             _uploadToCurrentPath = ReactiveCommand.CreateFromObservable(
                 () => Observable
                     .FromAsync(fileManager.OpenRead)
+                    .Where(response => response.Name != null && response.Stream != null)
                     .Select(x => _provider.UploadFile(CurrentPath, x.Stream, x.Name))
                     .SelectMany(task => task.ToObservable()), 
                 canUploadToCurrentPath,
                 mainThread);
+
+            _uploadToCurrentPath.InvokeCommand(_refresh);
 
             var canDownloadSelectedFile = this
                 .WhenAnyValue(x => x.SelectedFile)
@@ -126,6 +129,7 @@ namespace Camelotia.Presentation.ViewModels
             _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
                 () => Observable
                     .FromAsync(() => fileManager.OpenWrite(SelectedFile.Name))
+                    .Where(stream => stream != null)
                     .Select(stream => _provider.DownloadFile(SelectedFile.Path, stream))
                     .SelectMany(task => task.ToObservable()), 
                 canDownloadSelectedFile,
@@ -174,6 +178,8 @@ namespace Camelotia.Presentation.ViewModels
 
         [Reactive] public FileModel SelectedFile { get; set; }
         
+        public string CurrentPath => _currentPath?.Value ?? _provider.InitialPath;
+        
         public ICommand DownloadSelectedFile => _downloadSelectedFile;
 
         public ICommand UploadToCurrentPath => _uploadToCurrentPath;
@@ -183,8 +189,6 @@ namespace Camelotia.Presentation.ViewModels
         public IEnumerable<FileModel> Files => _files.Value;
 
         public string Description => _provider.Description;
-        
-        public string CurrentPath => _currentPath?.Value ?? _provider.InitialPath;
         
         public bool CanLogout => _canLogout.Value;
         

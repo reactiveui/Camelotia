@@ -68,8 +68,6 @@ namespace Camelotia.Services.Providers
 
         public async Task<IEnumerable<FileModel>> Get(string path)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
-
             var documents = await _api.Docs.GetAsync();
             return documents.Select(document =>
             {
@@ -82,9 +80,6 @@ namespace Camelotia.Services.Providers
 
         public async Task DownloadFile(string from, Stream to)
         {
-            if (from == null) throw new ArgumentNullException(nameof(from));
-            if (to == null) throw new ArgumentNullException(nameof(to));
-
             var isValidUriString = Uri.IsWellFormedUriString(from, UriKind.Absolute);
             if (!isValidUriString) throw new InvalidOperationException("Uri is invalid.");
             
@@ -96,10 +91,6 @@ namespace Camelotia.Services.Providers
 
         public async Task UploadFile(string to, Stream from, string name)
         {
-            if (to == null) throw new ArgumentNullException(nameof(to));
-            if (from == null) throw new ArgumentNullException(nameof(from));
-            if (name == null) throw new ArgumentNullException(nameof(name));
-
             var server = await _api.Docs.GetUploadServerAsync().ConfigureAwait(false);
             var uri = new Uri(server.UploadUrl);
             

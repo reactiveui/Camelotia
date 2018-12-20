@@ -57,35 +57,27 @@ namespace Camelotia.Services.Providers
                 .AsEnumerable();
         });
 
-        public Task DownloadFile(string from, Stream to)
+        public async Task DownloadFile(string from, Stream to)
         {
-            if (from == null) throw new ArgumentNullException(nameof(from));
-            if (to == null) throw new ArgumentNullException(nameof(to));
             if (IsDirectory(from)) throw new InvalidOperationException("Can't download directory.");
-
+            
             using (var fileStream = File.OpenRead(from))
             {
                 fileStream.Seek(0, SeekOrigin.Begin);
-                fileStream.CopyTo(to);
+                await fileStream.CopyToAsync(to);
             }
-
-            return Task.CompletedTask;
         }
 
-        public Task UploadFile(string to, Stream from, string name)
+        public async Task UploadFile(string to, Stream from, string name)
         {
-            if (to == null) throw new ArgumentNullException(nameof(to));
-            if (from == null) throw new ArgumentNullException(nameof(from));
             if (!IsDirectory(to)) throw new InvalidOperationException("Can't upload to a non-directory.");
-
+            
             var path = Path.Combine(to, name);
             using (var fileStream = File.Create(path))
             {
                 from.Seek(0, SeekOrigin.Begin);
-                from.CopyTo(fileStream);
+                await from.CopyToAsync(fileStream);
             }
-
-            return Task.CompletedTask;
         }
 
         private static string GetSizeOnAllDisks()
@@ -109,7 +101,6 @@ namespace Camelotia.Services.Providers
         private static bool IsDirectory(string path)
         {
             var attributes = File.GetAttributes(path);
-
             return attributes.HasFlag(FileAttributes.Directory);
         }
     }

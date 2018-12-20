@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
+using Camelotia.Services.Models.Yandex;
 using Newtonsoft.Json;
 
 namespace Camelotia.Services.Providers
@@ -19,6 +20,7 @@ namespace Camelotia.Services.Providers
     {
         private const string YandexAuthTokenUrl = "https://oauth.yandex.ru/token";
         private const string CloudApiDownloadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/download?path=";
+        private const string CloudApiUploadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/upload?path=";
         private const string CloudApiGetPathBase = "https://cloud-api.yandex.net:443/v1/disk/resources?path=";
         private const string SuccessContent = "<html><body>Please return to the app.</body></html>";
         private const string ClientSecret = "f14bfc0275a34ceea83d7de7f4b50898";
@@ -45,8 +47,6 @@ namespace Camelotia.Services.Providers
         
         public async Task<IEnumerable<FileModel>> Get(string path)
         {
-            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentException(nameof(path));
-
             var yaPath = path.Replace("\\", "/");
             var encodedPath = WebUtility.UrlEncode(yaPath);
             var pathUrl = CloudApiGetPathBase + encodedPath;
@@ -70,24 +70,37 @@ namespace Camelotia.Services.Providers
 
         public async Task DownloadFile(string from, Stream to)
         {
-            if (from == null) throw new ArgumentNullException(nameof(from));
-            if (to == null) throw new ArgumentNullException(nameof(to));
-
-            var encodedPath = WebUtility.UrlEncode(from);
+            var yaPath = from.Replace("\\", "/");
+            var encodedPath = WebUtility.UrlEncode(yaPath);
             var pathUrl = CloudApiDownloadFileUrl + encodedPath;
             using (var response = await _http.GetAsync(pathUrl).ConfigureAwait(false))
             {
-                var json = await response.Content.ReadAsStringAsync();
                 response.EnsureSuccessStatusCode();
+                var json = await response.Content.ReadAsStringAsync();
+                var content = JsonConvert.DeserializeObject<YandexFileLoadResponse>(json);
                 
-                var content = JsonConvert.DeserializeObject<YandexFileDownloadResponse>(json);
                 using (var file = await _http.GetAsync(content.Href).ConfigureAwait(false))
                 using (var stream = await file.Content.ReadAsStreamAsync().ConfigureAwait(false))
                     await stream.CopyToAsync(to).ConfigureAwait(false);
             }
         }
 
-        public Task UploadFile(string to, Stream from, string name) => Task.CompletedTask;
+        public async Task UploadFile(string to, Stream from, string name)
+        {
+            var yaPath = Path.Combine(to, name).Replace("\\", "/");
+            var encodedPath = WebUtility.UrlEncode(yaPath);
+            var pathUrl = CloudApiUploadFileUrl + encodedPath;
+            using (var response = await _http.GetAsync(pathUrl).ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+                var json = await response.Content.ReadAsStringAsync();
+                var content = JsonConvert.DeserializeObject<YandexFileLoadResponse>(json);
+
+                var httpContent = new StreamContent(from);
+                using (var file = await _http.PutAsync(content.Href, httpContent).ConfigureAwait(false))
+                    file.EnsureSuccessStatusCode();
+            }
+        }
 
         public Task Logout()
         {
@@ -158,48 +171,6 @@ namespace Camelotia.Services.Providers
         {
             return "https://oauth.yandex.ru/authorize?response_type=code" +
                    $"&client_id={ClientId}&redirect_url={redirect}";
-        }
-
-        private class YandexTokenAuthResponse
-        {
-            [JsonProperty("access_token")]
-            public string AccessToken { get; set; }
-        }
-
-        private class YandexContentResponse
-        {
-            [JsonProperty("_embedded")]
-            public YandexContentItemsResponse Embedded { get; set; }
-        }
-
-        private class YandexContentItemsResponse
-        {
-            [JsonProperty("items")]
-            public IList<YandexContentItemResponse> Items { get; set; }
-        }
-
-        private class YandexContentItemResponse
-        {
-            [JsonProperty("path")]
-            public string Path { get; set; }
-            
-            [JsonProperty("type")]
-            public string Type { get; set; }
-            
-            [JsonProperty("name")]
-            public string Name { get; set; }
-            
-            [JsonProperty("size")]
-            public long Size { get; set; }
-            
-            [JsonProperty("created")]
-            public DateTime Created { get; set; }
-        }
-
-        private class YandexFileDownloadResponse
-        {
-            [JsonProperty("href")]
-            public string Href { get; set; }
         }
     }
 }

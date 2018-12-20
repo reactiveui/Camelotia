@@ -10,6 +10,7 @@ namespace Camelotia.Services.Models
             IsDrive = isDrive;
             Size = size;
         }
+        
         public string Name { get; }
 
         public string Path { get; }

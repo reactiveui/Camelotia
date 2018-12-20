@@ -122,6 +122,22 @@ namespace Camelotia.Presentation.Tests
             }
         });
 
+        [Fact]
+        public void ShouldRefreshContentOfCurrentPathWhenFileIsUploaded() => new TestScheduler().With(scheduler =>
+        {
+            _provider.InitialPath.Returns(Separator);            
+            _fileManager.OpenRead().Returns(("example", Stream.Null));
+            _authViewModel.IsAuthenticated.Returns(true);
+
+            var model = BuildProviderViewModel(scheduler);
+            model.CurrentPath.Should().Be(Separator);
+            model.UploadToCurrentPath.CanExecute(null).Should().BeTrue();
+            model.UploadToCurrentPath.Execute(null);
+            
+            scheduler.AdvanceBy(2);
+            _provider.Received(1).Get(Separator);
+        });
+
         private ProviderViewModel BuildProviderViewModel(IScheduler scheduler)
         {
             return new ProviderViewModel(_authViewModel, _fileManager, scheduler, scheduler, _provider);

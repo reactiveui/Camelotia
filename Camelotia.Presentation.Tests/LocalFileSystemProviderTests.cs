@@ -53,10 +53,6 @@ namespace Camelotia.Presentation.Tests
         }
 
         [Fact]
-        public void ShouldImplementNonNullInitialPath()
-        {
-            _provider.InitialPath.Should().NotBeNull();
-        }
-   
+        public void ShouldImplementNonNullInitialPath() => _provider.InitialPath.Should().NotBeNull();
     }
 }

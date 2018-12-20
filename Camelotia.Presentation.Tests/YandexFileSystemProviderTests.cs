@@ -10,9 +10,6 @@ namespace Camelotia.Presentation.Tests
         private readonly IProvider _provider = new YandexFileSystemProvider();
 
         [Fact]
-        public void ShouldImplementNonNullInitialPath()
-        {
-            _provider.InitialPath.Should().NotBeNull();
-        }
+        public void ShouldImplementNonNullInitialPath() => _provider.InitialPath.Should().NotBeNull();
     }
 }
