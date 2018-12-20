@@ -6,7 +6,6 @@
     xmlns:model="using:Camelotia.Presentation.Interfaces"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DataContext="{d:DesignInstance Type=model:IMainViewModel, IsDesignTimeCreatable=False}"
     mc:Ignorable="d">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -48,7 +47,7 @@
                     Grid.Row="2" />
         </Grid>
         <Grid Grid.Column="1" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
-            <views:ProviderView DataContext="{Binding SelectedProvider}" />
+            <views:ProviderView ViewModel="{x:Bind ViewModel.SelectedProvider, Mode=OneWay}" />
         </Grid>
     </Grid>
 </Page>

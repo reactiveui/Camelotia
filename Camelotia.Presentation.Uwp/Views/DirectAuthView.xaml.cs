@@ -5,27 +5,27 @@ using Windows.UI.Xaml.Controls;
 
 namespace Camelotia.Presentation.Uwp.Views
 {
-    public sealed partial class ProviderView : UserControl, IViewFor<IProviderViewModel>
+    public sealed partial class DirectAuthView : UserControl, IViewFor<IDirectAuthViewModel>
     {
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty
-               .Register(nameof(ViewModel), typeof(IProviderViewModel), typeof(ProviderView), null);
+               .Register(nameof(ViewModel), typeof(IDirectAuthViewModel), typeof(DirectAuthView), null);
 
-        public ProviderView()
+        public DirectAuthView()
         {
             InitializeComponent();
             this.WhenActivated(disposables => { });
         }
 
-        public IProviderViewModel ViewModel
+        public IDirectAuthViewModel ViewModel
         {
-            get => (IProviderViewModel)GetValue(ViewModelProperty);
+            get => (IDirectAuthViewModel)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
 
         object IViewFor.ViewModel
         {
             get => ViewModel;
-            set => ViewModel = (IProviderViewModel)value;
+            set => ViewModel = (IDirectAuthViewModel)value;
         }
     }
 }

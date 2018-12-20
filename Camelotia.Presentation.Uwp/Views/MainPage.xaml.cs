@@ -17,7 +17,7 @@ namespace Camelotia.Presentation.Uwp
         public MainView()
         {
             InitializeComponent();
-            DataContext = ViewModel = BuildMainViewModel();
+            ViewModel = BuildMainViewModel();
             this.WhenActivated(disposables => { });
         }
 
