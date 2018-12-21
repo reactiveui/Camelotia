@@ -1,8 +1,10 @@
-# Compiling
-
 [![Build Status](https://worldbeater.visualstudio.com/Camelotia/_apis/build/status/Camelotia-CI)](https://worldbeater.visualstudio.com/Camelotia/_build/latest?definitionId=1) [![Pull Requests](https://img.shields.io/github/issues-pr/worldbeater/camelotia.svg)](https://github.com/worldbeater/Camelotia/pulls) [![Issues](https://img.shields.io/github/issues/worldbeater/camelotia.svg)](https://github.com/worldbeater/Camelotia/issues) ![License](https://img.shields.io/github/license/worldbeater/camelotia.svg) ![Size](https://img.shields.io/github/repo-size/worldbeater/camelotia.svg)
 
-The app runs on Windows, Linux and MacOS. Make sure you have latest [.NET Core SDK](https://dot.net/) installed.
+The app runs on Windows, Linux, MacOS, XBox, Surface Hub and HoloLens.
+
+## Compiling Avalonia app
+
+You can compile .NET Standard libraries, run tests and run an Avalonia application on Windows, Linux and macOS operating systems. Make sure you have latest [.NET Core SDK](https://dot.net/) installed.
 
 <img src="./Camelotia.png" width="500">
 
@@ -13,7 +15,13 @@ cd Camelotia/Camelotia.Presentation.Avalonia
 dotnet run
 ```
 
-On Windows, run the `./run.bat` file.
+On Windows, double-click the `./run.bat` file.
+
+## Compiling Universal Windows Platform app
+
+You can compile Universal Windows Platform Camelotia app only on latest Windows 10. Make sure you have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/).
+
+<img src="./Universal.png" width="500">
 
 ### Adding Custom Providers
 
