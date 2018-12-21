@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -28,8 +27,13 @@ namespace Camelotia.Services.Providers
         
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
         private readonly HttpClient _http = new HttpClient();
+        private readonly IUriLauncher _uriLauncher;
 
-        public YandexFileSystemProvider() => _isAuthorized.OnNext(false);
+        public YandexFileSystemProvider(IUriLauncher uriLauncher)
+        {
+            _isAuthorized.OnNext(false);
+            _uriLauncher = uriLauncher;
+        }
 
         public string Size => "Unknown";
 
@@ -142,22 +146,17 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        private static async Task<string> GetAuthenticationCode()
+        private async Task<string> GetAuthenticationCode()
         {
             var listener = new HttpListener();
             var server = $"http://{IPAddress.Loopback}:{3000}/";
             listener.Prefixes.Add(server);
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    UseShellExecute = true,
-                    FileName = GetYandexAuthCodeUrl(server)
-                }
-            };
-            
             listener.Start();
-            process.Start();
+
+            var uriString = GetYandexAuthCodeUrl(server);
+            var uri = new Uri(uriString);
+            await _uriLauncher.LaunchUri(uri);
+
             var context = await listener.GetContextAsync();
             var code = context.Request.QueryString["code"];
             

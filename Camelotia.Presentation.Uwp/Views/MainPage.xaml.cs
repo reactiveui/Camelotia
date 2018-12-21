@@ -48,7 +48,9 @@ namespace Camelotia.Presentation.Uwp
                 ),
                 new ProviderStorage(
                     new VkontakteFileSystemProvider(),
-                    new YandexFileSystemProvider()
+                    new YandexFileSystemProvider(
+                        new UniversalUriLauncher()    
+                    )
                 ),
                 new UniversalFileManager(),
                 currentThread,

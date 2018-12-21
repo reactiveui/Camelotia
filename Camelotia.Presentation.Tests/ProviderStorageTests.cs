@@ -1,6 +1,8 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Camelotia.Services.Interfaces;
 using Camelotia.Services.Providers;
+using NSubstitute;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
@@ -10,7 +12,14 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public async Task ShouldResolveAllSupportedProviders()
         {
-            var provider = new ProviderStorage();
+            var provider = new ProviderStorage(
+                new LocalFileSystemProvider(),
+                new VkontakteFileSystemProvider(),
+                new YandexFileSystemProvider(
+                    Substitute.For<IUriLauncher>()
+                )
+            );
+
             var sequence = await provider.LoadProviders();
             var providers = sequence.ToList();
             
