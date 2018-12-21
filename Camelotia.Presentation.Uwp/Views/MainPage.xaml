@@ -7,6 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <DrillInNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -18,7 +27,10 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="Camelotia" Margin="10"/>
+            <TextBlock Grid.Row="0" 
+                       Style="{StaticResource HeaderTextBlockStyle}"
+                       Text="Camelotia" 
+                       Margin="22"/>
             <ListBox Grid.Row="1" Background="Transparent"
                      SelectedItem="{x:Bind ViewModel.SelectedProvider, Mode=TwoWay}"
                      ItemsSource="{x:Bind ViewModel.Providers, Mode=OneWay}">
@@ -29,8 +41,10 @@
                                        Foreground="White"
                                        FontSize="15" />
                             <StackPanel Orientation="Horizontal" Margin="0 5">
-                                <TextBlock Text="Size: " Foreground="#eeeeee" />
-                                <TextBlock Text="{x:Bind Size, Mode=OneTime}" Foreground="#eeeeee" />
+                                <TextBlock Text="Size:" Margin="0 0 3 0"
+                                           Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                                <TextBlock Text="{x:Bind Size, Mode=OneTime}" 
+                                           Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
                             </StackPanel>
                             <TextBlock Text="{x:Bind Description, Mode=OneTime}"
                                        TextWrapping="Wrap"
@@ -40,7 +54,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
             <Button Style="{StaticResource ButtonRevealStyle}" 
-                    Command="{x:Bind ViewModel.LoadProviders}" 
+                    Command="{x:Bind ViewModel.LoadProviders, Mode=OneWay}" 
                     HorizontalAlignment="Stretch"
                     Content="Load providers"
                     Padding="10"

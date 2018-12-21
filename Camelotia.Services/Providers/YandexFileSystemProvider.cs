@@ -28,7 +28,9 @@ namespace Camelotia.Services.Providers
         
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
         private readonly HttpClient _http = new HttpClient();
-        
+
+        public YandexFileSystemProvider() => _isAuthorized.OnNext(false);
+
         public string Size => "Unknown";
 
         public string Name => "Yandex Disk";

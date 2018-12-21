@@ -26,7 +26,7 @@
                 <Button Grid.Column="0" Margin="6"
                         Style="{StaticResource ButtonRevealStyle}"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.Back}"
+                        Command="{x:Bind ViewModel.Back, Mode=OneWay}"
                         Content="Back" />
                 <TextBlock Grid.Column="1"
                            Text="{x:Bind ViewModel.CurrentPath}"
@@ -36,12 +36,12 @@
                 <Button Grid.Column="2" Margin="6 6 0 6"
                         Style="{StaticResource AccentButtonStyle}"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.Open}"
+                        Command="{x:Bind ViewModel.Open, Mode=OneWay}"
                         Content="Open" />
                 <Button Grid.Column="3" Margin="6"
                         Style="{StaticResource ButtonRevealStyle}"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.Refresh}"
+                        Command="{x:Bind ViewModel.Refresh, Mode=OneWay}"
                         Content="Refresh" />
             </Grid>
             <Grid Grid.Row="1">
@@ -49,23 +49,31 @@
                          Visibility="{x:Bind ViewModel.IsReady, Mode=OneWay}"
                          ItemsSource="{x:Bind ViewModel.Files, Mode=OneWay}"
                          SelectedItem="{x:Bind ViewModel.SelectedFile, Mode=TwoWay}">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="models:FileModel">
-                            <Grid>
+                            <Grid Margin="8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="3*" />
                                     <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
                                 </Grid.ColumnDefinitions>
-                                <StackPanel Margin="8" Grid.Column="0">
-                                    <TextBlock Text="{x:Bind Name, Mode=OneTime}"
-                                               TextWrapping="Wrap"
-                                               FontSize="14" />
-                                    <TextBlock Text="Directory"
-                                               Visibility="{x:Bind IsFolder, Mode=OneTime}"
-                                               Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                               FontSize="12" />
-                                </StackPanel>
+                                <TextBlock Grid.Column="0"
+                                           Text="{x:Bind Name, Mode=OneTime}"
+                                           TextWrapping="Wrap"
+                                           FontSize="14" />
                                 <TextBlock Grid.Column="1"
+                                           Text="Directory"
+                                           Visibility="{x:Bind IsFolder, Mode=OneTime}"
+                                           Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                                           FontSize="12" />
+                                <TextBlock Grid.Column="2"
                                            VerticalAlignment="Center"
                                            Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
                                            Text="{x:Bind Size, Mode=OneTime}" />
@@ -74,7 +82,7 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <Grid Visibility="{x:Bind ViewModel.HasErrors, Mode=OneWay}"
-                          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                         <Ellipse Width="10" Height="10"
                                  HorizontalAlignment="Center"
@@ -84,8 +92,8 @@
                                    Text="Can't perform the operation, an error has occured." />
                     </StackPanel>
                 </Grid>
-                <Grid Visibility="{x:Bind ViewModel.IsCurrentPathEmpty}" 
-                          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <Grid Visibility="{x:Bind ViewModel.IsCurrentPathEmpty, Mode=OneWay}" 
+                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                         <Ellipse Width="10" Height="10"
                                  HorizontalAlignment="Center"
@@ -96,7 +104,7 @@
                     </StackPanel>
                 </Grid>
                 <Grid Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}" 
-                          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                         <ProgressBar HorizontalAlignment="Stretch"
                                      IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
@@ -115,23 +123,23 @@
                 <Button Grid.Column="0" Content="Logout" Margin="6"
                         Style="{StaticResource ButtonRevealStyle}"
                         Visibility="{x:Bind ViewModel.CanLogout, Mode=OneWay}"
-                        Command="{x:Bind ViewModel.Logout}" />
+                        Command="{x:Bind ViewModel.Logout, Mode=OneWay}" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
-                    <TextBlock Text="You selected: " 
+                    <TextBlock Text="You selected:" Margin="0 0 3 0" TextTrimming="CharacterEllipsis" 
                                Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
                     <TextBlock Text="{x:Bind ViewModel.SelectedFile.Name, Mode=OneWay}"
-                               Foreground="{ThemeResource SystemControlAccentAcrylicElementAccentMediumHighBrush}" />
+                               Foreground="{ThemeResource AppBarSeparatorForegroundThemeBrush}" />
                 </StackPanel>
                 <Button Grid.Column="2" Content="Upload" Margin="6 6 0 6"
                         Style="{StaticResource ButtonRevealStyle}"
-                        Command="{x:Bind ViewModel.UploadToCurrentPath}" />
+                        Command="{x:Bind ViewModel.UploadToCurrentPath, Mode=OneWay}" />
                 <Button Grid.Column="3" Content="Download" Margin="6"
                         Style="{StaticResource ButtonRevealStyle}"
-                        Command="{x:Bind ViewModel.DownloadSelectedFile}" />
+                        Command="{x:Bind ViewModel.DownloadSelectedFile, Mode=OneWay}" />
             </Grid>
         </Grid>
-        <Grid Visibility="{x:Bind ViewModel.Auth.IsAnonymous}"
-              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid Visibility="{x:Bind ViewModel.Auth.IsAnonymous, Mode=OneWay}"
+              Background="{ThemeResource SystemControlChromeLowAcrylicWindowBrush}">
             <views:AuthView ViewModel="{x:Bind ViewModel.Auth, Mode=OneWay}" />
         </Grid>
     </Grid>

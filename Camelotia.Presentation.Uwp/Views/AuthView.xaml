@@ -8,17 +8,20 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     mc:Ignorable="d">
-    <Pivot>
-        <PivotItem>
+    <Pivot x:Name="AuthorizationPivot">
+        <PivotItem IsEnabled="{x:Bind ViewModel.SupportsDirectAuth, Mode=OneWay}">
             <PivotItem.Header>
-                <TextBlock Text="Direct Auth" Visibility="{x:Bind ViewModel.SupportsDirectAuth, Mode=OneWay}" />
+                <TextBlock Text="Direct Auth" FontSize="18" FontWeight="SemiBold"
+                           Visibility="{x:Bind ViewModel.SupportsDirectAuth, Mode=OneWay}" />
             </PivotItem.Header>
             <views:DirectAuthView ViewModel="{x:Bind ViewModel.DirectAuth, Mode=OneWay}" />
         </PivotItem>
-        <PivotItem>
+        <PivotItem IsEnabled="{x:Bind ViewModel.SupportsOAuth, Mode=OneWay}">
             <PivotItem.Header>
-                <TextBlock Text="OAuth" Visibility="{x:Bind ViewModel.SupportsOAuth, Mode=OneWay}" />
+                <TextBlock Text="Open Auth"  FontSize="18" FontWeight="SemiBold"
+                           Visibility="{x:Bind ViewModel.SupportsOAuth, Mode=OneWay}" />
             </PivotItem.Header>
+            <views:OAuthView ViewModel="{x:Bind ViewModel.OAuth, Mode=OneWay}" />
         </PivotItem>
     </Pivot>
 </UserControl>

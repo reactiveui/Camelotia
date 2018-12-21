@@ -29,7 +29,9 @@ namespace Camelotia.Presentation.ViewModels
 
             _isAnonymous = _provider
                 .IsAuthorized
+                .Select(authorized => !authorized)
                 .DistinctUntilChanged()
+                .StartWith(false)
                 .ToProperty(this, x => x.IsAnonymous, scheduler: currentThread);
         }
 

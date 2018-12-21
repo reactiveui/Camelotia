@@ -130,6 +130,9 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\OAuthView.xaml.cs">
+      <DependentUpon>OAuthView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ProviderView.xaml.cs">
       <DependentUpon>ProviderView.xaml</DependentUpon>
     </Compile>
@@ -164,6 +167,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\OAuthView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
