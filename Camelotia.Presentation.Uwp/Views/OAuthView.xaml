@@ -15,27 +15,27 @@
                     Padding="24"
                     Width="350">
             <TextBlock Text="OAuth"
-                   Style="{StaticResource HeaderTextBlockStyle}"
-                   FontSize="24"
-                   Margin="0 10" />
+                       Style="{StaticResource HeaderTextBlockStyle}"
+                       FontSize="24"
+                       Margin="0 10" />
             <ProgressBar HorizontalAlignment="Stretch"
-                     IsIndeterminate="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
-                     Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
-                     Margin="0 5" />
+                         IsIndeterminate="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
+                         Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
+                         Margin="0 5" />
             <StackPanel Visibility="{x:Bind ViewModel.HasErrors, Mode=OneWay}"
-                    Background="{ThemeResource SystemControlAccentAcrylicWindowAccentMediumHighBrush}"
-                    Margin="0 5">
+                        Background="{ThemeResource SystemControlAccentAcrylicWindowAccentMediumHighBrush}"
+                        Margin="0 5">
                 <StackPanel Margin="12">
                     <TextBlock Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
-                           IsTextSelectionEnabled="True"
-                           TextWrapping="Wrap" />
+                               IsTextSelectionEnabled="True"
+                               TextWrapping="Wrap" />
                 </StackPanel>
             </StackPanel>
             <Button Content="Login"
-                HorizontalAlignment="Stretch"
-                Command="{x:Bind ViewModel.Login, Mode=OneWay}"
-                Style="{StaticResource AccentButtonStyle}"
-                Margin="0 10" />
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.Login, Mode=OneWay}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Margin="0 10" />
         </StackPanel>
         <WebView x:Name="AuthenticationView" Visibility="Collapsed"/>
     </Grid>
