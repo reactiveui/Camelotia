@@ -13,5 +13,7 @@ namespace Camelotia.Presentation.Interfaces
         bool SupportsOAuth { get; }
         
         bool IsAuthenticated { get; }
+
+        bool IsAnonymous { get; }
     }
 }

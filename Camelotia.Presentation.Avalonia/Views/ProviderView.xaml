@@ -129,7 +129,7 @@
                         Command="{Binding DownloadSelectedFile}" />
             </Grid>
         </Grid>
-        <Grid IsVisible="{Binding !Auth.IsAuthenticated}">
+        <Grid IsVisible="{Binding Auth.IsAnonymous}">
             <views:AuthView DataContext="{Binding Auth}" />
         </Grid>
     </Grid>

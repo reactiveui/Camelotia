@@ -1,11 +1,11 @@
 ﻿using System.Reactive.Concurrency;
 using Camelotia.Presentation.Avalonia.Views;
 using Camelotia.Presentation.Avalonia.Services;
+using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Providers;
 using ReactiveUI;
 using Avalonia;
-using Camelotia.Presentation.Interfaces;
 
 namespace Camelotia.Presentation.Avalonia
 {
@@ -33,7 +33,13 @@ namespace Camelotia.Presentation.Avalonia
                     currentThread,
                     provider
                 ),
-                new ProviderStorage(),
+                new ProviderStorage(
+                    new LocalFileSystemProvider(),
+                    new VkontakteFileSystemProvider(),
+                    new YandexFileSystemProvider(
+                        new AvaloniaYandexAuthenticator()
+                    )
+                ),
                 new AvaloniaFileManager(),
                 currentThread,
                 mainThread

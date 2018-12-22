@@ -7,9 +7,11 @@ namespace Camelotia.Presentation.Tests
 {
     public sealed class VkontakteFileSystemProviderTests
     {
-        private readonly IProvider _provider = new VkontakteFileSystemProvider();
-
         [Fact]
-        public void ShouldImplementNonNullInitialPath() => _provider.InitialPath.Should().NotBeNull();
+        public void ShouldImplementNonNullInitialPath()
+        {
+            var provider = new VkontakteFileSystemProvider();
+            provider.InitialPath.Should().NotBeNull();
+        }
     }
 }
