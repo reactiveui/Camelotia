@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Camelotia.Presentation.Uwp.Services
 {
-    public sealed class UniversalFileManager : IFileManager
+    public sealed class UniversalWindowsFileManager : IFileManager
     {
         public async Task<(string Name, Stream Stream)> OpenRead()
         {

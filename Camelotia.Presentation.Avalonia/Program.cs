@@ -37,8 +37,7 @@ namespace Camelotia.Presentation.Avalonia
                     new LocalFileSystemProvider(),
                     new VkontakteFileSystemProvider(),
                     new YandexFileSystemProvider(
-                        new ShellExecuteUriLauncher(),
-                        new HttpCoreListener()
+                        new AvaloniaYandexAuthenticator()
                     )
                 ),
                 new AvaloniaFileManager(),

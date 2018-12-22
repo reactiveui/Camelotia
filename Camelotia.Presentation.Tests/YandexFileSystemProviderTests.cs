@@ -8,13 +8,13 @@ namespace Camelotia.Presentation.Tests
 {
     public sealed class YandexFileSystemProviderTests
     {
-        private readonly IUriLauncher _uriLauncher = Substitute.For<IUriLauncher>();
-        private readonly IListener _listener = Substitute.For<IListener>();
-        private readonly IProvider _provider;
-
-        public YandexFileSystemProviderTests() => _provider = new YandexFileSystemProvider(_uriLauncher, _listener);
+        private readonly IYandexAuthenticator _authenticator = Substitute.For<IYandexAuthenticator>();
 
         [Fact]
-        public void ShouldImplementNonNullInitialPath() => _provider.InitialPath.Should().NotBeNull();
+        public void ShouldImplementNonNullInitialPath()
+        {
+            var provider = new YandexFileSystemProvider(_authenticator);
+            provider.InitialPath.Should().NotBeNull();
+        }
     }
 }

@@ -119,8 +119,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Services\UniversalFileManager.cs" />
-    <Compile Include="Services\UniversalUriLauncher.cs" />
+    <Compile Include="Services\UniversalWindowsFileManager.cs" />
+    <Compile Include="Services\UniversalWindowsAuthCodeReceiver.cs" />
     <Compile Include="Views\AuthView.xaml.cs">
       <DependentUpon>AuthView.xaml</DependentUpon>
     </Compile>

@@ -6,7 +6,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reactive.Subjects;
-using System.Text;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
@@ -25,17 +24,13 @@ namespace Camelotia.Services.Providers
         private const string ClientId = "122661520b174cb5b85b4a3c26aa66f6";
         
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
+        private readonly IYandexAuthenticator _authenticator;
         private readonly HttpClient _http = new HttpClient();
-        private readonly IUriLauncher _uriLauncher;
-        private readonly IListener _listener;
 
-        public YandexFileSystemProvider(
-            IUriLauncher uriLauncher,
-            IListener listener)
+        public YandexFileSystemProvider(IYandexAuthenticator authenticator)
         {
+            _authenticator = authenticator;
             _isAuthorized.OnNext(false);
-            _uriLauncher = uriLauncher;
-            _listener = listener;
         }
 
         public string Size => "Unknown";
@@ -91,6 +86,9 @@ namespace Camelotia.Services.Providers
                 using (var file = await _http.GetAsync(content.Href).ConfigureAwait(false))
                 using (var stream = await file.Content.ReadAsStreamAsync().ConfigureAwait(false))
                     await stream.CopyToAsync(to).ConfigureAwait(false);
+
+                await to.FlushAsync();
+                to.Close();
             }
         }
 
@@ -120,26 +118,38 @@ namespace Camelotia.Services.Providers
 
         public async Task OAuth()
         {
-            var code = await GetAuthenticationCode();
-            var token = await GetAuthenticationToken(code);
+            var token = await GetAuthenticationToken();
             _http.DefaultRequestHeaders.Clear();
             _http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("OAuth", token);
             _isAuthorized.OnNext(true);
         }
 
-        private static async Task<string> GetAuthenticationToken(string code)
+        private async Task<string> GetAuthenticationToken()
         {
-            var form = new Dictionary<string, string>
+            switch (_authenticator.YandexAuthenticationType)
+            {
+                case YandexAuthenticationType.Code:
+                    var server = $"http://{IPAddress.Loopback}:{3000}/";
+                    var uri = GetYandexAuthCodeUrl(server);
+                    var code = await _authenticator.ReceiveYandexCode(uri, IPAddress.Loopback, 3000);
+                    return await GetAuthenticationTokenFromCode(code);
+                case YandexAuthenticationType.Token:
+                    return "kekekek";
+                default: throw new InvalidOperationException();
+            }
+        }
+
+        private static async Task<string> GetAuthenticationTokenFromCode(string code)
+        {
+            using (var http = new HttpClient())
+            using (var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 ["code"] = code,
                 ["grant_type"] = "authorization_code",
                 ["client_id"] = ClientId,
                 ["client_secret"] = ClientSecret
-            };
-            
-            using (var http = new HttpClient())
-            using (var content = new FormUrlEncodedContent(form))
+            }))
             using (var response = await http.PostAsync(YandexAuthTokenUrl, content).ConfigureAwait(false))
             {
                 var token = await response.Content.ReadAsStringAsync();
@@ -149,24 +159,11 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        private async Task<string> GetAuthenticationCode()
+        private static Uri GetYandexAuthCodeUrl(string redirect)
         {
-            var server = $"http://{IPAddress.Loopback}:{3000}/";
-            _listener.Start(IPAddress.Loopback, 3000);
-            
-            var uriString = GetYandexAuthCodeUrl(server);
-            var uri = new Uri(uriString);
-            await _uriLauncher.LaunchUri(uri);
-
-            var code = await _listener.GetCode();
-            _listener.Stop();
-            return code;
-        }
-
-        private static string GetYandexAuthCodeUrl(string redirect)
-        {
-            return "https://oauth.yandex.ru/authorize?response_type=code" +
-                   $"&client_id={ClientId}&redirect_url={redirect}";
+            var uri = "https://oauth.yandex.ru/authorize?response_type=code" +
+                     $"&client_id={ClientId}&redirect_url={redirect}";
+            return new Uri(uri);
         }
     }
 }

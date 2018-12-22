@@ -9,16 +9,15 @@ namespace Camelotia.Presentation.Tests
 {
     public sealed class ProviderStorageTests
     {
-        private readonly IUriLauncher _uriLauncher = Substitute.For<IUriLauncher>();
-        private readonly IListener _listener = Substitute.For<IListener>();
-        
+        private readonly IYandexAuthenticator _authenticator = Substitute.For<IYandexAuthenticator>();
+
         [Fact]
         public async Task ShouldResolveAllSupportedProviders()
         {
             var provider = new ProviderStorage(
                 new LocalFileSystemProvider(),
                 new VkontakteFileSystemProvider(),
-                new YandexFileSystemProvider(_uriLauncher, _listener)
+                new YandexFileSystemProvider(_authenticator)
             );
 
             var sequence = await provider.LoadProviders();
