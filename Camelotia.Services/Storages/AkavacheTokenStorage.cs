@@ -7,16 +7,18 @@ namespace Camelotia.Services.Storages
 {
     public sealed class AkavacheTokenStorage : ITokenStorage
     {
-        public async Task<string> ReadToken(AuthenticationTokenOwner owner)
+        public AkavacheTokenStorage() => BlobCache.ApplicationName = "Camelotia";
+
+        public async Task<string> ReadToken<TOwner>()
         {
-            var key = owner.ToString();
-            var token = await BlobCache.Secure.GetObject<string>(key);
+            var key = typeof(TOwner).Name;
+            var token = await BlobCache.Secure.GetOrCreateObject<string>(key, () => null);
             return token;
         }
 
-        public async Task WriteToken(AuthenticationTokenOwner owner, string token)
+        public async Task WriteToken<TOwner>(string token)
         {
-            var key = owner.ToString();
+            var key = typeof(TOwner).Name;
             await BlobCache.Secure.InsertObject(key, token);
         }
     }

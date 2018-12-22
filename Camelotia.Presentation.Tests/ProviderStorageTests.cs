@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Providers;
+using Camelotia.Services.Storages;
 using NSubstitute;
 using Xunit;
 

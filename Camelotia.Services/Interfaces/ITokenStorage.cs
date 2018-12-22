@@ -4,13 +4,8 @@ namespace Camelotia.Services.Interfaces
 {
     public interface ITokenStorage
     {
-        Task WriteToken(AuthenticationTokenOwner owner, string token);
+        Task WriteToken<TOwner>(string token);
 
-        Task<string> ReadToken(AuthenticationTokenOwner owner);
-    }
-
-    public enum AuthenticationTokenOwner
-    {
-        Vkontakte, Yandex
+        Task<string> ReadToken<TOwner>();
     }
 }

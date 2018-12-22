@@ -1,9 +1,4 @@
-﻿using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml;
-using ReactiveUI;
-using Camelotia.Presentation.Interfaces;
-
-namespace Camelotia.Presentation.Uwp
+﻿namespace Camelotia.Presentation.Uwp.Views
 {
     public sealed partial class MainView : Page, IViewFor<IMainViewModel>
     {

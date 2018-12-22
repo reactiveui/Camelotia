@@ -13,21 +13,21 @@ using Newtonsoft.Json;
 using VkNet.Enums.Filters;
 using VkNet.Model;
 using VkNet;
+using VkNet.Abstractions;
 
 namespace Camelotia.Services.Providers
 {
     public sealed class VkontakteFileSystemProvider : IProvider
     {
-        private readonly ReplaySubject<bool> _isAuthorized;
-        private readonly ITokenStorage _tokenCache;
-        private VkApi _api;
+        private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>();
+        private readonly ITokenStorage _tokenStorage;
+        private IVkApi _api = new VkApi();
         
-        public VkontakteFileSystemProvider(ITokenStorage tokenCache)
+        public VkontakteFileSystemProvider(ITokenStorage tokenStorage)
         {
-            _api = new VkApi();
-            _tokenCache = tokenCache;
-            _isAuthorized = new ReplaySubject<bool>();
+            _tokenStorage = tokenStorage;
             _isAuthorized.OnNext(false);
+            EnsureLoggedInIfTokenSaved();
         }
 
         public string Size => "Unknown";
@@ -58,14 +58,16 @@ namespace Camelotia.Services.Providers
                 Password = password,
                 Settings = Settings.Documents
             });
+
+            await _tokenStorage.WriteToken<VkontakteFileSystemProvider>(_api.Token);
             _isAuthorized.OnNext(_api.IsAuthorized);
         }
         
-        public Task Logout()
+        public async Task Logout()
         {
             _api = new VkApi();
+            await _tokenStorage.WriteToken<VkontakteFileSystemProvider>(null);
             _isAuthorized.OnNext(_api.IsAuthorized);
-            return Task.CompletedTask;
         }
 
         public async Task<IEnumerable<FileModel>> Get(string path)
@@ -112,6 +114,14 @@ namespace Camelotia.Services.Providers
             }                
         }
 
+        private async void EnsureLoggedInIfTokenSaved()
+        {
+            var token = await _tokenStorage.ReadToken<VkontakteFileSystemProvider>();
+            if (string.IsNullOrWhiteSpace(token) || _api.IsAuthorized) return;
+            await _api.AuthorizeAsync(new ApiAuthParams {AccessToken = token});
+            _isAuthorized.OnNext(true);
+        }
+        
         private static async Task<byte[]> StreamToArray(Stream stream)
         {
             using (var memory = new MemoryStream())

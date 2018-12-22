@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 
-namespace Camelotia.Services.Providers
+namespace Camelotia.Services.Storages
 {
     public sealed class ProviderStorage : IProviderStorage
     {

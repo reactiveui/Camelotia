@@ -27,13 +27,14 @@ namespace Camelotia.Services.Providers
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
         private readonly HttpClient _http = new HttpClient();
         private readonly IAuthenticator _authenticator;
-        private readonly ITokenStorage _tokenCache;
+        private readonly ITokenStorage _tokenStorage;
 
-        public YandexFileSystemProvider(IAuthenticator authenticator, ITokenStorage tokenCache)
+        public YandexFileSystemProvider(IAuthenticator authenticator, ITokenStorage tokenStorage)
         {
             _authenticator = authenticator;
+            _tokenStorage = tokenStorage;
             _isAuthorized.OnNext(false);
-            _tokenCache = tokenCache;
+            EnsureLoggedInIfTokenSaved();
         }
 
         public string Size => "Unknown";
@@ -112,20 +113,34 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        public Task Logout()
+        public async Task Logout()
         {
+            await _tokenStorage.WriteToken<YandexFileSystemProvider>(null);
             _http.DefaultRequestHeaders.Clear();
             _isAuthorized.OnNext(false);
-            return Task.CompletedTask;
         }
 
         public async Task OAuth()
         {
             var token = await GetAuthenticationToken();
+            await _tokenStorage.WriteToken<YandexFileSystemProvider>(token);
+            ApplyTokenToHeaders(token);
+            _isAuthorized.OnNext(true);
+        }
+        
+        private async void EnsureLoggedInIfTokenSaved()
+        {
+            var token = await _tokenStorage.ReadToken<YandexFileSystemProvider>();
+            if (string.IsNullOrWhiteSpace(token)) return;
+            ApplyTokenToHeaders(token);
+            _isAuthorized.OnNext(true);
+        }
+
+        private void ApplyTokenToHeaders(string token)
+        {
             _http.DefaultRequestHeaders.Clear();
             _http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("OAuth", token);
-            _isAuthorized.OnNext(true);
         }
 
         private async Task<string> GetAuthenticationToken()

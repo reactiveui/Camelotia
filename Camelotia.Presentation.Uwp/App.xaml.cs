@@ -3,6 +3,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Camelotia.Presentation.Uwp.Views;
 
 namespace Camelotia.Presentation.Uwp
 {
