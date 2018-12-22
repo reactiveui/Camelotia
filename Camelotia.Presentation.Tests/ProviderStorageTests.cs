@@ -9,15 +9,16 @@ namespace Camelotia.Presentation.Tests
 {
     public sealed class ProviderStorageTests
     {
-        private readonly IYandexAuthenticator _authenticator = Substitute.For<IYandexAuthenticator>();
+        private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
+        private readonly ITokenStorage _tokenStorage = Substitute.For<ITokenStorage>();
 
         [Fact]
         public async Task ShouldResolveAllSupportedProviders()
         {
             var provider = new ProviderStorage(
                 new LocalFileSystemProvider(),
-                new VkontakteFileSystemProvider(),
-                new YandexFileSystemProvider(_authenticator)
+                new VkontakteFileSystemProvider(_tokenStorage),
+                new YandexFileSystemProvider(_authenticator, _tokenStorage)
             );
 
             var sequence = await provider.LoadProviders();

@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="akavache" Version="6.0.31" />
     <PackageReference Include="System.Reactive" Version="4.0.0" />
     <PackageReference Include="VkNet" Version="1.39.0" />
   </ItemGroup>

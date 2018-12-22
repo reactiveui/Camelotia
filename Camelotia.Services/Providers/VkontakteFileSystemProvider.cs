@@ -19,11 +19,13 @@ namespace Camelotia.Services.Providers
     public sealed class VkontakteFileSystemProvider : IProvider
     {
         private readonly ReplaySubject<bool> _isAuthorized;
+        private readonly ITokenStorage _tokenCache;
         private VkApi _api;
         
-        public VkontakteFileSystemProvider()
+        public VkontakteFileSystemProvider(ITokenStorage tokenCache)
         {
             _api = new VkApi();
+            _tokenCache = tokenCache;
             _isAuthorized = new ReplaySubject<bool>();
             _isAuthorized.OnNext(false);
         }

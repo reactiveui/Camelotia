@@ -25,13 +25,15 @@ namespace Camelotia.Services.Providers
         private const string CodeAuthClientId = "122661520b174cb5b85b4a3c26aa66f6";
         
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
-        private readonly IYandexAuthenticator _authenticator;
         private readonly HttpClient _http = new HttpClient();
+        private readonly IAuthenticator _authenticator;
+        private readonly ITokenStorage _tokenCache;
 
-        public YandexFileSystemProvider(IYandexAuthenticator authenticator)
+        public YandexFileSystemProvider(IAuthenticator authenticator, ITokenStorage tokenCache)
         {
             _authenticator = authenticator;
             _isAuthorized.OnNext(false);
+            _tokenCache = tokenCache;
         }
 
         public string Size => "Unknown";

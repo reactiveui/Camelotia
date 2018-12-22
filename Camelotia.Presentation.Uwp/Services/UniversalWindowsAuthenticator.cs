@@ -9,7 +9,7 @@ using Windows.UI.Core;
 
 namespace Camelotia.Presentation.Uwp.Services
 {
-    public sealed class UniversalWindowsYandexAuthenticator : IYandexAuthenticator
+    public sealed class UniversalWindowsAuthenticator : IAuthenticator
     {
         private const string SuccessContent = "<html><body>Please return to the app.</body></html>";
         private TaskCompletionSource<string> _taskCompletionSource;

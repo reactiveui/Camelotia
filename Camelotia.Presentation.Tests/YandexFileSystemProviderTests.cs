@@ -8,12 +8,13 @@ namespace Camelotia.Presentation.Tests
 {
     public sealed class YandexFileSystemProviderTests
     {
-        private readonly IYandexAuthenticator _authenticator = Substitute.For<IYandexAuthenticator>();
+        private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
+        private readonly ITokenStorage _tokenStorage = Substitute.For<ITokenStorage>();
 
         [Fact]
         public void ShouldImplementNonNullInitialPath()
         {
-            var provider = new YandexFileSystemProvider(_authenticator);
+            var provider = new YandexFileSystemProvider(_authenticator, _tokenStorage);
             provider.InitialPath.Should().NotBeNull();
         }
     }

@@ -2,8 +2,9 @@
 using Camelotia.Presentation.Uwp.Services;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Providers;
-using ReactiveUI;
+using Camelotia.Services.Storages;
 using System.Reactive.Concurrency;
+using ReactiveUI;
 
 namespace Camelotia.Presentation.Uwp
 {
@@ -13,6 +14,7 @@ namespace Camelotia.Presentation.Uwp
         {
             var currentThread = CurrentThreadScheduler.Instance;
             var mainThread = RxApp.MainThreadScheduler;
+            var cache = new AkavacheTokenStorage();
 
             return new MainViewModel(
                 (provider, files, auth) => new ProviderViewModel(auth, files, currentThread, mainThread, provider),
@@ -23,9 +25,9 @@ namespace Camelotia.Presentation.Uwp
                     provider
                 ),
                 new ProviderStorage(
-                    new VkontakteFileSystemProvider(),
+                    new VkontakteFileSystemProvider(cache),
                     new YandexFileSystemProvider(
-                        new UniversalWindowsYandexAuthenticator()
+                        new UniversalWindowsAuthenticator(), cache
                     )
                 ),
                 new UniversalWindowsFileManager(),

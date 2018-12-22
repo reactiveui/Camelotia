@@ -7,7 +7,7 @@ using Camelotia.Services.Interfaces;
 
 namespace Camelotia.Presentation.Avalonia.Services
 {
-    public sealed class AvaloniaYandexAuthenticator : IYandexAuthenticator
+    public sealed class AvaloniaAuthenticator : IAuthenticator
     {
         private const string SuccessContent = "<html><body>Please return to the app.</body></html>";
 

@@ -6,6 +6,7 @@ using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Providers;
 using ReactiveUI;
 using Avalonia;
+using Camelotia.Services.Storages;
 
 namespace Camelotia.Presentation.Avalonia
 {
@@ -24,7 +25,8 @@ namespace Camelotia.Presentation.Avalonia
         {
             var currentThread = CurrentThreadScheduler.Instance;
             var mainThread = RxApp.MainThreadScheduler;
-                    
+            var cache = new AkavacheTokenStorage();
+
             return new MainViewModel(
                 (provider, files, auth) => new ProviderViewModel(auth, files, currentThread, mainThread, provider),
                 provider => new AuthViewModel(
@@ -35,9 +37,9 @@ namespace Camelotia.Presentation.Avalonia
                 ),
                 new ProviderStorage(
                     new LocalFileSystemProvider(),
-                    new VkontakteFileSystemProvider(),
+                    new VkontakteFileSystemProvider(cache),
                     new YandexFileSystemProvider(
-                        new AvaloniaYandexAuthenticator()
+                        new AvaloniaAuthenticator(), cache
                     )
                 ),
                 new AvaloniaFileManager(),

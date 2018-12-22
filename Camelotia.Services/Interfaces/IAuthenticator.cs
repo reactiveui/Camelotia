@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Camelotia.Services.Interfaces
 {
-    public interface IYandexAuthenticator
+    public interface IAuthenticator
     {
         YandexAuthenticationType YandexAuthenticationType { get; }
 
