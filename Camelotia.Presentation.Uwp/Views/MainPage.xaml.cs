@@ -1,8 +1,4 @@
-﻿using Camelotia.Presentation.Uwp.Services;
-using Camelotia.Presentation.ViewModels;
-using Camelotia.Services.Providers;
-using System.Reactive.Concurrency;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml;
 using ReactiveUI;
 using Camelotia.Presentation.Interfaces;
@@ -17,7 +13,7 @@ namespace Camelotia.Presentation.Uwp
         public MainView()
         {
             InitializeComponent();
-            ViewModel = BuildMainViewModel();
+            ViewModel = Bootstrapper.BuildMainViewModel();
             this.WhenActivated(disposables => { });
         }
 
@@ -31,31 +27,6 @@ namespace Camelotia.Presentation.Uwp
         {
             get => ViewModel;
             set => ViewModel = (IMainViewModel)value;
-        }
-
-        private static IMainViewModel BuildMainViewModel()
-        {
-            var currentThread = CurrentThreadScheduler.Instance;
-            var mainThread = RxApp.MainThreadScheduler;
-
-            return new MainViewModel(
-                (provider, files, auth) => new ProviderViewModel(auth, files, currentThread, mainThread, provider),
-                provider => new AuthViewModel(
-                    new DirectAuthViewModel(currentThread, mainThread, provider),
-                    new OAuthViewModel(currentThread, mainThread, provider),
-                    currentThread,
-                    provider
-                ),
-                new ProviderStorage(
-                    new VkontakteFileSystemProvider(),
-                    new YandexFileSystemProvider(
-                        new UniversalWindowsYandexAuthenticator()
-                    )
-                ),
-                new UniversalWindowsFileManager(),
-                currentThread,
-                mainThread
-            );
         }
     }
 }

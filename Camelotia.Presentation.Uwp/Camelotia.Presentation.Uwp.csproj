@@ -119,6 +119,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="Services\UniversalWindowsFileManager.cs" />
     <Compile Include="Services\UniversalWindowsAuthCodeReceiver.cs" />
     <Compile Include="Views\AuthView.xaml.cs">
