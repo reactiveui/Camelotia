@@ -21,18 +21,21 @@ namespace Camelotia.Services.Providers
         private const string CloudApiDownloadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/download?path=";
         private const string CloudApiUploadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/upload?path=";
         private const string CloudApiGetPathBase = "https://cloud-api.yandex.net:443/v1/disk/resources?path=";
-        private const string SuccessContent = "<html><body>Please return to the app.</body></html>";
         private const string ClientSecret = "f14bfc0275a34ceea83d7de7f4b50898";
         private const string ClientId = "122661520b174cb5b85b4a3c26aa66f6";
         
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
         private readonly HttpClient _http = new HttpClient();
         private readonly IUriLauncher _uriLauncher;
+        private readonly IListener _listener;
 
-        public YandexFileSystemProvider(IUriLauncher uriLauncher)
+        public YandexFileSystemProvider(
+            IUriLauncher uriLauncher,
+            IListener listener)
         {
             _isAuthorized.OnNext(false);
             _uriLauncher = uriLauncher;
+            _listener = listener;
         }
 
         public string Size => "Unknown";
@@ -148,23 +151,15 @@ namespace Camelotia.Services.Providers
 
         private async Task<string> GetAuthenticationCode()
         {
-            var listener = new HttpListener();
             var server = $"http://{IPAddress.Loopback}:{3000}/";
-            listener.Prefixes.Add(server);
-            listener.Start();
-
+            _listener.Start(IPAddress.Loopback, 3000);
+            
             var uriString = GetYandexAuthCodeUrl(server);
             var uri = new Uri(uriString);
             await _uriLauncher.LaunchUri(uri);
 
-            var context = await listener.GetContextAsync();
-            var code = context.Request.QueryString["code"];
-            
-            var buffer = Encoding.UTF8.GetBytes(SuccessContent);
-            context.Response.ContentLength64 = buffer.Length;
-            await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
-            context.Response.Close();
-            listener.Close();
+            var code = await _listener.GetCode();
+            _listener.Stop();
             return code;
         }
 

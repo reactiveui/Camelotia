@@ -5,7 +5,7 @@ using Camelotia.Services.Interfaces;
 
 namespace Camelotia.Presentation.Avalonia.Services
 {
-    public sealed class ProcessStartUriLauncher : IUriLauncher
+    public sealed class ShellExecuteUriLauncher : IUriLauncher
     {
         public Task LaunchUri(Uri uri) => Task.Run(() =>
         {
