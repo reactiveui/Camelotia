@@ -31,7 +31,6 @@ namespace Camelotia.Presentation.ViewModels
                 .IsAuthorized
                 .Select(authorized => !authorized)
                 .DistinctUntilChanged()
-                .StartWith(false)
                 .ToProperty(this, x => x.IsAnonymous, scheduler: currentThread);
         }
 

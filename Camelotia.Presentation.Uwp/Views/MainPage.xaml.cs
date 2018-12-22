@@ -49,7 +49,7 @@ namespace Camelotia.Presentation.Uwp
                 new ProviderStorage(
                     new VkontakteFileSystemProvider(),
                     new YandexFileSystemProvider(
-                        new UniversalWindowsAuthCodeReceiver()
+                        new UniversalWindowsYandexAuthenticator()
                     )
                 ),
                 new UniversalWindowsFileManager(),
