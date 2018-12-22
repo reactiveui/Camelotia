@@ -121,7 +121,7 @@
     </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Services\UniversalWindowsFileManager.cs" />
-    <Compile Include="Services\UniversalWindowsAuthCodeReceiver.cs" />
+    <Compile Include="Services\UniversalWindowsYandexAuthenticator.cs" />
     <Compile Include="Views\AuthView.xaml.cs">
       <DependentUpon>AuthView.xaml</DependentUpon>
     </Compile>
