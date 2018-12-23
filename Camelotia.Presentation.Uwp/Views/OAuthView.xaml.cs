@@ -2,6 +2,7 @@
 using ReactiveUI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using System;
 
 namespace Camelotia.Presentation.Uwp.Views
 {
@@ -9,11 +10,14 @@ namespace Camelotia.Presentation.Uwp.Views
     {
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty
                .Register(nameof(ViewModel), typeof(IOAuthViewModel), typeof(OAuthView), null);
-
+        
         public OAuthView()
         {
             InitializeComponent();
-            this.WhenActivated(disposables => { });
+            this.WhenActivated(async disposables => 
+            {
+                await WebView.ClearTemporaryWebDataAsync();
+            });
         }
 
         public IOAuthViewModel ViewModel
