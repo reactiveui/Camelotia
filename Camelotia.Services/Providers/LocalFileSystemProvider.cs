@@ -20,7 +20,7 @@ namespace Camelotia.Services.Providers
         public IObservable<bool> IsAuthorized { get; } = Observable.Return(true);
 
         public bool SupportsDirectAuth => false;
-        
+
         public bool SupportsOAuth => false;
 
         public string InitialPath => string.Empty;
@@ -38,19 +38,19 @@ namespace Camelotia.Services.Providers
                 var driveQuery = from entity in GetAllDrives()
                                  where entity.IsReady
                                  let size = ByteConverter.BytesToString(entity.AvailableFreeSpace)
-                                 select new FileModel(entity.Name, entity.Name, false, true, size);
+                                 select new FileModel(entity.Name, entity.Name, true, size);
                 return driveQuery
                     .ToList()
                     .AsEnumerable();
             }
-            
+
             if (!Directory.Exists(path))
                 throw new ArgumentException("Directory doesn't exist.");
-            
-            var query = from entity in Directory.GetFileSystemEntries(path) 
-                        let isDirectory = IsDirectory(entity) 
-                        let size = isDirectory ? "*" : ByteConverter.BytesToString(new FileInfo(entity).Length) 
-                        select new FileModel(Path.GetFileName(entity), entity, isDirectory, false, size);
+
+            var query = from entity in Directory.GetFileSystemEntries(path)
+                        let isDirectory = IsDirectory(entity)
+                        let size = isDirectory ? "*" : ByteConverter.BytesToString(new FileInfo(entity).Length)
+                        select new FileModel(Path.GetFileName(entity), entity, isDirectory, size);
 
             return query
                 .ToList()
@@ -60,7 +60,7 @@ namespace Camelotia.Services.Providers
         public async Task DownloadFile(string from, Stream to)
         {
             if (IsDirectory(from)) throw new InvalidOperationException("Can't download directory.");
-            
+
             using (var fileStream = File.OpenRead(from))
             {
                 fileStream.Seek(0, SeekOrigin.Begin);
@@ -71,7 +71,7 @@ namespace Camelotia.Services.Providers
         public async Task UploadFile(string to, Stream from, string name)
         {
             if (!IsDirectory(to)) throw new InvalidOperationException("Can't upload to a non-directory.");
-            
+
             var path = Path.Combine(to, name);
             using (var fileStream = File.Create(path))
             {
@@ -79,6 +79,13 @@ namespace Camelotia.Services.Providers
                 await from.CopyToAsync(fileStream);
             }
         }
+
+        public Task Delete(FileModel file) => Task.Run(() =>
+        {
+            var isDirectory = IsDirectory(file.Path);
+            if (isDirectory) Directory.Delete(file.Path, false);
+            else File.Delete(file.Path);
+        });
 
         private static string GetSizeOnAllDisks()
         {

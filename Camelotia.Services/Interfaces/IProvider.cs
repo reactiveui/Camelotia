@@ -22,6 +22,8 @@ namespace Camelotia.Services.Interfaces
 
         Task DownloadFile(string from, Stream to);
         
+        Task Delete(FileModel file);
+        
         IObservable<bool> IsAuthorized { get; }
         
         bool SupportsDirectAuth { get; }

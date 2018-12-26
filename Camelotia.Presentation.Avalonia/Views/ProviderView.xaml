@@ -105,6 +105,7 @@
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -114,16 +115,20 @@
                         Classes="Rounded"
                         IsVisible="{Binding CanLogout}"
                         Command="{Binding Logout}" />
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
+                <Button Grid.Column="1"
+                        Content="Delete"
+                        Classes="Rounded"
+                        Command="{Binding DeleteSelectedFile}" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10">
                     <TextBlock Text="You selected: " Foreground="#aaaaaa" />
                     <TextBlock Text="{Binding SelectedFile.Name}"
                                Foreground="#888888" />
                 </StackPanel>
-                <Button Grid.Column="2"
+                <Button Grid.Column="3"
                         Content="Upload"
                         Classes="Rounded"
                         Command="{Binding UploadToCurrentPath}" />
-                <Button Grid.Column="3"
+                <Button Grid.Column="4"
                         Content="Download"
                         Classes="Rounded"
                         Command="{Binding DownloadSelectedFile}" />

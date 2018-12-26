@@ -14,6 +14,7 @@ using VkNet.Enums.Filters;
 using VkNet.Model;
 using VkNet;
 using VkNet.Abstractions;
+using VkNet.Model.Attachments;
 
 namespace Camelotia.Services.Providers
 {
@@ -78,19 +79,31 @@ namespace Camelotia.Services.Providers
                 var size = string.Empty;
                 if (document.Size.HasValue)
                     size = ByteConverter.BytesToString(document.Size.Value);
-                return new FileModel(document.Title, document.Uri, false, false, size);
+                return new FileModel(document.Title, document.Id.ToString(), false, size);
             });
         }
 
         public async Task DownloadFile(string from, Stream to)
         {
-            var isValidUriString = Uri.IsWellFormedUriString(from, UriKind.Absolute);
+            var id = long.Parse(from);
+            var users = await _api.Users.GetAsync(new long[0]);
+            var currentUser = users.First();
+
+            var documents = await _api.Docs.GetByIdAsync(new[] {new Document {Id = id, OwnerId = currentUser.Id}});
+            var document = documents.First();
+            Console.WriteLine  (document.Uri);
+
+            var uri = document.Uri;
+            var isValidUriString = Uri.IsWellFormedUriString(uri, UriKind.Absolute);
             if (!isValidUriString) throw new InvalidOperationException("Uri is invalid.");
             
             using (var http = new HttpClient())
-            using (var response = await http.GetAsync(from).ConfigureAwait(false))
+            using (var response = await http.GetAsync(uri).ConfigureAwait(false))
             using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 await stream.CopyToAsync(to).ConfigureAwait(false);
+
+            await to.FlushAsync();
+            to.Close();
         }
 
         public async Task UploadFile(string to, Stream from, string name)
@@ -111,7 +124,15 @@ namespace Camelotia.Services.Providers
 
                 var error = $"Unable to upload {name}{ext} \n{message}";
                 throw new Exception(error);
-            }                
+            }
+        }
+
+        public async Task Delete(FileModel file)
+        {
+            var id = long.Parse(file.Path);
+            var users = await _api.Users.GetAsync(new long[0]);
+            var currentUser = users.First();
+            await _api.Docs.DeleteAsync(currentUser.Id, id);
         }
 
         private async void EnsureLoggedInIfTokenSaved()

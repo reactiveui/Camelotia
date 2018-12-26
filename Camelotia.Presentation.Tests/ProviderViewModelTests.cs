@@ -95,7 +95,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldBeAbleToOpenSelectedPath() => new TestScheduler().With(scheduler =>
         {
-            var file = new FileModel("foo", Separator + "foo", true, false, string.Empty);
+            var file = new FileModel("foo", Separator + "foo", true, string.Empty);
             _provider.Get(Separator).Returns(Enumerable.Repeat(file, 1));
             _authViewModel.IsAuthenticated.Returns(true);
             _provider.InitialPath.Returns(Separator);

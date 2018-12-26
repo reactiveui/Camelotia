@@ -24,6 +24,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _isCurrentPathEmpty;
         private readonly ReactiveCommand<Unit, Unit> _downloadSelectedFile;
         private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
+        private readonly ReactiveCommand<Unit, Unit> _deleteSelectedFile;
         private readonly ObservableAsPropertyHelper<string> _currentPath;
         private readonly ObservableAsPropertyHelper<bool> _hasErrors;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
@@ -66,7 +67,7 @@ namespace Camelotia.Presentation.ViewModels
             
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file != null && (file.IsFolder || file.IsDrive))
+                .Select(file => file != null && file.IsFolder)
                 .CombineLatest(_refresh.IsExecuting, (folder, busy) => folder && !busy);
             
             _open = ReactiveCommand.Create(
@@ -123,7 +124,7 @@ namespace Camelotia.Presentation.ViewModels
 
             var canDownloadSelectedFile = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file != null && !file.IsFolder && !file.IsDrive)
+                .Select(file => file != null && !file.IsFolder)
                 .DistinctUntilChanged();
                 
             _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
@@ -141,7 +142,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Subscribe(Console.WriteLine);
 
             this.WhenAnyValue(x => x.SelectedFile)
-                .Where(file => file != null && (file.IsFolder || file.IsDrive))
+                .Where(file => file != null && file.IsFolder)
                 .Buffer(2, 1)
                 .Select(files => (files.First().Path, files.Last().Path))
                 .DistinctUntilChanged()
@@ -159,6 +160,16 @@ namespace Camelotia.Presentation.ViewModels
             _logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
             _canLogout = canLogout
                 .ToProperty(this, x => x.CanLogout, scheduler: currentThread);
+
+            var canDeleteSelection = this
+                .WhenAnyValue(x => x.SelectedFile)
+                .Select(file => file != null && !file.IsFolder);
+
+            _deleteSelectedFile = ReactiveCommand.CreateFromTask(
+                () => provider.Delete(SelectedFile),
+                canDeleteSelection);
+
+            _deleteSelectedFile.InvokeCommand(Refresh);
             
             Auth = authViewModel;
             Activator = new ViewModelActivator();
@@ -183,7 +194,9 @@ namespace Camelotia.Presentation.ViewModels
         public ICommand DownloadSelectedFile => _downloadSelectedFile;
 
         public ICommand UploadToCurrentPath => _uploadToCurrentPath;
-        
+
+        public ICommand DeleteSelectedFile => _deleteSelectedFile;
+
         public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
         
         public IEnumerable<FileModel> Files => _files.Value;

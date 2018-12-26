@@ -69,7 +69,6 @@ namespace Camelotia.Services.Providers
                         file.Name,
                         file.Path.Replace("disk:", ""),
                         file.Type == "dir",
-                        false,
                         ByteConverter.BytesToString(file.Size)));
 
                 return models;
@@ -111,6 +110,14 @@ namespace Camelotia.Services.Providers
                 using (var file = await _http.PutAsync(content.Href, httpContent).ConfigureAwait(false))
                     file.EnsureSuccessStatusCode();
             }
+        }
+
+        public async Task Delete(FileModel file)
+        {
+            var encodedPath = WebUtility.UrlEncode(file.Path);
+            var pathUrl = CloudApiGetPathBase + encodedPath;
+            using (var response = await _http.DeleteAsync(pathUrl).ConfigureAwait(false))
+                response.EnsureSuccessStatusCode();
         }
 
         public async Task Logout()

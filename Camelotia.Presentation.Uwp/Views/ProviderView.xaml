@@ -116,6 +116,7 @@
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -124,16 +125,19 @@
                         Style="{StaticResource ButtonRevealStyle}"
                         Visibility="{x:Bind ViewModel.CanLogout, Mode=OneWay}"
                         Command="{x:Bind ViewModel.Logout, Mode=OneWay}" />
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
+                <Button Grid.Column="1" Content="Delete" Margin="0 0 3 0"
+                        Style="{StaticResource ButtonRevealStyle}"
+                        Command="{x:Bind ViewModel.DeleteSelectedFile, Mode=OneWay}" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10">
                     <TextBlock Text="You selected:" Margin="0 0 3 0" TextTrimming="CharacterEllipsis" 
                                Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
                     <TextBlock Text="{x:Bind ViewModel.SelectedFile.Name, Mode=OneWay}"
                                Foreground="{ThemeResource AppBarSeparatorForegroundThemeBrush}" />
                 </StackPanel>
-                <Button Grid.Column="2" Content="Upload" Margin="6 6 0 6"
+                <Button Grid.Column="3" Content="Upload" Margin="6 6 0 6"
                         Style="{StaticResource ButtonRevealStyle}"
                         Command="{x:Bind ViewModel.UploadToCurrentPath, Mode=OneWay}" />
-                <Button Grid.Column="3" Content="Download" Margin="6"
+                <Button Grid.Column="4" Content="Download" Margin="6"
                         Style="{StaticResource ButtonRevealStyle}"
                         Command="{x:Bind ViewModel.DownloadSelectedFile, Mode=OneWay}" />
             </Grid>

@@ -16,7 +16,9 @@ namespace Camelotia.Presentation.Interfaces
         ICommand DownloadSelectedFile { get; }
         
         ICommand UploadToCurrentPath { get; }
-        
+
+        ICommand DeleteSelectedFile { get; }
+
         ICommand Refresh { get; }
         
         ICommand Logout { get; }

@@ -47,9 +47,7 @@ namespace Camelotia.Presentation.Tests
             
             foreach (var model in real)
                 expected.Should().Contain(drive =>
-                    model.Name == drive.Name &&
-                    model.IsFolder == false && 
-                    model.IsDrive);
+                    model.Name == drive.Name && model.IsFolder);
         }
 
         [Fact]
