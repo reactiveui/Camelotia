@@ -1,6 +1,14 @@
-﻿using Android.App;
+﻿using Camelotia.Presentation.Interfaces;
+using Camelotia.Presentation.ViewModels;
+using Camelotia.Presentation.Xamarin.Services;
+using Camelotia.Services.Providers;
+using Camelotia.Services.Storages;
+using System.Reactive.Concurrency;
+using Android.App;
 using Android.Content.PM;
 using Android.OS;
+using ReactiveUI;
+using System;
 
 namespace Camelotia.Presentation.Xamarin.Droid
 {
@@ -14,7 +22,34 @@ namespace Camelotia.Presentation.Xamarin.Droid
 
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-            LoadApplication(new App());
+            LoadApplication(new App(BuildMainViewModel()));
+        }
+
+        private static IMainViewModel BuildMainViewModel()
+        {
+            var currentThread = CurrentThreadScheduler.Instance;
+            var mainThread = RxApp.MainThreadScheduler;
+            var cache = new AkavacheTokenStorage();
+
+            return new MainViewModel(
+                (provider, files, auth) => new ProviderViewModel(auth, files, currentThread, mainThread, provider),
+                provider => new AuthViewModel(
+                    new DirectAuthViewModel(currentThread, mainThread, provider),
+                    new OAuthViewModel(currentThread, mainThread, provider),
+                    currentThread,
+                    provider
+                ),
+                new ProviderStorage(
+                    new LocalFileSystemProvider(),
+                    new VkontakteFileSystemProvider(cache),
+                    new YandexFileSystemProvider(
+                        new XamarinAuthenticator(), cache
+                    )
+                ),
+                new XamarinFileManager(),
+                currentThread,
+                mainThread
+            );
         }
     }
 }

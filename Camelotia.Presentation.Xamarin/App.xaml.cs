@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Camelotia.Presentation.Interfaces;
+using Camelotia.Presentation.Xamarin.View;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -7,26 +8,10 @@ namespace Camelotia.Presentation.Xamarin
 {
     public partial class App : Application
     {
-        public App()
+        public App(IMainViewModel viewModel)
         {
             InitializeComponent();
-
-            MainPage = new MainPage();
-        }
-
-        protected override void OnStart()
-        {
-            // Handle when your app starts
-        }
-
-        protected override void OnSleep()
-        {
-            // Handle when your app sleeps
-        }
-
-        protected override void OnResume()
-        {
-            // Handle when your app resumes
+            MainPage = new MainView { ViewModel = viewModel };
         }
     }
 }
