@@ -19,8 +19,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="View\MainView.xaml.cs">
-      <DependentUpon>MainView.xaml</DependentUpon>
+    <Compile Update="View\MainMasterView.xaml.cs">
+      <DependentUpon>MainMasterView.xaml</DependentUpon>
     </Compile>
+    <Compile Update="View\MainProviderView.xaml.cs">
+      <DependentUpon>MainProviderView.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="View\MainView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="View\ProviderView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="View\MainProviderView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

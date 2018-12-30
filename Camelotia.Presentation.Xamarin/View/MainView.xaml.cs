@@ -1,29 +1,28 @@
 ﻿using Camelotia.Presentation.Interfaces;
-using ReactiveUI;
-using ReactiveUI.XamForms;
-using System.Reactive.Disposables;
 using Xamarin.Forms.Xaml;
+using ReactiveUI.XamForms;
+using ReactiveUI;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System;
 
 namespace Camelotia.Presentation.Xamarin.View
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class MainView : ReactiveContentPage<IMainViewModel>
+    public partial class MainView : ReactiveMasterDetailPage<IMainViewModel>
     {
         public MainView()
         {
             InitializeComponent();
             this.WhenActivated(disposables => 
             {
-                this.OneWayBind(ViewModel, x => x.IsReady, x => x.ProvidersView.IsVisible)
-                    .DisposeWith(disposables);
-                this.OneWayBind(ViewModel, x => x.IsLoading, x => x.LoadingBar.IsVisible)
-                    .DisposeWith(disposables);
-                this.BindCommand(ViewModel, x => x.LoadProviders, x => x.RefreshButton)
+                this.WhenAnyValue(x => x.ViewModel.SelectedProvider)
+                    .BindTo(ProviderView, x => x.ViewModel)
                     .DisposeWith(disposables);
 
-                this.Bind(ViewModel, x => x.SelectedProvider, x => x.ProvidersView.SelectedItem)
-                    .DisposeWith(disposables);
-                this.OneWayBind(ViewModel, x => x.Providers, x => x.ProvidersView.ItemsSource)
+                this.WhenAnyValue(x => x.ViewModel.SelectedProvider)
+                    .Select(provider => false)
+                    .Subscribe(x => IsPresented = x)
                     .DisposeWith(disposables);
             });
         }

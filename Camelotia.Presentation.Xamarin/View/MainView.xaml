@@ -1,45 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<rxui:ReactiveContentPage 
-    x:TypeArguments="vm:IMainViewModel"       
+<rxui:ReactiveMasterDetailPage
+    x:TypeArguments="vm:IMainViewModel"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:Camelotia.Presentation.Xamarin"
+    x:Class="Camelotia.Presentation.Xamarin.View.MainView"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"   
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
-    x:Class="Camelotia.Presentation.Xamarin.View.MainView">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="2*" />
-        </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Label Grid.Row="0" Text="Camelotia" FontSize="17" Margin="12" />
-            <ListView x:Name="ProvidersView" Grid.Row="1">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="vm:IProviderViewModel">
-                        <ViewCell>
-                            <StackLayout Margin="10">
-                                <Label Text="{Binding Name, Mode=OneTime}" FontSize="15" />
-                                <StackLayout Orientation="Horizontal" Margin="0, 5">
-                                    <Label Text="Size: " />
-                                    <Label Text="{Binding Size, Mode=OneTime}" />
-                                </StackLayout>
-                                <Label Text="{Binding Description}" />
-                            </StackLayout>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <StackLayout Grid.Row="2">
-                <Button x:Name="RefreshButton" Text="Refresh" Margin="12" />
-            </StackLayout>
-            <ProgressBar Grid.Row="0" Grid.RowSpan="3" x:Name="LoadingBar" />
-        </Grid>
-        <Grid Grid.Column="1"></Grid>
-    </Grid>
-</rxui:ReactiveContentPage>
+    xmlns:views="clr-namespace:Camelotia.Presentation.Xamarin.View">
+    <MasterDetailPage.Master>
+        <views:MainMasterView ViewModel="{Binding}" />
+    </MasterDetailPage.Master>
+    <MasterDetailPage.Detail>
+        <views:ProviderView x:Name="ProviderView" ViewModel="{Binding}" />
+    </MasterDetailPage.Detail>
+</rxui:ReactiveMasterDetailPage>

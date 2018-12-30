@@ -40,7 +40,6 @@ namespace Camelotia.Presentation.Xamarin.Droid
                     provider
                 ),
                 new ProviderStorage(
-                    new LocalFileSystemProvider(),
                     new VkontakteFileSystemProvider(cache),
                     new YandexFileSystemProvider(
                         new XamarinAuthenticator(), cache
