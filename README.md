@@ -35,8 +35,10 @@ File system providers are located at `./Camelotia.Services/Providers/`. To add a
 
 ### Technologies and Tools Used
 
-- <a href="https://reactiveui.net/">ReactiveUI</a>
-- <a href="http://github.com/avaloniaui">AvaloniaUI</a>
-- <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a>
-- <a href="https://github.com/fluentassertions/fluentassertions">FluentAssertions</a>
+- <a href="https://reactiveui.net/">ReactiveUI</a> modern MVVM framework
+- <a href="http://github.com/avaloniaui">AvaloniaUI</a> cross-platform GUI framework
+- <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a> mocking library
+- <a href="https://github.com/fluentassertions/fluentassertions">FluentAssertions</a> assertions library
+- <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/">Xamarin.Forms</a> mobile GUI framework
+- <a href="https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide">Universal Windows Platform</a>
 - <a href="https://www.jetbrains.com/rider/">JetBrains Rider IDE</a>
