@@ -5,7 +5,7 @@ jobs:
   variables:
     buildConfiguration: 'Release'
   steps:
-  - script: dotnet build --configuration $(buildConfiguration)
+  - script: dotnet build --configuration $(buildConfiguration) $(Build.SourcesDirectory)/Camelotia.Presentation.Avalonia/Camelotia.Presentation.Avalonia.csproj
     displayName: 'Linux Build'
   - script: dotnet test --logger trx Camelotia.Presentation.Tests
     displayName: 'Linux Unit Tests'
@@ -20,7 +20,7 @@ jobs:
   variables:
     buildConfiguration: 'Release'
   steps:
-  - script: dotnet build --configuration $(buildConfiguration)
+  - script: dotnet build --configuration $(buildConfiguration) $(Build.SourcesDirectory)/Camelotia.Presentation.Avalonia/Camelotia.Presentation.Avalonia.csproj
     displayName: 'Windows Build'
   - script: |
       mkdir $(Build.SourcesDirectory)\results
