@@ -11,6 +11,6 @@
         <views:MainMasterView ViewModel="{Binding}" />
     </MasterDetailPage.Master>
     <MasterDetailPage.Detail>
-        <views:ProviderView x:Name="ProviderView" ViewModel="{Binding}" />
+        <NavigationPage x:Name="NavigationView" />
     </MasterDetailPage.Detail>
 </rxui:ReactiveMasterDetailPage>

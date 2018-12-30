@@ -26,6 +26,8 @@ namespace Camelotia.Presentation.Xamarin.View
 
                 this.OneWayBind(ViewModel, x => x.Files, x => x.FilesListView.ItemsSource)
                     .DisposeWith(disposables);
+                this.Bind(ViewModel, x => x.SelectedFile, x => x.FilesListView.SelectedItem)
+                    .DisposeWith(disposables);
                 this.OneWayBind(ViewModel, x => x.IsLoading, x => x.IsBusy)
                     .DisposeWith(disposables);
 
@@ -41,6 +43,9 @@ namespace Camelotia.Presentation.Xamarin.View
                 this.BindCommand(ViewModel, x => x.UploadToCurrentPath, x => x.UploadButton)
                     .DisposeWith(disposables);
                 this.BindCommand(ViewModel, x => x.DownloadSelectedFile, x => x.DownloadButton)
+                    .DisposeWith(disposables);
+
+                this.OneWayBind(ViewModel, x => x.Name, x => x.Title)
                     .DisposeWith(disposables);
             });
         }

@@ -13,6 +13,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
@@ -45,10 +46,16 @@
                 </ListView.ItemTemplate>
             </ListView>
             <Grid Grid.Row="2">
+                <StackLayout Grid.Column="2" Orientation="Horizontal" 
+                             Margin="10" HorizontalOptions="StartAndExpand">
+                    <Label Text="You selected: " />
+                    <Label x:Name="SelectedFileNameLabel" />
+                </StackLayout>
+            </Grid>
+            <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
@@ -58,10 +65,6 @@
                 <Button Grid.Column="1"
                         x:Name="DeleteButton"
                         Text="Delete" />
-                <StackLayout Grid.Column="2" Orientation="Horizontal" Margin="10">
-                    <Label Text="You selected: " />
-                    <Label x:Name="SelectedFileNameLabel" />
-                </StackLayout>
                 <Button Grid.Column="3"
                         x:Name="UploadButton"
                         Text="Upload" />
