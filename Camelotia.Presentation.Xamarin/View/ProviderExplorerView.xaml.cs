@@ -3,16 +3,15 @@ using System.Reactive.Disposables;
 using Xamarin.Forms.Xaml;
 using ReactiveUI.XamForms;
 using ReactiveUI;
-using Xamarin.Forms;
 
 namespace Camelotia.Presentation.Xamarin.View
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class ProviderExplorerView : ReactiveContentPage<IProviderViewModel>
-	{
-		public ProviderExplorerView()
-		{
-			InitializeComponent();
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class ProviderExplorerView : ReactiveContentPage<IProviderViewModel>
+    {
+        public ProviderExplorerView()
+        {
+            InitializeComponent();
             this.WhenActivated(disposables =>
             {
                 this.BindCommand(ViewModel, x => x.Back, x => x.BackButton)
@@ -29,7 +28,10 @@ namespace Camelotia.Presentation.Xamarin.View
                     .DisposeWith(disposables);
                 this.Bind(ViewModel, x => x.SelectedFile, x => x.FilesListView.SelectedItem)
                     .DisposeWith(disposables);
-                this.OneWayBind(ViewModel, x => x.IsLoading, x => x.IsBusy)
+
+                this.OneWayBind(ViewModel, x => x.IsLoading, x => x.FilesListView.IsRefreshing)
+                    .DisposeWith(disposables);
+                this.OneWayBind(ViewModel, x => x.Refresh, x => x.FilesListView.RefreshCommand)
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel, x => x.CanLogout, x => x.LogoutButton.IsVisible)
@@ -50,5 +52,5 @@ namespace Camelotia.Presentation.Xamarin.View
                     .DisposeWith(disposables);
             });
         }
-	}
+    }
 }

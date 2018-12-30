@@ -38,7 +38,10 @@
                         x:Name="RefreshButton"
                         Text="Refresh" />
             </Grid>
-            <ListView Grid.Row="1" x:Name="FilesListView" HasUnevenRows="True">
+            <ListView Grid.Row="1" 
+                      x:Name="FilesListView" 
+                      IsPullToRefreshEnabled="True"
+                      HasUnevenRows="True">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <view:ProviderExplorerFileView ViewModel="{Binding}" />
