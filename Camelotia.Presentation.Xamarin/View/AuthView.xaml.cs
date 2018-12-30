@@ -1,8 +1,10 @@
 ﻿using Camelotia.Presentation.Interfaces;
-using System.Reactive.Disposables;
-using Xamarin.Forms.Xaml;
 using ReactiveUI.XamForms;
 using ReactiveUI;
+using Xamarin.Forms.Xaml;
+using System.Reactive.Linq;
+using System.Reactive.Disposables;
+using System;
 
 namespace Camelotia.Presentation.Xamarin.View
 {
@@ -14,14 +16,18 @@ namespace Camelotia.Presentation.Xamarin.View
             InitializeComponent();
             this.WhenActivated(disposables => 
             {
-                this.OneWayBind(ViewModel, x => x.DirectAuth, x => x.DirectAuthPage.ViewModel)
+                this.WhenAnyValue(x => x.ViewModel.SupportsDirectAuth)
+                    .Where(supportsDirectAuth => supportsDirectAuth)
+                    .Select(supports => new DirectAuthView { ViewModel = ViewModel.DirectAuth })
+                    .Do(view => Children.Clear())
+                    .Subscribe(view => Children.Add(view))
                     .DisposeWith(disposables);
-                this.OneWayBind(ViewModel, x => x.OAuth, x => x.OpenAuthPage.ViewModel)
-                    .DisposeWith(disposables);
-                
-                this.OneWayBind(ViewModel, x => x.SupportsDirectAuth, x => x.DirectAuthPage.IsVisible)
-                    .DisposeWith(disposables);
-                this.OneWayBind(ViewModel, x => x.SupportsOAuth, x => x.OpenAuthPage.IsVisible)
+
+                this.WhenAnyValue(x => x.ViewModel.SupportsOAuth)
+                    .Where(supportsOAuth => supportsOAuth)
+                    .Select(supports => new OAuthView { ViewModel = ViewModel.OAuth })
+                    .Do(view => Children.Clear())
+                    .Subscribe(view => Children.Add(view))
                     .DisposeWith(disposables);
             });
         }
