@@ -19,19 +19,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="View\DirectAuthView.xaml.cs">
+      <DependentUpon>DirectAuthView.xaml</DependentUpon>
+    </Compile>
     <Compile Update="View\MainMasterView.xaml.cs">
       <DependentUpon>MainMasterView.xaml</DependentUpon>
     </Compile>
     <Compile Update="View\MainProviderView.xaml.cs">
       <DependentUpon>MainProviderView.xaml</DependentUpon>
     </Compile>
+    <Compile Update="View\ProviderExplorerFileView.xaml.cs">
+      <DependentUpon>ProviderExplorerFileView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="View\ProviderExplorerView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="View\AuthView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="View\DirectAuth.xaml">
+    <EmbeddedResource Update="View\DirectAuthView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="View\MainView.xaml">
@@ -40,7 +49,7 @@
     <EmbeddedResource Update="View\OAuthView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="View\ProviderFileView.xaml">
+    <EmbeddedResource Update="View\ProviderExplorerFileView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="View\ProviderView.xaml">

@@ -7,9 +7,9 @@ using Xamarin.Forms.Xaml;
 namespace Camelotia.Presentation.Xamarin.View
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ProviderFileView : ReactiveViewCell<FileModel>
+    public partial class ProviderExplorerFileView : ReactiveViewCell<FileModel>
     {
-        public ProviderFileView()
+        public ProviderExplorerFileView()
         {
             InitializeComponent();
             this.WhenActivated(disposables =>

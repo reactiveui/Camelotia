@@ -21,17 +21,9 @@ namespace Camelotia.Presentation.Xamarin.View
                     .Subscribe(x => IsPresented = x)
                     .DisposeWith(disposables);
 
-                this.WhenAnyValue(x => x.ViewModel.SelectedProvider.Auth.IsAuthenticated)
-                    .Where(authenticated => authenticated)
-                    .DistinctUntilChanged()
+                this.WhenAnyValue(x => x.ViewModel.SelectedProvider)
+                    .Where(provider => provider != null)
                     .Select(x => new ProviderView { ViewModel = ViewModel.SelectedProvider })
-                    .Subscribe(view => NavigationView.PushAsync(view))
-                    .DisposeWith(disposables);
-
-                this.WhenAnyValue(x => x.ViewModel.SelectedProvider.Auth.IsAuthenticated)
-                    .Where(authenticated => !authenticated)
-                    .DistinctUntilChanged()
-                    .Select(x => new AuthView { ViewModel = ViewModel.SelectedProvider.Auth })
                     .Subscribe(view => NavigationView.PushAsync(view))
                     .DisposeWith(disposables);
             });

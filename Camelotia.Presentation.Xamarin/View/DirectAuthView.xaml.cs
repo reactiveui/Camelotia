@@ -7,9 +7,9 @@ using Xamarin.Forms.Xaml;
 namespace Camelotia.Presentation.Xamarin.View
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class DirectAuth : ReactiveContentPage<IDirectAuthViewModel>
+    public partial class DirectAuthView : ReactiveContentPage<IDirectAuthViewModel>
     {
-        public DirectAuth()
+        public DirectAuthView()
         {
             InitializeComponent();
             this.WhenActivated(disposables => 

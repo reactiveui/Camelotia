@@ -8,6 +8,6 @@
     xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.View"
     x:Class="Camelotia.Presentation.Xamarin.View.AuthView"
     Title="Authentication Required">
-    <view:DirectAuth Title="Direct Auth" x:Name="DirectAuthPage" />
+    <view:DirectAuthView Title="Direct Auth" x:Name="DirectAuthPage" />
     <view:OAuthView Title="Open Auth" x:Name="OpenAuthPage" />
 </rxui:ReactiveTabbedPage>
