@@ -15,7 +15,7 @@
             <StackLayout>
                 <Label Text="Password Authorization" />
                 <Entry x:Name="LoginEntry" />
-                <Entry x:Name="PasswordEntry" />
+                <Entry x:Name="PasswordEntry" IsPassword="True" />
                 <Button x:Name="LoginButton" Text="Login" />
             </StackLayout>
         </Frame>

@@ -8,11 +8,8 @@
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms">
     <ViewCell.View>
         <StackLayout Margin="8" Grid.Column="0">
-            <Label x:Name="NameLabel" FontSize="14" />
-            <Label Text="Directory"
-                   x:Name="IsFolderLabel"
-                   FontSize="12" />
-            <Label x:Name="SizeLabel" />
+            <Label x:Name="NameLabel" FontSize="16" />
+            <Label x:Name="SizeLabel" FontAttributes="Bold"/>
         </StackLayout>
     </ViewCell.View>
 </rxui:ReactiveViewCell>

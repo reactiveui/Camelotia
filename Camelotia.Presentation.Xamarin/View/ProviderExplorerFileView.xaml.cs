@@ -16,8 +16,6 @@ namespace Camelotia.Presentation.Xamarin.View
             {
                 this.OneWayBind(ViewModel, x => x.Name, x => x.NameLabel.Text)
                     .DisposeWith(disposables);
-                this.OneWayBind(ViewModel, x => x.IsFolder, x => x.IsFolderLabel.Text)
-                    .DisposeWith(disposables);
                 this.OneWayBind(ViewModel, x => x.Size, x => x.SizeLabel.Text)
                     .DisposeWith(disposables);
             });

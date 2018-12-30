@@ -14,7 +14,7 @@
                Margin="15">
             <StackLayout>
                 <Label Text="OAuth Authorization" />
-                <Button x:Name="LoginButton" />
+                <Button x:Name="LoginButton" Text="Authorize" />
             </StackLayout>
         </Frame>
     </ContentPage.Content>

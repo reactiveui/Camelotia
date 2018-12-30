@@ -8,12 +8,12 @@
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms">
     <ViewCell.View>
         <StackLayout Margin="10">
-            <Label x:Name="NameLabel" FontSize="15" />
+            <Label x:Name="NameLabel" FontSize="16" FontAttributes="Bold" />
+            <Label x:Name="DescriptionLabel" FontAttributes="Italic" />
             <StackLayout Orientation="Horizontal" Margin="0, 5">
                 <Label Text="Size: " />
                 <Label x:Name="SizeLabel" />
             </StackLayout>
-            <Label x:Name="DescriptionLabel" />
         </StackLayout>
     </ViewCell.View>
 </rxui:ReactiveViewCell>

@@ -14,7 +14,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Text="Camelotia" FontSize="17" Margin="12" />
+        <Label Grid.Row="0" Text="Camelotia" FontSize="17" Margin="12" FontAttributes="Bold" />
         <ListView x:Name="ProvidersView" HasUnevenRows="True" Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:IProviderViewModel">
