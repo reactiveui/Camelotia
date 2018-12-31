@@ -21,9 +21,9 @@ namespace Camelotia.Presentation.Xamarin.View
                 this.BindCommand(ViewModel, x => x.LoadProviders, x => x.RefreshButton)
                     .DisposeWith(disposables);
 
-                this.Bind(ViewModel, x => x.SelectedProvider, x => x.ProvidersView.SelectedItem)
-                    .DisposeWith(disposables);
                 this.OneWayBind(ViewModel, x => x.Providers, x => x.ProvidersView.ItemsSource)
+                    .DisposeWith(disposables);
+                this.Bind(ViewModel, x => x.SelectedProvider, x => x.ProvidersView.SelectedItem)
                     .DisposeWith(disposables);
             });
         }
