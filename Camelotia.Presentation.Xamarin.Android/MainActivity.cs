@@ -1,6 +1,6 @@
 ﻿using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
-using Camelotia.Presentation.Xamarin.Android.Services;
+using Camelotia.Presentation.Xamarin.Droid.Services;
 using Camelotia.Services.Providers;
 using Camelotia.Services.Storages;
 using System.Reactive.Concurrency;
@@ -8,13 +8,15 @@ using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using ReactiveUI;
-using System;
 
 namespace Camelotia.Presentation.Xamarin.Droid
 {
-    [Activity(Label = "Camelotia.Presentation.Xamarin", 
-              Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, 
-              ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(
+        Label = "Camelotia.Presentation.Xamarin", 
+        Icon = "@mipmap/icon", 
+        Theme = "@style/MainTheme", 
+        MainLauncher = true, 
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
@@ -27,7 +29,7 @@ namespace Camelotia.Presentation.Xamarin.Droid
             LoadApplication(new App(BuildMainViewModel()));
         }
 
-        private static IMainViewModel BuildMainViewModel()
+        private IMainViewModel BuildMainViewModel()
         {
             var currentThread = CurrentThreadScheduler.Instance;
             var mainThread = RxApp.MainThreadScheduler;
@@ -47,7 +49,7 @@ namespace Camelotia.Presentation.Xamarin.Droid
                         new AndroidAuthenticator(), cache
                     )
                 ),
-                new AndroidFileManager(),
+                new AndroidFileManager(this),
                 currentThread,
                 mainThread
             );

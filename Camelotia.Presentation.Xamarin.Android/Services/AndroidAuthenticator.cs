@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 
-namespace Camelotia.Presentation.Xamarin.Android.Services
+namespace Camelotia.Presentation.Xamarin.Droid.Services
 {
     public sealed class AndroidAuthenticator : IAuthenticator
     {
