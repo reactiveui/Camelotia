@@ -10,6 +10,11 @@ namespace Camelotia.Presentation.Xamarin
     {
         public App(IMainViewModel viewModel)
         {
+        	Plugin.Iconize.Iconize
+                .With(new Plugin.Iconize.Fonts.FontAwesomeRegularModule())
+                .With(new Plugin.Iconize.Fonts.FontAwesomeSolidModule())
+                .With(new Plugin.Iconize.Fonts.FontAwesomeBrandsModule());
+
             InitializeComponent();
             MainPage = new MainView { ViewModel = viewModel };
         }

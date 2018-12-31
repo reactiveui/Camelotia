@@ -6,7 +6,8 @@
     x:Class="Camelotia.Presentation.Xamarin.View.ProviderExplorerView"
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
-    xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.View">
+    xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.View"
+    xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize">
     <ContentPage.Content>
         <Grid>
             <Grid.RowDefinitions>
@@ -34,9 +35,9 @@
                 <Button Grid.Column="2"
                         x:Name="OpenButton"
                         Text="Open" />
-                <Button Grid.Column="3"
-                        x:Name="RefreshButton"
-                        Text="Refresh" />
+                <iconize:IconButton Grid.Column="3"
+                                    x:Name="RefreshButton"
+                                    Text="fas-sync-alt" />
             </Grid>
             <ListView Grid.Row="1" 
                       x:Name="FilesListView" 
@@ -57,23 +58,23 @@
             </Grid>
             <Grid Grid.Row="3" Margin="3">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0"
-                        x:Name="LogoutButton"
-                        Text="Logout" />
-                <Button Grid.Column="1"
-                        x:Name="DeleteButton"
-                        Text="Delete" />
-                <Button Grid.Column="3"
-                        x:Name="UploadButton"
-                        Text="Upload" />
-                <Button Grid.Column="4"
-                        x:Name="DownloadButton"
-                        Text="Download" />
+                <iconize:IconButton Grid.Column="0"
+                                    x:Name="LogoutButton"
+                                    Text="fas-sign-out-alt" />
+                <iconize:IconButton Grid.Column="1"
+                                    x:Name="DeleteButton"
+                                    Text="fas-trash" />
+                <iconize:IconButton Grid.Column="2"
+                                    x:Name="UploadButton"
+                                    Text="fas-cloud-upload-alt" />
+                <iconize:IconButton Grid.Column="3"
+                                    x:Name="DownloadButton"
+                                    Text="fas-cloud-download-alt" />
             </Grid>
         </Grid>
     </ContentPage.Content>

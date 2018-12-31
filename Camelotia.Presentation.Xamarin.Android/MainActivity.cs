@@ -33,6 +33,7 @@ namespace Camelotia.Presentation.Xamarin.Droid
 
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            Plugin.Iconize.Iconize.Init(Resource.Id.toolbar, Resource.Id.sliding_tabs);
             LoadApplication(new App(BuildMainViewModel()));
         }
 
