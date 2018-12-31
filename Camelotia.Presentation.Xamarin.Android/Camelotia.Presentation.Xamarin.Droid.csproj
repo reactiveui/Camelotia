@@ -78,6 +78,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AndroidAuthenticator.cs" />
     <Compile Include="Services\AndroidFileManager.cs" />
+    <Compile Include="WebActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AboutAssets.txt" />
@@ -121,6 +122,11 @@
       <Project>{283B8F56-AB9F-4556-AB93-AAC54171841C}</Project>
       <Name>Camelotia.Services</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\WebActivity.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
