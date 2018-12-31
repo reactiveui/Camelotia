@@ -15,7 +15,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
+            <Grid Grid.Row="0" Margin="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -40,7 +40,6 @@
             </Grid>
             <ListView Grid.Row="1" 
                       x:Name="FilesListView" 
-                      IsPullToRefreshEnabled="True"
                       HasUnevenRows="True">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -51,12 +50,12 @@
             <Grid Grid.Row="2">
                 <StackLayout Orientation="Horizontal" 
                              HorizontalOptions="StartAndExpand"
-                             Margin="10">
+                             Margin="10, 5">
                     <Label Text="You selected: " />
-                    <Label x:Name="SelectedFileNameLabel" />
+                    <Label x:Name="SelectedFileNameLabel" TextColor="Accent" />
                 </StackLayout>
             </Grid>
-            <Grid Grid.Row="3">
+            <Grid Grid.Row="3" Margin="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
