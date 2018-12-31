@@ -1,6 +1,6 @@
 ﻿using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
-using Camelotia.Presentation.Xamarin.Services;
+using Camelotia.Presentation.Xamarin.Android.Services;
 using Camelotia.Services.Providers;
 using Camelotia.Services.Storages;
 using System.Reactive.Concurrency;
@@ -44,10 +44,10 @@ namespace Camelotia.Presentation.Xamarin.Droid
                 new ProviderStorage(
                     new VkontakteFileSystemProvider(cache),
                     new YandexFileSystemProvider(
-                        new XamarinAuthenticator(), cache
+                        new AndroidAuthenticator(), cache
                     )
                 ),
-                new XamarinFileManager(),
+                new AndroidFileManager(),
                 currentThread,
                 mainThread
             );

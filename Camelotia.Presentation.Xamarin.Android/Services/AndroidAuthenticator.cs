@@ -3,9 +3,9 @@ using System.Net;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 
-namespace Camelotia.Presentation.Xamarin.Services
+namespace Camelotia.Presentation.Xamarin.Android.Services
 {
-    public sealed class XamarinAuthenticator : IAuthenticator
+    public sealed class AndroidAuthenticator : IAuthenticator
     {
         public YandexAuthenticationType YandexAuthenticationType => YandexAuthenticationType.Token;
 
