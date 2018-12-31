@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  <style name="MainTheme" parent="MainTheme.Base"></style>
+  <style name="MainTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
+    <item name="windowNoTitle">true</item>
+    <item name="windowActionBar">false</item>
+    <item name="colorPrimary">#311b92</item>
+    <item name="colorPrimaryDark">#000063</item>
+    <item name="colorAccent">#6746c3</item>
+    <item name="windowActionModeOverlay">true</item>
+    <item name="android:datePickerDialogTheme">@style/AppCompatDialogStyle</item>
+    <item name="android:colorPressedHighlight">@color/ListViewSelected</item>
+    <item name="android:colorLongPressedHighlight">@color/ListViewHighlighted</item>
+    <item name="android:colorFocusedHighlight">@color/ListViewSelected</item>
+    <item name="android:colorActivatedHighlight">@color/ListViewSelected</item>
+    <item name="android:activatedBackgroundIndicator">@color/ListViewSelected</item>
+  </style>
+  <style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+    <item name="colorAccent">#6746c3</item>
+  </style>
+</resources>

@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<rxui:ReactiveContentPage 
+    x:TypeArguments="vm:IProviderViewModel"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Camelotia.Presentation.Xamarin.View.ProviderExplorerView"
+    xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
+    xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
+    xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.View">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        x:Name="BackButton"
+                        Text="Back" />
+                <Label Grid.Column="1"
+                       x:Name="PathLabel"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center"
+                       FontSize="14"
+                       Margin="15, 0" />
+                <Button Grid.Column="2"
+                        x:Name="OpenButton"
+                        Text="Open" />
+                <Button Grid.Column="3"
+                        x:Name="RefreshButton"
+                        Text="Refresh" />
+            </Grid>
+            <ListView Grid.Row="1" 
+                      x:Name="FilesListView" 
+                      HasUnevenRows="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <view:ProviderExplorerFileView ViewModel="{Binding}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Grid Grid.Row="2">
+                <StackLayout Orientation="Horizontal" 
+                             HorizontalOptions="StartAndExpand"
+                             Margin="10, 5">
+                    <Label Text="You selected: " />
+                    <Label x:Name="SelectedFileNameLabel" TextColor="Accent" />
+                </StackLayout>
+            </Grid>
+            <Grid Grid.Row="3" Margin="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        x:Name="LogoutButton"
+                        Text="Logout" />
+                <Button Grid.Column="1"
+                        x:Name="DeleteButton"
+                        Text="Delete" />
+                <Button Grid.Column="3"
+                        x:Name="UploadButton"
+                        Text="Upload" />
+                <Button Grid.Column="4"
+                        x:Name="DownloadButton"
+                        Text="Download" />
+            </Grid>
+        </Grid>
+    </ContentPage.Content>
+</rxui:ReactiveContentPage>

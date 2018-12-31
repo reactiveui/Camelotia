@@ -6,7 +6,7 @@ The app runs on Windows, Linux, MacOS, XBox, Surface Hub and HoloLens.
 
 You can compile .NET Standard libraries, run tests and run an Avalonia application on Windows, Linux and macOS operating systems. Make sure you have latest [.NET Core SDK](https://dot.net/) installed.
 
-<img src="./Camelotia.png" width="500">
+<img src="./UiAvalonia.png" width="500">
 
 ```sh
 # Linux or MacOS shell
@@ -21,7 +21,13 @@ On Windows, double-click the `./run.bat` file.
 
 You can compile Universal Windows Platform Camelotia app only on latest Windows 10. Make sure you have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/).
 
-<img src="./Universal.jpg" width="500">
+<img src="./UiWindows.jpg" width="500">
+
+## Compiling Xamarin Forms app
+
+To compile the Xamarin Forms Android application, you need to install appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there.
+
+<img src="./UiAndroid1.png" width="220"> <img src="./UiAndroid2.png" width="220">
 
 ### Adding Custom Providers
 
@@ -29,8 +35,10 @@ File system providers are located at `./Camelotia.Services/Providers/`. To add a
 
 ### Technologies and Tools Used
 
-- <a href="https://reactiveui.net/">ReactiveUI</a>
-- <a href="http://github.com/avaloniaui">AvaloniaUI</a>
-- <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a>
-- <a href="https://github.com/fluentassertions/fluentassertions">FluentAssertions</a>
+- <a href="https://reactiveui.net/">ReactiveUI</a> modern MVVM framework
+- <a href="http://github.com/avaloniaui">AvaloniaUI</a> cross-platform GUI framework
+- <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a> mocking library
+- <a href="https://github.com/fluentassertions/fluentassertions">FluentAssertions</a> assertions library
+- <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/">Xamarin.Forms</a> mobile GUI framework
+- <a href="https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide">Universal Windows Platform</a>
 - <a href="https://www.jetbrains.com/rider/">JetBrains Rider IDE</a>
