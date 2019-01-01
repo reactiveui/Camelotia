@@ -8,7 +8,7 @@ using System;
 using Xamarin.Forms;
 using System.Linq;
 
-namespace Camelotia.Presentation.Xamarin.View
+namespace Camelotia.Presentation.Xamarin.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ProviderView : ReactiveNavigationPage<IProviderViewModel>

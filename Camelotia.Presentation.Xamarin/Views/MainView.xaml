@@ -3,10 +3,10 @@
     x:TypeArguments="vm:IMainViewModel"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Class="Camelotia.Presentation.Xamarin.View.MainView"
+    x:Class="Camelotia.Presentation.Xamarin.Views.MainView"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"   
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
-    xmlns:views="clr-namespace:Camelotia.Presentation.Xamarin.View">
+    xmlns:views="clr-namespace:Camelotia.Presentation.Xamarin.Views">
     <MasterDetailPage.Master>
         <views:MainMasterView ViewModel="{Binding}" />
     </MasterDetailPage.Master>

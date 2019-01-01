@@ -29,7 +29,7 @@
                         Command="{x:Bind ViewModel.Back, Mode=OneWay}"
                         Content="Back" />
                 <TextBlock Grid.Column="1"
-                           Text="{x:Bind ViewModel.CurrentPath}"
+                           Text="{x:Bind ViewModel.CurrentPath, Mode=OneWay}"
                            VerticalAlignment="Center"
                            FontSize="14"
                            Margin="15 0" />

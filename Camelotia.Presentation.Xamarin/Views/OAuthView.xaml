@@ -3,10 +3,10 @@
     x:TypeArguments="vm:IOAuthViewModel"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Class="Camelotia.Presentation.Xamarin.View.OAuthView"
+    x:Class="Camelotia.Presentation.Xamarin.Views.OAuthView"
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
-    xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.View"
+    xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.Views"
     Title="OAuth Authorization">
     <ContentPage.Content>
         <Frame VerticalOptions="StartAndExpand" 

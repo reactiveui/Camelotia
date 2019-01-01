@@ -54,7 +54,7 @@ namespace Camelotia.Presentation.ViewModels
                     .ToList())
                 .StartWithEmpty()
                 .ToProperty(this, x => x.Files, scheduler: currentThread);
-            
+
             _isLoading = _refresh
                 .IsExecuting
                 .ToProperty(this, x => x.IsLoading, scheduler: currentThread);
@@ -92,6 +92,9 @@ namespace Camelotia.Presentation.ViewModels
                 .Skip(1)
                 .Select(path => Unit.Default)
                 .InvokeCommand(_refresh);
+
+            this.WhenAnyValue(x => x.CurrentPath)
+                .Subscribe(path => SelectedFile = null);
 
             _isCurrentPathEmpty = this
                 .WhenAnyValue(x => x.Files)

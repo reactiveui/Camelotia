@@ -21,43 +21,43 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="View\DirectAuthView.xaml.cs">
+    <Compile Update="Views\DirectAuthView.xaml.cs">
       <DependentUpon>DirectAuthView.xaml</DependentUpon>
     </Compile>
-    <Compile Update="View\MainMasterView.xaml.cs">
+    <Compile Update="Views\MainMasterView.xaml.cs">
       <DependentUpon>MainMasterView.xaml</DependentUpon>
     </Compile>
-    <Compile Update="View\MainProviderView.xaml.cs">
+    <Compile Update="Views\MainProviderView.xaml.cs">
       <DependentUpon>MainProviderView.xaml</DependentUpon>
     </Compile>
-    <Compile Update="View\ProviderExplorerFileView.xaml.cs">
+    <Compile Update="Views\ProviderExplorerFileView.xaml.cs">
       <DependentUpon>ProviderExplorerFileView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="View\ProviderExplorerView.xaml">
+    <EmbeddedResource Update="Views\ProviderExplorerView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="View\AuthView.xaml">
+    <EmbeddedResource Update="Views\AuthView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="View\DirectAuthView.xaml">
+    <EmbeddedResource Update="Views\DirectAuthView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="View\MainView.xaml">
+    <EmbeddedResource Update="Views\MainView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="View\OAuthView.xaml">
+    <EmbeddedResource Update="Views\OAuthView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="View\ProviderExplorerFileView.xaml">
+    <EmbeddedResource Update="Views\ProviderExplorerFileView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="View\ProviderView.xaml">
+    <EmbeddedResource Update="Views\ProviderView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="View\MainProviderView.xaml">
+    <EmbeddedResource Update="Views\MainProviderView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

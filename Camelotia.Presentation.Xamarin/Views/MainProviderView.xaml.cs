@@ -4,7 +4,7 @@ using Xamarin.Forms.Xaml;
 using ReactiveUI.XamForms;
 using ReactiveUI;
 
-namespace Camelotia.Presentation.Xamarin.View
+namespace Camelotia.Presentation.Xamarin.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MainProviderView : ReactiveViewCell<IProviderViewModel>

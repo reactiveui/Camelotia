@@ -138,6 +138,32 @@ namespace Camelotia.Presentation.Tests
             _provider.Received(1).Get(Separator);
         });
 
+        [Fact]
+        public void ShouldSetSelectedFileToNullWithCurrentPathChanges() => new TestScheduler().With(scheduler =>
+        {
+            var file = new FileModel("foo", Separator + "foo", true, string.Empty);
+            _provider.Get(Separator).Returns(Enumerable.Repeat(file, 1));
+            _authViewModel.IsAuthenticated.Returns(true);
+            _provider.InitialPath.Returns(Separator);
+
+            var model = BuildProviderViewModel(scheduler);
+            model.Refresh.Execute(null);
+
+            scheduler.AdvanceBy(3);
+            model.Files.Should().NotBeEmpty();
+            model.CurrentPath.Should().Be(Separator);
+
+            model.SelectedFile = model.Files.First();
+            model.SelectedFile.Should().NotBeNull();
+            model.Open.CanExecute(null).Should().BeTrue();
+            model.Open.Execute(null);
+
+            scheduler.AdvanceBy(4);
+            model.CurrentPath.Should().Be(Separator + "foo");
+            model.SelectedFile.Should().BeNull();
+            model.Open.CanExecute(null).Should().BeFalse();
+        });
+
         private ProviderViewModel BuildProviderViewModel(IScheduler scheduler)
         {
             return new ProviderViewModel(_authViewModel, _fileManager, scheduler, scheduler, _provider);

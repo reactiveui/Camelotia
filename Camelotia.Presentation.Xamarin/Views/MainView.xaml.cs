@@ -6,7 +6,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System;
 
-namespace Camelotia.Presentation.Xamarin.View
+namespace Camelotia.Presentation.Xamarin.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MainView : ReactiveMasterDetailPage<IMainViewModel>

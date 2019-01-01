@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"   
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
-    xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.View"
-    x:Class="Camelotia.Presentation.Xamarin.View.AuthView"
+    xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.Views"
+    x:Class="Camelotia.Presentation.Xamarin.Views.AuthView"
     Title="Authentication Required">
 </rxui:ReactiveTabbedPage>

@@ -29,6 +29,7 @@
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" 
                        Style="{StaticResource HeaderTextBlockStyle}"
+                       Foreground="White"
                        Text="Camelotia" 
                        Margin="22"/>
             <ListBox Grid.Row="1" Background="Transparent"
@@ -41,10 +42,11 @@
                                        Foreground="White"
                                        FontSize="15" />
                             <StackPanel Orientation="Horizontal" Margin="0 5">
-                                <TextBlock Text="Size:" Margin="0 0 3 0"
-                                           Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                                <TextBlock Text="Size:" 
+                                           Margin="0 0 3 0" 
+                                           Foreground="White" />
                                 <TextBlock Text="{x:Bind Size, Mode=OneTime}" 
-                                           Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
+                                           Foreground="White" />
                             </StackPanel>
                             <TextBlock Text="{x:Bind Description, Mode=OneTime}"
                                        TextWrapping="Wrap"
@@ -53,7 +55,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Button Style="{StaticResource ButtonRevealStyle}" 
+            <Button Style="{StaticResource AccentButtonStyle}" 
                     Command="{x:Bind ViewModel.LoadProviders, Mode=OneWay}" 
                     HorizontalAlignment="Stretch"
                     Content="Load providers"

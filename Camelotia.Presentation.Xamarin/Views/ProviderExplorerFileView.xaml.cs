@@ -4,7 +4,7 @@ using ReactiveUI.XamForms;
 using System.Reactive.Disposables;
 using Xamarin.Forms.Xaml;
 
-namespace Camelotia.Presentation.Xamarin.View
+namespace Camelotia.Presentation.Xamarin.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ProviderExplorerFileView : ReactiveViewCell<FileModel>
