@@ -121,23 +121,28 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="Logout" Margin="6"
+                <Button Grid.Column="0" 
+                        Content="Logout" Margin="6 6 0 6"
                         Style="{StaticResource ButtonRevealStyle}"
                         Visibility="{x:Bind ViewModel.CanLogout, Mode=OneWay}"
                         Command="{x:Bind ViewModel.Logout, Mode=OneWay}" />
-                <Button Grid.Column="1" Content="Delete" Margin="0 0 3 0"
+                <Button Grid.Column="1" 
+                        Content="Delete" Margin="6 6 3 6"
                         Style="{StaticResource ButtonRevealStyle}"
                         Command="{x:Bind ViewModel.DeleteSelectedFile, Mode=OneWay}" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10">
-                    <TextBlock Text="You selected:" Margin="0 0 3 0" TextTrimming="CharacterEllipsis" 
+                    <TextBlock Text="You selected:" 
+                               Margin="0 0 3 0" TextTrimming="CharacterEllipsis" 
                                Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
                     <TextBlock Text="{x:Bind ViewModel.SelectedFile.Name, Mode=OneWay}"
                                Foreground="{ThemeResource AppBarSeparatorForegroundThemeBrush}" />
                 </StackPanel>
-                <Button Grid.Column="3" Content="Upload" Margin="6 6 0 6"
+                <Button Grid.Column="3" 
+                        Content="Upload" Margin="6 6 0 6"
                         Style="{StaticResource ButtonRevealStyle}"
                         Command="{x:Bind ViewModel.UploadToCurrentPath, Mode=OneWay}" />
-                <Button Grid.Column="4" Content="Download" Margin="6"
+                <Button Grid.Column="4" 
+                        Content="Download" Margin="6"
                         Style="{StaticResource ButtonRevealStyle}"
                         Command="{x:Bind ViewModel.DownloadSelectedFile, Mode=OneWay}" />
             </Grid>

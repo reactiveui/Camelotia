@@ -41,11 +41,15 @@ namespace Camelotia.Services.Providers
 
         public bool SupportsDirectAuth => true;
 
+        public bool SupportsHostAuth => false;
+
         public bool SupportsOAuth => false;
 
         public string InitialPath => Path.DirectorySeparatorChar.ToString();
 
         public Task OAuth() => Task.CompletedTask;
+
+        public Task HostAuth(string address, int port, string login, string password) => Task.CompletedTask;
 
         public async Task DirectAuth(string login, string password)
         {

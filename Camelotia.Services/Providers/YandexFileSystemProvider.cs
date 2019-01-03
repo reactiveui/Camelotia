@@ -17,9 +17,9 @@ namespace Camelotia.Services.Providers
     public sealed class YandexFileSystemProvider : IProvider
     {
         private const string YandexAuthTokenUrl = "https://oauth.yandex.ru/token";
-        private const string CloudApiDownloadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/download?path=";
-        private const string CloudApiUploadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/upload?path=";
-        private const string CloudApiGetPathBase = "https://cloud-api.yandex.net:443/v1/disk/resources?path=";
+        private const string ApiDownloadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/download?path=";
+        private const string ApiUploadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/upload?path=";
+        private const string ApiGetPathBase = "https://cloud-api.yandex.net:443/v1/disk/resources?path=";
         private const string HashAuthClientId = "ce3e9bc7859244ac81ce6626e184a12c";
         private const string CodeAuthClientSecret = "f14bfc0275a34ceea83d7de7f4b50898";
         private const string CodeAuthClientId = "122661520b174cb5b85b4a3c26aa66f6";
@@ -46,10 +46,14 @@ namespace Camelotia.Services.Providers
         public IObservable<bool> IsAuthorized => _isAuthorized;
 
         public bool SupportsDirectAuth => false;
+        
+        public bool SupportsHostAuth => false;
 
         public bool SupportsOAuth => true;
 
         public string InitialPath => Path.DirectorySeparatorChar.ToString();
+
+        public Task HostAuth(string address, int port, string login, string password) => Task.CompletedTask;
 
         public Task DirectAuth(string login, string password) => Task.CompletedTask;
         
@@ -57,7 +61,7 @@ namespace Camelotia.Services.Providers
         {
             var yaPath = path.Replace("\\", "/");
             var encodedPath = WebUtility.UrlEncode(yaPath);
-            var pathUrl = CloudApiGetPathBase + encodedPath;
+            var pathUrl = ApiGetPathBase + encodedPath;
             using (var response = await _http.GetAsync(pathUrl).ConfigureAwait(false))
             {
                 var json = await response.Content.ReadAsStringAsync();
@@ -79,7 +83,7 @@ namespace Camelotia.Services.Providers
         {
             var yaPath = from.Replace("\\", "/");
             var encodedPath = WebUtility.UrlEncode(yaPath);
-            var pathUrl = CloudApiDownloadFileUrl + encodedPath;
+            var pathUrl = ApiDownloadFileUrl + encodedPath;
             using (var response = await _http.GetAsync(pathUrl).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
@@ -99,7 +103,7 @@ namespace Camelotia.Services.Providers
         {
             var yaPath = Path.Combine(to, name).Replace("\\", "/");
             var encodedPath = WebUtility.UrlEncode(yaPath);
-            var pathUrl = CloudApiUploadFileUrl + encodedPath;
+            var pathUrl = ApiUploadFileUrl + encodedPath;
             using (var response = await _http.GetAsync(pathUrl).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
@@ -115,7 +119,7 @@ namespace Camelotia.Services.Providers
         public async Task Delete(FileModel file)
         {
             var encodedPath = WebUtility.UrlEncode(file.Path);
-            var pathUrl = CloudApiGetPathBase + encodedPath;
+            var pathUrl = ApiGetPathBase + encodedPath;
             using (var response = await _http.DeleteAsync(pathUrl).ConfigureAwait(false))
                 response.EnsureSuccessStatusCode();
         }

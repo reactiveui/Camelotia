@@ -55,15 +55,18 @@ namespace Camelotia.Presentation.Xamarin.Droid
                 (provider, files, auth) => new ProviderViewModel(auth, files, currentThread, mainThread, provider),
                 provider => new AuthViewModel(
                     new DirectAuthViewModel(currentThread, mainThread, provider),
+                    new HostAuthViewModel(currentThread, mainThread, provider),
                     new OAuthViewModel(currentThread, mainThread, provider),
                     currentThread,
+                    mainThread,
                     provider
                 ),
                 new ProviderStorage(
                     new VkontakteFileSystemProvider(cache),
                     new YandexFileSystemProvider(
                         new AndroidAuthenticator(this), cache
-                    )
+                    ),
+                    new FtpFileSystemProvider()
                 ),
                 new AndroidFileManager(this),
                 currentThread,

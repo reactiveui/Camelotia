@@ -21,6 +21,8 @@ namespace Camelotia.Services.Providers
 
         public bool SupportsDirectAuth => false;
 
+        public bool SupportsHostAuth => false;
+
         public bool SupportsOAuth => false;
 
         public string InitialPath => string.Empty;
@@ -28,6 +30,8 @@ namespace Camelotia.Services.Providers
         public Task OAuth() => Task.CompletedTask;
 
         public Task Logout() => Task.CompletedTask;
+
+        public Task HostAuth(string address, int port, string login, string password) => Task.CompletedTask;
 
         public Task DirectAuth(string login, string password) => Task.CompletedTask;
 

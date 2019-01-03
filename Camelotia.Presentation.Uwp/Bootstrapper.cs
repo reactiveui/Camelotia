@@ -20,15 +20,18 @@ namespace Camelotia.Presentation.Uwp
                 (provider, files, auth) => new ProviderViewModel(auth, files, currentThread, mainThread, provider),
                 provider => new AuthViewModel(
                     new DirectAuthViewModel(currentThread, mainThread, provider),
+                    new HostAuthViewModel(currentThread, mainThread, provider),
                     new OAuthViewModel(currentThread, mainThread, provider),
                     currentThread,
+                    mainThread,
                     provider
                 ),
                 new ProviderStorage(
                     new VkontakteFileSystemProvider(cache),
                     new YandexFileSystemProvider(
                         new UniversalWindowsAuthenticator(), cache
-                    )
+                    ),
+                    new FtpFileSystemProvider()
                 ),
                 new UniversalWindowsFileManager(),
                 currentThread,

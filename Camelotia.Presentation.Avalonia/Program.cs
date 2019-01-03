@@ -31,8 +31,10 @@ namespace Camelotia.Presentation.Avalonia
                 (provider, files, auth) => new ProviderViewModel(auth, files, currentThread, mainThread, provider),
                 provider => new AuthViewModel(
                     new DirectAuthViewModel(currentThread, mainThread, provider),
+                    new HostAuthViewModel(currentThread, mainThread, provider), 
                     new OAuthViewModel(currentThread, mainThread, provider),
                     currentThread,
+                    mainThread,
                     provider
                 ),
                 new ProviderStorage(
@@ -40,7 +42,8 @@ namespace Camelotia.Presentation.Avalonia
                     new VkontakteFileSystemProvider(cache),
                     new YandexFileSystemProvider(
                         new AvaloniaAuthenticator(), cache
-                    )
+                    ),
+                    new FtpFileSystemProvider()
                 ),
                 new AvaloniaFileManager(),
                 currentThread,
