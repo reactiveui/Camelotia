@@ -18,10 +18,17 @@
         </PivotItem>
         <PivotItem IsEnabled="{x:Bind ViewModel.SupportsOAuth, Mode=OneWay}">
             <PivotItem.Header>
-                <TextBlock Text="Open Auth"  FontSize="18" FontWeight="SemiBold"
+                <TextBlock Text="Open Auth" FontSize="18" FontWeight="SemiBold"
                            Visibility="{x:Bind ViewModel.SupportsOAuth, Mode=OneWay}" />
             </PivotItem.Header>
             <views:OAuthView ViewModel="{x:Bind ViewModel.OAuth, Mode=OneWay}" />
+        </PivotItem>
+        <PivotItem IsEnabled="{x:Bind ViewModel.SupportsHostAuth, Mode=OneWay}">
+            <PivotItem.Header>
+                <TextBlock Text="Host Auth" FontSize="18" FontWeight="SemiBold"
+                           Visibility="{x:Bind ViewModel.SupportsHostAuth, Mode=OneWay}" />
+            </PivotItem.Header>
+            <views:HostAuthView ViewModel="{x:Bind ViewModel.HostAuth, Mode=OneWay}" />
         </PivotItem>
     </Pivot>
 </UserControl>

@@ -34,6 +34,7 @@ namespace Camelotia.Presentation.Avalonia
                     new HostAuthViewModel(currentThread, mainThread, provider), 
                     new OAuthViewModel(currentThread, mainThread, provider),
                     currentThread,
+                    mainThread,
                     provider
                 ),
                 new ProviderStorage(

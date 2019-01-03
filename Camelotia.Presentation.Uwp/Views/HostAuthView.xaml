@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Camelotia.Presentation.Uwp.Views.DirectAuthView"
+    x:Class="Camelotia.Presentation.Uwp.Views.HostAuthView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Camelotia.Presentation.Uwp.Views"
@@ -31,6 +31,16 @@
                            TextWrapping="Wrap" />
             </StackPanel>
         </StackPanel>
+        <TextBlock Text="Please, enter host address with port:" Margin="0 5" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Text="{x:Bind ViewModel.Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Grid.Column="1" Margin="5 0 0 0" 
+                     Text="{x:Bind ViewModel.Port, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
         <TextBlock Text="Please, enter your user name:" Margin="0 5" />
         <TextBox Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <TextBlock Text="Please, enter your password:" Margin="0 5" />

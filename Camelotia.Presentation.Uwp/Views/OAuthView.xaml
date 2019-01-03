@@ -28,6 +28,7 @@
                 <StackPanel Margin="12">
                     <TextBlock Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
                                IsTextSelectionEnabled="True"
+                               Foreground="White"
                                TextWrapping="Wrap" />
                 </StackPanel>
             </StackPanel>

@@ -17,6 +17,7 @@ namespace Camelotia.Presentation.ViewModels
             IHostAuthViewModel hostAuth,
             IOAuthViewModel oAuth,
             IScheduler currentThread,
+            IScheduler mainThread,
             IProvider provider)
         {
             OAuth = oAuth;
@@ -27,12 +28,14 @@ namespace Camelotia.Presentation.ViewModels
             _isAuthenticated = _provider
                 .IsAuthorized
                 .DistinctUntilChanged()
+                .ObserveOn(mainThread)
                 .ToProperty(this, x => x.IsAuthenticated, scheduler: currentThread);
 
             _isAnonymous = _provider
                 .IsAuthorized
                 .Select(authorized => !authorized)
                 .DistinctUntilChanged()
+                .ObserveOn(mainThread)
                 .ToProperty(this, x => x.IsAnonymous, scheduler: currentThread);
         }
 

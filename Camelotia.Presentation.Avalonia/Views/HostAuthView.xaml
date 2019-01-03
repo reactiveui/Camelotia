@@ -31,7 +31,7 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0" Text="{Binding Address, Mode=TwoWay}" />
-            <TextBox Grid.Column="1" Text="{Binding Port, Mode=TwoWay}" />
+            <TextBox Grid.Column="1" Text="{Binding Port, Mode=TwoWay}" Margin="5 0 0 0" />
         </Grid>
         <TextBlock Text="Please, enter your user name:" Margin="0 5" />
         <TextBox Text="{Binding Username, Mode=TwoWay}" />

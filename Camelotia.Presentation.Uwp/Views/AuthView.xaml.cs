@@ -2,6 +2,7 @@
 using ReactiveUI;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -18,8 +19,18 @@ namespace Camelotia.Presentation.Uwp.Views
             this.WhenActivated(disposables => 
             {
                 this.WhenAnyValue(x => x.ViewModel.SupportsDirectAuth)
-                    .Select(supportsDirectAuth => supportsDirectAuth ? 0 : 1)
-                    .BindTo(this, x => x.AuthorizationPivot.SelectedIndex)
+                    .Where(supports => supports)
+                    .Subscribe(supports => AuthorizationPivot.SelectedIndex = 0)
+                    .DisposeWith(disposables);
+
+                this.WhenAnyValue(x => x.ViewModel.SupportsOAuth)
+                    .Where(supports => supports)
+                    .Subscribe(supports => AuthorizationPivot.SelectedIndex = 1)
+                    .DisposeWith(disposables);
+
+                this.WhenAnyValue(x => x.ViewModel.SupportsHostAuth)
+                    .Where(supports => supports)
+                    .Subscribe(supports => AuthorizationPivot.SelectedIndex = 2)
                     .DisposeWith(disposables);
             });
         }

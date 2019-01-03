@@ -56,7 +56,7 @@ namespace Camelotia.Presentation.Tests
 
         private AuthViewModel BuildAuthViewModel(IScheduler scheduler)
         {
-            return new AuthViewModel(_directAuthViewModel, _hostAuthViewModel, _oAuthViewModel, scheduler, _provider);
+            return new AuthViewModel(_directAuthViewModel, _hostAuthViewModel, _oAuthViewModel, scheduler, scheduler, _provider);
         }
     }
 }
