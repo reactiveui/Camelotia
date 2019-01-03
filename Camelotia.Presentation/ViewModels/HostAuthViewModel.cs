@@ -34,13 +34,18 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.Address)
                 .Select(name => !string.IsNullOrWhiteSpace(name));
 
+            var portValid = this
+                .WhenAnyValue(x => x.Port)
+                .Select(port => int.TryParse(port, out _));
+
             var canLogin = nameValid
                 .CombineLatest(passwordValid, (name, password) => name && password)
-                .CombineLatest(addressValid, (credentials, address) => credentials && address)
+                .CombineLatest(addressValid, (etc, address) => etc && address)
+                .CombineLatest(portValid, (etc, port) => etc && port)
                 .DistinctUntilChanged();
             
             _login = ReactiveCommand.CreateFromTask(
-                () => provider.HostAuth(Address, Username, Password),
+                () => provider.HostAuth(Address, int.Parse(Port), Username, Password),
                 canLogin, mainThread);
 
             _errorMessage = _login
@@ -58,10 +63,16 @@ namespace Camelotia.Presentation.ViewModels
                 .IsExecuting
                 .ToProperty(this, x => x.IsBusy, scheduler: currentThread);
             
-            _login.Subscribe(x => Username = string.Empty);
-            _login.Subscribe(x => Password = string.Empty);
-            _login.Subscribe(x => Address = string.Empty);
+            _login.Subscribe(x =>
+            {
+                Username = string.Empty;
+                Password = string.Empty;
+                Address = string.Empty;
+                Port = string.Empty;
+            });
         }
+        
+        [Reactive] public string Port { get; set; }
         
         [Reactive] public string Address { get; set; }
         

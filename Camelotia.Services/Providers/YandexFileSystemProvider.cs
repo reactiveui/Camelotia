@@ -53,7 +53,7 @@ namespace Camelotia.Services.Providers
 
         public string InitialPath => Path.DirectorySeparatorChar.ToString();
 
-        public Task HostAuth(string address, string login, string password) => Task.CompletedTask;
+        public Task HostAuth(string address, int port, string login, string password) => Task.CompletedTask;
 
         public Task DirectAuth(string login, string password) => Task.CompletedTask;
         

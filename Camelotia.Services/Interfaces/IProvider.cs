@@ -32,7 +32,7 @@ namespace Camelotia.Services.Interfaces
         
         bool SupportsOAuth { get; }
 
-        Task HostAuth(string address, string login, string password);
+        Task HostAuth(string address, int port, string login, string password);
 
         Task DirectAuth(string login, string password);
 

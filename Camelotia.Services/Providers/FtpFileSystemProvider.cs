@@ -1,16 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
+using FluentFTP;
+using VkNet.Model;
 
 namespace Camelotia.Services.Providers
 {
     public sealed class FtpFileSystemProvider : IProvider
     {
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
+        private Func<FtpClient> _factory;
 
         public FtpFileSystemProvider() => _isAuthorized.OnNext(false);
         
@@ -30,18 +34,50 @@ namespace Camelotia.Services.Providers
 
         public bool SupportsOAuth => false;
 
+        public Task OAuth() => Task.CompletedTask;
+
         public Task DirectAuth(string login, string password) => Task.CompletedTask;
 
-        public Task OAuth() => Task.CompletedTask;
-        
-        public Task HostAuth(string address, string login, string password)
+        public async Task HostAuth(string address, int port, string login, string password)
         {
-            throw new NotImplementedException();
+            _factory = () => new FtpClient(address, port, login, password);
+            await Get("/").ConfigureAwait(false);
+            _isAuthorized.OnNext(true);
         }
         
-        public Task<IEnumerable<FileModel>> Get(string path)
+        public async Task<IEnumerable<FileModel>> Get(string path)
         {
-            throw new NotImplementedException();
+            using (var connection = _factory())
+            {
+                await connection.ConnectAsync();
+                var files = await connection.GetListingAsync(path);
+                await connection.DisconnectAsync();
+
+                return
+                    from file in files
+                    let folder = file.Type == FtpFileSystemObjectType.Directory
+                    let size = ByteConverter.BytesToString(file.Size)
+                    select new FileModel(file.Name, file.FullName, folder, size);
+            }
+        }
+
+        public async Task Delete(FileModel file)
+        {
+            var path = file.Path;
+            using (var connection = _factory())
+            {
+                await connection.ConnectAsync();
+                if (file.IsFolder) await connection.DeleteDirectoryAsync(path);
+                else await connection.DeleteFileAsync(path);
+                await connection.DisconnectAsync();
+            }
+        }
+
+        public Task Logout()
+        {
+            _factory = null;
+            _isAuthorized.OnNext(false);
+            return Task.CompletedTask;
         }
 
         public Task UploadFile(string to, Stream from, string name)
@@ -50,16 +86,6 @@ namespace Camelotia.Services.Providers
         }
 
         public Task DownloadFile(string from, Stream to)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Delete(FileModel file)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Logout()
         {
             throw new NotImplementedException();
         }

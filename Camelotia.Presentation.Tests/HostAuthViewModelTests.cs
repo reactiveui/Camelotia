@@ -19,9 +19,10 @@ namespace Camelotia.Presentation.Tests
         {
             var model = BuildHostAuthViewModel(scheduler);
             model.Login.CanExecute(null).Should().BeFalse();
+            model.Address = "10.10.10.10";
             model.Username = "hello";
             model.Password = "world";
-            model.Address = "10.10.10.10:5000";
+            model.Port = "5000";
             model.Login.CanExecute(null).Should().BeTrue();
         });
 
@@ -29,15 +30,16 @@ namespace Camelotia.Presentation.Tests
         public void HasErrorsShouldTriggerWhenProviderBreaks() => new TestScheduler().With(scheduler =>
         {
             _provider
-                .HostAuth("10.10.10.10:5000", "hello", "world")
+                .HostAuth("10.10.10.10", 5000, "hello", "world")
                 .Returns(x => throw new Exception("example"));
                 
             var model = BuildHostAuthViewModel(scheduler);
             model.HasErrors.Should().BeFalse();
                 
+            model.Port = "5000";
             model.Username = "hello";
             model.Password = "world";
-            model.Address = "10.10.10.10:5000";
+            model.Address = "10.10.10.10";
             model.Login.Execute(null);
                 
             scheduler.AdvanceBy(2);
@@ -50,10 +52,11 @@ namespace Camelotia.Presentation.Tests
         {
             var model = BuildHostAuthViewModel(scheduler);
             model.IsBusy.Should().BeFalse();
-            
+
+            model.Port = "5000";
             model.Username = "hello";
             model.Password = "world";
-            model.Address = "10.10.10.10:5000";
+            model.Address = "10.10.10.10";
             model.Login.Execute(null);
                 
             scheduler.AdvanceBy(2);
@@ -61,6 +64,25 @@ namespace Camelotia.Presentation.Tests
                 
             scheduler.AdvanceBy(2);
             model.IsBusy.Should().BeFalse();
+        });
+
+        [Fact]
+        public void ShouldTreatNonIntegersAsInvalid() => new TestScheduler().With(scheduler =>
+        {
+            var model = BuildHostAuthViewModel(scheduler);
+            model.Login.CanExecute(null).Should().BeFalse();
+            
+            model.Port = "5000";
+            model.Username = "hello";
+            model.Password = "world";
+            model.Address = "10.10.10.10";
+            model.Login.CanExecute(null).Should().BeTrue();
+
+            model.Port = "abc";
+            model.Login.CanExecute(null).Should().BeFalse();
+            
+            model.Port = "42";
+            model.Login.CanExecute(null).Should().BeTrue();
         });
 
         private HostAuthViewModel BuildHostAuthViewModel(IScheduler scheduler)
