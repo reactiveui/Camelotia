@@ -14,11 +14,13 @@ namespace Camelotia.Presentation.ViewModels
         
         public AuthViewModel(
             IDirectAuthViewModel directAuth,
+            IHostAuthViewModel hostAuth,
             IOAuthViewModel oAuth,
             IScheduler currentThread,
             IProvider provider)
         {
             OAuth = oAuth;
+            HostAuth = hostAuth;
             DirectAuth = directAuth;
             _provider = provider;
 
@@ -36,13 +38,17 @@ namespace Camelotia.Presentation.ViewModels
 
         public bool SupportsDirectAuth => _provider.SupportsDirectAuth;
 
-        public bool IsAuthenticated => _isAuthenticated.Value;
+        public bool SupportsHostAuth => _provider.SupportsHostAuth;
 
         public bool SupportsOAuth => _provider.SupportsOAuth;
+
+        public bool IsAuthenticated => _isAuthenticated.Value;
 
         public bool IsAnonymous => _isAnonymous.Value;
 
         public IDirectAuthViewModel DirectAuth { get; }
+        
+        public IHostAuthViewModel HostAuth { get; }
         
         public IOAuthViewModel OAuth { get; }
     }
