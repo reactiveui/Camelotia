@@ -29,6 +29,13 @@ namespace Camelotia.Presentation.Xamarin.Views
                     .Do(view => Children.Clear())
                     .Subscribe(view => Children.Add(view))
                     .DisposeWith(disposables);
+
+                this.WhenAnyValue(x => x.ViewModel.SupportsHostAuth)
+                    .Where(supportsHostAuth => supportsHostAuth)
+                    .Select(supports => new HostAuthView { ViewModel = ViewModel.HostAuth })
+                    .Do(view => Children.Clear())
+                    .Subscribe(view => Children.Add(view))
+                    .DisposeWith(disposables);
             });
         }
     }
