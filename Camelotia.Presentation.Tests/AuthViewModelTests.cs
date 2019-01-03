@@ -14,6 +14,7 @@ namespace Camelotia.Presentation.Tests
     public sealed class AuthViewModelTests
     {
         private readonly IDirectAuthViewModel _directAuthViewModel = Substitute.For<IDirectAuthViewModel>();
+        private readonly IHostAuthViewModel _hostAuthViewModel = Substitute.For<IHostAuthViewModel>();
         private readonly IOAuthViewModel _oAuthViewModel = Substitute.For<IOAuthViewModel>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
 
@@ -55,7 +56,7 @@ namespace Camelotia.Presentation.Tests
 
         private AuthViewModel BuildAuthViewModel(IScheduler scheduler)
         {
-            return new AuthViewModel(_directAuthViewModel, _oAuthViewModel, scheduler, _provider);
+            return new AuthViewModel(_directAuthViewModel, _hostAuthViewModel, _oAuthViewModel, scheduler, _provider);
         }
     }
 }
