@@ -41,7 +41,7 @@ namespace Camelotia.Services.Providers
 
         public string Name => "Yandex Disk";
         
-        public string Description => "Yandex Disk file provider";
+        public string Description => "Yandex Disk file provider.";
 
         public IObservable<bool> IsAuthorized => _isAuthorized;
 

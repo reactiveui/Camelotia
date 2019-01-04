@@ -35,7 +35,7 @@ namespace Camelotia.Services.Providers
 
         public string Name => "Vkontakte Documents";
 
-        public string Description => "Vkontakte documents provider";
+        public string Description => "Vkontakte documents provider.";
 
         public IObservable<bool> IsAuthorized => _isAuthorized;
 
