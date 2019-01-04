@@ -80,14 +80,25 @@ namespace Camelotia.Services.Providers
             return Task.CompletedTask;
         }
 
-        public Task UploadFile(string to, Stream from, string name)
+        public async Task UploadFile(string to, Stream from, string name)
         {
-            throw new NotImplementedException();
+            using (var connection = _factory())
+            {
+                await connection.ConnectAsync();
+                var path = Path.Combine(to, name);
+                await connection.UploadAsync(from, path);
+                await connection.DisconnectAsync();
+            }
         }
 
-        public Task DownloadFile(string from, Stream to)
+        public async Task DownloadFile(string from, Stream to)
         {
-            throw new NotImplementedException();
+            using (var connection = _factory())
+            {
+                await connection.ConnectAsync();
+                await connection.DownloadAsync(to, from);
+                await connection.DisconnectAsync();
+            }
         }
     }
 }
