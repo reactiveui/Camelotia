@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="akavache" Version="6.2.3" />
     <PackageReference Include="FluentFTP" Version="19.2.2" />
+    <PackageReference Include="ssh.net" Version="2016.1.0" />
     <PackageReference Include="System.Reactive" Version="4.1.2" />
     <PackageReference Include="VkNet" Version="1.40.0" />
   </ItemGroup>

@@ -66,7 +66,8 @@ namespace Camelotia.Presentation.Xamarin.Droid
                     new YandexFileSystemProvider(
                         new AndroidAuthenticator(this), cache
                     ),
-                    new FtpFileSystemProvider()
+                    new FtpFileSystemProvider(),
+                    new SftpFileSystemProvider()
                 ),
                 new AndroidFileManager(this),
                 currentThread,

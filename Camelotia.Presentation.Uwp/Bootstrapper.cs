@@ -31,7 +31,8 @@ namespace Camelotia.Presentation.Uwp
                     new YandexFileSystemProvider(
                         new UniversalWindowsAuthenticator(), cache
                     ),
-                    new FtpFileSystemProvider()
+                    new FtpFileSystemProvider(),
+                    new SftpFileSystemProvider()
                 ),
                 new UniversalWindowsFileManager(),
                 currentThread,

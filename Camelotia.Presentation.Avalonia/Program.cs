@@ -43,7 +43,8 @@ namespace Camelotia.Presentation.Avalonia
                     new YandexFileSystemProvider(
                         new AvaloniaAuthenticator(), cache
                     ),
-                    new FtpFileSystemProvider()
+                    new FtpFileSystemProvider(),
+                    new SftpFileSystemProvider()
                 ),
                 new AvaloniaFileManager(),
                 currentThread,
