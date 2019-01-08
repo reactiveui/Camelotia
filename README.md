@@ -31,14 +31,20 @@ To compile the Xamarin Forms Android application, you need to install appropriat
 
 ### Adding Custom Providers
 
-File system providers are located at `./Camelotia.Services/Providers/`. To add a custom file system provider, you need to create a separate class and implement the [IProvider](https://github.com/worldbeater/Camelotia/blob/master/Camelotia.Services/Interfaces/IProvider.cs) interface. It'll get integrated into the UI automagically.
+File system providers are located at `./Camelotia.Services/Providers/`. To add a custom file system provider, you need to create a separate class and implement the [IProvider](https://github.com/worldbeater/Camelotia/blob/master/Camelotia.Services/Interfaces/IProvider.cs) interface. Then, add your provider to composition root for each platform that should support it.
 
 ### Technologies and Tools Used
 
 - <a href="https://reactiveui.net/">ReactiveUI</a> modern MVVM framework
-- <a href="http://github.com/avaloniaui">AvaloniaUI</a> cross-platform GUI framework
+- <a href="https://github.com/reactiveui/Akavache">Akavache</a> persistent key-value store
+- <a href="http://github.com/avaloniaui">AvaloniaUI</a> cross-platform XAML-based GUI framework
 - <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a> mocking library
 - <a href="https://github.com/fluentassertions/fluentassertions">FluentAssertions</a> assertions library
 - <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/">Xamarin.Forms</a> mobile GUI framework
-- <a href="https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide">Universal Windows Platform</a>
-- <a href="https://www.jetbrains.com/rider/">JetBrains Rider IDE</a>
+- <a href="https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide">Universal Windows Platform</a> SDK
+- <a href="https://github.com/dotnet/reactive">Reactive Extensions</a> for .NET
+- <a href="https://github.com/octokit/octokit.net">Octokit</a> GitHub client library
+- <a href="https://github.com/robinrodricks/FluentFTP">FluentFTP</a> FTP implementation
+- <a href="https://github.com/sshnet/SSH.NET/">SSH.NET</a> SFTP implementation
+- <a href="https://github.com/vknet/vk">VkNet</a> Vkontakte SDK for .NET
+- <a href="https://www.jetbrains.com/rider/">JetBrains Rider</a> and <a href="https://visualstudio.microsoft.com/">Microsoft Visual Studio</a> IDEs

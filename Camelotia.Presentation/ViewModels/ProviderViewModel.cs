@@ -142,6 +142,7 @@ namespace Camelotia.Presentation.ViewModels
             _uploadToCurrentPath
                 .ThrownExceptions
                 .Merge(_downloadSelectedFile.ThrownExceptions)
+                .Merge(_refresh.ThrownExceptions)
                 .Subscribe(Console.WriteLine);
 
             this.WhenAnyValue(x => x.SelectedFile)

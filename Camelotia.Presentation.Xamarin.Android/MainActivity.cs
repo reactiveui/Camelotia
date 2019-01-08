@@ -67,7 +67,8 @@ namespace Camelotia.Presentation.Xamarin.Droid
                         new AndroidAuthenticator(this), cache
                     ),
                     new FtpFileSystemProvider(),
-                    new SftpFileSystemProvider()
+                    new SftpFileSystemProvider(),
+                    new GitHubFileSystemProvider()
                 ),
                 new AndroidFileManager(this),
                 currentThread,

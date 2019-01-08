@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Background="#f0f0f0"
         FontFamily="Ubuntu"
-        MinHeight="500"
-        MinWidth="700">
+        MinHeight="590"
+        MinWidth="750">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />

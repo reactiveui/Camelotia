@@ -44,7 +44,8 @@ namespace Camelotia.Presentation.Avalonia
                         new AvaloniaAuthenticator(), cache
                     ),
                     new FtpFileSystemProvider(),
-                    new SftpFileSystemProvider()
+                    new SftpFileSystemProvider(),
+                    new GitHubFileSystemProvider()
                 ),
                 new AvaloniaFileManager(),
                 currentThread,

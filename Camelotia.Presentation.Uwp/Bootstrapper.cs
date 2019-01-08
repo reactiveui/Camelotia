@@ -32,7 +32,8 @@ namespace Camelotia.Presentation.Uwp
                         new UniversalWindowsAuthenticator(), cache
                     ),
                     new FtpFileSystemProvider(),
-                    new SftpFileSystemProvider()
+                    new SftpFileSystemProvider(),
+                    new GitHubFileSystemProvider()
                 ),
                 new UniversalWindowsFileManager(),
                 currentThread,
