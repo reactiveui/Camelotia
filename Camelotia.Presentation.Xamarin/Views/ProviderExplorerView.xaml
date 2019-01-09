@@ -30,6 +30,7 @@
                        x:Name="PathLabel"
                        HorizontalTextAlignment="Center"
                        VerticalTextAlignment="Center"
+                       LineBreakMode="HeadTruncation"
                        FontSize="14"
                        Margin="15, 0" />
                 <Button Grid.Column="2"
