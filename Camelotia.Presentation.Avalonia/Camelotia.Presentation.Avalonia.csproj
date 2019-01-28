@@ -9,6 +9,7 @@
     <PackageReference Include="Avalonia" Version="0.7.0" />
     <PackageReference Include="Avalonia.Desktop" Version="0.7.0" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.7.0" />
+    <PackageReference Include="Splat.NLog" Version="1.0.5.0" />
   </ItemGroup>
 
   <ItemGroup>

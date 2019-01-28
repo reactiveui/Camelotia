@@ -4,9 +4,9 @@ using Camelotia.Presentation.Avalonia.Services;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Providers;
+using Camelotia.Services.Storages;
 using ReactiveUI;
 using Avalonia;
-using Camelotia.Services.Storages;
 
 namespace Camelotia.Presentation.Avalonia
 {

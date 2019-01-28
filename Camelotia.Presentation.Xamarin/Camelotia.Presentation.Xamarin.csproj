@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReactiveUI.XamForms" Version="9.5.1" />
+    <PackageReference Include="ReactiveUI.XamForms" Version="9.8.23" />
     <PackageReference Include="Xamarin.Forms" Version="3.4.0.1008975" />
     <PackageReference Include="Xam.Plugin.Iconize" Version="3.4.0.103" />
     <PackageReference Include="Xam.Plugin.Iconize.FontAwesome" Version="3.4.0.103" />
