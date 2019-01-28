@@ -30,6 +30,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _canLogout;
         private readonly ObservableAsPropertyHelper<bool> _isReady;
+        private readonly ReactiveCommand<Unit, Unit> _unselectFile;
         private readonly ReactiveCommand<Unit, string> _back;
         private readonly ReactiveCommand<Unit, string> _open;
         private readonly ReactiveCommand<Unit, Unit> _logout;
@@ -174,6 +175,14 @@ namespace Camelotia.Presentation.ViewModels
                 canDeleteSelection);
 
             _deleteSelectedFile.InvokeCommand(Refresh);
+
+            var canUnselectFile = this
+                .WhenAnyValue(x => x.SelectedFile)
+                .Select(selection => selection != null);
+            
+            _unselectFile = ReactiveCommand.Create(
+                () => { SelectedFile = null; },
+                canUnselectFile);
             
             Auth = authViewModel;
             Activator = new ViewModelActivator();
@@ -184,6 +193,28 @@ namespace Camelotia.Presentation.ViewModels
                     .Select(ignore => Unit.Default)
                     .InvokeCommand(_refresh)
                     .DisposeWith(disposable);
+
+                var interval = TimeSpan.FromSeconds(1);
+                var tick = Observable
+                    .Timer(interval, interval)
+                    .Select(value => Unit.Default);
+
+                tick.Select(unit => RefreshingIn - 1)
+                    .Where(value => value >= 0)
+                    .Subscribe(x => RefreshingIn = x)
+                    .DisposeWith(disposable);
+
+                this.WhenAnyValue(x => x.RefreshingIn)
+                    .Where(refreshing => refreshing == 0)
+                    .Select(value => Unit.Default)
+                    .InvokeCommand(_refresh)
+                    .DisposeWith(disposable);
+
+                const int refreshPeriod = 30;
+                _refresh.Select(results => refreshPeriod)
+                    .StartWith(refreshPeriod)
+                    .Subscribe(x => RefreshingIn = x)
+                    .DisposeWith(disposable);
             });
         }
         
@@ -192,6 +223,8 @@ namespace Camelotia.Presentation.ViewModels
         public ViewModelActivator Activator { get; }
 
         [Reactive] public FileModel SelectedFile { get; set; }
+        
+        [Reactive] public int RefreshingIn { get; private set; }
         
         public string CurrentPath => _currentPath?.Value ?? _provider.InitialPath;
         
@@ -206,6 +239,8 @@ namespace Camelotia.Presentation.ViewModels
         public IEnumerable<FileModel> Files => _files.Value;
 
         public string Description => _provider.Description;
+        
+        public ICommand UnselectFile => _unselectFile;
         
         public bool CanLogout => _canLogout.Value;
         
