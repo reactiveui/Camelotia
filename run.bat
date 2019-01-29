@@ -1,6 +1,7 @@
-echo "Starting app..."
+@echo off
+echo Starting app...
+cd Camelotia.Presentation.Avalonia
 dotnet clean
 dotnet restore
 dotnet build
-cd Camelotia.Presentation.Avalonia
 dotnet run --framework netcoreapp2.0
