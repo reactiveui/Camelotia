@@ -1,13 +1,13 @@
 using System;
-using System.Linq;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Windows.Input;
+using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Threading.Tasks;
-using System.Windows.Input;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
@@ -68,11 +68,11 @@ namespace Camelotia.Presentation.ViewModels
             
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file != null && file.IsFolder)
+                .Select(file => file.HasValue && file.Value.IsFolder)
                 .CombineLatest(_refresh.IsExecuting, (folder, busy) => folder && !busy);
             
             _open = ReactiveCommand.Create(
-                () => Path.Combine(CurrentPath, SelectedFile.Name),
+                () => Path.Combine(CurrentPath, SelectedFile.Value.Name),
                 canOpenCurrentPath, mainThread);
 
             var canCurrentPathGoBack = this
@@ -128,14 +128,14 @@ namespace Camelotia.Presentation.ViewModels
 
             var canDownloadSelectedFile = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file != null && !file.IsFolder)
+                .Select(file => file.HasValue && !file.Value.IsFolder)
                 .DistinctUntilChanged();
                 
             _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
                 () => Observable
-                    .FromAsync(() => fileManager.OpenWrite(SelectedFile.Name))
+                    .FromAsync(() => fileManager.OpenWrite(SelectedFile.Value.Name))
                     .Where(stream => stream != null)
-                    .Select(stream => _provider.DownloadFile(SelectedFile.Path, stream))
+                    .Select(stream => _provider.DownloadFile(SelectedFile.Value.Path, stream))
                     .SelectMany(task => task.ToObservable()), 
                 canDownloadSelectedFile,
                 mainThread);
@@ -145,15 +145,6 @@ namespace Camelotia.Presentation.ViewModels
                 .Merge(_downloadSelectedFile.ThrownExceptions)
                 .Merge(_refresh.ThrownExceptions)
                 .Subscribe(Console.WriteLine);
-
-            this.WhenAnyValue(x => x.SelectedFile)
-                .Where(file => file != null && file.IsFolder)
-                .Buffer(2, 1)
-                .Select(files => (files.First().Path, files.Last().Path))
-                .DistinctUntilChanged()
-                .Where(x => x.Item1 == x.Item2)
-                .Select(ignore => Unit.Default)
-                .InvokeCommand(_open);
             
             var isAuthEnabled = provider.SupportsDirectAuth || provider.SupportsOAuth;
             var canLogout = provider
@@ -168,10 +159,10 @@ namespace Camelotia.Presentation.ViewModels
 
             var canDeleteSelection = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file != null && !file.IsFolder);
+                .Select(file => file.HasValue && !file.Value.IsFolder);
 
             _deleteSelectedFile = ReactiveCommand.CreateFromTask(
-                () => provider.Delete(SelectedFile),
+                () => provider.Delete(SelectedFile.Value),
                 canDeleteSelection);
 
             _deleteSelectedFile.InvokeCommand(Refresh);
@@ -205,6 +196,7 @@ namespace Camelotia.Presentation.ViewModels
                     .DisposeWith(disposable);
 
                 this.WhenAnyValue(x => x.RefreshingIn)
+                    .Skip(1)
                     .Where(refreshing => refreshing == 0)
                     .Select(value => Unit.Default)
                     .InvokeCommand(_refresh)
@@ -222,7 +214,7 @@ namespace Camelotia.Presentation.ViewModels
         
         public ViewModelActivator Activator { get; }
 
-        [Reactive] public FileModel SelectedFile { get; set; }
+        [Reactive] public FileModel? SelectedFile { get; set; }
         
         [Reactive] public int RefreshingIn { get; private set; }
         

@@ -1,15 +1,7 @@
 namespace Camelotia.Services.Models
 {
-    public sealed class FileModel
+    public struct FileModel
     {
-        public FileModel(string name, string path, bool isFolder, string size)
-        {
-            Name = name;
-            Path = path;
-            IsFolder = isFolder;
-            Size = size;
-        }
-        
         public string Name { get; }
 
         public string Path { get; }
@@ -17,5 +9,13 @@ namespace Camelotia.Services.Models
         public bool IsFolder { get; }
 
         public string Size { get; }
+        
+        public FileModel(string name, string path, bool isFolder, string size)
+        {
+            Name = name;
+            Path = path;
+            IsFolder = isFolder;
+            Size = size;
+        }
     }
 }

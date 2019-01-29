@@ -36,70 +36,72 @@
                         Classes="Rounded"
                         Content="Open" />
             </Grid>
-            <Grid Grid.Row="1">
-                <ListBox Padding="0"
-                         Background="Transparent"
-                         SelectionMode="Toggle"
-                         Items="{Binding Files}"
-                         BorderBrush="Transparent"
-                         IsVisible="{Binding IsReady}"
-                         SelectedItem="{Binding SelectedFile, Mode=TwoWay}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate DataType="models:FileModel">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="3*" />
-                                    <ColumnDefinition Width="1*" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="8" Grid.Column="0">
-                                    <TextBlock Text="{Binding Name}"
-                                               TextWrapping="Wrap"
-                                               FontSize="14" />
-                                    <TextBlock Text="Directory"
-                                               IsVisible="{Binding IsFolder}"
-                                               Foreground="#777777"
-                                               FontSize="12" />
-                                </StackPanel>
-                                <TextBlock Grid.Column="1"
-                                           VerticalAlignment="Center"
-                                           Foreground="#999999"
-                                           Text="{Binding Size}" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <Grid IsVisible="{Binding HasErrors}" Background="#f7f7f7">
-                    <StackPanel VerticalAlignment="Center">
-                        <Ellipse Width="10" Height="10"
-                                 HorizontalAlignment="Center"
-                                 Fill="#ff0000"
-                                 Margin="10" />
-                        <TextBlock HorizontalAlignment="Center"
-                                   Text="Can't perform the operation, an error has occured."
-                                   Foreground="#000000" />
-                    </StackPanel>
+            <Border Grid.Row="1" BorderBrush="#f2f2f2" BorderThickness="0 2 0 2">
+                <Grid>
+                    <ListBox Padding="0"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             SelectionMode="Toggle"
+                             Items="{Binding Files}"
+                             IsVisible="{Binding IsReady}"
+                             SelectedItem="{Binding SelectedFile, Mode=TwoWay}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="models:FileModel">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*" />
+                                        <ColumnDefinition Width="1*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="8" Grid.Column="0">
+                                        <TextBlock Text="{Binding Name}"
+                                                   TextWrapping="Wrap"
+                                                   FontSize="14" />
+                                        <TextBlock Text="Directory"
+                                                   IsVisible="{Binding IsFolder}"
+                                                   Foreground="#777777"
+                                                   FontSize="12" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1"
+                                               VerticalAlignment="Center"
+                                               Foreground="#999999"
+                                               Text="{Binding Size}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Grid IsVisible="{Binding HasErrors}" Background="#f7f7f7">
+                        <StackPanel VerticalAlignment="Center">
+                            <Ellipse Width="10" Height="10"
+                                     HorizontalAlignment="Center"
+                                     Fill="#ff0000"
+                                     Margin="10" />
+                            <TextBlock HorizontalAlignment="Center"
+                                       Text="Can't perform the operation, an error has occured."
+                                       Foreground="#000000" />
+                        </StackPanel>
+                    </Grid>
+                    <Grid IsVisible="{Binding IsCurrentPathEmpty}" Background="#f7f7f7">
+                        <StackPanel VerticalAlignment="Center">
+                            <Ellipse Width="10" Height="10"
+                                     HorizontalAlignment="Center"
+                                     Fill="#ff0000"
+                                     Margin="10" />
+                            <TextBlock HorizontalAlignment="Center"
+                                       Text="Whoops, no files here!"
+                                       Foreground="#000000" />
+                        </StackPanel>
+                    </Grid>
+                    <Grid IsVisible="{Binding IsLoading}" Background="#f7f7f7">
+                        <StackPanel VerticalAlignment="Center">
+                            <ProgressBar HorizontalAlignment="Stretch"
+                                         IsIndeterminate="{Binding IsLoading}" />
+                            <TextBlock HorizontalAlignment="Center"
+                                       Text="Please, wait..."
+                                       Foreground="#000000" />
+                        </StackPanel>
+                    </Grid>
                 </Grid>
-                <Grid IsVisible="{Binding IsCurrentPathEmpty}" Background="#f7f7f7">
-                    <StackPanel VerticalAlignment="Center">
-                        <Ellipse Width="10" Height="10"
-                                 HorizontalAlignment="Center"
-                                 Fill="#ff0000"
-                                 Margin="10" />
-                        <TextBlock HorizontalAlignment="Center"
-                                   Text="Whoops, no files here!"
-                                   Foreground="#000000" />
-                    </StackPanel>
-                </Grid>
-                <Grid IsVisible="{Binding IsLoading}" Background="#f7f7f7">
-                    <StackPanel VerticalAlignment="Center">
-                        <ProgressBar HorizontalAlignment="Stretch"
-                                     IsIndeterminate="{Binding IsLoading}" />
-                        <TextBlock HorizontalAlignment="Center"
-                                   Text="Please, wait..."
-                                   Foreground="#000000" />
-                    </StackPanel>
-                </Grid>
-            </Grid>
+            </Border>
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
