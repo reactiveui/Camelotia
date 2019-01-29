@@ -18,6 +18,8 @@ namespace Camelotia.Presentation.Interfaces
         ICommand UploadToCurrentPath { get; }
 
         ICommand DeleteSelectedFile { get; }
+        
+        ICommand UnselectFile { get; }
 
         ICommand Refresh { get; }
         
@@ -36,6 +38,8 @@ namespace Camelotia.Presentation.Interfaces
         bool HasErrors { get; }
         
         bool CanLogout { get; }
+        
+        int RefreshingIn { get; }
         
         string CurrentPath { get; }
         

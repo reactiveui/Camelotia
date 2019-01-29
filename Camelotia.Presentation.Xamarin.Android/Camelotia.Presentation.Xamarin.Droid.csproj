@@ -54,9 +54,7 @@
   <ItemGroup>
     <PackageReference Include="System.Reactive" Version="4.1.2" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
-    <PackageReference Include="ReactiveUI.AndroidSupport">
-      <Version>9.5.1</Version>
-    </PackageReference>
+    <PackageReference Include="ReactiveUI.AndroidSupport" Version="9.8.23"/>
     <PackageReference Include="Xamarin.Forms" Version="3.4.0.1008975" />
     <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0" />
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0" />
