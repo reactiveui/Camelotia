@@ -54,6 +54,7 @@ namespace Camelotia.Presentation.ViewModels
                     .ThenBy(file => file.Name)
                     .ToList())
                 .StartWithEmpty()
+                .Where(files => Files == null || !files.SequenceEqual(Files))
                 .ToProperty(this, x => x.Files, scheduler: currentThread);
 
             _isLoading = _refresh
@@ -68,11 +69,11 @@ namespace Camelotia.Presentation.ViewModels
             
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file.HasValue && file.Value.IsFolder)
+                .Select(file => file != null && file.IsFolder)
                 .CombineLatest(_refresh.IsExecuting, (folder, busy) => folder && !busy);
             
             _open = ReactiveCommand.Create(
-                () => Path.Combine(CurrentPath, SelectedFile.Value.Name),
+                () => Path.Combine(CurrentPath, SelectedFile.Name),
                 canOpenCurrentPath, mainThread);
 
             var canCurrentPathGoBack = this
@@ -128,14 +129,14 @@ namespace Camelotia.Presentation.ViewModels
 
             var canDownloadSelectedFile = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file.HasValue && !file.Value.IsFolder)
+                .Select(file => file != null && !file.IsFolder)
                 .DistinctUntilChanged();
                 
             _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
                 () => Observable
-                    .FromAsync(() => fileManager.OpenWrite(SelectedFile.Value.Name))
+                    .FromAsync(() => fileManager.OpenWrite(SelectedFile.Name))
                     .Where(stream => stream != null)
-                    .Select(stream => _provider.DownloadFile(SelectedFile.Value.Path, stream))
+                    .Select(stream => _provider.DownloadFile(SelectedFile.Path, stream))
                     .SelectMany(task => task.ToObservable()), 
                 canDownloadSelectedFile,
                 mainThread);
@@ -159,10 +160,10 @@ namespace Camelotia.Presentation.ViewModels
 
             var canDeleteSelection = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file.HasValue && !file.Value.IsFolder);
+                .Select(file => file != null && !file.IsFolder);
 
             _deleteSelectedFile = ReactiveCommand.CreateFromTask(
-                () => provider.Delete(SelectedFile.Value),
+                () => provider.Delete(SelectedFile),
                 canDeleteSelection);
 
             _deleteSelectedFile.InvokeCommand(Refresh);
@@ -188,7 +189,8 @@ namespace Camelotia.Presentation.ViewModels
                 var interval = TimeSpan.FromSeconds(1);
                 var tick = Observable
                     .Timer(interval, interval)
-                    .Select(value => Unit.Default);
+                    .Select(value => Unit.Default)
+                    .ObserveOn(mainThread);
 
                 tick.Select(unit => RefreshingIn - 1)
                     .Where(value => value >= 0)
@@ -214,7 +216,7 @@ namespace Camelotia.Presentation.ViewModels
         
         public ViewModelActivator Activator { get; }
 
-        [Reactive] public FileModel? SelectedFile { get; set; }
+        [Reactive] public FileModel SelectedFile { get; set; }
         
         [Reactive] public int RefreshingIn { get; private set; }
         
@@ -228,7 +230,7 @@ namespace Camelotia.Presentation.ViewModels
 
         public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
         
-        public IEnumerable<FileModel> Files => _files.Value;
+        public IEnumerable<FileModel> Files => _files?.Value;
 
         public string Description => _provider.Description;
         

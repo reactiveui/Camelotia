@@ -9,7 +9,7 @@ namespace Camelotia.Presentation.Interfaces
     {
         IAuthViewModel Auth { get; }
         
-        FileModel? SelectedFile { get; set; }
+        FileModel SelectedFile { get; set; }
         
         IEnumerable<FileModel> Files { get; }
         
