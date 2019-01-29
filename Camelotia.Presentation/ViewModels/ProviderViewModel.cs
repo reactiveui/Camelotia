@@ -100,7 +100,7 @@ namespace Camelotia.Presentation.ViewModels
 
             _isCurrentPathEmpty = this
                 .WhenAnyValue(x => x.Files)
-                .Skip(2)
+                .Skip(1)
                 .Where(files => files != null)
                 .Select(files => !files.Any())
                 .ToProperty(this, x => x.IsCurrentPathEmpty, scheduler: currentThread);
