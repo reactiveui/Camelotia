@@ -160,12 +160,12 @@
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" 
                         HorizontalAlignment="Stretch"
-                        Content="Logout" Margin="6 6 0 6"
+                        Content="Logout" Margin="6 3 0 6"
                         Style="{StaticResource ButtonRevealStyle}"
                         Command="{x:Bind ViewModel.Logout, Mode=OneWay}" />
                 <Button Grid.Column="1" 
                         HorizontalAlignment="Stretch"
-                        Content="Unselect" Margin="6 6 0 6"
+                        Content="Unselect" Margin="6 3 0 6"
                         Style="{StaticResource ButtonRevealStyle}"
                         Command="{x:Bind ViewModel.UnselectFile, Mode=OneWay}" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10">
@@ -175,7 +175,7 @@
                     <TextBlock Text="{x:Bind ViewModel.RefreshingIn, Mode=OneWay}"
                                Foreground="{ThemeResource AppBarSeparatorForegroundThemeBrush}" />
                 </StackPanel>
-                <Button Grid.Column="3" Margin="6"
+                <Button Grid.Column="3" Margin="6 3 6 6"
                         Style="{StaticResource AccentButtonStyle}"
                         HorizontalAlignment="Stretch"
                         Command="{x:Bind ViewModel.Refresh, Mode=OneWay}"
