@@ -114,7 +114,7 @@ namespace Camelotia.Presentation.ViewModels
             var canUploadToCurrentPath = this
                 .WhenAnyValue(x => x.CurrentPath)
                 .Select(path => path != null)
-                .DistinctUntilChanged();
+                .CombineLatest(_refresh.IsExecuting, (up, loading) => up && !loading);
                 
             _uploadToCurrentPath = ReactiveCommand.CreateFromObservable(
                 () => Observable
@@ -130,7 +130,7 @@ namespace Camelotia.Presentation.ViewModels
             var canDownloadSelectedFile = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && !file.IsFolder)
-                .DistinctUntilChanged();
+                .CombineLatest(_refresh.IsExecuting, (down, loading) => down && !loading);
                 
             _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
                 () => Observable
@@ -160,7 +160,8 @@ namespace Camelotia.Presentation.ViewModels
 
             var canDeleteSelection = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file != null && !file.IsFolder);
+                .Select(file => file != null && !file.IsFolder)
+                .CombineLatest(_refresh.IsExecuting, (del, loading) => del && !loading);
 
             _deleteSelectedFile = ReactiveCommand.CreateFromTask(
                 () => provider.Delete(SelectedFile),
@@ -170,7 +171,8 @@ namespace Camelotia.Presentation.ViewModels
 
             var canUnselectFile = this
                 .WhenAnyValue(x => x.SelectedFile)
-                .Select(selection => selection != null);
+                .Select(selection => selection != null)
+                .CombineLatest(_refresh.IsExecuting, (sel, loading) => sel && !loading);
             
             _unselectFile = ReactiveCommand.Create(
                 () => { SelectedFile = null; },
