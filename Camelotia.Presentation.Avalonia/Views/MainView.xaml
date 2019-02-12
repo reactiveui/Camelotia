@@ -60,10 +60,10 @@
                         Content="Refresh"
                         Margin="12" />
             </StackPanel>
-            <ProgressBar Grid.Row="0"
-                         Grid.RowSpan="3"
-                         IsIndeterminate="True"
+            <ProgressBar Grid.Row="1"
+                         Grid.RowSpan="2"
                          Orientation="Vertical"
+                         IsIndeterminate="{Binding IsLoading}"
                          IsVisible="{Binding IsLoading}" />
         </Grid>
         <Grid Grid.Column="1">

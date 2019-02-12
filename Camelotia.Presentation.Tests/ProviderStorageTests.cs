@@ -1,8 +1,11 @@
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Providers;
 using Camelotia.Services.Storages;
+using DynamicData;
+using DynamicData.Tests;
 using NSubstitute;
 using Xunit;
 
@@ -22,24 +25,26 @@ namespace Camelotia.Presentation.Tests
                 new YandexFileSystemProvider(_authenticator, _tokenStorage)
             );
 
-            var sequence = await provider.LoadProviders();
-            var providers = sequence.ToList();
+            await provider.LoadProviders();
+            var providers = provider.Connect().AsAggregator();
             
-            Assert.Contains(providers, x => x is LocalFileSystemProvider);
-            Assert.Contains(providers, x => x is VkontakteFileSystemProvider);
-            Assert.Contains(providers, x => x is YandexFileSystemProvider);
+            Assert.Equal(3, providers.Data.Count);
+            Assert.Contains(providers.Data.Items, x => x is LocalFileSystemProvider);
+            Assert.Contains(providers.Data.Items, x => x is VkontakteFileSystemProvider);
+            Assert.Contains(providers.Data.Items, x => x is YandexFileSystemProvider);
         }
 
         [Fact]
         public async Task ShouldResolveOnlySpecifiedProvidersIfNeeded()
         {
             var provider = new ProviderStorage(new LocalFileSystemProvider());
-            var sequence = await provider.LoadProviders();
-            var providers = sequence.ToList();
+            await provider.LoadProviders();
+            var providers = provider.Connect().AsAggregator();
 
-            Assert.Contains(providers, x => x is LocalFileSystemProvider);
-            Assert.DoesNotContain(providers, x => x is VkontakteFileSystemProvider);
-            Assert.DoesNotContain(providers, x => x is YandexFileSystemProvider);
+            Assert.Equal(1, providers.Data.Count);
+            Assert.Contains(providers.Data.Items, x => x is LocalFileSystemProvider);
+            Assert.DoesNotContain(providers.Data.Items, x => x is VkontakteFileSystemProvider);
+            Assert.DoesNotContain(providers.Data.Items, x => x is YandexFileSystemProvider);
         }
     }
 }

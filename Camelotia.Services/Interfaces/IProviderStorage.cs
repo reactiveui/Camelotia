@@ -1,10 +1,13 @@
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
+using DynamicData;
 
 namespace Camelotia.Services.Interfaces
 {
     public interface IProviderStorage
     {
-        Task<IEnumerable<IProvider>> LoadProviders();
+        IObservable<IChangeSet<IProvider>> Connect();
+        
+        Task LoadProviders();
     }
 }

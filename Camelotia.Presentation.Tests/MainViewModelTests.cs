@@ -1,8 +1,10 @@
-using System.Linq;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
+using DynamicData;
+using DynamicData.Binding;
 using FluentAssertions;
 using Microsoft.Reactive.Testing;
 using NSubstitute;
@@ -20,9 +22,9 @@ namespace Camelotia.Presentation.Tests
         public void ShouldIndicateWhenLoadingAndReady() => new TestScheduler().With(scheduler =>
         {
             _providerStorage
-                .LoadProviders()
-                .Returns(Enumerable.Empty<IProvider>());
-                
+                .Connect()
+                .Returns(Observable.Return(new ChangeSet<IProvider>()));
+            
             var model = BuildMainViewModel(scheduler);
             model.IsLoading.Should().BeFalse();
             model.IsReady.Should().BeFalse();
@@ -44,10 +46,13 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldSelectFirstProviderWhenProvidersGetLoaded() => new TestScheduler().With(scheduler =>
         {
-            var providers = Enumerable.Repeat(Substitute.For<IProvider>(), 1);
+            var collection = new ObservableCollectionExtended<IProvider>();
+            var set = collection.ToObservableChangeSet();
+            
+            _providerStorage.Connect().Returns(set);
             _providerStorage
-                .LoadProviders()
-                .Returns(providers);
+                .When(storage => storage.LoadProviders())
+                .Do(args => collection.Add(Substitute.For<IProvider>()));
                 
             var model = BuildMainViewModel(scheduler);
             scheduler.AdvanceBy(2);
@@ -63,10 +68,13 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ActivationShouldTriggerLoad() => new TestScheduler().With(scheduler =>
         {
-            var providers = Enumerable.Repeat(Substitute.For<IProvider>(), 1);
+            var collection = new ObservableCollectionExtended<IProvider>();
+            var set = collection.ToObservableChangeSet();
+            
+            _providerStorage.Connect().Returns(set);
             _providerStorage
-                .LoadProviders()
-                .Returns(providers);
+                .When(storage => storage.LoadProviders())
+                .Do(args => collection.Add(Substitute.For<IProvider>()));
                 
             var model = BuildMainViewModel(scheduler);
             scheduler.AdvanceBy(2);

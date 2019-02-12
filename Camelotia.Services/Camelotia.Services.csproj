@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DynamicData" Version="6.7.1.2534" />
     <PackageReference Include="akavache" Version="6.2.3" />
     <PackageReference Include="FluentFTP" Version="19.2.2" />
     <PackageReference Include="Octokit" Version="0.32.0" />

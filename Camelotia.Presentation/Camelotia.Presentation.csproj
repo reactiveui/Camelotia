@@ -11,7 +11,6 @@
   <ItemGroup>
     <PackageReference Include="ReactiveUI" Version="9.8.23" />
     <PackageReference Include="ReactiveUI.Fody" Version="9.8.23" />
-    <PackageReference Include="DynamicData" Version="6.7.1.2534" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -6,9 +6,9 @@ namespace Camelotia.Presentation.Interfaces
 {
     public interface IMainViewModel : INotifyPropertyChanged
     {
-        IProviderViewModel SelectedProvider { get; set; }
+        ReadOnlyObservableCollection<IProviderViewModel> Providers { get; }
         
-        IEnumerable<IProviderViewModel> Providers { get; }
+        IProviderViewModel SelectedProvider { get; set; }
 
         ICommand LoadProviders { get; }
         

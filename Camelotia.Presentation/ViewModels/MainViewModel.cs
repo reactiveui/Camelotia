@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
@@ -16,10 +16,10 @@ namespace Camelotia.Presentation.ViewModels
 {
     public sealed class MainViewModel : ReactiveObject, IMainViewModel, ISupportsActivation
     {
-        private readonly ObservableAsPropertyHelper<IEnumerable<IProviderViewModel>> _providers;
-        private readonly ReactiveCommand<Unit, IEnumerable<IProvider>> _loadProviders;
+        private readonly ReadOnlyObservableCollection<IProviderViewModel> _providers;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _isReady;
+        private readonly ReactiveCommand<Unit, Unit> _load;
 
         public MainViewModel(
             Func<IProvider, IFileManager, IAuthViewModel, IProviderViewModel> providerFactory,
@@ -29,51 +29,54 @@ namespace Camelotia.Presentation.ViewModels
             IScheduler currentThread,
             IScheduler mainThread)
         {
-            _loadProviders = ReactiveCommand.CreateFromTask(
+            _load = ReactiveCommand.CreateFromTask(
                 providerStorage.LoadProviders,
                 outputScheduler: mainThread);
             
-            _providers = _loadProviders
-                .Select(providers => providers
-                    .Select(x => providerFactory(x, fileManager, authFactory(x)))
-                    .ToList())
+            var observableProviders = providerStorage.Connect();
+            observableProviders
+                .Transform(x => providerFactory(x, fileManager, authFactory(x)))
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .StartWithEmpty()
-                .ToProperty(this, x => x.Providers, scheduler: currentThread);
+                .Bind(out _providers)
+                .Subscribe();
             
-            _isLoading = _loadProviders
+            _isLoading = _load
                 .IsExecuting
                 .ToProperty(this, x => x.IsLoading, scheduler: currentThread);
             
-            _isReady = _loadProviders
+            _isReady = _load
                 .IsExecuting
-                .Select(executing => !executing)
                 .Skip(1)
+                .Select(executing => !executing)
                 .ToProperty(this, x => x.IsReady, scheduler: currentThread);
-            
-            this.WhenAnyValue(x => x.Providers)
-                .Where(providers => providers != null)
-                .Select(providers => providers.FirstOrDefault())
-                .Subscribe(x => SelectedProvider = x);
+
+            observableProviders
+                .Take(1)
+                .Where(changes => changes.Any())
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Select(changes => Providers.FirstOrDefault())
+                .Subscribe(change => SelectedProvider = change);
 
             Activator = new ViewModelActivator();
             this.WhenActivated(disposable =>
             {
-                _loadProviders.Execute()
+                _load.Execute()
                     .Subscribe(x => { })
                     .DisposeWith(disposable);
             });
         }
+        
+        public ReadOnlyObservableCollection<IProviderViewModel> Providers => _providers;
 
         [Reactive] public IProviderViewModel SelectedProvider { get; set; }
-        
-        public IEnumerable<IProviderViewModel> Providers => _providers.Value;
-        
-        public ICommand LoadProviders => _loadProviders;
-        
-        public bool IsLoading => _isLoading.Value;
-
-        public bool IsReady => _isReady.Value;
 
         public ViewModelActivator Activator { get; }
+        
+        public bool IsLoading => _isLoading.Value;
+        
+        public ICommand LoadProviders => _load;
+
+        public bool IsReady => _isReady.Value;
     }
 }
