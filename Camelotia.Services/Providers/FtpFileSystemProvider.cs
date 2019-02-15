@@ -34,6 +34,8 @@ namespace Camelotia.Services.Providers
 
         public bool SupportsOAuth => false;
 
+        public bool CanCreateFolder => false;
+
         public Task OAuth() => Task.CompletedTask;
 
         public Task DirectAuth(string login, string password) => Task.CompletedTask;
@@ -59,6 +61,11 @@ namespace Camelotia.Services.Providers
                     let size = ByteConverter.BytesToString(file.Size)
                     select new FileModel(file.Name, file.FullName, folder, size);
             }
+        }
+
+        public Task CreateFolder(string path, string name)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task Delete(FileModel file)

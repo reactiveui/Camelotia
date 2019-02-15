@@ -9,6 +9,8 @@ namespace Camelotia.Presentation.Interfaces
     {
         IAuthViewModel Auth { get; }
         
+        ICreateFolderViewModel Folder { get; }
+        
         FileModel SelectedFile { get; set; }
         
         IEnumerable<FileModel> Files { get; }

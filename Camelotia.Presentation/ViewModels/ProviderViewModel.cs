@@ -37,6 +37,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly IProvider _provider;
 
         public ProviderViewModel(
+            Func<IProviderViewModel, ICreateFolderViewModel> createFolder,
             IAuthViewModel authViewModel,
             IFileManager fileManager,
             IScheduler currentThread,
@@ -179,6 +180,7 @@ namespace Camelotia.Presentation.ViewModels
                 canUnselectFile);
             
             Auth = authViewModel;
+            Folder = createFolder(this);
             Activator = new ViewModelActivator();
             this.WhenActivated(disposable =>
             {
@@ -189,13 +191,10 @@ namespace Camelotia.Presentation.ViewModels
                     .DisposeWith(disposable);
 
                 var interval = TimeSpan.FromSeconds(1);
-                var tick = Observable
-                    .Timer(interval, interval)
-                    .Select(value => Unit.Default)
-                    .ObserveOn(mainThread);
-
-                tick.Select(unit => RefreshingIn - 1)
+                Observable.Timer(interval, interval)
+                    .Select(unit => RefreshingIn - 1)
                     .Where(value => value >= 0)
+                    .ObserveOn(mainThread)
                     .Subscribe(x => RefreshingIn = x)
                     .DisposeWith(disposable);
 
@@ -215,8 +214,10 @@ namespace Camelotia.Presentation.ViewModels
         }
         
         public IAuthViewModel Auth { get; }
-        
+
         public ViewModelActivator Activator { get; }
+        
+        public ICreateFolderViewModel Folder { get; }
 
         [Reactive] public FileModel SelectedFile { get; set; }
         
@@ -237,7 +238,7 @@ namespace Camelotia.Presentation.ViewModels
         public string Description => _provider.Description;
         
         public ICommand UnselectFile => _unselectFile;
-        
+
         public bool CanLogout => _canLogout.Value;
         
         public bool IsLoading => _isLoading.Value;
