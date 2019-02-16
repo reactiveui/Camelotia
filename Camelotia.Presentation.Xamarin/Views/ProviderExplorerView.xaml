@@ -63,6 +63,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <iconize:IconButton Grid.Column="0"
                                     x:Name="LogoutButton"
@@ -75,6 +76,9 @@
                                     Text="fas-cloud-upload-alt" />
                 <iconize:IconButton Grid.Column="3"
                                     x:Name="DownloadButton"
+                                    Text="fas-cloud-download-alt" />
+                <iconize:IconButton Grid.Column="4"
+                                    x:Name="CreateFolderButton"
                                     Text="fas-cloud-download-alt" />
             </Grid>
         </Grid>

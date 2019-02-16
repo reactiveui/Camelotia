@@ -1,12 +1,12 @@
 ﻿using Camelotia.Presentation.Interfaces;
 using Xamarin.Forms.Xaml;
+using Xamarin.Forms;
 using ReactiveUI.XamForms;
 using ReactiveUI;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
-using System;
-using Xamarin.Forms;
 using System.Linq;
+using System;
 
 namespace Camelotia.Presentation.Xamarin.Views
 {
@@ -30,6 +30,13 @@ namespace Camelotia.Presentation.Xamarin.Views
                     .Where(authenticated => !authenticated)
                     .DistinctUntilChanged()
                     .Select(x => new AuthView { ViewModel = ViewModel.Auth })
+                    .Subscribe(NavigateWithoutBackStack)
+                    .DisposeWith(disposables);
+
+                this.WhenAnyValue(x => x.ViewModel.Folder.IsVisible)
+                    .Where(visible => visible)
+                    .DistinctUntilChanged()
+                    .Select(x => new CreateFolderView { ViewModel = ViewModel.Folder })
                     .Subscribe(NavigateWithoutBackStack)
                     .DisposeWith(disposables);
             });
