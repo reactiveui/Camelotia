@@ -11,6 +11,14 @@
         <views:MainMasterView ViewModel="{Binding}" />
     </MasterDetailPage.Master>
     <MasterDetailPage.Detail>
-        <NavigationPage x:Name="NavigationView" />
+        <NavigationPage x:Name="NavigationView">
+            <x:Arguments>
+                <ContentPage>
+                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="Select a provider to get started." />
+                    </StackLayout>
+                </ContentPage>
+            </x:Arguments>
+        </NavigationPage>
     </MasterDetailPage.Detail>
 </rxui:ReactiveMasterDetailPage>
