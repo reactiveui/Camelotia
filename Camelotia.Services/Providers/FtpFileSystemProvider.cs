@@ -34,7 +34,7 @@ namespace Camelotia.Services.Providers
 
         public bool SupportsOAuth => false;
 
-        public bool CanCreateFolder => false;
+        public bool CanCreateFolder => true;
 
         public Task OAuth() => Task.CompletedTask;
 
@@ -63,9 +63,15 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        public Task CreateFolder(string path, string name)
+        public async Task CreateFolder(string path, string name)
         {
-            throw new NotImplementedException();
+            using (var connection = _factory())
+            {
+                await connection.ConnectAsync();
+                var directory = Path.Combine(path, name);
+                await connection.CreateDirectoryAsync(directory);
+                await connection.DisconnectAsync();
+            }
         }
 
         public async Task Delete(FileModel file)

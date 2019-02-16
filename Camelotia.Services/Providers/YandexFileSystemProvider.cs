@@ -101,9 +101,13 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        public Task CreateFolder(string path, string name)
+        public async Task CreateFolder(string path, string name)
         {
-            throw new NotImplementedException();
+            var directory = Path.Combine(path, name).Replace("\\", "/");
+            var encoded = WebUtility.UrlEncode(directory);
+            var pathUrl = ApiGetPathBase + encoded;
+            using (var response = await _http.PutAsync(pathUrl, null).ConfigureAwait(false))
+                response.EnsureSuccessStatusCode();
         }
 
         public async Task UploadFile(string to, Stream from, string name)
