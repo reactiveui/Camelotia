@@ -32,8 +32,8 @@
         <TextBox Text="{Binding Name, Mode=TwoWay}" />
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
                     Content="Create folder"

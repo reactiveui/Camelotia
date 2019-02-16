@@ -41,20 +41,7 @@ namespace Camelotia.Presentation.ViewModels
             _create = ReactiveCommand.CreateFromTask(
                 () => provider.CreateFolder(Path, Name),
                 canCreateFolder, mainThread);
-
-            _hasErrors = _create
-                .ThrownExceptions
-                .Select(exception => true)
-                .ToProperty(this, x => x.HasErrors);
-
-            _errorMessage = _create
-                .ThrownExceptions
-                .Select(exception => exception.Message)
-                .ToProperty(this, x => x.ErrorMessage);
-
-            _isLoading = _create.IsExecuting
-                .ToProperty(this, x => x.IsLoading);
-
+            
             var canCreate = Observable.Return(provider.CanCreateFolder);
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
@@ -73,6 +60,21 @@ namespace Camelotia.Presentation.ViewModels
             _close = ReactiveCommand.Create(
                 () => { IsVisible = false; },
                 canClose, mainThread);
+
+            _hasErrors = _create
+                .ThrownExceptions
+                .Select(exception => true)
+                .Merge(_close.Select(unit => false))
+                .ToProperty(this, x => x.HasErrors);
+
+            _errorMessage = _create
+                .ThrownExceptions
+                .Select(exception => exception.Message)
+                .Merge(_close.Select(unit => string.Empty))
+                .ToProperty(this, x => x.ErrorMessage);
+
+            _isLoading = _create.IsExecuting
+                .ToProperty(this, x => x.IsLoading);
 
             _close.Subscribe(x => Name = string.Empty);
             _create.InvokeCommand(Close);

@@ -167,7 +167,7 @@ namespace Camelotia.Presentation.Tests
 
         private ProviderViewModel BuildProviderViewModel(IScheduler scheduler)
         {
-            return new ProviderViewModel(_createFolder, _authViewModel, _fileManager, scheduler, scheduler, _provider);
+            return new ProviderViewModel(x => _createFolder, _authViewModel, _fileManager, scheduler, scheduler, _provider);
         }
     }
 }
