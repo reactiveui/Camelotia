@@ -40,7 +40,6 @@
                 <Grid>
                     <ListBox Padding="0"
                              BorderThickness="0"
-                             Background="Transparent"
                              SelectionMode="Toggle"
                              Items="{Binding Files}"
                              IsVisible="{Binding IsReady}"

@@ -77,8 +77,8 @@ namespace Camelotia.Presentation.ViewModels
                 .IsExecuting
                 .ToProperty(this, x => x.IsLoading);
 
-            _close.Subscribe(x => Name = string.Empty);
             _create.InvokeCommand(Close);
+            _close.Subscribe(x => Name = string.Empty);
         }
 
         [Reactive] public string Name { get; set; }

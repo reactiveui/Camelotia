@@ -46,7 +46,7 @@ namespace Camelotia.Presentation.ViewModels
         {
             _provider = provider;
             Folder = createFolder(this);
-
+            
             var canInteract = this
                 .WhenAnyValue(x => x.Folder.IsVisible)
                 .Select(visible => !visible);
@@ -222,6 +222,11 @@ namespace Camelotia.Presentation.ViewModels
                     .StartWith(refreshPeriod)
                     .Subscribe(x => RefreshingIn = x)
                     .DisposeWith(disposable);
+
+                this.WhenAnyValue(x => x.Folder.IsVisible)
+                    .Where(visible => !visible)
+                    .Select(x => Unit.Default)
+                    .InvokeCommand(_refresh);
             });
         }
         
