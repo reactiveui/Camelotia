@@ -47,7 +47,7 @@ namespace Camelotia.Presentation.Xamarin.Views
                     .DisposeWith(disposables);
                 this.BindCommand(ViewModel, x => x.DownloadSelectedFile, x => x.DownloadButton)
                     .DisposeWith(disposables);
-                this.BindCommand(ViewModel, x => x.Folder.Create, x => x.CreateFolderButton)
+                this.BindCommand(ViewModel, x => x.Folder.Open, x => x.CreateFolderButton)
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel, x => x.Name, x => x.Title)

@@ -79,7 +79,7 @@
                                     Text="fas-cloud-download-alt" />
                 <iconize:IconButton Grid.Column="4"
                                     x:Name="CreateFolderButton"
-                                    Text="fas-cloud-download-alt" />
+                                    Text="fas-folder" />
             </Grid>
         </Grid>
     </ContentPage.Content>
