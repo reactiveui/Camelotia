@@ -51,7 +51,7 @@ namespace Camelotia.Services.Providers
 
         public bool SupportsOAuth => true;
         
-        public bool CanCreateFolder => false;
+        public bool CanCreateFolder => true;
 
         public string InitialPath => Path.DirectorySeparatorChar.ToString();
 

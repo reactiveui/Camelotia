@@ -17,7 +17,13 @@ namespace Camelotia.Presentation.Uwp
             var cache = new AkavacheTokenStorage();
 
             return new MainViewModel(
-                (provider, files, auth) => new ProviderViewModel(auth, files, currentThread, mainThread, provider),
+                (provider, files, auth) => new ProviderViewModel(
+                    model => new CreateFolderViewModel(model, mainThread, provider),
+                    auth, files,
+                    currentThread,
+                    mainThread,
+                    provider
+                ),
                 provider => new AuthViewModel(
                     new DirectAuthViewModel(currentThread, mainThread, provider),
                     new HostAuthViewModel(currentThread, mainThread, provider),
