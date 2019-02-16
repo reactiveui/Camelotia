@@ -35,8 +35,14 @@ namespace Camelotia.Presentation.Xamarin.Views
 
                 this.WhenAnyValue(x => x.ViewModel.Folder.IsVisible)
                     .Where(visible => visible)
-                    .DistinctUntilChanged()
                     .Select(x => new CreateFolderView { ViewModel = ViewModel.Folder })
+                    .Subscribe(NavigateWithoutBackStack)
+                    .DisposeWith(disposables);
+
+                this.WhenAnyValue(x => x.ViewModel.Folder.IsVisible)
+                    .Where(visible => !visible)
+                    .Skip(1)
+                    .Select(x => new ProviderExplorerView { ViewModel = ViewModel })
                     .Subscribe(NavigateWithoutBackStack)
                     .DisposeWith(disposables);
             });
