@@ -73,7 +73,8 @@ namespace Camelotia.Presentation.ViewModels
                 .Merge(_close.Select(unit => string.Empty))
                 .ToProperty(this, x => x.ErrorMessage);
 
-            _isLoading = _create.IsExecuting
+            _isLoading = _create
+                .IsExecuting
                 .ToProperty(this, x => x.IsLoading);
 
             _close.Subscribe(x => Name = string.Empty);
