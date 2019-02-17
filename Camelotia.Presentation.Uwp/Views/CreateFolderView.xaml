@@ -1,0 +1,59 @@
+﻿<UserControl
+    x:Class="Camelotia.Presentation.Uwp.Views.CreateFolderView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Camelotia.Presentation.Uwp.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+    <StackPanel Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Padding="24"
+                Width="350">
+        <TextBlock Text="Create Folder"
+                   Style="{StaticResource HeaderTextBlockStyle}"
+                   FontSize="24"
+                   Margin="0 10" />
+        <ProgressBar HorizontalAlignment="Stretch"
+                     IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                     Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                     Margin="0 5" />
+        <StackPanel Visibility="{x:Bind ViewModel.HasErrors, Mode=OneWay}"
+                    Background="{ThemeResource SystemControlAccentAcrylicWindowAccentMediumHighBrush}"
+                    Margin="0 5">
+            <StackPanel Margin="12">
+                <TextBlock Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                           IsTextSelectionEnabled="True"
+                           Foreground="White"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel  Orientation="Horizontal" Margin="0 5">
+            <TextBlock Text="Creating new folder at:" Margin="0 0 5 0" />
+            <TextBlock Text="{x:Bind ViewModel.Path, Mode=OneWay}" Foreground="#002171" />
+        </StackPanel>
+        <TextBlock Text="Please, enter new folder name:" Margin="0 5" />
+        <TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    Content="Create folder"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Command="{x:Bind ViewModel.Create, Mode=OneWay}"
+                    HorizontalAlignment="Stretch"
+                    Margin="0 10 10 10" />
+            <Button Grid.Column="1"
+                    Content="Close"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Command="{x:Bind ViewModel.Close, Mode=OneWay}"
+                    HorizontalAlignment="Stretch"
+                    Margin="0 10" />
+        </Grid>
+    </StackPanel>
+</UserControl>

@@ -125,6 +125,9 @@
     <Compile Include="Views\AuthView.xaml.cs">
       <DependentUpon>AuthView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CreateFolderView.xaml.cs">
+      <DependentUpon>CreateFolderView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DirectAuthView.xaml.cs">
       <DependentUpon>DirectAuthView.xaml</DependentUpon>
     </Compile>
@@ -164,6 +167,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Views\AuthView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateFolderView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

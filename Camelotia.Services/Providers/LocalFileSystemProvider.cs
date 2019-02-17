@@ -25,6 +25,8 @@ namespace Camelotia.Services.Providers
 
         public bool SupportsOAuth => false;
 
+        public bool CanCreateFolder => true;
+
         public string InitialPath => string.Empty;
 
         public Task OAuth() => Task.CompletedTask;
@@ -71,6 +73,14 @@ namespace Camelotia.Services.Providers
                 await fileStream.CopyToAsync(to);
             }
         }
+
+        public Task CreateFolder(string at, string name) => Task.Run(() =>
+        {
+            if (!IsDirectory(at)) throw new InvalidOperationException("Can't create folder at a non-directory.");
+
+            var path = Path.Combine(at, name);
+            Directory.CreateDirectory(path);
+        });
 
         public async Task UploadFile(string to, Stream from, string name)
         {

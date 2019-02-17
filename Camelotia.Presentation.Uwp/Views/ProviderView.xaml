@@ -120,6 +120,10 @@
                                    Text="Please, wait..." />
                     </StackPanel>
                 </Grid>
+                <Grid Visibility="{x:Bind ViewModel.Folder.IsVisible, Mode=OneWay}"
+                      Background="{ThemeResource SystemControlChromeLowAcrylicWindowBrush}">
+                    <views:CreateFolderView ViewModel="{x:Bind ViewModel.Folder, Mode=OneWay}" />
+                </Grid>
             </Grid>
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
@@ -156,12 +160,13 @@
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="5*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" 
                         HorizontalAlignment="Stretch"
                         Content="Logout" Margin="6 3 0 6"
-                        Style="{StaticResource ButtonRevealStyle}"
+                        Style="{StaticResource AccentButtonStyle}"
                         Command="{x:Bind ViewModel.Logout, Mode=OneWay}" />
                 <Button Grid.Column="1" 
                         HorizontalAlignment="Stretch"
@@ -175,7 +180,12 @@
                     <TextBlock Text="{x:Bind ViewModel.RefreshingIn, Mode=OneWay}"
                                Foreground="{ThemeResource AppBarSeparatorForegroundThemeBrush}" />
                 </StackPanel>
-                <Button Grid.Column="3" Margin="6 3 6 6"
+                <Button Grid.Column="3" Margin="6 3 0 6"
+                        Style="{StaticResource ButtonRevealStyle}"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.Folder.Open, Mode=OneWay}"
+                        Content="New folder" />
+                <Button Grid.Column="4" Margin="6 3 6 6"
                         Style="{StaticResource AccentButtonStyle}"
                         HorizontalAlignment="Stretch"
                         Command="{x:Bind ViewModel.Refresh, Mode=OneWay}"

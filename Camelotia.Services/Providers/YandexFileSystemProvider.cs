@@ -50,6 +50,8 @@ namespace Camelotia.Services.Providers
         public bool SupportsHostAuth => false;
 
         public bool SupportsOAuth => true;
+        
+        public bool CanCreateFolder => true;
 
         public string InitialPath => Path.DirectorySeparatorChar.ToString();
 
@@ -97,6 +99,15 @@ namespace Camelotia.Services.Providers
                 await to.FlushAsync();
                 to.Close();
             }
+        }
+
+        public async Task CreateFolder(string path, string name)
+        {
+            var directory = Path.Combine(path, name).Replace("\\", "/");
+            var encoded = WebUtility.UrlEncode(directory);
+            var pathUrl = ApiGetPathBase + encoded;
+            using (var response = await _http.PutAsync(pathUrl, null).ConfigureAwait(false))
+                response.EnsureSuccessStatusCode();
         }
 
         public async Task UploadFile(string to, Stream from, string name)

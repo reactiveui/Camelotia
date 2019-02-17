@@ -40,7 +40,6 @@
                 <Grid>
                     <ListBox Padding="0"
                              BorderThickness="0"
-                             Background="Transparent"
                              SelectionMode="Toggle"
                              Items="{Binding Files}"
                              IsVisible="{Binding IsReady}"
@@ -100,6 +99,9 @@
                                        Foreground="#000000" />
                         </StackPanel>
                     </Grid>
+                    <Grid IsVisible="{Binding Folder.IsVisible}" Background="#f7f7f7">
+                        <views:CreateFolderView DataContext="{Binding Folder}" />
+                    </Grid>
                 </Grid>
             </Border>
             <Grid Grid.Row="2">
@@ -136,7 +138,8 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
                         Content="Logout"
@@ -154,7 +157,12 @@
                     <TextBlock Text="{Binding RefreshingIn}"
                                Foreground="#888888" />
                 </StackPanel>
-                <Button Grid.Column="3"
+                <Button Grid.Column="3" 
+                        Content="New folder" 
+                        Classes="Rounded" 
+                        HorizontalAlignment="Stretch" 
+                        Command="{Binding Folder.Open}"/>
+                <Button Grid.Column="4"
                         Content="Refresh"
                         Classes="Rounded"
                         HorizontalAlignment="Stretch"

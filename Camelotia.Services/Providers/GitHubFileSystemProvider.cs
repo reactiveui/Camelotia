@@ -37,6 +37,8 @@ namespace Camelotia.Services.Providers
         public bool SupportsHostAuth => false;
 
         public bool SupportsOAuth => false;
+        
+        public bool CanCreateFolder => false;
 
         public Task HostAuth(string address, int port, string login, string password) => Task.CompletedTask;
 
@@ -108,6 +110,11 @@ namespace Camelotia.Services.Providers
 
             await to.FlushAsync();
             to.Close();
+        }
+
+        public Task CreateFolder(string path, string name)
+        {
+            throw new NotImplementedException();
         }
 
         public Task UploadFile(string to, Stream from, string name) => throw new NotImplementedException();

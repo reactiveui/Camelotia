@@ -21,7 +21,9 @@ namespace Camelotia.Services.Interfaces
         Task UploadFile(string to, Stream from, string name);
 
         Task DownloadFile(string from, Stream to);
-        
+
+        Task CreateFolder(string path, string name);
+
         Task Delete(FileModel file);
         
         IObservable<bool> IsAuthorized { get; }
@@ -31,6 +33,8 @@ namespace Camelotia.Services.Interfaces
         bool SupportsHostAuth { get; }
         
         bool SupportsOAuth { get; }
+        
+        bool CanCreateFolder { get; }
 
         Task HostAuth(string address, int port, string login, string password);
 
