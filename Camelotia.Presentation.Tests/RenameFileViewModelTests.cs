@@ -1,8 +1,8 @@
-using System.IO;
 using System.Reactive.Concurrency;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
+using Camelotia.Services.Models;
 using FluentAssertions;
 using Microsoft.Reactive.Testing;
 using NSubstitute;
@@ -13,8 +13,8 @@ namespace Camelotia.Presentation.Tests
 {
     public sealed class RenameFileViewModelTests
     {
-        private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
         private readonly IProviderViewModel _providerViewModel = Substitute.For<IProviderViewModel>();
+        private readonly FileModel _file = new FileModel("foo", "/foo", false, string.Empty);
         private readonly IProvider _provider = Substitute.For<IProvider>();
 
         [Fact]
@@ -32,8 +32,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldChangeVisibility() => new TestScheduler().With(scheduler =>
         {
-            _providerViewModel.CurrentPath.Returns(Separator);
-            _provider.CanCreateFolder.Returns(true);
+            _providerViewModel.SelectedFile.Returns(_file);
             var model = BuildRenameFileViewModel(scheduler);
             
             model.Open.CanExecute(null).Should().BeTrue();
@@ -56,10 +55,10 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldRenameFileSuccessfullyAndCloseViewModel() => new TestScheduler().With(scheduler =>
         {
-            _providerViewModel.CurrentPath.Returns(Separator);
-            _provider.CanCreateFolder.Returns(true);
-
+            _providerViewModel.SelectedFile.Returns(_file);
             var model = BuildRenameFileViewModel(scheduler);
+            
+            model.OldName.Should().Be(_file.Name);
             model.IsVisible.Should().BeFalse();
             model.Close.CanExecute(null).Should().BeFalse();
             model.Open.CanExecute(null).Should().BeTrue();
@@ -87,7 +86,7 @@ namespace Camelotia.Presentation.Tests
             model.IsLoading.Should().BeFalse();
             model.Rename.CanExecute(null).Should().BeFalse();
             model.NewName.Should().BeNullOrEmpty();
-            model.OldName.Should().Be(Separator);
+            model.OldName.Should().Be(_file.Name);
             model.IsVisible.Should().BeFalse();
             
             model.Close.CanExecute(null).Should().BeFalse();

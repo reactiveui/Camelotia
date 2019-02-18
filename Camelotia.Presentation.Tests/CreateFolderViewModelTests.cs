@@ -35,6 +35,7 @@ namespace Camelotia.Presentation.Tests
             _providerViewModel.CurrentPath.Returns(Separator);
             _provider.CanCreateFolder.Returns(true);
             var model = BuildCreateFolderViewModel(scheduler);
+            scheduler.AdvanceBy(2);
             
             model.Open.CanExecute(null).Should().BeTrue();
             model.Close.CanExecute(null).Should().BeFalse();
@@ -60,6 +61,8 @@ namespace Camelotia.Presentation.Tests
             _provider.CanCreateFolder.Returns(true);
 
             var model = BuildCreateFolderViewModel(scheduler);
+            scheduler.AdvanceBy(2);
+            
             model.IsVisible.Should().BeFalse();
             model.Close.CanExecute(null).Should().BeFalse();
             model.Open.CanExecute(null).Should().BeTrue();
@@ -78,7 +81,7 @@ namespace Camelotia.Presentation.Tests
             model.Name = "Foo";
             model.Create.CanExecute(null).Should().BeTrue();
             model.Create.Execute(null);
-            scheduler.AdvanceBy(1);
+            scheduler.AdvanceBy(2);
             
             model.IsLoading.Should().BeTrue();
             model.Create.CanExecute(null).Should().BeFalse();
@@ -96,7 +99,7 @@ namespace Camelotia.Presentation.Tests
 
         private CreateFolderViewModel BuildCreateFolderViewModel(IScheduler scheduler)
         {
-            return new CreateFolderViewModel(_providerViewModel, scheduler, _provider);
+            return new CreateFolderViewModel(_providerViewModel, scheduler, scheduler, _provider);
         }
     }
 }

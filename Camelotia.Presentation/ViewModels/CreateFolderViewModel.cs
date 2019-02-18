@@ -22,12 +22,13 @@ namespace Camelotia.Presentation.ViewModels
         
         public CreateFolderViewModel(
             IProviderViewModel providerViewModel,
+            IScheduler currentThread,
             IScheduler mainThread,
             IProvider provider)
         {
             _path = providerViewModel
                 .WhenAnyValue(x => x.CurrentPath)
-                .ToProperty(this, x => x.Path);
+                .ToProperty(this, x => x.Path, scheduler: currentThread);
             
             var pathValid = this
                 .WhenAnyValue(x => x.Path)
@@ -65,17 +66,17 @@ namespace Camelotia.Presentation.ViewModels
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_close.Select(unit => false))
-                .ToProperty(this, x => x.HasErrors);
+                .ToProperty(this, x => x.HasErrors, scheduler: currentThread);
 
             _errorMessage = _create
                 .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Merge(_close.Select(unit => string.Empty))
-                .ToProperty(this, x => x.ErrorMessage);
+                .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
 
             _isLoading = _create
                 .IsExecuting
-                .ToProperty(this, x => x.IsLoading);
+                .ToProperty(this, x => x.IsLoading, scheduler: currentThread);
 
             _create.InvokeCommand(Close);
             _close.Subscribe(x => Name = string.Empty);
