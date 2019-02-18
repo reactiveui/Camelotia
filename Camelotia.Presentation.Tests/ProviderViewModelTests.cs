@@ -18,6 +18,7 @@ namespace Camelotia.Presentation.Tests
     {
         private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
         private readonly ICreateFolderViewModel _createFolder = Substitute.For<ICreateFolderViewModel>();
+        private readonly IRenameFileViewModel _renameFile = Substitute.For<IRenameFileViewModel>();
         private readonly IAuthViewModel _authViewModel = Substitute.For<IAuthViewModel>();
         private readonly IFileManager _fileManager = Substitute.For<IFileManager>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
@@ -167,7 +168,15 @@ namespace Camelotia.Presentation.Tests
 
         private ProviderViewModel BuildProviderViewModel(IScheduler scheduler)
         {
-            return new ProviderViewModel(x => _createFolder, _authViewModel, _fileManager, scheduler, scheduler, _provider);
+            return new ProviderViewModel(
+                x => _createFolder,
+                x => _renameFile,
+                _authViewModel,
+                _fileManager,
+                scheduler,
+                scheduler,
+                _provider
+            );
         }
     }
 }

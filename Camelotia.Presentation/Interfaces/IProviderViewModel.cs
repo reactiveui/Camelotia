@@ -11,6 +11,8 @@ namespace Camelotia.Presentation.Interfaces
         
         ICreateFolderViewModel Folder { get; }
         
+        IRenameFileViewModel Rename { get; }
+        
         FileModel SelectedFile { get; set; }
         
         IEnumerable<FileModel> Files { get; }

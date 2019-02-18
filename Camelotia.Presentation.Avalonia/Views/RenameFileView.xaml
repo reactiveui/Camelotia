@@ -1,13 +1,13 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             d:DataContext="{d:DesignInstance interfaces:ICreateFolderViewModel, IsDesignTimeCreatable=False}"
+             d:DataContext="{d:DesignInstance interfaces:IRenameFileViewModel, IsDesignTimeCreatable=False}"
              xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" Background="#ffffff">
     <StackPanel VerticalAlignment="Center"
                 HorizontalAlignment="Center"
                 Width="300">
-        <TextBlock Text="Create Folder"
+        <TextBlock Text="Rename File"
                    Foreground="#002171"
                    FontSize="16"
                    Margin="0 10" />
@@ -25,20 +25,20 @@
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0 5">
-            <TextBlock Text="Creating new folder at:" Margin="0 0 5 0" />
-            <TextBlock Text="{Binding Path}" Foreground="#002171" />
+            <TextBlock Text="Renaming file with name:" Margin="0 0 5 0" />
+            <TextBlock Text="{Binding OldName}" Foreground="#002171" />
         </StackPanel>
-        <TextBlock Text="Please, enter new folder name:" Margin="0 5" />
-        <TextBox Text="{Binding Name, Mode=TwoWay}" />
+        <TextBlock Text="Please, enter new file name:" Margin="0 5" />
+        <TextBox Text="{Binding NewName, Mode=TwoWay}" />
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
-                    Content="Create folder"
+                    Content="Rename file"
                     HorizontalAlignment="Stretch"
-                    Command="{Binding Create}"
+                    Command="{Binding Rename}"
                     Classes="Rounded"
                     Margin="0 10 10 10" />
             <Button Grid.Column="1"

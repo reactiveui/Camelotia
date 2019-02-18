@@ -29,7 +29,8 @@ namespace Camelotia.Presentation.Avalonia
 
             return new MainViewModel(
                 (provider, files, auth) => new ProviderViewModel(
-                    model => new CreateFolderViewModel(model, mainThread, provider), 
+                    model => new CreateFolderViewModel(model, mainThread, provider),
+                    model => new RenameFileViewModel(model, mainThread, provider),
                     auth, files,
                     currentThread, 
                     mainThread, 
