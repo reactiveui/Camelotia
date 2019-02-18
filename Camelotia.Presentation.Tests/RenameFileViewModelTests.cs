@@ -79,7 +79,7 @@ namespace Camelotia.Presentation.Tests
             model.NewName = "Foo";
             model.Rename.CanExecute(null).Should().BeTrue();
             model.Rename.Execute(null);
-            scheduler.AdvanceBy(1);
+            scheduler.AdvanceBy(2);
             
             model.IsLoading.Should().BeTrue();
             model.Rename.CanExecute(null).Should().BeFalse();
