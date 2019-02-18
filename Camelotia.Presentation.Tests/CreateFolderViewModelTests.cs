@@ -32,8 +32,10 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldChangeVisibility() => new TestScheduler().With(scheduler =>
         {
+            _providerViewModel.CanInteract.Returns(true);
             _providerViewModel.CurrentPath.Returns(Separator);
             _provider.CanCreateFolder.Returns(true);
+            
             var model = BuildCreateFolderViewModel(scheduler);
             scheduler.AdvanceBy(2);
             
@@ -57,6 +59,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldCreateFolderSuccessfullyAndCloseViewModel() => new TestScheduler().With(scheduler =>
         {
+            _providerViewModel.CanInteract.Returns(true);
             _providerViewModel.CurrentPath.Returns(Separator);
             _provider.CanCreateFolder.Returns(true);
 

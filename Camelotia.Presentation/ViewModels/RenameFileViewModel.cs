@@ -32,6 +32,9 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(file => file?.Name)
                 .ToProperty(this, x => x.OldName, scheduler: currentThread);
 
+            var canInteract = providerViewModel
+                .WhenAnyValue(x => x.CanInteract);
+            
             var oldNameValid = this
                 .WhenAnyValue(x => x.OldName)
                 .Select(old => !string.IsNullOrWhiteSpace(old));
@@ -39,7 +42,8 @@ namespace Camelotia.Presentation.ViewModels
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => !visible)
-                .CombineLatest(oldNameValid, (visible, old) => visible && old);
+                .CombineLatest(oldNameValid, (visible, old) => visible && old)
+                .CombineLatest(canInteract, (open, interact) => open && interact);
             
             _open = ReactiveCommand.Create(
                 () => { IsVisible = true; },

@@ -30,6 +30,9 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.CurrentPath)
                 .ToProperty(this, x => x.Path, scheduler: currentThread);
             
+            var canInteract = providerViewModel
+                .WhenAnyValue(x => x.CanInteract);
+            
             var pathValid = this
                 .WhenAnyValue(x => x.Path)
                 .Select(path => !string.IsNullOrWhiteSpace(path));
@@ -47,8 +50,8 @@ namespace Camelotia.Presentation.ViewModels
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => !visible)
-                .CombineLatest(canCreate, (visible, can) => visible && can)
-                .CombineLatest(pathValid, (can, path) => can && path);
+                .CombineLatest(canCreate, pathValid, (visible, can, path) => visible && path && can)
+                .CombineLatest(canInteract, (open, interact) => open && interact);
             
             _open = ReactiveCommand.Create(
                 () => { IsVisible = true; },

@@ -43,6 +43,8 @@ namespace Camelotia.Presentation.Interfaces
         
         bool CanLogout { get; }
         
+        bool CanInteract { get; }
+        
         int RefreshingIn { get; }
         
         string CurrentPath { get; }

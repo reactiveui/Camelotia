@@ -32,7 +32,9 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldChangeVisibility() => new TestScheduler().With(scheduler =>
         {
+            _providerViewModel.CanInteract.Returns(true);
             _providerViewModel.SelectedFile.Returns(_file);
+            
             var model = BuildRenameFileViewModel(scheduler);
             scheduler.AdvanceBy(2);
             
@@ -56,7 +58,9 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldRenameFileSuccessfullyAndCloseViewModel() => new TestScheduler().With(scheduler =>
         {
+            _providerViewModel.CanInteract.Returns(true);
             _providerViewModel.SelectedFile.Returns(_file);
+            
             var model = BuildRenameFileViewModel(scheduler);
             scheduler.AdvanceBy(2);
             

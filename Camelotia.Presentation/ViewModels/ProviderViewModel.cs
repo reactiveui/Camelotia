@@ -26,6 +26,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
         private readonly ReactiveCommand<Unit, Unit> _deleteSelectedFile;
         private readonly ObservableAsPropertyHelper<string> _currentPath;
+        private readonly ObservableAsPropertyHelper<bool> _canInteract;
         private readonly ObservableAsPropertyHelper<bool> _hasErrors;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _canLogout;
@@ -52,6 +53,10 @@ namespace Camelotia.Presentation.ViewModels
             var canInteract = this
                 .WhenAnyValue(x => x.Folder.IsVisible, x => x.Rename.IsVisible)
                 .Select(visible => !visible.Item1 && !visible.Item2);
+
+            _canInteract = canInteract
+                .DistinctUntilChanged()
+                .ToProperty(this, x => x.CanInteract, scheduler: currentThread);
             
             _refresh = ReactiveCommand.CreateFromTask(
                 () => provider.Get(CurrentPath),
@@ -253,6 +258,8 @@ namespace Camelotia.Presentation.ViewModels
         public ICommand DeleteSelectedFile => _deleteSelectedFile;
 
         public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
+
+        public bool CanInteract => _canInteract?.Value ?? true;
         
         public IEnumerable<FileModel> Files => _files?.Value;
 
