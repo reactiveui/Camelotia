@@ -34,6 +34,7 @@ namespace Camelotia.Presentation.Tests
         {
             _providerViewModel.SelectedFile.Returns(_file);
             var model = BuildRenameFileViewModel(scheduler);
+            scheduler.AdvanceBy(2);
             
             model.Open.CanExecute(null).Should().BeTrue();
             model.Close.CanExecute(null).Should().BeFalse();
@@ -57,6 +58,7 @@ namespace Camelotia.Presentation.Tests
         {
             _providerViewModel.SelectedFile.Returns(_file);
             var model = BuildRenameFileViewModel(scheduler);
+            scheduler.AdvanceBy(2);
             
             model.OldName.Should().Be(_file.Name);
             model.IsVisible.Should().BeFalse();
@@ -95,7 +97,7 @@ namespace Camelotia.Presentation.Tests
 
         private RenameFileViewModel BuildRenameFileViewModel(IScheduler scheduler)
         {
-            return new RenameFileViewModel(_providerViewModel, scheduler, _provider);
+            return new RenameFileViewModel(_providerViewModel, scheduler, scheduler, _provider);
         }
     }
 }

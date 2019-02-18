@@ -23,13 +23,14 @@ namespace Camelotia.Presentation.ViewModels
         
         public RenameFileViewModel(
             IProviderViewModel providerViewModel,
+            IScheduler currentThread,
             IScheduler mainThread,
             IProvider provider)
         {
             _oldName = providerViewModel
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file?.Name)
-                .ToProperty(this, x => x.OldName);
+                .ToProperty(this, x => x.OldName, scheduler: currentThread);
 
             var oldNameValid = this
                 .WhenAnyValue(x => x.OldName)
@@ -63,19 +64,19 @@ namespace Camelotia.Presentation.ViewModels
 
             _isLoading = _rename
                 .IsExecuting
-                .ToProperty(this, x => x.IsLoading);
+                .ToProperty(this, x => x.IsLoading, scheduler: currentThread);
 
             _hasErrors = _rename
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_close.Select(x => false))
-                .ToProperty(this, x => x.HasErrors);
+                .ToProperty(this, x => x.HasErrors, scheduler: currentThread);
 
             _errorMessage = _rename
                 .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Merge(_close.Select(x => string.Empty))
-                .ToProperty(this, x => x.ErrorMessage);
+                .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
 
             _rename.InvokeCommand(_close);
             _close.Subscribe(x => NewName = string.Empty);
