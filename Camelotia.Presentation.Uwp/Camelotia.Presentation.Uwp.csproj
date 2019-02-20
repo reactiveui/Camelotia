@@ -144,6 +144,9 @@
     <Compile Include="Views\ProviderView.xaml.cs">
       <DependentUpon>ProviderView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\RenameFileView.xaml.cs">
+      <DependentUpon>RenameFileView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -191,6 +194,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ProviderView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenameFileView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
