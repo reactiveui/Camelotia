@@ -2,7 +2,6 @@ using System;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
@@ -63,7 +62,7 @@ namespace Camelotia.Presentation.ViewModels
                 .CombineLatest(oldNameValid, (old, name) => old && name);
             
             _rename = ReactiveCommand.CreateFromTask(
-                () => Task.CompletedTask,
+                () => provider.RenameFile(providerViewModel.SelectedFile, NewName),
                 canRename, mainThread);
 
             _isLoading = _rename

@@ -74,6 +74,11 @@ namespace Camelotia.Services.Providers
             }
         }
 
+        public Task RenameFile(FileModel file, string name)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task Delete(FileModel file)
         {
             var path = file.Path;

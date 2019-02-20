@@ -90,7 +90,12 @@ namespace Camelotia.Services.Providers
                 connection.Disconnect();
             }
         });
-        
+
+        public Task RenameFile(FileModel file, string name)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task Delete(FileModel file) => Task.Run(() =>
         {
             using (var connection = _factory())

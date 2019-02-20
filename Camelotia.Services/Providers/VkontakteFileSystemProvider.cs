@@ -112,7 +112,9 @@ namespace Camelotia.Services.Providers
             to.Close();
         }
 
-        public Task CreateFolder(string path, string name)
+        public Task CreateFolder(string path, string name) => throw new NotSupportedException("Folders not supported.");
+
+        public Task RenameFile(FileModel file, string name)
         {
             throw new NotImplementedException();
         }

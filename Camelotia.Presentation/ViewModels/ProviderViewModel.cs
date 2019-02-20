@@ -230,8 +230,9 @@ namespace Camelotia.Presentation.ViewModels
                     .Subscribe(x => RefreshingIn = x)
                     .DisposeWith(disposable);
 
-                this.WhenAnyValue(x => x.Folder.IsVisible)
-                    .Where(visible => !visible)
+                this.WhenAnyValue(x => x.CanInteract)
+                    .Skip(1)
+                    .Where(interact => interact)
                     .Select(x => Unit.Default)
                     .InvokeCommand(_refresh);
             });
