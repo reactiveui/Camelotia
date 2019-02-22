@@ -12,8 +12,8 @@ namespace Camelotia.Presentation.Uwp.Views
 
         public MainView()
         {
-            InitializeComponent();
             ViewModel = Bootstrapper.BuildMainViewModel();
+            InitializeComponent();
             this.WhenActivated(disposables => { });
         }
 

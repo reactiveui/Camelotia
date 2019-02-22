@@ -53,7 +53,8 @@ namespace Camelotia.Presentation.Xamarin.Droid
 
             return new MainViewModel(
                 (provider, files, auth) => new ProviderViewModel(
-                    model => new CreateFolderViewModel(model, mainThread, provider), 
+                    model => new CreateFolderViewModel(model, currentThread, mainThread, provider),
+                    model => new RenameFileViewModel(model, currentThread, mainThread, provider),
                     auth, files,
                     currentThread,
                     mainThread,

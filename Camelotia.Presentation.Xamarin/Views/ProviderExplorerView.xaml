@@ -64,6 +64,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <iconize:IconButton Grid.Column="0"
                                     x:Name="LogoutButton"
@@ -80,6 +81,9 @@
                 <iconize:IconButton Grid.Column="4"
                                     x:Name="CreateFolderButton"
                                     Text="fas-folder" />
+                <iconize:IconButton Grid.Column="5"
+                                    x:Name="RenameFileButton"
+                                    Text="fas-file" />
             </Grid>
         </Grid>
     </ContentPage.Content>
