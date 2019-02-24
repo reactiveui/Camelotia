@@ -40,12 +40,13 @@
                         Content="Open" />
             </Grid>
             <Grid Grid.Row="1">
-                <ListBox BorderBrush="Transparent"
+                <ListBox Background="{ThemeResource SystemControlChromeLowAcrylicWindowBrush}"
                          Visibility="{x:Bind ViewModel.IsReady, Mode=OneWay}"
                          ItemsSource="{x:Bind ViewModel.Files, Mode=OneWay}"
                          SelectedItem="{x:Bind ViewModel.SelectedFile, Mode=TwoWay}">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
+                            <Setter Property="Background" Value="{ThemeResource SystemControlChromeLowAcrylicWindowBrush}" />
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                             <Setter Property="HorizontalAlignment" Value="Stretch" />
                             <Setter Property="Padding" Value="0" />

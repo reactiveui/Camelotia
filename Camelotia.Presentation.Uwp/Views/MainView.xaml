@@ -62,7 +62,7 @@
                     Padding="10"
                     Grid.Row="2" />
         </Grid>
-        <Grid Grid.Column="1" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+        <Grid Grid.Column="1" Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}">
             <views:ProviderView ViewModel="{x:Bind ViewModel.SelectedProvider, Mode=OneWay}" />
         </Grid>
     </Grid>
