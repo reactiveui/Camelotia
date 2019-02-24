@@ -6,7 +6,7 @@ The app runs on Windows, Linux, MacOS, XBox, Surface Hub and HoloLens. Built wit
 
 You can compile .NET Standard libraries, run tests and run an Avalonia application on Windows, Linux and macOS operating systems. Make sure you have latest [.NET Core SDK](https://dot.net/) installed.
 
-<img src="./UiAvalonia.png" width="360"> <img src="./UiAvalonia1.png" width="360">
+<img src="./UiAvalonia.png" width="500">
 
 ```sh
 # Linux or MacOS shell
