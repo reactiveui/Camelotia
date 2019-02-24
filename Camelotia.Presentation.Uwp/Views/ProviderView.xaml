@@ -6,8 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Camelotia.Services.Models"
     xmlns:views="using:Camelotia.Presentation.Uwp.Views"
-    d:DesignHeight="300" 
-    d:DesignWidth="400"
+    d:DesignHeight="500" 
+    d:DesignWidth="700"
     mc:Ignorable="d">
     <Grid>
         <Grid>
