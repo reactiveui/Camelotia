@@ -91,10 +91,17 @@ namespace Camelotia.Services.Providers
             }
         });
 
-        public Task RenameFile(FileModel file, string name)
+        public Task RenameFile(FileModel file, string name) => Task.Run(() =>
         {
-            throw new NotImplementedException();
-        }
+            using (var connection = _factory())
+            {
+                connection.Connect();
+                var directoryName = Path.GetDirectoryName(file.Path);
+                var newName = Path.Combine(directoryName, name);
+                connection.RenameFile(file.Path, newName);
+                connection.Disconnect();
+            }
+        });
 
         public Task Delete(FileModel file) => Task.Run(() =>
         {

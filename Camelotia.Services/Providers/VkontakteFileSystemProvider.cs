@@ -114,10 +114,7 @@ namespace Camelotia.Services.Providers
 
         public Task CreateFolder(string path, string name) => throw new NotSupportedException("Folders not supported.");
 
-        public Task RenameFile(FileModel file, string name)
-        {
-            throw new NotImplementedException();
-        }
+        public Task RenameFile(FileModel file, string name) => throw new NotSupportedException("Rename not supported.");
 
         public async Task UploadFile(string to, Stream from, string name)
         {
