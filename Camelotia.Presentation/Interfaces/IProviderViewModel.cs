@@ -11,6 +11,8 @@ namespace Camelotia.Presentation.Interfaces
         
         ICreateFolderViewModel Folder { get; }
         
+        IRenameFileViewModel Rename { get; }
+        
         FileModel SelectedFile { get; set; }
         
         IEnumerable<FileModel> Files { get; }
@@ -40,6 +42,8 @@ namespace Camelotia.Presentation.Interfaces
         bool HasErrors { get; }
         
         bool CanLogout { get; }
+        
+        bool CanInteract { get; }
         
         int RefreshingIn { get; }
         

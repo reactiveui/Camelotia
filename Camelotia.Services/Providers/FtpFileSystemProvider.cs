@@ -74,6 +74,18 @@ namespace Camelotia.Services.Providers
             }
         }
 
+        public async Task RenameFile(FileModel file, string name)
+        {
+            using (var connection = _factory())
+            {
+                await connection.ConnectAsync();
+                var directoryName = Path.GetDirectoryName(file.Path);
+                var newName = Path.Combine(directoryName, name);
+                await connection.RenameAsync(file.Path, newName);
+                await connection.DisconnectAsync();
+            }
+        }
+
         public async Task Delete(FileModel file)
         {
             var path = file.Path;

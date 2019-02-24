@@ -82,6 +82,14 @@ namespace Camelotia.Services.Providers
             Directory.CreateDirectory(path);
         });
 
+        public Task RenameFile(FileModel file, string name) => Task.Run(() =>
+        {
+            var directoryName = Path.GetDirectoryName(file.Path);
+            var newName = Path.Combine(directoryName, name);
+            if (IsDirectory(file.Path)) Directory.Move(file.Path, newName);
+            else File.Move(file.Path, newName);
+        });
+
         public async Task UploadFile(string to, Stream from, string name)
         {
             if (!IsDirectory(to)) throw new InvalidOperationException("Can't upload to a non-directory.");

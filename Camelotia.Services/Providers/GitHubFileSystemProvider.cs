@@ -117,6 +117,11 @@ namespace Camelotia.Services.Providers
             throw new NotImplementedException();
         }
 
+        public Task RenameFile(FileModel file, string name)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task UploadFile(string to, Stream from, string name) => throw new NotImplementedException();
 
         public Task Delete(FileModel file) => throw new NotImplementedException();

@@ -45,6 +45,19 @@ namespace Camelotia.Presentation.Xamarin.Views
                     .Select(x => new ProviderExplorerView { ViewModel = ViewModel })
                     .Subscribe(NavigateWithoutBackStack)
                     .DisposeWith(disposables);
+
+                this.WhenAnyValue(x => x.ViewModel.Rename.IsVisible)
+                    .Where(visible => visible)
+                    .Select(x => new RenameFileView { ViewModel = ViewModel.Rename })
+                    .Subscribe(NavigateWithoutBackStack)
+                    .DisposeWith(disposables);
+
+                this.WhenAnyValue(x => x.ViewModel.Rename.IsVisible)
+                    .Where(visible => !visible)
+                    .Skip(1)
+                    .Select(x => new ProviderExplorerView { ViewModel = ViewModel })
+                    .Subscribe(NavigateWithoutBackStack)
+                    .DisposeWith(disposables);
             });
         }
 

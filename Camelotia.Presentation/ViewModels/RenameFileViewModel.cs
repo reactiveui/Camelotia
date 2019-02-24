@@ -10,53 +10,44 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public sealed class CreateFolderViewModel : ReactiveObject, ICreateFolderViewModel
+    public sealed class RenameFileViewModel : ReactiveObject, IRenameFileViewModel
     {
         private readonly ObservableAsPropertyHelper<string> _errorMessage;
+        private readonly ObservableAsPropertyHelper<string> _oldName;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _hasErrors;
-        private readonly ObservableAsPropertyHelper<string> _path;
-        private readonly ReactiveCommand<Unit, Unit> _create;
+        private readonly ReactiveCommand<Unit, Unit> _rename;
         private readonly ReactiveCommand<Unit, Unit> _close;
         private readonly ReactiveCommand<Unit, Unit> _open;
         
-        public CreateFolderViewModel(
+        public RenameFileViewModel(
             IProviderViewModel providerViewModel,
             IScheduler currentThread,
             IScheduler mainThread,
             IProvider provider)
         {
-            _path = providerViewModel
-                .WhenAnyValue(x => x.CurrentPath)
-                .ToProperty(this, x => x.Path, scheduler: currentThread);
-            
+            _oldName = providerViewModel
+                .WhenAnyValue(x => x.SelectedFile)
+                .Select(file => file?.Name)
+                .ToProperty(this, x => x.OldName, scheduler: currentThread);
+
             var canInteract = providerViewModel
                 .WhenAnyValue(x => x.CanInteract);
             
-            var pathValid = this
-                .WhenAnyValue(x => x.Path)
-                .Select(path => !string.IsNullOrWhiteSpace(path));
+            var oldNameValid = this
+                .WhenAnyValue(x => x.OldName)
+                .Select(old => !string.IsNullOrWhiteSpace(old));
             
-            var canCreateFolder = this
-                .WhenAnyValue(x => x.Name)
-                .Select(name => !string.IsNullOrWhiteSpace(name))
-                .CombineLatest(pathValid, (name, path) => name && path);
-            
-            _create = ReactiveCommand.CreateFromTask(
-                () => provider.CreateFolder(Path, Name),
-                canCreateFolder, mainThread);
-            
-            var canCreate = Observable.Return(provider.CanCreateFolder);
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => !visible)
-                .CombineLatest(canCreate, pathValid, (visible, can, path) => visible && path && can)
+                .CombineLatest(oldNameValid, (visible, old) => visible && old)
                 .CombineLatest(canInteract, (open, interact) => open && interact);
             
             _open = ReactiveCommand.Create(
                 () => { IsVisible = true; },
                 canOpen, mainThread);
-
+            
             var canClose = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => visible);
@@ -65,29 +56,38 @@ namespace Camelotia.Presentation.ViewModels
                 () => { IsVisible = false; },
                 canClose, mainThread);
 
-            _hasErrors = _create
-                .ThrownExceptions
-                .Select(exception => true)
-                .Merge(_close.Select(unit => false))
-                .ToProperty(this, x => x.HasErrors, scheduler: currentThread);
+            var canRename = this
+                .WhenAnyValue(x => x.NewName)
+                .Select(name => !string.IsNullOrWhiteSpace(name))
+                .CombineLatest(oldNameValid, (old, name) => old && name);
+            
+            _rename = ReactiveCommand.CreateFromTask(
+                () => provider.RenameFile(providerViewModel.SelectedFile, NewName),
+                canRename, mainThread);
 
-            _errorMessage = _create
-                .ThrownExceptions
-                .Select(exception => exception.Message)
-                .Merge(_close.Select(unit => string.Empty))
-                .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
-
-            _isLoading = _create
+            _isLoading = _rename
                 .IsExecuting
                 .ToProperty(this, x => x.IsLoading, scheduler: currentThread);
 
-            _create.InvokeCommand(Close);
-            _close.Subscribe(x => Name = string.Empty);
-        }
+            _hasErrors = _rename
+                .ThrownExceptions
+                .Select(exception => true)
+                .Merge(_close.Select(x => false))
+                .ToProperty(this, x => x.HasErrors, scheduler: currentThread);
 
-        [Reactive] public string Name { get; set; }
+            _errorMessage = _rename
+                .ThrownExceptions
+                .Select(exception => exception.Message)
+                .Merge(_close.Select(x => string.Empty))
+                .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
+
+            _rename.InvokeCommand(_close);
+            _close.Subscribe(x => NewName = string.Empty);
+        }
         
         [Reactive] public bool IsVisible { get; set; }
+        
+        [Reactive] public string NewName { get; set; }
 
         public string ErrorMessage => _errorMessage.Value;
 
@@ -95,10 +95,10 @@ namespace Camelotia.Presentation.ViewModels
 
         public bool IsLoading => _isLoading.Value;
 
-        public string Path => _path.Value;
-        
-        public ICommand Create => _create;
-        
+        public string OldName => _oldName.Value;
+
+        public ICommand Rename => _rename;
+
         public ICommand Close => _close;
 
         public ICommand Open => _open;

@@ -26,6 +26,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
         private readonly ReactiveCommand<Unit, Unit> _deleteSelectedFile;
         private readonly ObservableAsPropertyHelper<string> _currentPath;
+        private readonly ObservableAsPropertyHelper<bool> _canInteract;
         private readonly ObservableAsPropertyHelper<bool> _hasErrors;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _canLogout;
@@ -38,6 +39,7 @@ namespace Camelotia.Presentation.ViewModels
 
         public ProviderViewModel(
             Func<IProviderViewModel, ICreateFolderViewModel> createFolder,
+            Func<IProviderViewModel, IRenameFileViewModel> createRename,
             IAuthViewModel authViewModel,
             IFileManager fileManager,
             IScheduler currentThread,
@@ -46,10 +48,15 @@ namespace Camelotia.Presentation.ViewModels
         {
             _provider = provider;
             Folder = createFolder(this);
+            Rename = createRename(this);
             
             var canInteract = this
-                .WhenAnyValue(x => x.Folder.IsVisible)
-                .Select(visible => !visible);
+                .WhenAnyValue(x => x.Folder.IsVisible, x => x.Rename.IsVisible)
+                .Select(visible => !visible.Item1 && !visible.Item2);
+
+            _canInteract = canInteract
+                .DistinctUntilChanged()
+                .ToProperty(this, x => x.CanInteract, scheduler: currentThread);
             
             _refresh = ReactiveCommand.CreateFromTask(
                 () => provider.Get(CurrentPath),
@@ -223,14 +230,17 @@ namespace Camelotia.Presentation.ViewModels
                     .Subscribe(x => RefreshingIn = x)
                     .DisposeWith(disposable);
 
-                this.WhenAnyValue(x => x.Folder.IsVisible)
-                    .Where(visible => !visible)
+                this.WhenAnyValue(x => x.CanInteract)
+                    .Skip(1)
+                    .Where(interact => interact)
                     .Select(x => Unit.Default)
                     .InvokeCommand(_refresh);
             });
         }
         
         public IAuthViewModel Auth { get; }
+        
+        public IRenameFileViewModel Rename { get; }
 
         public ViewModelActivator Activator { get; }
         
@@ -249,6 +259,8 @@ namespace Camelotia.Presentation.ViewModels
         public ICommand DeleteSelectedFile => _deleteSelectedFile;
 
         public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
+
+        public bool CanInteract => _canInteract?.Value ?? true;
         
         public IEnumerable<FileModel> Files => _files?.Value;
 

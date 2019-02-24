@@ -17,6 +17,7 @@ namespace Camelotia.Services.Providers
     public sealed class YandexFileSystemProvider : IProvider
     {
         private const string YandexAuthTokenUrl = "https://oauth.yandex.ru/token";
+        private const string ApiMoveFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/move";
         private const string ApiDownloadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/download?path=";
         private const string ApiUploadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/upload?path=";
         private const string ApiGetPathBase = "https://cloud-api.yandex.net:443/v1/disk/resources?path=";
@@ -107,6 +108,17 @@ namespace Camelotia.Services.Providers
             var encoded = WebUtility.UrlEncode(directory);
             var pathUrl = ApiGetPathBase + encoded;
             using (var response = await _http.PutAsync(pathUrl, null).ConfigureAwait(false))
+                response.EnsureSuccessStatusCode();
+        }
+
+        public async Task RenameFile(FileModel file, string name)
+        {
+            var directoryName = Path.GetDirectoryName(file.Path);
+            var fromPath = WebUtility.UrlEncode(file.Path);
+            var toPath = Path.Combine(directoryName, name);
+            
+            var pathUrl = $"{ApiMoveFileUrl}?from={fromPath}&path={toPath}";
+            using (var response = await _http.PostAsync(pathUrl, null).ConfigureAwait(false))
                 response.EnsureSuccessStatusCode();
         }
 

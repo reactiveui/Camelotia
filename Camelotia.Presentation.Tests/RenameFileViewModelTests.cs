@@ -1,28 +1,28 @@
-using System.IO;
 using System.Reactive.Concurrency;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
+using Camelotia.Services.Models;
 using FluentAssertions;
 using Microsoft.Reactive.Testing;
-using ReactiveUI.Testing;
 using NSubstitute;
+using ReactiveUI.Testing;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
 {
-    public sealed class CreateFolderViewModelTests
+    public sealed class RenameFileViewModelTests
     {
-        private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
         private readonly IProviderViewModel _providerViewModel = Substitute.For<IProviderViewModel>();
+        private readonly FileModel _file = new FileModel("foo", "/foo", false, string.Empty);
         private readonly IProvider _provider = Substitute.For<IProvider>();
 
         [Fact]
-        public void ShouldProperlyInitializeCreateFolderViewModel() => new TestScheduler().With(scheduler =>
+        public void ShouldProperlyInitializeRenameFileViewModel() => new TestScheduler().With(scheduler =>
         {
-            var model = BuildCreateFolderViewModel(scheduler);
-            model.Name.Should().BeNullOrEmpty();
-            model.Path.Should().BeNullOrEmpty();
+            var model = BuildRenameFileViewModel(scheduler);
+            model.OldName.Should().BeNullOrEmpty();
+            model.NewName.Should().BeNullOrEmpty();
             
             model.ErrorMessage.Should().BeNullOrEmpty();
             model.HasErrors.Should().BeFalse();
@@ -33,10 +33,9 @@ namespace Camelotia.Presentation.Tests
         public void ShouldChangeVisibility() => new TestScheduler().With(scheduler =>
         {
             _providerViewModel.CanInteract.Returns(true);
-            _providerViewModel.CurrentPath.Returns(Separator);
-            _provider.CanCreateFolder.Returns(true);
+            _providerViewModel.SelectedFile.Returns(_file);
             
-            var model = BuildCreateFolderViewModel(scheduler);
+            var model = BuildRenameFileViewModel(scheduler);
             scheduler.AdvanceBy(2);
             
             model.Open.CanExecute(null).Should().BeTrue();
@@ -57,15 +56,15 @@ namespace Camelotia.Presentation.Tests
         });
 
         [Fact]
-        public void ShouldCreateFolderSuccessfullyAndCloseViewModel() => new TestScheduler().With(scheduler =>
+        public void ShouldRenameFileSuccessfullyAndCloseViewModel() => new TestScheduler().With(scheduler =>
         {
             _providerViewModel.CanInteract.Returns(true);
-            _providerViewModel.CurrentPath.Returns(Separator);
-            _provider.CanCreateFolder.Returns(true);
-
-            var model = BuildCreateFolderViewModel(scheduler);
+            _providerViewModel.SelectedFile.Returns(_file);
+            
+            var model = BuildRenameFileViewModel(scheduler);
             scheduler.AdvanceBy(2);
             
+            model.OldName.Should().Be(_file.Name);
             model.IsVisible.Should().BeFalse();
             model.Close.CanExecute(null).Should().BeFalse();
             model.Open.CanExecute(null).Should().BeTrue();
@@ -73,7 +72,7 @@ namespace Camelotia.Presentation.Tests
             scheduler.AdvanceBy(3);
 
             model.IsVisible.Should().BeTrue();
-            model.Create.CanExecute(null).Should().BeFalse();
+            model.Rename.CanExecute(null).Should().BeFalse();
             model.ErrorMessage.Should().BeNullOrEmpty();
             model.HasErrors.Should().BeFalse();
             model.IsLoading.Should().BeFalse();
@@ -81,28 +80,28 @@ namespace Camelotia.Presentation.Tests
             model.Close.CanExecute(null).Should().BeTrue();
             model.Open.CanExecute(null).Should().BeFalse();
             
-            model.Name = "Foo";
-            model.Create.CanExecute(null).Should().BeTrue();
-            model.Create.Execute(null);
+            model.NewName = "Foo";
+            model.Rename.CanExecute(null).Should().BeTrue();
+            model.Rename.Execute(null);
             scheduler.AdvanceBy(2);
             
             model.IsLoading.Should().BeTrue();
-            model.Create.CanExecute(null).Should().BeFalse();
+            model.Rename.CanExecute(null).Should().BeFalse();
             scheduler.AdvanceBy(3);
             
             model.IsLoading.Should().BeFalse();
-            model.Create.CanExecute(null).Should().BeFalse();
-            model.Name.Should().BeNullOrEmpty();
-            model.Path.Should().Be(Separator);
+            model.Rename.CanExecute(null).Should().BeFalse();
+            model.NewName.Should().BeNullOrEmpty();
+            model.OldName.Should().Be(_file.Name);
             model.IsVisible.Should().BeFalse();
             
             model.Close.CanExecute(null).Should().BeFalse();
             model.Open.CanExecute(null).Should().BeTrue();
         });
 
-        private CreateFolderViewModel BuildCreateFolderViewModel(IScheduler scheduler)
+        private RenameFileViewModel BuildRenameFileViewModel(IScheduler scheduler)
         {
-            return new CreateFolderViewModel(_providerViewModel, scheduler, scheduler, _provider);
+            return new RenameFileViewModel(_providerViewModel, scheduler, scheduler, _provider);
         }
     }
 }

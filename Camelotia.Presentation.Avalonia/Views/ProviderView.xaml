@@ -102,12 +102,16 @@
                     <Grid IsVisible="{Binding Folder.IsVisible}" Background="#f7f7f7">
                         <views:CreateFolderView DataContext="{Binding Folder}" />
                     </Grid>
+                    <Grid IsVisible="{Binding Rename.IsVisible}" Background="#f7f7f7">
+                        <views:RenameFileView DataContext="{Binding Rename}" />
+                    </Grid>
                 </Grid>
             </Border>
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -116,18 +120,22 @@
                         Classes="Rounded"
                         HorizontalAlignment="Stretch"
                         Command="{Binding DeleteSelectedFile}" />
-                <StackPanel Grid.Column="1" Orientation="Horizontal" 
+                <Button Grid.Column="1"
+                        Content="Rename"
+                        Classes="Rounded"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding Rename.Open}"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" 
                             Margin="5" VerticalAlignment="Center">
-                    <TextBlock Text="You selected: " Foreground="#aaaaaa" />
                     <TextBlock Text="{Binding SelectedFile.Name}"
                                Foreground="#888888" />
                 </StackPanel>
-                <Button Grid.Column="2"
+                <Button Grid.Column="3"
                         Content="Upload"
                         Classes="Rounded"
                         HorizontalAlignment="Stretch"
                         Command="{Binding UploadToCurrentPath}" />
-                <Button Grid.Column="3"
+                <Button Grid.Column="4"
                         Content="Download"
                         Classes="Rounded"
                         HorizontalAlignment="Stretch"
