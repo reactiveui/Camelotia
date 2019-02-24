@@ -59,7 +59,7 @@ namespace Camelotia.Services.Providers
                     from file in files
                     let folder = file.Type == FtpFileSystemObjectType.Directory
                     let size = ByteConverter.BytesToString(file.Size)
-                    select new FileModel(file.Name, file.FullName, folder, size);
+                    select new FileModel(file.Name, file.FullName, folder, size, file.Modified);
             }
         }
 

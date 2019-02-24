@@ -57,21 +57,22 @@
                             <Grid Margin="8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="24" />
-                                    <ColumnDefinition Width="3*" />
+                                    <ColumnDefinition Width="2*" />
                                     <ColumnDefinition Width="1*" />
                                     <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="2*" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0"
                                            Text="&#x1F4C1;"
                                            FontFamily="Segoe UI Symbol"
                                            Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                           Visibility="{x:Bind IsFolder}"
+                                           Visibility="{x:Bind IsFolder, Mode=OneTime}"
                                            FontSize="14" />
                                 <TextBlock Grid.Column="0"
                                            Text="&#xE729;"
                                            FontFamily="Segoe MDL2 Assets"
                                            Foreground="{ThemeResource AppBarSeparatorForegroundThemeBrush}"
-                                           Visibility="{x:Bind IsFile}"
+                                           Visibility="{x:Bind IsFile, Mode=OneTime}"
                                            FontSize="14" />
                                 <TextBlock Grid.Column="1"
                                            Text="{x:Bind Name, Mode=OneTime}"
@@ -86,6 +87,10 @@
                                            VerticalAlignment="Center"
                                            Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
                                            Text="{x:Bind Size, Mode=OneTime}" />
+                                <TextBlock Grid.Column="4"
+                                           VerticalAlignment="Center"
+                                           Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                                           Text="{x:Bind Modified, Mode=OneTime}" />
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

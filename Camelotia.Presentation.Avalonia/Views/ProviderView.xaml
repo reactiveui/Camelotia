@@ -50,6 +50,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="3*" />
                                         <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="2*" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Margin="8" Grid.Column="0">
                                         <TextBlock Text="{Binding Name}"
@@ -64,6 +65,10 @@
                                                VerticalAlignment="Center"
                                                Foreground="#999999"
                                                Text="{Binding Size}" />
+                                    <TextBlock Grid.Column="2"
+                                               VerticalAlignment="Center"
+                                               Foreground="#999999"
+                                               Text="{Binding Modified}" />
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>

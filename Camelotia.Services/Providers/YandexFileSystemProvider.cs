@@ -76,7 +76,8 @@ namespace Camelotia.Services.Providers
                         file.Name,
                         file.Path.Replace("disk:", ""),
                         file.Type == "dir",
-                        ByteConverter.BytesToString(file.Size)));
+                        ByteConverter.BytesToString(file.Size),
+                        file.Created));
 
                 return models;
             }

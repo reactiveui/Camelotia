@@ -76,7 +76,7 @@ namespace Camelotia.Services.Providers
                     from file in contents
                     let size = ByteConverter.BytesToString(file.Length)
                     where file.Name != "." && file.Name != ".."
-                    select new FileModel(file.Name, file.FullName, file.IsDirectory, size);
+                    select new FileModel(file.Name, file.FullName, file.IsDirectory, size, file.LastWriteTime);
             }
         });
 

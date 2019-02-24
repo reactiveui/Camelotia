@@ -85,7 +85,7 @@ namespace Camelotia.Services.Providers
                 var size = string.Empty;
                 if (document.Size.HasValue)
                     size = ByteConverter.BytesToString(document.Size.Value);
-                return new FileModel(document.Title, document.Id.ToString(), false, size);
+                return new FileModel(document.Title, document.Id.ToString(), false, size, document.Date);
             });
         }
 

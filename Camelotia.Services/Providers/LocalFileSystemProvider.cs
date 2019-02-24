@@ -55,8 +55,9 @@ namespace Camelotia.Services.Providers
 
             var query = from entity in Directory.GetFileSystemEntries(path)
                         let isDirectory = IsDirectory(entity)
-                        let size = isDirectory ? "*" : ByteConverter.BytesToString(new FileInfo(entity).Length)
-                        select new FileModel(Path.GetFileName(entity), entity, isDirectory, size);
+                        let fileInfo = new FileInfo(entity)
+                        let size = isDirectory ? "*" : ByteConverter.BytesToString(fileInfo.Length)
+                        select new FileModel(Path.GetFileName(entity), entity, isDirectory, size, fileInfo.LastWriteTime);
 
             return query
                 .ToList()

@@ -77,7 +77,7 @@ namespace Camelotia.Services.Providers
                 var repos =
                     from repo in repositories
                     let size = ByteConverter.BytesToString(repo.Size)
-                    select new FileModel(repo.Name, repo.Name, true, size);
+                    select new FileModel(repo.Name, repo.Name, true, size, repo.CreatedAt.UtcDateTime);
                 
                 return repos;
             }

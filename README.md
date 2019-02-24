@@ -6,7 +6,7 @@ The app runs on Windows, Linux, MacOS, XBox, Surface Hub and HoloLens. Built wit
 
 You can compile .NET Standard libraries, run tests and run an Avalonia application on Windows, Linux and macOS operating systems. Make sure you have latest [.NET Core SDK](https://dot.net/) installed.
 
-<img src="./UiAvalonia.png" width="500">
+<img src="./UiAvalonia.png" width="550">
 
 ```sh
 # Linux or MacOS shell
@@ -21,7 +21,7 @@ On Windows, double-click the `./run.bat` file.
 
 You can compile Universal Windows Platform Camelotia app only on latest Windows 10. Make sure you have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/).
 
-<img src="./UiWindows.jpg" width="650">
+<img src="./UiWindows.jpg" width="620">
 
 ## Compiling Xamarin Forms app
 
