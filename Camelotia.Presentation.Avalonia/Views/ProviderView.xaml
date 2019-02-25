@@ -46,28 +46,29 @@
                              SelectedItem="{Binding SelectedFile, Mode=TwoWay}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="models:FileModel">
-                                <Grid>
+                                <Grid Margin="6">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="3*" />
                                         <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
                                         <ColumnDefinition Width="2*" />
                                     </Grid.ColumnDefinitions>
-                                    <StackPanel Margin="8" Grid.Column="0">
-                                        <TextBlock Text="{Binding Name}"
-                                                   TextWrapping="Wrap"
-                                                   FontSize="14" />
-                                        <TextBlock Text="Directory"
-                                                   IsVisible="{Binding IsFolder}"
-                                                   Foreground="#777777"
-                                                   FontSize="12" />
-                                    </StackPanel>
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding Name}"
+                                               TextWrapping="Wrap"
+                                               FontSize="14" />
                                     <TextBlock Grid.Column="1"
-                                               VerticalAlignment="Center"
-                                               Foreground="#999999"
-                                               Text="{Binding Size}" />
+                                               Text="Directory"
+                                               IsVisible="{Binding IsFolder}"
+                                               Foreground="#777777"
+                                               FontSize="12" />
                                     <TextBlock Grid.Column="2"
                                                VerticalAlignment="Center"
-                                               Foreground="#999999"
+                                               Foreground="#777777"
+                                               Text="{Binding Size}" />
+                                    <TextBlock Grid.Column="3"
+                                               VerticalAlignment="Center"
+                                               Foreground="#777777"
                                                Text="{Binding Modified}" />
                                 </Grid>
                             </DataTemplate>
