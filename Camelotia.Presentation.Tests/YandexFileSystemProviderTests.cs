@@ -1,4 +1,6 @@
-﻿using Camelotia.Services.Interfaces;
+﻿using System;
+using Akavache;
+using Camelotia.Services.Interfaces;
 using Camelotia.Services.Providers;
 using FluentAssertions;
 using NSubstitute;
@@ -8,14 +10,16 @@ namespace Camelotia.Presentation.Tests
 {
     public sealed class YandexFileSystemProviderTests
     {
+        private static readonly Guid YandexIdentifier = Guid.NewGuid();
         private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
-        private readonly ITokenStorage _tokenStorage = Substitute.For<ITokenStorage>();
+        private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
 
         [Fact]
         public void ShouldImplementNonNullInitialPath()
         {
-            var provider = new YandexFileSystemProvider(_authenticator, _tokenStorage);
+            var provider = new YandexFileSystemProvider(YandexIdentifier, _authenticator, _blobCache);
             provider.InitialPath.Should().NotBeNull();
+            provider.Id.Should().Be(YandexIdentifier);
         }
     }
 }

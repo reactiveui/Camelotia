@@ -30,7 +30,6 @@ namespace Camelotia.Services.Storages
 
         public Task Add(string typeName) => Task.Run(async () =>
         {
-            Console.WriteLine("Adding " + typeName);
             var type = _factories.Keys.First(x => x == typeName);
             var providerFactory = _factories[type];
             

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,8 +11,12 @@ namespace Camelotia.Presentation.Tests
 {
     public sealed class LocalFileSystemProviderTests
     {
+        private static readonly Guid LocalIdentifier = Guid.NewGuid();
         private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
-        private readonly IProvider _provider = new LocalFileSystemProvider();
+        private readonly IProvider _provider = new LocalFileSystemProvider(LocalIdentifier);
+
+        [Fact]
+        public void ShouldExposeCorrectId() => _provider.Id.Should().Be(LocalIdentifier);
         
         [Fact]
         public async Task LocalFileSystemShouldNotSupportAuth()
