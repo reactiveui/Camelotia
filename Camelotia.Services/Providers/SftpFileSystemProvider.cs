@@ -15,7 +15,13 @@ namespace Camelotia.Services.Providers
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private Func<SftpClient> _factory;
 
-        public SftpFileSystemProvider() => _isAuthorized.OnNext(false);
+        public SftpFileSystemProvider(Guid id)
+        {
+            Id = id;
+            _isAuthorized.OnNext(false);
+        }
+
+        public Guid Id { get; }
         
         public string Size => "Unknown";
         

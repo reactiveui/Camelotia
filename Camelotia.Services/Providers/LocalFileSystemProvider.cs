@@ -11,6 +11,10 @@ namespace Camelotia.Services.Providers
 {
     public sealed class LocalFileSystemProvider : IProvider
     {
+        public LocalFileSystemProvider(Guid id) => Id = id;
+        
+        public Guid Id { get; }
+        
         public string Size => GetSizeOnAllDisks();
 
         public string Name => "Local File System";

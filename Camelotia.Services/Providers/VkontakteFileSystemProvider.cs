@@ -4,9 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
+using Akavache;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Newtonsoft.Json;
@@ -21,16 +23,19 @@ namespace Camelotia.Services.Providers
     public sealed class VkontakteFileSystemProvider : IProvider
     {
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>();
-        private readonly ITokenStorage _tokenStorage;
+        private readonly IBlobCache _blobCache;
         private IVkApi _api = new VkApi();
         
-        public VkontakteFileSystemProvider(ITokenStorage tokenStorage)
+        public VkontakteFileSystemProvider(Guid id, IBlobCache blobCache)
         {
-            _tokenStorage = tokenStorage;
+            Id = id;
+            _blobCache = blobCache;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
 
+        public Guid Id { get; }
+        
         public string Size => "Unknown";
 
         public string Name => "Vkontakte Documents";
@@ -66,14 +71,22 @@ namespace Camelotia.Services.Providers
                 Settings = Settings.Documents
             });
 
-            await _tokenStorage.WriteToken<VkontakteFileSystemProvider>(_api.Token);
+            var persistentId = Id.ToString();
+            var model = await _blobCache.GetObject<ProviderModel>(persistentId);
+            model.Token = _api.Token;
+
+            await _blobCache.InsertObject(persistentId, model);
             _isAuthorized.OnNext(_api.IsAuthorized);
         }
         
         public async Task Logout()
         {
             _api = new VkApi();
-            await _tokenStorage.WriteToken<VkontakteFileSystemProvider>(null);
+            var persistentId = Id.ToString();
+            var model = await _blobCache.GetObject<ProviderModel>(persistentId);
+            model.Token = null;
+            
+            await _blobCache.InsertObject(persistentId, model);
             _isAuthorized.OnNext(_api.IsAuthorized);
         }
 
@@ -147,7 +160,10 @@ namespace Camelotia.Services.Providers
 
         private async void EnsureLoggedInIfTokenSaved()
         {
-            var token = await _tokenStorage.ReadToken<VkontakteFileSystemProvider>();
+            var persistentId = Id.ToString();
+            var model = await _blobCache.GetOrFetchObject(persistentId, () => Observable.Return<ProviderModel>(null));
+            var token = model?.Token;
+            
             if (string.IsNullOrWhiteSpace(token) || _api.IsAuthorized) return;
             await _api.AuthorizeAsync(new ApiAuthParams {AccessToken = token});
             _isAuthorized.OnNext(true);

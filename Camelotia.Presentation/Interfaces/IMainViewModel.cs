@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -9,8 +10,16 @@ namespace Camelotia.Presentation.Interfaces
         ReadOnlyObservableCollection<IProviderViewModel> Providers { get; }
         
         IProviderViewModel SelectedProvider { get; set; }
+        
+        IEnumerable<string> SupportedTypes { get; }
 
-        ICommand LoadProviders { get; }
+        string SelectedSupportedType { get; set; }
+
+        ICommand Refresh { get; }
+
+        ICommand Remove { get; }
+
+        ICommand Add { get; }
         
         bool IsLoading { get; }
         
