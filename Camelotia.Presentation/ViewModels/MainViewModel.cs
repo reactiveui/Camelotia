@@ -18,6 +18,8 @@ namespace Camelotia.Presentation.ViewModels
     public sealed class MainViewModel : ReactiveObject, IMainViewModel, ISupportsActivation
     {
         private readonly ReadOnlyObservableCollection<IProviderViewModel> _providers;
+        private readonly ObservableAsPropertyHelper<bool> _welcomeScreenCollapsed;
+        private readonly ObservableAsPropertyHelper<bool> _welcomeScreenVisible;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _isReady;
         private readonly ReactiveCommand<Unit, Unit> _refresh;
@@ -58,7 +60,7 @@ namespace Camelotia.Presentation.ViewModels
             providers.Where(changes => changes.Any())
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .OnItemAdded(x => SelectedProvider = Providers.LastOrDefault())
-                .OnItemRemoved(x => SelectedProvider = Providers.FirstOrDefault())
+                .OnItemRemoved(x => SelectedProvider = null)
                 .Subscribe();
 
             var canRemove = this
@@ -76,6 +78,16 @@ namespace Camelotia.Presentation.ViewModels
             _add = ReactiveCommand.CreateFromTask(
                 () => providerStorage.Add(SelectedSupportedType),
                 canAddProvider);
+
+            _welcomeScreenVisible = this
+                .WhenAnyValue(x => x.SelectedProvider)
+                .Select(provider => provider == null)
+                .ToProperty(this, x => x.WelcomeScreenVisible);
+
+            _welcomeScreenCollapsed = this
+                .WhenAnyValue(x => x.WelcomeScreenVisible)
+                .Select(visible => !visible)
+                .ToProperty(this, x => x.WelcomeScreenCollapsed);
             
             Activator = new ViewModelActivator();
             this.WhenActivated(async (CompositeDisposable disposable) =>
@@ -94,7 +106,11 @@ namespace Camelotia.Presentation.ViewModels
         public ReadOnlyObservableCollection<IProviderViewModel> Providers => _providers;
 
         public IEnumerable<string> SupportedTypes => _providerStorage.SupportedTypes;
-        
+
+        public bool WelcomeScreenCollapsed => _welcomeScreenCollapsed.Value;
+
+        public bool WelcomeScreenVisible => _welcomeScreenVisible.Value;
+
         public bool IsLoading => _isLoading.Value;
         
         public ICommand LoadProviders => _refresh;

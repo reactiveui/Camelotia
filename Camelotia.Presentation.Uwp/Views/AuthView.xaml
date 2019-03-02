@@ -8,7 +8,7 @@
     d:DesignHeight="500"
     d:DesignWidth="600"
     mc:Ignorable="d">
-    <Pivot x:Name="AuthorizationPivot">
+    <Pivot x:Name="AuthorizationPivot" Visibility="Collapsed">
         <PivotItem IsEnabled="{x:Bind ViewModel.SupportsDirectAuth, Mode=OneWay}">
             <PivotItem.Header>
                 <TextBlock Text="Direct Auth" FontSize="18" FontWeight="SemiBold"

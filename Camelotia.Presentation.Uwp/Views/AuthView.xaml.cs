@@ -32,6 +32,13 @@ namespace Camelotia.Presentation.Uwp.Views
                     .Where(supports => supports)
                     .Subscribe(supports => AuthorizationPivot.SelectedIndex = 2)
                     .DisposeWith(disposables);
+
+                this.WhenAnyValue(
+                    x => x.ViewModel.SupportsDirectAuth,
+                    x => x.ViewModel.SupportsHostAuth,
+                    x => x.ViewModel.SupportsOAuth)
+                    .Subscribe(x => AuthorizationPivot.Visibility = Visibility.Visible)
+                    .DisposeWith(disposables);
             });
         }
 

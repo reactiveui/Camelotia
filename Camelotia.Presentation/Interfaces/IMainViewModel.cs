@@ -15,6 +15,10 @@ namespace Camelotia.Presentation.Interfaces
 
         string SelectedSupportedType { get; set; }
 
+        bool WelcomeScreenCollapsed { get; }
+
+        bool WelcomeScreenVisible { get; }
+
         ICommand Refresh { get; }
 
         ICommand Remove { get; }

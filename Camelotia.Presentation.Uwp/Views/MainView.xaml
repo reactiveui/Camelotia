@@ -24,15 +24,33 @@
         <Grid Grid.Column="0" Background="{ThemeResource SystemControlAccentAcrylicWindowAccentMediumHighBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" 
-                       Style="{StaticResource HeaderTextBlockStyle}"
+                       Style="{StaticResource SubheaderTextBlockStyle}"
                        Foreground="White"
                        Text="Camelotia" 
                        Margin="22"/>
-            <ListBox Grid.Row="1" Background="Transparent"
+            <Grid Grid.Row="1" Margin="10 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ComboBox Grid.Column="0" 
+                          HorizontalAlignment="Stretch"
+                          ItemsSource="{x:Bind ViewModel.SupportedTypes, Mode=OneWay}"
+                          SelectedItem="{x:Bind ViewModel.SelectedSupportedType, Mode=TwoWay}"
+                          Margin="10" />
+                <Button Grid.Column="1"
+                        Style="{StaticResource AccentButtonStyle}" 
+                        Command="{x:Bind ViewModel.Add, Mode=OneWay}"
+                        HorizontalAlignment="Stretch"
+                        Margin="0 10 10 10"
+                        Content="Add" />
+            </Grid>
+            <ListBox Grid.Row="2" Background="Transparent"
                      SelectedItem="{x:Bind ViewModel.SelectedProvider, Mode=TwoWay}"
                      ItemsSource="{x:Bind ViewModel.Providers, Mode=OneWay}">
                 <ListBox.ItemTemplate>
@@ -55,15 +73,42 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Button Style="{StaticResource AccentButtonStyle}" 
-                    Command="{x:Bind ViewModel.LoadProviders, Mode=OneWay}" 
-                    HorizontalAlignment="Stretch"
-                    Content="Load providers"
-                    Padding="10"
-                    Grid.Row="2" />
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Style="{StaticResource AccentButtonStyle}" 
+                        Command="{x:Bind ViewModel.Refresh, Mode=OneWay}" 
+                        HorizontalAlignment="Stretch"
+                        Content="Refresh"
+                        Padding="10"
+                        Grid.Column="0" />
+                <Button Style="{StaticResource AccentButtonStyle}" 
+                        Command="{x:Bind ViewModel.Remove, Mode=OneWay}" 
+                        HorizontalAlignment="Stretch"
+                        Content="Remove"
+                        Padding="10"
+                        Grid.Column="1" />
+            </Grid>
         </Grid>
         <Grid Grid.Column="1" Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}">
-            <views:ProviderView ViewModel="{x:Bind ViewModel.SelectedProvider, Mode=OneWay}" />
+            <views:ProviderView ViewModel="{x:Bind ViewModel.SelectedProvider, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.WelcomeScreenCollapsed, Mode=OneWay}" />
+            <Grid Visibility="{x:Bind ViewModel.WelcomeScreenVisible, Mode=OneWay}" 
+                  Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" 
+                               Text="&#xE753;" 
+                               FontSize="90" 
+                               HorizontalAlignment="Center"
+                               Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
+                    <TextBlock Text="Select existing provider or add a new one!" 
+                               Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                               Margin="10" />
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </Page>
