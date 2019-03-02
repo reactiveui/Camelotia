@@ -30,8 +30,8 @@ namespace Camelotia.Presentation.Tests
             model.IsLoading.Should().BeFalse();
             model.IsReady.Should().BeFalse();
                 
-            model.LoadProviders.CanExecute(null).Should().BeTrue();
-            model.LoadProviders.Execute(null);
+            model.Refresh.CanExecute(null).Should().BeTrue();
+            model.Refresh.Execute(null);
             scheduler.AdvanceBy(2);
                 
             model.Providers.Should().BeEmpty();
@@ -59,7 +59,7 @@ namespace Camelotia.Presentation.Tests
             scheduler.AdvanceBy(2);
 
             model.Providers.Should().BeEmpty();
-            model.LoadProviders.Execute(null);
+            model.Refresh.Execute(null);
             scheduler.AdvanceBy(3);
                 
             model.Providers.Should().NotBeEmpty();

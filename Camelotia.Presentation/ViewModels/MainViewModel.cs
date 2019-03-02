@@ -113,8 +113,6 @@ namespace Camelotia.Presentation.ViewModels
 
         public bool IsLoading => _isLoading.Value;
         
-        public ICommand LoadProviders => _refresh;
-
         public bool IsReady => _isReady.Value;
 
         public ICommand Refresh => _refresh;
