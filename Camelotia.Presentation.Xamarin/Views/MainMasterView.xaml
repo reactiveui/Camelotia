@@ -36,9 +36,14 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <StackLayout Grid.Row="3">
-            <Button x:Name="RefreshButton" Text="Refresh" Margin="12" />
-        </StackLayout>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" x:Name="RefreshButton" Text="Refresh" Margin="12" />
+            <Button Grid.Column="1" x:Name="RemoveButton" Text="Remove" Margin="0, 12, 12, 12" />
+        </Grid>
         <ProgressBar Grid.Row="1" Grid.RowSpan="3" x:Name="LoadingBar" />
     </Grid>
 </rxui:ReactiveContentPage>

@@ -20,7 +20,10 @@ namespace Camelotia.Presentation.Xamarin.Views
                     .DisposeWith(disposables);
                 this.OneWayBind(ViewModel, x => x.IsLoading, x => x.LoadingBar.IsVisible)
                     .DisposeWith(disposables);
+
                 this.BindCommand(ViewModel, x => x.Refresh, x => x.RefreshButton)
+                    .DisposeWith(disposables);
+                this.BindCommand(ViewModel, x => x.Remove, x => x.RemoveButton)
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel, x => x.Providers, x => x.ProvidersView.ItemsSource)
