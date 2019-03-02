@@ -1,10 +1,13 @@
 ﻿using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.Uwp.Services;
 using Camelotia.Presentation.ViewModels;
+using Camelotia.Services.Interfaces;
 using Camelotia.Services.Providers;
 using Camelotia.Services.Storages;
 using System.Reactive.Concurrency;
+using System.Collections.Generic;
 using ReactiveUI;
+using System;
 
 namespace Camelotia.Presentation.Uwp
 {
@@ -14,7 +17,10 @@ namespace Camelotia.Presentation.Uwp
         {
             var currentThread = CurrentThreadScheduler.Instance;
             var mainThread = RxApp.MainThreadScheduler;
-            var cache = new AkavacheTokenStorage();
+
+            Akavache.BlobCache.ApplicationName = "Camelotia";
+            var cache = Akavache.BlobCache.UserAccount;
+            var login = new UniversalWindowsAuthenticator();
 
             return new MainViewModel(
                 (provider, files, auth) => new ProviderViewModel(
@@ -34,13 +40,15 @@ namespace Camelotia.Presentation.Uwp
                     provider
                 ),
                 new ProviderStorage(
-                    new VkontakteFileSystemProvider(cache),
-                    new YandexFileSystemProvider(
-                        new UniversalWindowsAuthenticator(), cache
-                    ),
-                    new FtpFileSystemProvider(),
-                    new SftpFileSystemProvider(),
-                    new GitHubFileSystemProvider()
+                    new Dictionary<string, Func<Guid, IProvider>>
+                    {
+                        ["Yandex Disk"] = id => new YandexFileSystemProvider(id, login, cache),
+                        ["Vkontakte Docs"] = id => new VkontakteFileSystemProvider(id, cache),
+                        ["FTP"] = id => new FtpFileSystemProvider(id),
+                        ["SFTP"] = id => new SftpFileSystemProvider(id),
+                        ["GitHub"] = id => new GitHubFileSystemProvider(id)
+                    },
+                    cache
                 ),
                 new UniversalWindowsFileManager(),
                 currentThread,

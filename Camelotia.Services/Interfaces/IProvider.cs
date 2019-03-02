@@ -8,6 +8,8 @@ namespace Camelotia.Services.Interfaces
 {
     public interface IProvider
     {
+        Guid Id { get; }
+        
         string Size { get; }
         
         string Name { get; }

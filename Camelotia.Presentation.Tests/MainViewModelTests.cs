@@ -1,3 +1,4 @@
+using System;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Camelotia.Presentation.Interfaces;
@@ -22,8 +23,8 @@ namespace Camelotia.Presentation.Tests
         public void ShouldIndicateWhenLoadingAndReady() => new TestScheduler().With(scheduler =>
         {
             _providerStorage
-                .Connect()
-                .Returns(Observable.Return(new ChangeSet<IProvider>()));
+                .Providers()
+                .Returns(Observable.Return(new ChangeSet<IProvider, Guid>()));
             
             var model = BuildMainViewModel(scheduler);
             model.IsLoading.Should().BeFalse();
@@ -47,11 +48,11 @@ namespace Camelotia.Presentation.Tests
         public void ShouldSelectFirstProviderWhenProvidersGetLoaded() => new TestScheduler().With(scheduler =>
         {
             var collection = new ObservableCollectionExtended<IProvider>();
-            var set = collection.ToObservableChangeSet();
+            var set = collection.ToObservableChangeSet(x => x.Id);
             
-            _providerStorage.Connect().Returns(set);
+            _providerStorage.Providers().Returns(set);
             _providerStorage
-                .When(storage => storage.LoadProviders())
+                .When(storage => storage.Refresh())
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
                 
             var model = BuildMainViewModel(scheduler);
@@ -69,11 +70,11 @@ namespace Camelotia.Presentation.Tests
         public void ActivationShouldTriggerLoad() => new TestScheduler().With(scheduler =>
         {
             var collection = new ObservableCollectionExtended<IProvider>();
-            var set = collection.ToObservableChangeSet();
+            var set = collection.ToObservableChangeSet(x => x.Id);
             
-            _providerStorage.Connect().Returns(set);
+            _providerStorage.Providers().Returns(set);
             _providerStorage
-                .When(storage => storage.LoadProviders())
+                .When(storage => storage.Refresh())
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
                 
             var model = BuildMainViewModel(scheduler);

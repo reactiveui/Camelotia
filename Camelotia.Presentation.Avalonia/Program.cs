@@ -1,10 +1,13 @@
-﻿using System.Reactive.Concurrency;
+﻿using System;
+using System.Collections.Generic;
+using System.Reactive.Concurrency;
 using Camelotia.Presentation.Avalonia.Views;
 using Camelotia.Presentation.Avalonia.Services;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Providers;
 using Camelotia.Services.Storages;
+using Camelotia.Services.Interfaces;
 using ReactiveUI;
 using Avalonia;
 
@@ -25,7 +28,10 @@ namespace Camelotia.Presentation.Avalonia
         {
             var currentThread = CurrentThreadScheduler.Instance;
             var mainThread = RxApp.MainThreadScheduler;
-            var cache = new AkavacheTokenStorage();
+
+            Akavache.BlobCache.ApplicationName = "Camelotia";
+            var cache = Akavache.BlobCache.UserAccount;
+            var login = new AvaloniaAuthenticator();
 
             return new MainViewModel(
                 (provider, files, auth) => new ProviderViewModel(
@@ -45,14 +51,16 @@ namespace Camelotia.Presentation.Avalonia
                     provider
                 ),
                 new ProviderStorage(
-                    new LocalFileSystemProvider(),
-                    new VkontakteFileSystemProvider(cache),
-                    new YandexFileSystemProvider(
-                        new AvaloniaAuthenticator(), cache
-                    ),
-                    new FtpFileSystemProvider(),
-                    new SftpFileSystemProvider(),
-                    new GitHubFileSystemProvider()
+                    new Dictionary<string, Func<Guid, IProvider>>
+                    {
+                        ["Local File System"] = id => new LocalFileSystemProvider(id),
+                        ["Vkontakte Docs"] = id => new VkontakteFileSystemProvider(id, cache),
+                        ["Yandex Disk"] = id => new YandexFileSystemProvider(id, login, cache),
+                        ["FTP"] = id => new FtpFileSystemProvider(id),
+                        ["SFTP"] = id => new SftpFileSystemProvider(id),
+                        ["GitHub"] = id => new GitHubFileSystemProvider(id)
+                    },
+                    cache
                 ),
                 new AvaloniaFileManager(),
                 currentThread,

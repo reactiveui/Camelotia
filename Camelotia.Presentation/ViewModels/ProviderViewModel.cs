@@ -237,6 +237,8 @@ namespace Camelotia.Presentation.ViewModels
                     .InvokeCommand(_refresh);
             });
         }
+
+        public Guid Id => _provider.Id;
         
         public IAuthViewModel Auth { get; }
         

@@ -20,8 +20,14 @@ namespace Camelotia.Services.Providers
         private readonly HttpClient _httpClient = new HttpClient();
         private string _currentUserName;
         
-        public GitHubFileSystemProvider() => _isAuthenticated.OnNext(false);
+        public GitHubFileSystemProvider(Guid id)
+        {
+            Id = id;
+            _isAuthenticated.OnNext(false);
+        }
 
+        public Guid Id { get; }
+        
         public string Size => "Unknown";
 
         public string Name => "GitHub";

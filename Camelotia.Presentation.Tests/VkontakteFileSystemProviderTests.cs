@@ -1,4 +1,5 @@
-﻿using Camelotia.Services.Interfaces;
+﻿using System;
+using Akavache;
 using Camelotia.Services.Providers;
 using FluentAssertions;
 using NSubstitute;
@@ -8,13 +9,15 @@ namespace Camelotia.Presentation.Tests
 {
     public sealed class VkontakteFileSystemProviderTests
     {
-        private readonly ITokenStorage _tokenStorage = Substitute.For<ITokenStorage>();
-
+        private static readonly Guid VkontakteIdentifier = Guid.NewGuid();
+        private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
+        
         [Fact]
         public void ShouldImplementNonNullInitialPath()
         {
-            var provider = new VkontakteFileSystemProvider(_tokenStorage);
+            var provider = new VkontakteFileSystemProvider(VkontakteIdentifier, _blobCache);
             provider.InitialPath.Should().NotBeNull();
+            provider.Id.Should().Be(VkontakteIdentifier);
         }
     }
 }

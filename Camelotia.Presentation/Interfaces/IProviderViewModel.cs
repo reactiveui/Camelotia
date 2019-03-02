@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -7,6 +8,8 @@ namespace Camelotia.Presentation.Interfaces
 {
     public interface IProviderViewModel : INotifyPropertyChanged
     {
+        Guid Id { get; }
+        
         IAuthViewModel Auth { get; }
         
         ICreateFolderViewModel Folder { get; }

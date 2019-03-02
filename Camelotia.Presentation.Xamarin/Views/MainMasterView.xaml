@@ -11,20 +11,39 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Text="Camelotia" FontSize="21" Margin="10" FontAttributes="Bold" TextColor="#311b92" />
-        <ListView x:Name="ProvidersView" HasUnevenRows="True" Grid.Row="1">
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Picker Grid.Column="0" 
+                    x:Name="SupportedTypesPicker"
+                    Margin="10, 5, 10, 10" />
+            <Button Grid.Column="1"
+                    x:Name="AddButton"
+                    Margin="0, 5, 5, 10"
+                    Text="Add" />
+        </Grid>
+        <ListView x:Name="ProvidersView" HasUnevenRows="True" Grid.Row="2">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:IProviderViewModel">
                     <view:MainProviderView ViewModel="{Binding}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <StackLayout Grid.Row="2">
-            <Button x:Name="RefreshButton" Text="Refresh" Margin="12" />
-        </StackLayout>
-        <ProgressBar Grid.Row="0" Grid.RowSpan="3" x:Name="LoadingBar" />
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" x:Name="RefreshButton" Text="Refresh" Margin="12" />
+            <Button Grid.Column="1" x:Name="RemoveButton" Text="Remove" Margin="0, 12, 12, 12" />
+        </Grid>
+        <ProgressBar Grid.Row="1" Grid.RowSpan="3" x:Name="LoadingBar" />
     </Grid>
 </rxui:ReactiveContentPage>

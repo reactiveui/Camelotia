@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
@@ -17,9 +18,14 @@ namespace Camelotia.Presentation.ViewModels
     public sealed class MainViewModel : ReactiveObject, IMainViewModel, ISupportsActivation
     {
         private readonly ReadOnlyObservableCollection<IProviderViewModel> _providers;
+        private readonly ObservableAsPropertyHelper<bool> _welcomeScreenCollapsed;
+        private readonly ObservableAsPropertyHelper<bool> _welcomeScreenVisible;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _isReady;
-        private readonly ReactiveCommand<Unit, Unit> _load;
+        private readonly ReactiveCommand<Unit, Unit> _refresh;
+        private readonly ReactiveCommand<Unit, Unit> _remove;
+        private readonly IProviderStorage _providerStorage;
+        private readonly ReactiveCommand<Unit, Unit> _add;
 
         public MainViewModel(
             Func<IProvider, IFileManager, IAuthViewModel, IProviderViewModel> providerFactory,
@@ -29,54 +35,92 @@ namespace Camelotia.Presentation.ViewModels
             IScheduler currentThread,
             IScheduler mainThread)
         {
-            _load = ReactiveCommand.CreateFromTask(
-                providerStorage.LoadProviders,
+            _providerStorage = providerStorage;
+            _refresh = ReactiveCommand.CreateFromTask(
+                providerStorage.Refresh,
                 outputScheduler: mainThread);
             
-            var observableProviders = providerStorage.Connect();
-            observableProviders
-                .Transform(x => providerFactory(x, fileManager, authFactory(x)))
+            var providers = providerStorage.Providers();
+            providers.Transform(x => providerFactory(x, fileManager, authFactory(x)))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .StartWithEmpty()
                 .Bind(out _providers)
                 .Subscribe();
             
-            _isLoading = _load
+            _isLoading = _refresh
                 .IsExecuting
                 .ToProperty(this, x => x.IsLoading, scheduler: currentThread);
             
-            _isReady = _load
+            _isReady = _refresh
                 .IsExecuting
                 .Skip(1)
                 .Select(executing => !executing)
                 .ToProperty(this, x => x.IsReady, scheduler: currentThread);
 
-            observableProviders
-                .Take(1)
-                .Where(changes => changes.Any())
+            providers.Where(changes => changes.Any())
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Select(changes => Providers.FirstOrDefault())
-                .Subscribe(change => SelectedProvider = change);
+                .OnItemAdded(x => SelectedProvider = Providers.LastOrDefault())
+                .OnItemRemoved(x => SelectedProvider = null)
+                .Subscribe();
 
+            var canRemove = this
+                .WhenAnyValue(x => x.SelectedProvider)
+                .Select(provider => provider != null);
+            
+            _remove = ReactiveCommand.CreateFromTask(
+                () => providerStorage.Remove(SelectedProvider.Id),
+                canRemove);
+
+            var canAddProvider = this
+                .WhenAnyValue(x => x.SelectedSupportedType)
+                .Select(type => !string.IsNullOrWhiteSpace(type));
+            
+            _add = ReactiveCommand.CreateFromTask(
+                () => providerStorage.Add(SelectedSupportedType),
+                canAddProvider);
+
+            _welcomeScreenVisible = this
+                .WhenAnyValue(x => x.SelectedProvider)
+                .Select(provider => provider == null)
+                .ToProperty(this, x => x.WelcomeScreenVisible);
+
+            _welcomeScreenCollapsed = this
+                .WhenAnyValue(x => x.WelcomeScreenVisible)
+                .Select(visible => !visible)
+                .ToProperty(this, x => x.WelcomeScreenCollapsed);
+            
             Activator = new ViewModelActivator();
-            this.WhenActivated(disposable =>
+            this.WhenActivated(async (CompositeDisposable disposable) =>
             {
-                _load.Execute()
-                    .Subscribe(x => { })
-                    .DisposeWith(disposable);
+                SelectedSupportedType = SupportedTypes.FirstOrDefault();
+                await _refresh.Execute();
             });
         }
-        
-        public ReadOnlyObservableCollection<IProviderViewModel> Providers => _providers;
-
-        [Reactive] public IProviderViewModel SelectedProvider { get; set; }
 
         public ViewModelActivator Activator { get; }
         
+        [Reactive] public string SelectedSupportedType { get; set; }
+
+        [Reactive] public IProviderViewModel SelectedProvider { get; set; }
+        
+        public ReadOnlyObservableCollection<IProviderViewModel> Providers => _providers;
+
+        public IEnumerable<string> SupportedTypes => _providerStorage.SupportedTypes;
+
+        public bool WelcomeScreenCollapsed => _welcomeScreenCollapsed.Value;
+
+        public bool WelcomeScreenVisible => _welcomeScreenVisible.Value;
+
         public bool IsLoading => _isLoading.Value;
         
-        public ICommand LoadProviders => _load;
+        public ICommand LoadProviders => _refresh;
 
         public bool IsReady => _isReady.Value;
+
+        public ICommand Refresh => _refresh;
+
+        public ICommand Remove => _remove;
+
+        public ICommand Add => _add;
     }
 }

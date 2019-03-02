@@ -5,8 +5,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using Akavache;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Camelotia.Services.Models.Yandex;
@@ -28,16 +30,19 @@ namespace Camelotia.Services.Providers
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
         private readonly HttpClient _http = new HttpClient();
         private readonly IAuthenticator _authenticator;
-        private readonly ITokenStorage _tokenStorage;
+        private readonly IBlobCache _blobCache;
 
-        public YandexFileSystemProvider(IAuthenticator authenticator, ITokenStorage tokenStorage)
+        public YandexFileSystemProvider(Guid id, IAuthenticator authenticator, IBlobCache blobCache)
         {
+            Id = id;
+            _blobCache = blobCache;
             _authenticator = authenticator;
-            _tokenStorage = tokenStorage;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
 
+        public Guid Id { get; }
+        
         public string Size => "Unknown";
 
         public string Name => "Yandex Disk";
@@ -150,22 +155,33 @@ namespace Camelotia.Services.Providers
 
         public async Task Logout()
         {
-            await _tokenStorage.WriteToken<YandexFileSystemProvider>(null);
+            var persistentId = Id.ToString();
+            var model = await _blobCache.GetObject<ProviderModel>(persistentId);
+            model.Token = null;
+            
+            await _blobCache.InsertObject(persistentId, model);
             _http.DefaultRequestHeaders.Clear();
             _isAuthorized.OnNext(false);
         }
 
         public async Task OAuth()
         {
+            var persistentId = Id.ToString();
             var token = await GetAuthenticationToken();
-            await _tokenStorage.WriteToken<YandexFileSystemProvider>(token);
+            var model = await _blobCache.GetObject<ProviderModel>(persistentId);
+            model.Token = token;
+            
+            await _blobCache.InsertObject(persistentId, model);
             ApplyTokenToHeaders(token);
             _isAuthorized.OnNext(true);
         }
         
         private async void EnsureLoggedInIfTokenSaved()
         {
-            var token = await _tokenStorage.ReadToken<YandexFileSystemProvider>();
+            var persistentId = Id.ToString();
+            var model = await _blobCache.GetOrFetchObject(persistentId, () => Observable.Return<ProviderModel>(null));
+            var token = model?.Token;
+            
             if (string.IsNullOrWhiteSpace(token)) return;
             ApplyTokenToHeaders(token);
             _isAuthorized.OnNext(true);

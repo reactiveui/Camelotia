@@ -1,8 +1,10 @@
 ﻿using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Presentation.Xamarin.Droid.Services;
+using Camelotia.Services.Interfaces;
 using Camelotia.Services.Providers;
 using Camelotia.Services.Storages;
+using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
 using System;
@@ -49,7 +51,10 @@ namespace Camelotia.Presentation.Xamarin.Droid
         {
             var currentThread = CurrentThreadScheduler.Instance;
             var mainThread = RxApp.MainThreadScheduler;
-            var cache = new AkavacheTokenStorage();
+
+            Akavache.BlobCache.ApplicationName = "Camelotia";
+            var cache = Akavache.BlobCache.UserAccount;
+            var login = new AndroidAuthenticator(this);
 
             return new MainViewModel(
                 (provider, files, auth) => new ProviderViewModel(
@@ -69,13 +74,15 @@ namespace Camelotia.Presentation.Xamarin.Droid
                     provider
                 ),
                 new ProviderStorage(
-                    new VkontakteFileSystemProvider(cache),
-                    new YandexFileSystemProvider(
-                        new AndroidAuthenticator(this), cache
-                    ),
-                    new FtpFileSystemProvider(),
-                    new SftpFileSystemProvider(),
-                    new GitHubFileSystemProvider()
+                    new Dictionary<string, Func<Guid, IProvider>>
+                    {
+                        ["Vkontakte Docs"] = id => new VkontakteFileSystemProvider(id, cache),
+                        ["Yandex Disk"] = id => new YandexFileSystemProvider(id, login, cache),
+                        ["FTP"] = id => new FtpFileSystemProvider(id),
+                        ["SFTP"] = id => new SftpFileSystemProvider(id),
+                        ["GitHub"] = id => new GitHubFileSystemProvider(id)
+                    },
+                    cache
                 ),
                 new AndroidFileManager(this),
                 currentThread,
