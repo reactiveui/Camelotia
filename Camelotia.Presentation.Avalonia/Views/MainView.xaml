@@ -101,13 +101,25 @@
         </Grid>
         <Grid Grid.Column="1">
             <Carousel Items="{Binding Providers, Mode=OneWay}"
+                      IsVisible="{Binding WelcomeScreenCollapsed, Mode=OneWay}"
                       SelectedItem="{Binding SelectedProvider, Mode=OneWay}">
+                <Carousel.PageTransition>
+                    <PageSlide Duration="00:00:00.300" Orientation="Vertical" />
+                </Carousel.PageTransition>
                 <Carousel.DataTemplates>
                     <DataTemplate DataType="interfaces:IProviderViewModel">
                         <views:ProviderView DataContext="{Binding}" />
                     </DataTemplate>
                 </Carousel.DataTemplates>
             </Carousel>
+            <Grid IsVisible="{Binding WelcomeScreenVisible, Mode=OneWay}"
+                  Background="#f0f0f0">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="Select existing provider or add a new one!" 
+                               Margin="10" />
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </Window>
