@@ -42,7 +42,6 @@ namespace Camelotia.Services.Providers
             if (string.IsNullOrWhiteSpace(path))
             {
                 var driveQuery = from entity in GetAllDrives()
-                                 where entity.IsReady
                                  let size = ByteConverter.BytesToString(entity.AvailableFreeSpace)
                                  select new FileModel(entity.Name, entity.Name, true, size);
                 return driveQuery
@@ -123,7 +122,7 @@ namespace Camelotia.Services.Providers
         {
             var drives = DriveInfo
                 .GetDrives()
-                .Where(p => p.DriveType != DriveType.CDRom);
+                .Where(p => p.DriveType != DriveType.CDRom && p.IsReady);
 
             return drives;
         }
