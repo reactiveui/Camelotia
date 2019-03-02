@@ -53,12 +53,12 @@ namespace Camelotia.Presentation.Avalonia
                 new ProviderStorage(
                     new Dictionary<string, Func<Guid, IProvider>>
                     {
-                        [typeof(LocalFileSystemProvider).Name] = id => new LocalFileSystemProvider(id),
-                        [typeof(VkontakteFileSystemProvider).Name] = id => new VkontakteFileSystemProvider(id, cache),
-                        [typeof(YandexFileSystemProvider).Name] = id => new YandexFileSystemProvider(id, login, cache),
-                        [typeof(FtpFileSystemProvider).Name] = id => new FtpFileSystemProvider(id),
-                        [typeof(SftpFileSystemProvider).Name] = id => new SftpFileSystemProvider(id),
-                        [typeof(GitHubFileSystemProvider).Name] = id => new GitHubFileSystemProvider(id)
+                        ["Local File System"] = id => new LocalFileSystemProvider(id),
+                        ["Vkontakte Docs"] = id => new VkontakteFileSystemProvider(id, cache),
+                        ["Yandex Disk"] = id => new YandexFileSystemProvider(id, login, cache),
+                        ["FTP"] = id => new FtpFileSystemProvider(id),
+                        ["SFTP"] = id => new SftpFileSystemProvider(id),
+                        ["GitHub"] = id => new GitHubFileSystemProvider(id)
                     },
                     cache
                 ),
