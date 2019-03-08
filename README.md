@@ -21,7 +21,11 @@ On Windows, double-click the `./run.bat` file.
 
 You can compile Universal Windows Platform Camelotia app only on latest Windows 10. Make sure you have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/).
 
-<img src="./UiWindows.jpg" width="620">
+<img src="./UiWindows1.jpg" width="460"> 
+
+Supports light and dark themes!
+
+<img src="./UiWindows2.jpg" width="460">
 
 ## Compiling Xamarin Forms app
 
