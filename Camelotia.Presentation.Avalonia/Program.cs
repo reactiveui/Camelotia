@@ -58,7 +58,7 @@ namespace Camelotia.Presentation.Avalonia
                         ["Yandex Disk"] = id => new YandexFileSystemProvider(id, login, cache),
                         ["FTP"] = id => new FtpFileSystemProvider(id),
                         ["SFTP"] = id => new SftpFileSystemProvider(id),
-                        ["GitHub"] = id => new GitHubFileSystemProvider(id),
+                        ["GitHub"] = id => new GitHubFileSystemProvider(id, cache),
                         ["Google Drive"] = id => new GoogleDriveFileSystemProvider(id, cache)
                     },
                     cache
