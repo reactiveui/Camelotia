@@ -10,6 +10,7 @@ using Akavache;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Google.Apis.Auth.OAuth2;
+using Google.Apis.Download;
 using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
@@ -72,9 +73,19 @@ namespace Camelotia.Services.Providers
             return files;
         }
 
-        public Task UploadFile(string to, Stream from, string name) => throw new NotImplementedException();
+        public async Task UploadFile(string to, Stream from, string name)
+        {
+            var create = _driveService.Files.Create(new File {Name = name}, from, "application/vnd.google-apps.file");
+            await create.UploadAsync().ConfigureAwait(false);
+        }
 
-        public Task DownloadFile(string from, Stream to) => throw new NotImplementedException();
+        public async Task DownloadFile(string from, Stream to)
+        {
+            var file = _driveService.Files.Get(from);
+            var progress = await file.DownloadAsync(to).ConfigureAwait(false);
+            while (progress.Status == DownloadStatus.Downloading)
+                await Task.Delay(1000);
+        }
 
         public async Task RenameFile(FileModel file, string name)
         {
