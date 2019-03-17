@@ -46,7 +46,7 @@ namespace Camelotia.Presentation.Uwp
                         ["Vkontakte Docs"] = id => new VkontakteFileSystemProvider(id, cache),
                         ["FTP"] = id => new FtpFileSystemProvider(id),
                         ["SFTP"] = id => new SftpFileSystemProvider(id),
-                        ["GitHub"] = id => new GitHubFileSystemProvider(id)
+                        ["GitHub"] = id => new GitHubFileSystemProvider(id, cache)
                     },
                     cache
                 ),

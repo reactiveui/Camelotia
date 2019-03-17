@@ -179,7 +179,7 @@ namespace Camelotia.Services.Providers
         private async void EnsureLoggedInIfTokenSaved()
         {
             var persistentId = Id.ToString();
-            var model = await _blobCache.GetOrFetchObject(persistentId, () => Observable.Return<ProviderModel>(null));
+            var model = await _blobCache.GetOrFetchObject(persistentId, () => Task.FromResult(default(ProviderModel)));
             var token = model?.Token;
             
             if (string.IsNullOrWhiteSpace(token)) return;

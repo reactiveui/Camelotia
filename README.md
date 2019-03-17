@@ -1,6 +1,6 @@
 [![Build Status](https://worldbeater.visualstudio.com/Camelotia/_apis/build/status/Camelotia-CI)](https://worldbeater.visualstudio.com/Camelotia/_build/latest?definitionId=1) [![Pull Requests](https://img.shields.io/github/issues-pr/worldbeater/camelotia.svg)](https://github.com/worldbeater/Camelotia/pulls) [![Issues](https://img.shields.io/github/issues/worldbeater/camelotia.svg)](https://github.com/worldbeater/Camelotia/issues) ![License](https://img.shields.io/github/license/worldbeater/camelotia.svg) ![Size](https://img.shields.io/github/repo-size/worldbeater/camelotia.svg)
 
-The app runs on Windows, Linux, MacOS, XBox, Surface Hub and HoloLens. Built with [ReactiveUI](https://github.com/reactiveui/ReactiveUI).
+File manager for cloud storages. Supports Yandex Disk, Google Drive, VK Documents, GitHub, FTP, SFTP. The app runs on Windows, Linux, MacOS, XBox, Surface Hub and HoloLens. Built with [ReactiveUI](https://github.com/reactiveui/ReactiveUI).
 
 ## Compiling Avalonia app
 
@@ -24,8 +24,6 @@ You can compile Universal Windows Platform Camelotia app only on latest Windows 
 <img src="./UiWindows1.jpg" width="550"> 
 
 Supports light and dark themes!
-
-<img src="./UiWindows2.jpg" width="550">
 
 ## Compiling Xamarin Forms app
 
@@ -51,4 +49,5 @@ File system providers are located at `./Camelotia.Services/Providers/`. To add a
 - <a href="https://github.com/robinrodricks/FluentFTP">FluentFTP</a> FTP implementation
 - <a href="https://github.com/sshnet/SSH.NET/">SSH.NET</a> SFTP implementation
 - <a href="https://github.com/vknet/vk">VkNet</a> Vkontakte SDK for .NET
+- <a href="https://github.com/googleapis/google-api-dotnet-client">Google Drive</a> SDK for .NET
 - <a href="https://www.jetbrains.com/rider/">JetBrains Rider</a> and <a href="https://visualstudio.microsoft.com/">Microsoft Visual Studio</a> IDEs

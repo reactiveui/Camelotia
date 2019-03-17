@@ -43,6 +43,7 @@
                              SelectionMode="Toggle"
                              Items="{Binding Files}"
                              IsVisible="{Binding IsReady}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                              SelectedItem="{Binding SelectedFile, Mode=TwoWay}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="models:FileModel">

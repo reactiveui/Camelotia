@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace Camelotia.Services.Models
 {
@@ -18,20 +19,19 @@ namespace Camelotia.Services.Models
         
         public FileModel(string name, string path, bool isFolder, string size, DateTime? modified = null)
         {
-            Name = name;
             Path = path;
             Size = size;
             IsFolder = isFolder;
             Modified = modified?.ToString();
+            Name = new string(name.Take(40).ToArray());
         }
 
         public override int GetHashCode() => (Name, Path, IsFolder, Size).GetHashCode();
 
         public override bool Equals(object obj)
         {
-            var file = obj as FileModel;
             return 
-                file != null &&
+                obj is FileModel file &&
                 file.Name == Name &&
                 file.Path == Path &&
                 file.IsFolder == IsFolder &&
