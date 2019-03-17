@@ -11,8 +11,10 @@ using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
+using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
+using File = Google.Apis.Drive.v3.Data.File;
 
 namespace Camelotia.Services.Providers
 {
@@ -32,17 +34,7 @@ namespace Camelotia.Services.Providers
             Id = id;
             _blobCache = blobCache;
             _isAuthorized.OnNext(false);
-            Task.Run(async () =>
-            {
-                try
-                {
-                    await AuthenticateAsync();
-                }
-                catch (Exception)
-                {
-                    // ignore
-                }
-            });
+            EnsureLoggedInIfTokenSaved();
         }
 
         public Guid Id { get; }
@@ -74,47 +66,33 @@ namespace Camelotia.Services.Providers
             var response = await list.ExecuteAsync().ConfigureAwait(false);
             var files = from file in response.Files
                         let size = file.Size.GetValueOrDefault()
-                        let fp = Path.Combine(path, file.Name)
                         let bytes = ByteConverter.BytesToString(size)
-                        select new FileModel(file.Name, fp, false, bytes, file.ModifiedTime);
+                        select new FileModel(file.Name, file.Id, false, bytes, file.ModifiedTime);
 
             return files;
         }
 
-        public Task UploadFile(string to, Stream from, string name)
+        public Task UploadFile(string to, Stream from, string name) => throw new NotImplementedException();
+
+        public Task DownloadFile(string from, Stream to) => throw new NotImplementedException();
+
+        public async Task RenameFile(FileModel file, string name)
         {
-            throw new NotImplementedException();
+            var update = _driveService.Files.Update(new File {Name = name}, file.Path);
+            await update.ExecuteAsync().ConfigureAwait(false);
         }
 
-        public Task DownloadFile(string from, Stream to)
+        public async Task Delete(FileModel file)
         {
-            throw new NotImplementedException();
+            var delete = _driveService.Files.Delete(file.Path);
+            await delete.ExecuteAsync().ConfigureAwait(false);
         }
 
-        public Task CreateFolder(string path, string name)
-        {
-            throw new NotImplementedException();
-        }
+        public Task CreateFolder(string path, string name) => Task.CompletedTask;
 
-        public Task RenameFile(FileModel file, string name)
-        {
-            throw new NotImplementedException();
-        }
+        public Task HostAuth(string address, int port, string login, string password) => Task.CompletedTask;
 
-        public Task Delete(FileModel file)
-        {
-            throw new NotImplementedException();
-        }
-        
-        public Task HostAuth(string address, int port, string login, string password)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DirectAuth(string login, string password)
-        {
-            throw new NotImplementedException();
-        }
+        public Task DirectAuth(string login, string password) => Task.CompletedTask;
 
         public Task OAuth() => Task.Run(AuthenticateAsync);
 
@@ -130,12 +108,24 @@ namespace Camelotia.Services.Providers
             return Task.CompletedTask;
         });
 
+        private void EnsureLoggedInIfTokenSaved() => Task.Run(async () =>
+        {
+            try
+            {
+                await AuthenticateAsync();
+            }
+            catch (Exception)
+            {
+                // ignore
+            }
+        });
+
         private async Task AuthenticateAsync()
         {
             var credential = await GoogleWebAuthorizationBroker
                 .AuthorizeAsync(
                     new ClientSecrets {ClientId = GoogleDriveClientId, ClientSecret = GoogleDriveClientSecret},
-                    new[] {DriveService.Scope.DriveReadonly},
+                    new[] {DriveService.Scope.Drive},
                     GoogleDriveUserName,
                     CancellationToken.None,
                     new AkavacheDataStore(_blobCache))
