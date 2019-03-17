@@ -25,8 +25,6 @@ You can compile Universal Windows Platform Camelotia app only on latest Windows 
 
 Supports light and dark themes!
 
-<img src="./UiWindows2.jpg" width="550">
-
 ## Compiling Xamarin Forms app
 
 To compile the Xamarin Forms Android application, you need to install appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there.
@@ -51,4 +49,5 @@ File system providers are located at `./Camelotia.Services/Providers/`. To add a
 - <a href="https://github.com/robinrodricks/FluentFTP">FluentFTP</a> FTP implementation
 - <a href="https://github.com/sshnet/SSH.NET/">SSH.NET</a> SFTP implementation
 - <a href="https://github.com/vknet/vk">VkNet</a> Vkontakte SDK for .NET
+- <a href="https://github.com/googleapis/google-api-dotnet-client">Google Drive</a> SDK for .NET
 - <a href="https://www.jetbrains.com/rider/">JetBrains Rider</a> and <a href="https://visualstudio.microsoft.com/">Microsoft Visual Studio</a> IDEs
