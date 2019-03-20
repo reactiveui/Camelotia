@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
+    xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
     x:Class="Camelotia.Presentation.Xamarin.Views.HostAuthView"
     Title="Authentication On Remote Host">
     <ContentPage.Content>
@@ -27,7 +28,7 @@
                     <Entry x:Name="LoginEntry" />
                     <Label Text="Please, enter password:" Margin="0, 5, 0, 0" />
                     <Entry x:Name="PasswordEntry" IsPassword="True" />
-                    <Button x:Name="LoginButton" Text="Login" />
+                    <controls:AccentButton x:Name="LoginButton" Text="Login" />
                 </StackLayout>
             </Frame>
         </StackLayout>

@@ -9,6 +9,7 @@
     <ViewCell.View>
         <StackLayout Margin="8" Grid.Column="0">
             <Label x:Name="NameLabel" FontSize="16" />
+            <Label x:Name="ModifiedLabel" />
             <Label x:Name="SizeLabel" FontAttributes="Bold"/>
         </StackLayout>
     </ViewCell.View>

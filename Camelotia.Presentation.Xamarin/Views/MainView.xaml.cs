@@ -26,6 +26,7 @@ namespace Camelotia.Presentation.Xamarin.Views
 
                 this.WhenAnyValue(x => x.ViewModel.SelectedProvider)
                     .Where(provider => provider != null)
+                    .Skip(1)
                     .Select(x => new ProviderExplorerView { ViewModel = ViewModel.SelectedProvider })
                     .Subscribe(HandleSelectedProviderViewChange)
                     .DisposeWith(disposables);

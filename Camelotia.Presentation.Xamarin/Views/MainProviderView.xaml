@@ -5,15 +5,28 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="Camelotia.Presentation.Xamarin.Views.MainProviderView"
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
-    xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms">
+    xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
+    xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize">
     <ViewCell.View>
-        <StackLayout Margin="10">
-            <Label x:Name="NameLabel" FontSize="16" FontAttributes="Bold" />
-            <Label x:Name="DescriptionLabel" FontAttributes="Italic" />
-            <StackLayout Orientation="Horizontal" Margin="0, 5">
-                <Label Text="Size: " />
-                <Label x:Name="SizeLabel" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <iconize:IconImage
+                Margin="10"
+                HeightRequest="50"
+                Icon="fas-file"
+                IconColor="#311b92"
+                WidthRequest="50" />
+            <StackLayout Margin="0, 10, 10, 10" Grid.Column="1">
+                <Label x:Name="NameLabel" FontSize="16" FontAttributes="Bold" />
+                <Label x:Name="DescriptionLabel" FontAttributes="Italic" />
+                <StackLayout Orientation="Horizontal" Margin="0, 5">
+                    <Label Text="Size: " />
+                    <Label x:Name="SizeLabel" />
+                </StackLayout>
             </StackLayout>
-        </StackLayout>
+        </Grid>
     </ViewCell.View>
 </rxui:ReactiveViewCell>

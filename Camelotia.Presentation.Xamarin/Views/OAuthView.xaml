@@ -7,6 +7,7 @@
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
     xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.Views"
+    xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
     Title="OAuth Authorization">
     <ContentPage.Content>
         <Frame VerticalOptions="StartAndExpand" 
@@ -14,7 +15,7 @@
                Margin="15">
             <StackLayout>
                 <Label Text="OAuth Authorization" />
-                <Button x:Name="LoginButton" Text="Authorize" />
+                <controls:AccentButton x:Name="LoginButton" Text="Authorize" />
             </StackLayout>
         </Frame>
     </ContentPage.Content>
