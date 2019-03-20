@@ -22,6 +22,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _welcomeScreenVisible;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _isReady;
+        private readonly ReactiveCommand<Unit, Unit> _unselect;
         private readonly ReactiveCommand<Unit, Unit> _refresh;
         private readonly ReactiveCommand<Unit, Unit> _remove;
         private readonly IProviderStorage _providerStorage;
@@ -88,6 +89,14 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.WelcomeScreenVisible)
                 .Select(visible => !visible)
                 .ToProperty(this, x => x.WelcomeScreenCollapsed);
+
+            var canUnSelect = this
+                .WhenAnyValue(x => x.SelectedProvider)
+                .Select(provider => provider != null);
+
+            _unselect = ReactiveCommand.Create(
+                () => { SelectedProvider = null; }, 
+                canUnSelect);
             
             Activator = new ViewModelActivator();
             this.WhenActivated(async (CompositeDisposable disposable) =>
@@ -114,6 +123,8 @@ namespace Camelotia.Presentation.ViewModels
         public bool IsLoading => _isLoading.Value;
         
         public bool IsReady => _isReady.Value;
+
+        public ICommand Unselect => _unselect;
 
         public ICommand Refresh => _refresh;
 

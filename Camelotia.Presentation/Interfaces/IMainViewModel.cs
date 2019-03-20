@@ -19,6 +19,8 @@ namespace Camelotia.Presentation.Interfaces
 
         bool WelcomeScreenVisible { get; }
 
+        ICommand Unselect { get; }
+
         ICommand Refresh { get; }
 
         ICommand Remove { get; }

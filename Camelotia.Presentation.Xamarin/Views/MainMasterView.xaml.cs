@@ -40,6 +40,8 @@ namespace Camelotia.Presentation.Xamarin.Views
 
                 this.BindCommand(ViewModel, x => x.Add, x => x.AddButton)
                     .DisposeWith(disposables);
+                this.BindCommand(ViewModel, x => x.Unselect, x => x.UnselectButton)
+                    .DisposeWith(disposables);
             });
         }
     }

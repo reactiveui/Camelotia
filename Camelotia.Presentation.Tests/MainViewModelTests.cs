@@ -88,6 +88,34 @@ namespace Camelotia.Presentation.Tests
             model.SelectedProvider.Should().NotBeNull();
         });
 
+        [Fact]
+        public void ShouldUnselectSelectedProvider() => new TestScheduler().With(scheduler =>
+        {
+            var collection = new ObservableCollectionExtended<IProvider>();
+            var set = collection.ToObservableChangeSet(x => x.Id);
+
+            _providerStorage.Providers().Returns(set);
+            _providerStorage
+                .When(storage => storage.Refresh())
+                .Do(args => collection.Add(Substitute.For<IProvider>()));
+
+            var model = BuildMainViewModel(scheduler);
+            scheduler.AdvanceBy(2);
+
+            model.Providers.Should().BeEmpty();
+            model.Refresh.Execute(null);
+            scheduler.AdvanceBy(3);
+
+            model.Providers.Should().NotBeEmpty();
+            model.SelectedProvider.Should().NotBeNull();
+            model.Unselect.CanExecute(null).Should().BeTrue();
+            model.Unselect.Execute(null);
+
+            scheduler.AdvanceBy(3);
+            model.Providers.Should().NotBeEmpty();
+            model.SelectedProvider.Should().BeNull();
+        });
+
         private MainViewModel BuildMainViewModel(IScheduler scheduler)
         {
             return new MainViewModel(

@@ -11,17 +11,16 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Text="Camelotia" FontSize="21" Margin="10" FontAttributes="Bold" TextColor="#311b92" />
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="0" BackgroundColor="#311b92">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Picker Grid.Column="0" 
+            <Picker Grid.Column="0"
+                    TextColor="#ffffff"
                     x:Name="SupportedTypesPicker"
                     Margin="10, 5, 10, 10" />
             <Button Grid.Column="1"
@@ -29,21 +28,23 @@
                     Margin="0, 5, 5, 10"
                     Text="Add" />
         </Grid>
-        <ListView x:Name="ProvidersView" HasUnevenRows="True" Grid.Row="2">
+        <ListView x:Name="ProvidersView" HasUnevenRows="True" Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:IProviderViewModel">
                     <view:MainProviderView ViewModel="{Binding}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" x:Name="RefreshButton" Text="Refresh" Margin="12" />
-            <Button Grid.Column="1" x:Name="RemoveButton" Text="Remove" Margin="0, 12, 12, 12" />
+            <Button Grid.Column="1" x:Name="RemoveButton" Text="Remove" Margin="0, 12, 0, 12" />
+            <Button Grid.Column="2" x:Name="UnselectButton" Text="Remove" Margin="12" />
         </Grid>
-        <ProgressBar Grid.Row="1" Grid.RowSpan="3" x:Name="LoadingBar" />
+        <ProgressBar Grid.Row="1" Grid.RowSpan="2" x:Name="LoadingBar" />
     </Grid>
 </rxui:ReactiveContentPage>

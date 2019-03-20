@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 
 namespace Camelotia.Services.Models
 {
@@ -23,7 +22,7 @@ namespace Camelotia.Services.Models
             Size = size;
             IsFolder = isFolder;
             Modified = modified?.ToString();
-            Name = new string(name.Take(40).ToArray());
+            Name = name;
         }
 
         public override int GetHashCode() => (Name, Path, IsFolder, Size).GetHashCode();
