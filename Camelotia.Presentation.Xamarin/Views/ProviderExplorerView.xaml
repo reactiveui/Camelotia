@@ -46,6 +46,7 @@
                     Text="Open" />
             </Grid>
             <ListView Grid.Row="1" 
+                      Margin="0"
                       SeparatorVisibility="None"
                       x:Name="FilesListView" 
                       HasUnevenRows="True">
