@@ -29,7 +29,7 @@ Supports light and dark themes!
 
 To compile the Xamarin Forms Android application, you need to install appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there.
 
-<img src="./UiAndroid1.png" width="220"> <img src="./UiAndroid2.png" width="220">
+<img src="./UiAndroid1.png" width="220"> <img src="./UiAndroid2.png" width="220"> <img src="./UiAndroid3.png" width="220">
 
 ### Adding Custom Providers
 

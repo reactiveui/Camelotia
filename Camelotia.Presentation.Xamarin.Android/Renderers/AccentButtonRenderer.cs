@@ -49,7 +49,7 @@ namespace Camelotia.Presentation.Xamarin.Droid.Renderers
         {
             return control.IsEnabled 
                 ? Color.FromRgb(254, 254, 254)
-                : Color.FromRgb(185, 185, 185);
+                : Color.FromRgb(140, 123, 219);
         }
     }
 }

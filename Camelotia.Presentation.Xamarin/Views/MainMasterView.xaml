@@ -46,9 +46,9 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <controls:AccentButton Grid.Column="0" x:Name="RefreshButton" Text="Refresh" Margin="10" />
-            <Button Grid.Column="1" x:Name="RemoveButton" Text="Remove" Margin="0, 10, 0, 10" />
-            <Button Grid.Column="2" x:Name="UnselectButton" Text="Unselect" Margin="10" />
+            <Button Grid.Column="0" x:Name="RemoveButton" Text="Remove" Margin="10" />
+            <Button Grid.Column="1" x:Name="RefreshButton" Text="Refresh" Margin="0, 10, 0, 10" />
+            <controls:AccentButton Grid.Column="2" x:Name="OpenButton" Text="Open" Margin="10" />
         </Grid>
         <ProgressBar Grid.Row="1" Grid.RowSpan="2" x:Name="LoadingBar" />
     </Grid>
