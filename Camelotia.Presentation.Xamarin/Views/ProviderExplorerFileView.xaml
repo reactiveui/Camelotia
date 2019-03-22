@@ -12,18 +12,31 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <iconize:IconImage
+                VerticalOptions="StartAndExpand"
                 x:Name="IconImage"
-                Margin="14, 7"
-                HeightRequest="35"
+                Margin="14, 12, 14, 5"
                 IconColor="#6453B3"
+                HeightRequest="35"
                 WidthRequest="35" />
-            <StackLayout Margin="0, 7, 7, 7" Grid.Column="1">
+            <StackLayout Margin="0, 7, 7, 5" Grid.Column="1">
                 <Label x:Name="NameLabel" FontSize="16" />
                 <Label x:Name="ModifiedLabel" />
                 <Label x:Name="SizeLabel" FontAttributes="Bold"/>
             </StackLayout>
+            <Label Grid.Column="2" 
+                   Margin="0, 0, 14, 0"
+                   x:Name="ExtensionLabel"
+                   HorizontalOptions="End"
+                   HorizontalTextAlignment="End"
+                   VerticalOptions="CenterAndExpand"
+                   VerticalTextAlignment="Center"
+                   TextColor="#dddddd"
+                   FontAttributes="Bold"
+                   WidthRequest="75"
+                   FontSize="25" />
         </Grid>
     </ViewCell.View>
 </rxui:ReactiveViewCell>

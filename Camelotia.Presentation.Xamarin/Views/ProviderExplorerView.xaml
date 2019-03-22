@@ -24,31 +24,33 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Padding="3" BackgroundColor="#311b92">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <controls:AccentButton 
-                    Grid.Column="0"
-                    x:Name="BackButton"
-                    Text="Back" />
-                <Label Grid.Column="1"
+                <Label Grid.Column="0"
                        x:Name="PathLabel"
-                       HorizontalTextAlignment="Center"
+                       HorizontalTextAlignment="Start"
                        VerticalTextAlignment="Center"
                        LineBreakMode="HeadTruncation"
                        TextColor="#ffffff"
-                       FontSize="16"
+                       FontSize="18"
                        Margin="15, 0" />
+                <controls:AccentButton 
+                    Grid.Column="1"
+                    x:Name="BackButton"
+                    Text="Back" />
                 <controls:AccentButton 
                     Grid.Column="2"
                     x:Name="OpenButton"
                     Text="Open" />
             </Grid>
-            <ListView Grid.Row="1" 
-                      Margin="0"
+            <ListView Grid.Row="1"
+                      Margin="0, -6, 0, 0"
+                      IsPullToRefreshEnabled="True"
+                      CachingStrategy="RecycleElementAndDataTemplate"
                       SeparatorVisibility="None"
-                      x:Name="FilesListView" 
+                      x:Name="FilesListView"
                       HasUnevenRows="True">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -60,7 +62,7 @@
                 <StackLayout Orientation="Horizontal" 
                              HorizontalOptions="StartAndExpand"
                              Margin="10, 5">
-                    <Label Text="You selected: " />
+                    <Label Text="SELECTED FILE: " />
                     <Label x:Name="SelectedFileNameLabel" TextColor="Accent" />
                 </StackLayout>
             </Grid>
