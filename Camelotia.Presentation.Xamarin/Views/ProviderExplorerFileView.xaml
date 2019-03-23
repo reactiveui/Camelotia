@@ -33,7 +33,7 @@
                    HorizontalTextAlignment="End"
                    VerticalOptions="CenterAndExpand"
                    VerticalTextAlignment="Center"
-                   TextColor="#dddddd"
+                   TextColor="#dfdfdf"
                    FontAttributes="Bold"
                    WidthRequest="75"
                    FontSize="25" />

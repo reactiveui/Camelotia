@@ -1,6 +1,5 @@
 ﻿using Camelotia.Presentation.Interfaces;
 using System.Reactive.Disposables;
-using System.Reactive.Linq;
 using Xamarin.Forms.Xaml;
 using ReactiveUI.XamForms;
 using ReactiveUI;
@@ -52,10 +51,6 @@ namespace Camelotia.Presentation.Xamarin.Views
                     .DisposeWith(disposables);
 
                 this.OneWayBind(ViewModel, x => x.Name, x => x.Title)
-                    .DisposeWith(disposables);
-                this.WhenAnyValue(x => x.ViewModel.SelectedFile.Name)
-                    .Select(name => name.ToUpperInvariant())
-                    .BindTo(this, x => x.SelectedFileNameLabel.Text)
                     .DisposeWith(disposables);
             });
         }

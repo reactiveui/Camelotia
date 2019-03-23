@@ -20,7 +20,6 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Padding="3" BackgroundColor="#311b92">
                 <Grid.ColumnDefinitions>
@@ -46,7 +45,7 @@
                     Text="Open" />
             </Grid>
             <ListView Grid.Row="1"
-                      Margin="0, -6, 0, 0"
+                      Margin="0, -6, 0, -6"
                       IsPullToRefreshEnabled="True"
                       CachingStrategy="RecycleElementAndDataTemplate"
                       SeparatorVisibility="None"
@@ -58,15 +57,9 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <Grid Grid.Row="2">
-                <StackLayout Orientation="Horizontal" 
-                             HorizontalOptions="StartAndExpand"
-                             Margin="10, 5">
-                    <Label Text="SELECTED FILE: " />
-                    <Label x:Name="SelectedFileNameLabel" TextColor="Accent" />
-                </StackLayout>
-            </Grid>
-            <Grid Grid.Row="3" Margin="3">
+            <Grid Grid.Row="2" 
+                  Margin="0" Padding="3" 
+                  BackgroundColor="#dddddd">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -75,24 +68,54 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <iconize:IconButton Grid.Column="0"
-                                    x:Name="LogoutButton"
-                                    Text="fas-sign-out-alt" />
-                <iconize:IconButton Grid.Column="1"
-                                    x:Name="DeleteButton"
-                                    Text="fas-trash" />
-                <iconize:IconButton Grid.Column="2"
-                                    x:Name="UploadButton"
-                                    Text="fas-cloud-upload-alt" />
-                <iconize:IconButton Grid.Column="3"
-                                    x:Name="DownloadButton"
-                                    Text="fas-cloud-download-alt" />
-                <iconize:IconButton Grid.Column="4"
-                                    x:Name="CreateFolderButton"
-                                    Text="fas-folder" />
-                <iconize:IconButton Grid.Column="5"
-                                    x:Name="RenameFileButton"
-                                    Text="fas-file" />
+                <iconize:IconButton 
+                    Grid.Column="0"
+                    x:Name="LogoutButton"
+                    BorderColor="Transparent"
+                    BackgroundColor="Transparent"
+                    TextColor="#311b92"
+                    Text="fas-sign-out-alt"
+                    FontSize="20"/>
+                <iconize:IconButton 
+                    Grid.Column="1"
+                    x:Name="DeleteButton"
+                    BorderColor="Transparent"
+                    BackgroundColor="Transparent"
+                    TextColor="#311b92"
+                    Text="fas-trash" 
+                    FontSize="20"/>
+                <iconize:IconButton 
+                    Grid.Column="2"
+                    x:Name="UploadButton"
+                    BorderColor="Transparent"
+                    BackgroundColor="Transparent"
+                    TextColor="#311b92"
+                    Text="fas-cloud-upload-alt" 
+                    FontSize="20"/>
+                <iconize:IconButton 
+                    Grid.Column="3"
+                    x:Name="DownloadButton"
+                    BorderColor="Transparent"
+                    BackgroundColor="Transparent"
+                    Text="fas-cloud-download-alt" 
+                    TextColor="#311b92"
+                    FontSize="20"/>
+                <iconize:IconButton 
+                    Grid.Column="4"
+                    x:Name="CreateFolderButton"
+                    BorderColor="Transparent"
+                    BackgroundColor="Transparent"
+                    TextColor="#311b92"
+                    Text="fas-folder" 
+                    FontSize="20"/>
+                <iconize:IconButton 
+                    Grid.Column="5"
+                    x:Name="RenameFileButton"
+                    BorderColor="Transparent"
+                    BackgroundColor="Transparent"
+                    TextColor="#311b92"
+                    Text="fas-file" 
+                    FontSize="20"/>
             </Grid>
         </Grid>
     </ContentPage.Content>
