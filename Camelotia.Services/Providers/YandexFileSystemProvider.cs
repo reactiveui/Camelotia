@@ -23,8 +23,8 @@ namespace Camelotia.Services.Providers
         private const string ApiDownloadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/download?path=";
         private const string ApiUploadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/upload?path=";
         private const string ApiGetPathBase = "https://cloud-api.yandex.net:443/v1/disk/resources?path=";
-        private const string HashAuthClientId = "ce3e9bc7859244ac81ce6626e184a12c";
-        private const string CodeAuthClientSecret = "f14bfc0275a34ceea83d7de7f4b50898";
+        private const string HashAuthClientId = "7762e3fccbe3431db2652a8434618790";
+        private const string CodeAuthClientSecret = "317a14f5491447e8bd3a9e7e14ce46cd";
         private const string CodeAuthClientId = "122661520b174cb5b85b4a3c26aa66f6";
         
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
