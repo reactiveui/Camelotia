@@ -27,6 +27,7 @@ namespace Camelotia.Presentation.ViewModels
             _errorMessage = _login
                 .ThrownExceptions
                 .Select(exception => exception.Message)
+                .Log(this, $"OAuth error occured in {provider.Name}")
                 .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
 
             _hasErrors = _login

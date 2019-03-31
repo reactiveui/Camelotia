@@ -104,6 +104,7 @@ namespace Camelotia.Presentation.ViewModels
             _currentPath = _open
                 .Merge(_back)
                 .DistinctUntilChanged()
+                .Log(this, $"Current path changed in {provider.Name}")
                 .ToProperty(this, x => x.CurrentPath, provider.InitialPath, scheduler: currentThread);
 
             this.WhenAnyValue(x => x.CurrentPath)
@@ -159,12 +160,6 @@ namespace Camelotia.Presentation.ViewModels
                 canDownloadSelectedFile,
                 mainThread);
             
-            _uploadToCurrentPath
-                .ThrownExceptions
-                .Merge(_downloadSelectedFile.ThrownExceptions)
-                .Merge(_refresh.ThrownExceptions)
-                .Subscribe(Console.WriteLine);
-            
             var isAuthEnabled = provider.SupportsDirectAuth || provider.SupportsOAuth;
             var canLogout = provider
                 .IsAuthorized
@@ -198,7 +193,15 @@ namespace Camelotia.Presentation.ViewModels
             _unselectFile = ReactiveCommand.Create(
                 () => { SelectedFile = null; },
                 canUnselectFile);
-            
+
+            _uploadToCurrentPath
+                .ThrownExceptions
+                .Merge(_deleteSelectedFile.ThrownExceptions)
+                .Merge(_downloadSelectedFile.ThrownExceptions)
+                .Merge(_refresh.ThrownExceptions)
+                .Log(this, $"Exception occured in provider {provider.Name}")
+                .Subscribe();
+
             Auth = authViewModel;
             Activator = new ViewModelActivator();
             this.WhenActivated(disposable =>
@@ -220,6 +223,7 @@ namespace Camelotia.Presentation.ViewModels
                 this.WhenAnyValue(x => x.RefreshingIn)
                     .Skip(1)
                     .Where(refreshing => refreshing == 0)
+                    .Log(this, $"Refreshing provider {provider.Name} path {CurrentPath}")
                     .Select(value => Unit.Default)
                     .InvokeCommand(_refresh)
                     .DisposeWith(disposable);

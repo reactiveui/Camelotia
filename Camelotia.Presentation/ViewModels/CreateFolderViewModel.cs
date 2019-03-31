@@ -74,6 +74,7 @@ namespace Camelotia.Presentation.ViewModels
             _errorMessage = _create
                 .ThrownExceptions
                 .Select(exception => exception.Message)
+                .Log(this, $"Create folder error occured in {provider.Name}")
                 .Merge(_close.Select(unit => string.Empty))
                 .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
 

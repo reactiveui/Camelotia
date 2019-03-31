@@ -2,7 +2,6 @@
 using ReactiveUI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using System;
 
 namespace Camelotia.Presentation.Uwp.Views
 {
@@ -14,10 +13,7 @@ namespace Camelotia.Presentation.Uwp.Views
         public OAuthView()
         {
             InitializeComponent();
-            this.WhenActivated(async disposables => 
-            {
-                await WebView.ClearTemporaryWebDataAsync();
-            });
+            this.WhenActivated(disposables => { });
         }
 
         public IOAuthViewModel ViewModel

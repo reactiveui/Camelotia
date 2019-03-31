@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Akavache;
 using Camelotia.Services.Interfaces;
@@ -144,6 +143,7 @@ namespace Camelotia.Services.Providers
             var model = await _blobCache.GetOrFetchObject(persistentId, () => Task.FromResult(default(ProviderModel)));
             if (model?.User == null || model?.Token == null) return;   
             _gitHub.Credentials = new Credentials(model.User, model.Token);
+            _currentUserName = model.User;
             _isAuthenticated.OnNext(true);
         }
 

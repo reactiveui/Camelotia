@@ -12,7 +12,6 @@ using Camelotia.Services.Models;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Download;
 using Google.Apis.Drive.v3;
-using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using File = Google.Apis.Drive.v3.Data.File;
@@ -23,7 +22,7 @@ namespace Camelotia.Services.Providers
     {
         private const string GoogleDriveApplicationName = "Camelotia";
         private const string GoogleDriveClientId = "1096201018044-qbv35mo5cd7b5utfjpg83v5lsuhssvvg.apps.googleusercontent.com";
-        private const string GoogleDriveClientSecret = "w4F099v9awUEAs66rmCxLbYr";
+        private const string GoogleDriveClientSecret = "L-xoeULle07kb_jHleqMxWo2";
         private const string GoogleDriveUserName = "user";
         
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
@@ -123,7 +122,9 @@ namespace Camelotia.Services.Providers
         {
             try
             {
-                await AuthenticateAsync();
+                var driveKeys = await _blobCache.GetAllKeys();
+                if (driveKeys.Any(x => x.StartsWith($"google-drive-{Id}")))
+                    await AuthenticateAsync();
             }
             catch (Exception)
             {
@@ -139,7 +140,7 @@ namespace Camelotia.Services.Providers
                     new[] {DriveService.Scope.Drive},
                     GoogleDriveUserName,
                     CancellationToken.None,
-                    new AkavacheDataStore(_blobCache))
+                    new AkavacheDataStore(_blobCache, Id))
                 .ConfigureAwait(false);
 
             var initializer = new BaseClientService.Initializer
@@ -155,25 +156,30 @@ namespace Camelotia.Services.Providers
         private sealed class AkavacheDataStore : IDataStore
         {
             private readonly IBlobCache _blobCache;
+            private readonly Guid _id;
 
-            public AkavacheDataStore(IBlobCache blobCache) => _blobCache = blobCache;
+            public AkavacheDataStore(IBlobCache blobCache, Guid id)
+            {
+                _blobCache = blobCache;
+                _id = id;
+            }
 
             public async Task StoreAsync<T>(string key, T value)
             {
-                var identity = $"google-drive-{key}";
+                var identity = $"google-drive-{_id}-{key}";
                 await _blobCache.InsertObject(identity, value);
             }
 
             public async Task DeleteAsync<T>(string key)
             {
-                var identity = $"google-drive-{key}";
+                var identity = $"google-drive-{_id}-{key}";
                 await _blobCache.Invalidate(identity);
             }
 
             public async Task<T> GetAsync<T>(string key)
             {
-                var identity = $"google-drive-{key}";
-                var value = await _blobCache.GetOrFetchObject<T>(identity, () => Task.FromResult(default(T)));
+                var identity = $"google-drive-{_id}-{key}";
+                var value = await _blobCache.GetOrFetchObject(identity, () => Task.FromResult(default(T)));
                 return value;
             }
 

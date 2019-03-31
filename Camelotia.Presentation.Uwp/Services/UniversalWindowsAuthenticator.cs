@@ -21,6 +21,7 @@ namespace Camelotia.Presentation.Uwp.Services
         public async Task<string> ReceiveYandexToken(Uri uri)
         {
             _taskCompletionSource = new TaskCompletionSource<string>();
+            await WebView.ClearTemporaryWebDataAsync();
             await Window.Current.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => 
             {
                 var root = Window.Current.Content;
@@ -38,7 +39,7 @@ namespace Camelotia.Presentation.Uwp.Services
         private void OnNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
             var currentUriString = args.Uri.ToString();
-            if (!currentUriString.Contains('#'))
+            if (!currentUriString.Contains("#"))
                 return;
 
             sender.NavigationCompleted -= OnNavigationCompleted;
