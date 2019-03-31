@@ -51,6 +51,7 @@ namespace Camelotia.Presentation.ViewModels
             _errorMessage = _login
                 .ThrownExceptions
                 .Select(exception => exception.Message)
+                .Log(this, $"Host auth error occured in {provider.Name}")
                 .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
 
             _hasErrors = _login

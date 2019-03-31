@@ -78,6 +78,7 @@ namespace Camelotia.Presentation.ViewModels
             _errorMessage = _rename
                 .ThrownExceptions
                 .Select(exception => exception.Message)
+                .Log(this, $"Rename file error occured in {provider.Name} for {OldName}")
                 .Merge(_close.Select(x => string.Empty))
                 .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
 

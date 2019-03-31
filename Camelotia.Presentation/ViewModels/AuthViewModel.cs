@@ -29,13 +29,12 @@ namespace Camelotia.Presentation.ViewModels
                 .IsAuthorized
                 .DistinctUntilChanged()
                 .ObserveOn(mainThread)
+                .Log(this, $"Authentication state changed for {provider.Name}")
                 .ToProperty(this, x => x.IsAuthenticated, scheduler: currentThread);
 
-            _isAnonymous = _provider
-                .IsAuthorized
-                .Select(authorized => !authorized)
-                .DistinctUntilChanged()
-                .ObserveOn(mainThread)
+            _isAnonymous = this
+                .WhenAnyValue(x => x.IsAuthenticated)
+                .Select(authenticated => !authenticated)
                 .ToProperty(this, x => x.IsAnonymous, scheduler: currentThread);
         }
 
