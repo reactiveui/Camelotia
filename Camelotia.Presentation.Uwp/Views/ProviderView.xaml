@@ -76,7 +76,7 @@
                                            FontSize="14" />
                                 <TextBlock Grid.Column="1"
                                            Text="{x:Bind Name, Mode=OneTime}"
-                                           TextWrapping="Wrap"
+                                           TextTrimming="CharacterEllipsis"
                                            FontSize="14" />
                                 <TextBlock Grid.Column="2"
                                            Text="Directory"
