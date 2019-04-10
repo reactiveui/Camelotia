@@ -103,7 +103,7 @@ namespace Camelotia.Presentation.Xamarin.Views
         private async void NavigateWithoutBackStack(Page page)
         {
             while (Navigation.NavigationStack.Count > 1)
-                await Navigation.PopAsync(true);
+                await Navigation.PopAsync(false);
             await Navigation.PushAsync(page);
         }
     }
