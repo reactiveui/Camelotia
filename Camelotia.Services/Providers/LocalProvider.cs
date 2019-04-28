@@ -9,9 +9,9 @@ using Camelotia.Services.Models;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class LocalFileSystemProvider : IProvider
+    public sealed class LocalProvider : IProvider
     {
-        public LocalFileSystemProvider(Guid id) => Id = id;
+        public LocalProvider(Guid id) => Id = id;
         
         public Guid Id { get; }
         

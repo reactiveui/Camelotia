@@ -18,7 +18,7 @@ using File = Google.Apis.Drive.v3.Data.File;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class GoogleDriveFileSystemProvider : IProvider
+    public sealed class GoogleDriveProvider : IProvider
     {
         private const string GoogleDriveApplicationName = "Camelotia";
         private const string GoogleDriveClientId = "1096201018044-qbv35mo5cd7b5utfjpg83v5lsuhssvvg.apps.googleusercontent.com";
@@ -29,7 +29,7 @@ namespace Camelotia.Services.Providers
         private readonly IBlobCache _blobCache;
         private DriveService _driveService;
         
-        public GoogleDriveFileSystemProvider(Guid id, IBlobCache blobCache)
+        public GoogleDriveProvider(Guid id, IBlobCache blobCache)
         {
             Id = id;
             _blobCache = blobCache;

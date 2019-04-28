@@ -11,12 +11,12 @@ using VkNet.Model;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class FtpFileSystemProvider : IProvider
+    public sealed class FtpProvider : IProvider
     {
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private Func<FtpClient> _factory;
 
-        public FtpFileSystemProvider(Guid id)
+        public FtpProvider(Guid id)
         {
             Id = id;
             _isAuthorized.OnNext(false);

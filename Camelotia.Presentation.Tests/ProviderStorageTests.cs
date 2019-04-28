@@ -24,20 +24,20 @@ namespace Camelotia.Presentation.Tests
         {
             var provider = new ProviderStorage(new Dictionary<string, Func<Guid, IProvider>>
             {
-                [typeof(LocalFileSystemProvider).Name] = id => new LocalFileSystemProvider(id),
-                [typeof(VkontakteFileSystemProvider).Name] = id => new VkontakteFileSystemProvider(id, _blobCache),
-                [typeof(YandexFileSystemProvider).Name] = id => new YandexFileSystemProvider(id, _authenticator, _blobCache),
+                [typeof(LocalProvider).Name] = id => new LocalProvider(id),
+                [typeof(VkDocsProvider).Name] = id => new VkDocsProvider(id, _blobCache),
+                [typeof(YandexDiskProvider).Name] = id => new YandexDiskProvider(id, _authenticator, _blobCache),
             }, _blobCache);
 
-            await provider.Add(typeof(LocalFileSystemProvider).Name);
-            await provider.Add(typeof(VkontakteFileSystemProvider).Name);
-            await provider.Add(typeof(YandexFileSystemProvider).Name);
+            await provider.Add(typeof(LocalProvider).Name);
+            await provider.Add(typeof(VkDocsProvider).Name);
+            await provider.Add(typeof(YandexDiskProvider).Name);
             var providers = provider.Providers().AsAggregator();
             
             Assert.Equal(3, providers.Data.Count);
-            Assert.Contains(providers.Data.Items, x => x is LocalFileSystemProvider);
-            Assert.Contains(providers.Data.Items, x => x is VkontakteFileSystemProvider);
-            Assert.Contains(providers.Data.Items, x => x is YandexFileSystemProvider);
+            Assert.Contains(providers.Data.Items, x => x is LocalProvider);
+            Assert.Contains(providers.Data.Items, x => x is VkDocsProvider);
+            Assert.Contains(providers.Data.Items, x => x is YandexDiskProvider);
         }
 
         [Fact]
@@ -45,16 +45,16 @@ namespace Camelotia.Presentation.Tests
         {
             var provider = new ProviderStorage(new Dictionary<string, Func<Guid, IProvider>>
             {
-                [typeof(LocalFileSystemProvider).Name] = id => new LocalFileSystemProvider(id),
+                [typeof(LocalProvider).Name] = id => new LocalProvider(id),
             }, _blobCache);
             
-            await provider.Add(typeof(LocalFileSystemProvider).Name);
+            await provider.Add(typeof(LocalProvider).Name);
             var providers = provider.Providers().AsAggregator();
 
             Assert.Equal(1, providers.Data.Count);
-            Assert.Contains(providers.Data.Items, x => x is LocalFileSystemProvider);
-            Assert.DoesNotContain(providers.Data.Items, x => x is VkontakteFileSystemProvider);
-            Assert.DoesNotContain(providers.Data.Items, x => x is YandexFileSystemProvider);
+            Assert.Contains(providers.Data.Items, x => x is LocalProvider);
+            Assert.DoesNotContain(providers.Data.Items, x => x is VkDocsProvider);
+            Assert.DoesNotContain(providers.Data.Items, x => x is YandexDiskProvider);
         }
 
         [Fact]
@@ -62,10 +62,10 @@ namespace Camelotia.Presentation.Tests
         {
             var provider = new ProviderStorage(new Dictionary<string, Func<Guid, IProvider>>
             {
-                [typeof(LocalFileSystemProvider).Name] = id => new LocalFileSystemProvider(id),
+                [typeof(LocalProvider).Name] = id => new LocalProvider(id),
             }, _blobCache);
             
-            await provider.Add(typeof(LocalFileSystemProvider).Name);
+            await provider.Add(typeof(LocalProvider).Name);
             var providers = provider.Providers().AsAggregator();
             Assert.Equal(1, providers.Data.Count);
 
@@ -83,21 +83,21 @@ namespace Camelotia.Presentation.Tests
                 {
                     Id = identity,
                     Token = "12345",
-                    Type = typeof(LocalFileSystemProvider).Name
+                    Type = typeof(LocalProvider).Name
                 }
             }));
             
             var provider = new ProviderStorage(new Dictionary<string, Func<Guid, IProvider>>
             {
-                [typeof(LocalFileSystemProvider).Name] = id => new LocalFileSystemProvider(id),
+                [typeof(LocalProvider).Name] = id => new LocalProvider(id),
             }, _blobCache);
 
             await provider.Refresh();
             var providers = provider.Providers().AsAggregator();
             Assert.Equal(1, providers.Data.Count);
-            Assert.Contains(providers.Data.Items, x => x is LocalFileSystemProvider);
-            Assert.DoesNotContain(providers.Data.Items, x => x is VkontakteFileSystemProvider);
-            Assert.DoesNotContain(providers.Data.Items, x => x is YandexFileSystemProvider);
+            Assert.Contains(providers.Data.Items, x => x is LocalProvider);
+            Assert.DoesNotContain(providers.Data.Items, x => x is VkDocsProvider);
+            Assert.DoesNotContain(providers.Data.Items, x => x is YandexDiskProvider);
             Assert.Equal(identity, providers.Data.Items.First().Id);
         }
     }

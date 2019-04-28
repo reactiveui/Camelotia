@@ -20,13 +20,13 @@ using VkNet.Model.Attachments;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class VkontakteFileSystemProvider : IProvider
+    public sealed class VkDocsProvider : IProvider
     {
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private readonly IBlobCache _blobCache;
         private IVkApi _api = new VkApi();
         
-        public VkontakteFileSystemProvider(Guid id, IBlobCache blobCache)
+        public VkDocsProvider(Guid id, IBlobCache blobCache)
         {
             Id = id;
             _blobCache = blobCache;

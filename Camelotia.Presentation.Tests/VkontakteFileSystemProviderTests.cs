@@ -15,7 +15,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldImplementNonNullInitialPath()
         {
-            var provider = new VkontakteFileSystemProvider(VkontakteIdentifier, _blobCache);
+            var provider = new VkDocsProvider(VkontakteIdentifier, _blobCache);
             provider.InitialPath.Should().NotBeNull();
             provider.Id.Should().Be(VkontakteIdentifier);
         }

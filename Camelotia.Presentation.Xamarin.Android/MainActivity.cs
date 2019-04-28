@@ -76,11 +76,11 @@ namespace Camelotia.Presentation.Xamarin.Droid
                 new ProviderStorage(
                     new Dictionary<string, Func<Guid, IProvider>>
                     {
-                        ["Vkontakte Docs"] = id => new VkontakteFileSystemProvider(id, cache),
-                        ["Yandex Disk"] = id => new YandexFileSystemProvider(id, login, cache),
-                        ["FTP"] = id => new FtpFileSystemProvider(id),
-                        ["SFTP"] = id => new SftpFileSystemProvider(id),
-                        ["GitHub"] = id => new GitHubFileSystemProvider(id, cache)
+                        ["Vkontakte Docs"] = id => new VkDocsProvider(id, cache),
+                        ["Yandex Disk"] = id => new YandexDiskProvider(id, login, cache),
+                        ["FTP"] = id => new FtpProvider(id),
+                        ["SFTP"] = id => new SftpProvider(id),
+                        ["GitHub"] = id => new GitHubProvider(id, cache)
                     },
                     cache
                 ),

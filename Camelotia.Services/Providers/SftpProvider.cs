@@ -10,12 +10,12 @@ using Renci.SshNet;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class SftpFileSystemProvider : IProvider
+    public sealed class SftpProvider : IProvider
     {
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private Func<SftpClient> _factory;
 
-        public SftpFileSystemProvider(Guid id)
+        public SftpProvider(Guid id)
         {
             Id = id;
             _isAuthorized.OnNext(false);

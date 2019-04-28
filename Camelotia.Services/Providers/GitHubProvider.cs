@@ -13,7 +13,7 @@ using Octokit;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class GitHubFileSystemProvider : IProvider
+    public sealed class GitHubProvider : IProvider
     {
         private const string GithubApplicationId = "my-cool-app";
         private readonly GitHubClient _gitHub = new GitHubClient(new ProductHeaderValue(GithubApplicationId));
@@ -22,7 +22,7 @@ namespace Camelotia.Services.Providers
         private readonly IBlobCache _blobCache;
         private string _currentUserName;
         
-        public GitHubFileSystemProvider(Guid id, IBlobCache blobCache)
+        public GitHubProvider(Guid id, IBlobCache blobCache)
         {
             Id = id;
             _blobCache = blobCache;

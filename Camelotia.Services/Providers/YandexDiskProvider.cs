@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class YandexFileSystemProvider : IProvider
+    public sealed class YandexDiskProvider : IProvider
     {
         private const string YandexAuthTokenUrl = "https://oauth.yandex.ru/token";
         private const string ApiMoveFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/move";
@@ -32,7 +32,7 @@ namespace Camelotia.Services.Providers
         private readonly IAuthenticator _authenticator;
         private readonly IBlobCache _blobCache;
 
-        public YandexFileSystemProvider(Guid id, IAuthenticator authenticator, IBlobCache blobCache)
+        public YandexDiskProvider(Guid id, IAuthenticator authenticator, IBlobCache blobCache)
         {
             Id = id;
             _blobCache = blobCache;

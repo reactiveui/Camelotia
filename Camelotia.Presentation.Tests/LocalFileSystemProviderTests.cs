@@ -13,7 +13,7 @@ namespace Camelotia.Presentation.Tests
     {
         private static readonly Guid LocalIdentifier = Guid.NewGuid();
         private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
-        private readonly IProvider _provider = new LocalFileSystemProvider(LocalIdentifier);
+        private readonly IProvider _provider = new LocalProvider(LocalIdentifier);
 
         [Fact]
         public void ShouldExposeCorrectId() => _provider.Id.Should().Be(LocalIdentifier);

@@ -17,7 +17,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldImplementNonNullInitialPath()
         {
-            var provider = new YandexFileSystemProvider(YandexIdentifier, _authenticator, _blobCache);
+            var provider = new YandexDiskProvider(YandexIdentifier, _authenticator, _blobCache);
             provider.InitialPath.Should().NotBeNull();
             provider.Id.Should().Be(YandexIdentifier);
         }
