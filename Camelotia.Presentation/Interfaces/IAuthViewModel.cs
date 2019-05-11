@@ -1,7 +1,10 @@
 using System.ComponentModel;
+using Camelotia.Services.Interfaces;
 
 namespace Camelotia.Presentation.Interfaces
 {
+    public delegate IAuthViewModel AuthViewModelFactory(IProvider provider);
+
     public interface IAuthViewModel : INotifyPropertyChanged
     {
         IDirectAuthViewModel DirectAuth { get; }

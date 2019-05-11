@@ -1,6 +1,5 @@
 ﻿using Camelotia.Services.Interfaces;
 using System.Threading.Tasks;
-using System.Net;
 using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -9,16 +8,15 @@ using Windows.UI.Core;
 
 namespace Camelotia.Presentation.Uwp.Services
 {
-    public sealed class UniversalWindowsAuthenticator : IAuthenticator
+    public sealed class UniversalWindowsYandexAuthenticator : IAuthenticator
     {
-        private const string SuccessContent = "<html><body>Please return to the app.</body></html>";
         private TaskCompletionSource<string> _taskCompletionSource;
 
-        public YandexAuthenticationType YandexAuthenticationType => YandexAuthenticationType.Token;
+        public GrantType GrantType => GrantType.AccessToken;
 
-        public Task<string> ReceiveYandexCode(Uri uri, IPAddress address, int port) => throw new PlatformNotSupportedException();
+        public Task<string> ReceiveCode(Uri uri, Uri returnUri) => throw new PlatformNotSupportedException();
 
-        public async Task<string> ReceiveYandexToken(Uri uri)
+        public async Task<string> ReceiveToken(Uri uri)
         {
             _taskCompletionSource = new TaskCompletionSource<string>();
             await WebView.ClearTemporaryWebDataAsync();
@@ -52,7 +50,7 @@ namespace Camelotia.Presentation.Uwp.Services
             sender.Visibility = Visibility.Collapsed;
         }
 
-        public static TControl FindControl<TControl>(UIElement parent) where TControl : FrameworkElement
+        private static TControl FindControl<TControl>(UIElement parent) where TControl : FrameworkElement
         {
             var targetType = typeof(TControl);
             if (parent == null) return null;
@@ -61,15 +59,13 @@ namespace Camelotia.Presentation.Uwp.Services
 
             var result = default(TControl);
             var count = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 var child = (UIElement)VisualTreeHelper.GetChild(parent, i);
                 var rec = FindControl<TControl>(child);
-                if (rec != null)
-                {
-                    result = rec;
-                    break;
-                }
+                if (rec == null) continue;
+                result = rec;
+                break;
             }
             return result;
         }

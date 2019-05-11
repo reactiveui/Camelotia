@@ -49,7 +49,7 @@ namespace Camelotia.Presentation.Tests
 
         private OAuthViewModel BuildOAuthViewModel(IScheduler scheduler)
         {
-            return new OAuthViewModel(scheduler, scheduler, _provider);
+            return new OAuthViewModel(_provider, scheduler, scheduler);
         }
     }
 }

@@ -7,17 +7,17 @@ using Camelotia.Services.Interfaces;
 
 namespace Camelotia.Presentation.Avalonia.Services
 {
-    public sealed class AvaloniaAuthenticator : IAuthenticator
+    public sealed class AvaloniaYandexAuthenticator : IAuthenticator
     {
         private const string SuccessContent = "<html><body>Please return to the app.</body></html>";
 
-        public YandexAuthenticationType YandexAuthenticationType => YandexAuthenticationType.Code;
+        public GrantType GrantType => GrantType.AuthorizationCode;
 
-        public Task<string> ReceiveYandexToken(Uri uri) => throw new PlatformNotSupportedException();
+        public Task<string> ReceiveToken(Uri uri) => throw new PlatformNotSupportedException();
 
-        public async Task<string> ReceiveYandexCode(Uri uri, IPAddress address, int port)
+        public async Task<string> ReceiveCode(Uri uri, Uri returnUrl)
         {
-            var server = $"http://{address}:{port}/";
+            var server = returnUrl.ToString();
             var listener = new HttpListener();
             listener.Prefixes.Add(server);
             listener.Start();

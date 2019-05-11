@@ -75,7 +75,7 @@
     <Compile Include="Renderers\AccentButtonRenderer.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\AndroidAuthenticator.cs" />
+    <Compile Include="Services\AndroidYandexAuthenticator.cs" />
     <Compile Include="Services\AndroidFileManager.cs" />
     <Compile Include="WebActivity.cs" />
   </ItemGroup>

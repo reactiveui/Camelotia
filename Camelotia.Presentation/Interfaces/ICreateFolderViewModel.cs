@@ -3,6 +3,8 @@ using System.Windows.Input;
 
 namespace Camelotia.Presentation.Interfaces
 {
+    public delegate ICreateFolderViewModel CreateFolderViewModelFactory(IProviderViewModel providerViewModel);
+
     public interface ICreateFolderViewModel : INotifyPropertyChanged
     {
         bool IsLoading { get; }

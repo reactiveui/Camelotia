@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
+using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 
 namespace Camelotia.Presentation.Interfaces
 {
+    public delegate IProviderViewModel ProviderViewModelFactory(IProvider provider, IFileManager files, IAuthViewModel auth);
+
     public interface IProviderViewModel : INotifyPropertyChanged
     {
         Guid Id { get; }

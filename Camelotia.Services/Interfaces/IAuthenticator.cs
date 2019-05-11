@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Camelotia.Services.Interfaces
 {
     public interface IAuthenticator
     {
-        YandexAuthenticationType YandexAuthenticationType { get; }
+        GrantType GrantType { get; }
 
-        Task<string> ReceiveYandexCode(Uri uri, IPAddress address, int port);
+        Task<string> ReceiveCode(Uri uri, Uri returnUri);
 
-        Task<string> ReceiveYandexToken(Uri uri);
+        Task<string> ReceiveToken(Uri uri);
     }
 
-    public enum YandexAuthenticationType
+    public enum GrantType
     {
-        Token, Code
+        AccessToken,
+        AuthorizationCode
     }
 }

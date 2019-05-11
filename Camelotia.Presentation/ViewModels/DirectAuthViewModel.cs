@@ -18,44 +18,44 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _login;
         
         public DirectAuthViewModel(
-            IScheduler currentThread,
-            IScheduler mainThread,
-            IProvider provider)
+            IProvider provider,
+            IScheduler current,
+            IScheduler main)
         {
-            var nameValid = this
-                .WhenAnyValue(x => x.Username)
-                .Select(name => !string.IsNullOrWhiteSpace(name));
-
-            var passwordValid = this
-                .WhenAnyValue(x => x.Password)
-                .Select(name => !string.IsNullOrWhiteSpace(name));
-
-            var canLogin = nameValid
-                .CombineLatest(passwordValid, (name, password) => name && password)
+            var canLogin = this
+                .WhenAnyValue(
+                    x => x.Username,
+                    x => x.Password,
+                    (name, pass) =>
+                        !string.IsNullOrWhiteSpace(name) &&
+                        !string.IsNullOrWhiteSpace(pass))
                 .DistinctUntilChanged();
-            
+
             _login = ReactiveCommand.CreateFromTask(
                 () => provider.DirectAuth(Username, Password),
-                canLogin, mainThread);
+                canLogin, main);
 
             _errorMessage = _login
                 .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Direct auth error occured in {provider.Name}")
-                .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
+                .ToProperty(this, x => x.ErrorMessage, scheduler: current);
 
             _hasErrors = _login
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
-                .ToProperty(this, x => x.HasErrors, scheduler: currentThread);
+                .ToProperty(this, x => x.HasErrors, scheduler: current);
 
             _isBusy = _login
                 .IsExecuting
-                .ToProperty(this, x => x.IsBusy, scheduler: currentThread);
-            
-            _login.Subscribe(x => Username = string.Empty);
-            _login.Subscribe(x => Password = string.Empty);            
+                .ToProperty(this, x => x.IsBusy, scheduler: current);
+
+            _login.Subscribe(x =>
+            {
+                Username = string.Empty;
+                Password = string.Empty;
+            });
         }
         
         [Reactive] public string Username { get; set; }

@@ -196,16 +196,16 @@ namespace Camelotia.Services.Providers
 
         private async Task<string> GetAuthenticationToken()
         {
-            switch (_authenticator.YandexAuthenticationType)
+            switch (_authenticator.GrantType)
             {
-                case YandexAuthenticationType.Code:
+                case GrantType.AuthorizationCode:
                     var server = $"http://{IPAddress.Loopback}:{3000}/";
                     var codeUri = GetYandexAuthCodeUrl(server);
-                    var code = await _authenticator.ReceiveYandexCode(codeUri, IPAddress.Loopback, 3000);
+                    var code = await _authenticator.ReceiveCode(codeUri, new Uri(server));
                     return await GetAuthenticationTokenFromCode(code);
-                case YandexAuthenticationType.Token:
+                case GrantType.AccessToken:
                     var tokenUri = GetYandexAuthTokenUrl();
-                    return await _authenticator.ReceiveYandexToken(tokenUri);
+                    return await _authenticator.ReceiveToken(tokenUri);
                 default: throw new InvalidOperationException();
             }
         }

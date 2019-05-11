@@ -173,9 +173,9 @@ namespace Camelotia.Presentation.Tests
                 x => _renameFile,
                 _authViewModel,
                 _fileManager,
+                _provider,
                 scheduler,
-                scheduler,
-                _provider
+                scheduler
             );
         }
     }

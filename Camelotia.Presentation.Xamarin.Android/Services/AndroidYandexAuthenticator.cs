@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 using Android.Content;
 using Camelotia.Services.Interfaces;
 
 namespace Camelotia.Presentation.Xamarin.Droid.Services
 {
-    public sealed class AndroidAuthenticator : IAuthenticator
+    public sealed class AndroidYandexAuthenticator : IAuthenticator
     {
         private readonly MainActivity _activity;
 
-        public AndroidAuthenticator(MainActivity activity) => _activity = activity;
+        public AndroidYandexAuthenticator(MainActivity activity) => _activity = activity;
 
-        public YandexAuthenticationType YandexAuthenticationType => YandexAuthenticationType.Token;
+        public GrantType GrantType => GrantType.AccessToken;
+        
+        public Task<string> ReceiveCode(Uri uri, Uri returnUri) => throw new PlatformNotSupportedException();
 
-        public Task<string> ReceiveYandexCode(Uri uri, IPAddress address, int port) => throw new PlatformNotSupportedException();
-
-        public async Task<string> ReceiveYandexToken(Uri uri)
+        public async Task<string> ReceiveToken(Uri uri)
         {
             var completion = new TaskCompletionSource<string>();
             var startWebActivity = new Intent(_activity, typeof(WebActivity));

@@ -3,6 +3,8 @@ using System.Windows.Input;
 
 namespace Camelotia.Presentation.Interfaces
 {
+    public delegate IRenameFileViewModel RenameFileViewModelFactory(IProviderViewModel providerViewModel);
+
     public interface IRenameFileViewModel : INotifyPropertyChanged
     {
         bool IsLoading { get; }

@@ -22,13 +22,13 @@ namespace Camelotia.Presentation.ViewModels
         
         public CreateFolderViewModel(
             IProviderViewModel providerViewModel,
-            IScheduler currentThread,
-            IScheduler mainThread,
-            IProvider provider)
+            IProvider provider,
+            IScheduler current,
+            IScheduler main)
         {
             _path = providerViewModel
                 .WhenAnyValue(x => x.CurrentPath)
-                .ToProperty(this, x => x.Path, scheduler: currentThread);
+                .ToProperty(this, x => x.Path, scheduler: current);
             
             var canInteract = providerViewModel
                 .WhenAnyValue(x => x.CanInteract);
@@ -44,8 +44,8 @@ namespace Camelotia.Presentation.ViewModels
             
             _create = ReactiveCommand.CreateFromTask(
                 () => provider.CreateFolder(Path, Name),
-                canCreateFolder, mainThread);
-            
+                canCreateFolder, main);
+
             var canCreate = Observable.Return(provider.CanCreateFolder);
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
@@ -55,7 +55,7 @@ namespace Camelotia.Presentation.ViewModels
             
             _open = ReactiveCommand.Create(
                 () => { IsVisible = true; },
-                canOpen, mainThread);
+                canOpen, main);
 
             var canClose = this
                 .WhenAnyValue(x => x.IsVisible)
@@ -63,27 +63,27 @@ namespace Camelotia.Presentation.ViewModels
             
             _close = ReactiveCommand.Create(
                 () => { IsVisible = false; },
-                canClose, mainThread);
+                canClose, main);
+
+            _create.InvokeCommand(_close);
+            _close.Subscribe(x => Name = string.Empty);
 
             _hasErrors = _create
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_close.Select(unit => false))
-                .ToProperty(this, x => x.HasErrors, scheduler: currentThread);
+                .ToProperty(this, x => x.HasErrors, scheduler: current);
 
             _errorMessage = _create
                 .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Create folder error occured in {provider.Name}")
                 .Merge(_close.Select(unit => string.Empty))
-                .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
+                .ToProperty(this, x => x.ErrorMessage, scheduler: current);
 
             _isLoading = _create
                 .IsExecuting
-                .ToProperty(this, x => x.IsLoading, scheduler: currentThread);
-
-            _create.InvokeCommand(Close);
-            _close.Subscribe(x => Name = string.Empty);
+                .ToProperty(this, x => x.IsLoading, scheduler: current);
         }
 
         [Reactive] public string Name { get; set; }

@@ -16,29 +16,29 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _login;
         
         public OAuthViewModel(
-            IScheduler currentThread,
-            IScheduler mainThread,
-            IProvider provider)
+            IProvider provider,
+            IScheduler current,
+            IScheduler main)
         {
             _login = ReactiveCommand.CreateFromTask(
                 provider.OAuth,
-                outputScheduler: mainThread);
+                outputScheduler: main);
 
             _errorMessage = _login
                 .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"OAuth error occured in {provider.Name}")
-                .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
+                .ToProperty(this, x => x.ErrorMessage, scheduler: current);
 
             _hasErrors = _login
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
-                .ToProperty(this, x => x.HasErrors, scheduler: currentThread);
+                .ToProperty(this, x => x.HasErrors, scheduler: current);
             
             _isBusy = _login
                 .IsExecuting
-                .ToProperty(this, x => x.IsBusy, scheduler: currentThread);
+                .ToProperty(this, x => x.IsBusy, scheduler: current);
         }
         
         public string ErrorMessage => _errorMessage.Value;

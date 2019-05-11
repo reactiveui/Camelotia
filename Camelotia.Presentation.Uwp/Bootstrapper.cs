@@ -15,29 +15,24 @@ namespace Camelotia.Presentation.Uwp
     {
         public static IMainViewModel BuildMainViewModel()
         {
-            var currentThread = CurrentThreadScheduler.Instance;
-            var mainThread = RxApp.MainThreadScheduler;
+            var current = CurrentThreadScheduler.Instance;
+            var main = RxApp.MainThreadScheduler;
 
             Akavache.BlobCache.ApplicationName = "Camelotia";
             var cache = Akavache.BlobCache.UserAccount;
-            var login = new UniversalWindowsAuthenticator();
+            var login = new UniversalWindowsYandexAuthenticator();
 
             return new MainViewModel(
                 (provider, files, auth) => new ProviderViewModel(
-                    model => new CreateFolderViewModel(model, currentThread, mainThread, provider),
-                    model => new RenameFileViewModel(model, currentThread, mainThread, provider),
-                    auth, files,
-                    currentThread,
-                    mainThread,
-                    provider
+                    model => new CreateFolderViewModel(model, provider, current, main),
+                    model => new RenameFileViewModel(model, provider, current, main),
+                    auth, files, provider, current, main
                 ),
                 provider => new AuthViewModel(
-                    new DirectAuthViewModel(currentThread, mainThread, provider),
-                    new HostAuthViewModel(currentThread, mainThread, provider),
-                    new OAuthViewModel(currentThread, mainThread, provider),
-                    currentThread,
-                    mainThread,
-                    provider
+                    new DirectAuthViewModel(provider, current, main),
+                    new HostAuthViewModel(provider, current, main),
+                    new OAuthViewModel(provider, current, main),
+                    provider, current, main
                 ),
                 new ProviderStorage(
                     new Dictionary<string, Func<Guid, IProvider>>
@@ -51,8 +46,7 @@ namespace Camelotia.Presentation.Uwp
                     cache
                 ),
                 new UniversalWindowsFileManager(),
-                currentThread,
-                mainThread
+                current, main
             );
         }
     }

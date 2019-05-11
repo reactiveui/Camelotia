@@ -18,51 +18,42 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _login;
         
         public HostAuthViewModel(
-            IScheduler currentThread,
-            IScheduler mainThread,
-            IProvider provider)
+            IProvider provider,
+            IScheduler current,
+            IScheduler main)
         {
-            var nameValid = this
-                .WhenAnyValue(x => x.Username)
-                .Select(name => !string.IsNullOrWhiteSpace(name));
-
-            var passwordValid = this
-                .WhenAnyValue(x => x.Password)
-                .Select(name => !string.IsNullOrWhiteSpace(name));
-
-            var addressValid = this
-                .WhenAnyValue(x => x.Address)
-                .Select(name => !string.IsNullOrWhiteSpace(name));
-
-            var portValid = this
-                .WhenAnyValue(x => x.Port)
-                .Select(port => int.TryParse(port, out _));
-
-            var canLogin = nameValid
-                .CombineLatest(passwordValid, (name, password) => name && password)
-                .CombineLatest(addressValid, (etc, address) => etc && address)
-                .CombineLatest(portValid, (etc, port) => etc && port)
+            var canLogin = this
+                .WhenAnyValue(
+                    x => x.Username, 
+                    x => x.Password,
+                    x => x.Address, 
+                    x => x.Port,
+                    (user, pass, host, port) =>
+                        !string.IsNullOrWhiteSpace(user) &&
+                        !string.IsNullOrWhiteSpace(pass) &&
+                        !string.IsNullOrWhiteSpace(host) &&
+                        int.TryParse(port, out _))
                 .DistinctUntilChanged();
             
             _login = ReactiveCommand.CreateFromTask(
                 () => provider.HostAuth(Address, int.Parse(Port), Username, Password),
-                canLogin, mainThread);
+                canLogin, main);
 
             _errorMessage = _login
                 .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Host auth error occured in {provider.Name}")
-                .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
+                .ToProperty(this, x => x.ErrorMessage, scheduler: current);
 
             _hasErrors = _login
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
-                .ToProperty(this, x => x.HasErrors, scheduler: currentThread);
+                .ToProperty(this, x => x.HasErrors, scheduler: current);
 
             _isBusy = _login
                 .IsExecuting
-                .ToProperty(this, x => x.IsBusy, scheduler: currentThread);
+                .ToProperty(this, x => x.IsBusy, scheduler: current);
             
             _login.Subscribe(x =>
             {

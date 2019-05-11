@@ -22,14 +22,14 @@ namespace Camelotia.Presentation.ViewModels
         
         public RenameFileViewModel(
             IProviderViewModel providerViewModel,
-            IScheduler currentThread,
-            IScheduler mainThread,
-            IProvider provider)
+            IProvider provider,
+            IScheduler current,
+            IScheduler main)
         {
             _oldName = providerViewModel
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file?.Name)
-                .ToProperty(this, x => x.OldName, scheduler: currentThread);
+                .ToProperty(this, x => x.OldName, scheduler: current);
 
             var canInteract = providerViewModel
                 .WhenAnyValue(x => x.CanInteract);
@@ -46,7 +46,7 @@ namespace Camelotia.Presentation.ViewModels
             
             _open = ReactiveCommand.Create(
                 () => { IsVisible = true; },
-                canOpen, mainThread);
+                canOpen, main);
             
             var canClose = this
                 .WhenAnyValue(x => x.IsVisible)
@@ -54,7 +54,7 @@ namespace Camelotia.Presentation.ViewModels
             
             _close = ReactiveCommand.Create(
                 () => { IsVisible = false; },
-                canClose, mainThread);
+                canClose, main);
 
             var canRename = this
                 .WhenAnyValue(x => x.NewName)
@@ -63,24 +63,24 @@ namespace Camelotia.Presentation.ViewModels
             
             _rename = ReactiveCommand.CreateFromTask(
                 () => provider.RenameFile(providerViewModel.SelectedFile, NewName),
-                canRename, mainThread);
+                canRename, main);
 
             _isLoading = _rename
                 .IsExecuting
-                .ToProperty(this, x => x.IsLoading, scheduler: currentThread);
+                .ToProperty(this, x => x.IsLoading, scheduler: current);
 
             _hasErrors = _rename
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_close.Select(x => false))
-                .ToProperty(this, x => x.HasErrors, scheduler: currentThread);
+                .ToProperty(this, x => x.HasErrors, scheduler: current);
 
             _errorMessage = _rename
                 .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Rename file error occured in {provider.Name} for {OldName}")
                 .Merge(_close.Select(x => string.Empty))
-                .ToProperty(this, x => x.ErrorMessage, scheduler: currentThread);
+                .ToProperty(this, x => x.ErrorMessage, scheduler: current);
 
             _rename.InvokeCommand(_close);
             _close.Subscribe(x => NewName = string.Empty);

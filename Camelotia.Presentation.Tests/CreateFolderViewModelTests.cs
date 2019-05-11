@@ -102,7 +102,7 @@ namespace Camelotia.Presentation.Tests
 
         private CreateFolderViewModel BuildCreateFolderViewModel(IScheduler scheduler)
         {
-            return new CreateFolderViewModel(_providerViewModel, scheduler, scheduler, _provider);
+            return new CreateFolderViewModel(_providerViewModel, _provider, scheduler, scheduler);
         }
     }
 }

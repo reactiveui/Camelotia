@@ -15,6 +15,7 @@ using DynamicData;
 
 namespace Camelotia.Presentation.ViewModels
 {
+
     public sealed class MainViewModel : ReactiveObject, IMainViewModel, ISupportsActivation
     {
         private readonly ReadOnlyObservableCollection<IProviderViewModel> _providers;
@@ -25,24 +26,24 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _unselect;
         private readonly ReactiveCommand<Unit, Unit> _refresh;
         private readonly ReactiveCommand<Unit, Unit> _remove;
-        private readonly IProviderStorage _providerStorage;
+        private readonly IProviderStorage _storage;
         private readonly ReactiveCommand<Unit, Unit> _add;
 
         public MainViewModel(
-            Func<IProvider, IFileManager, IAuthViewModel, IProviderViewModel> providerFactory,
-            Func<IProvider, IAuthViewModel> authFactory,
-            IProviderStorage providerStorage, 
-            IFileManager fileManager,
-            IScheduler currentThread,
-            IScheduler mainThread)
+            ProviderViewModelFactory providerFactory,
+            AuthViewModelFactory authFactory,
+            IProviderStorage storage, 
+            IFileManager files,
+            IScheduler current,
+            IScheduler main)
         {
-            _providerStorage = providerStorage;
+            _storage = storage;
             _refresh = ReactiveCommand.CreateFromTask(
-                providerStorage.Refresh,
-                outputScheduler: mainThread);
+                storage.Refresh,
+                outputScheduler: main);
             
-            var providers = providerStorage.Providers();
-            providers.Transform(x => providerFactory(x, fileManager, authFactory(x)))
+            var providers = storage.Providers();
+            providers.Transform(x => providerFactory(x, files, authFactory(x)))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .StartWithEmpty()
                 .Bind(out _providers)
@@ -50,13 +51,13 @@ namespace Camelotia.Presentation.ViewModels
             
             _isLoading = _refresh
                 .IsExecuting
-                .ToProperty(this, x => x.IsLoading, scheduler: currentThread);
+                .ToProperty(this, x => x.IsLoading, scheduler: current);
             
             _isReady = _refresh
                 .IsExecuting
                 .Skip(1)
                 .Select(executing => !executing)
-                .ToProperty(this, x => x.IsReady, scheduler: currentThread);
+                .ToProperty(this, x => x.IsReady, scheduler: current);
 
             providers.Where(changes => changes.Any())
                 .ObserveOn(RxApp.MainThreadScheduler)
@@ -69,7 +70,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(provider => provider != null);
             
             _remove = ReactiveCommand.CreateFromTask(
-                () => providerStorage.Remove(SelectedProvider.Id),
+                () => storage.Remove(SelectedProvider.Id),
                 canRemove);
 
             var canAddProvider = this
@@ -77,7 +78,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(type => !string.IsNullOrWhiteSpace(type));
             
             _add = ReactiveCommand.CreateFromTask(
-                () => providerStorage.Add(SelectedSupportedType),
+                () => storage.Add(SelectedSupportedType),
                 canAddProvider);
 
             _welcomeScreenVisible = this
@@ -99,10 +100,12 @@ namespace Camelotia.Presentation.ViewModels
                 canUnSelect);
             
             Activator = new ViewModelActivator();
-            this.WhenActivated(async (CompositeDisposable disposable) =>
+            this.WhenActivated(disposables =>
             {
                 SelectedSupportedType = SupportedTypes.FirstOrDefault();
-                await _refresh.Execute();
+                _refresh.Execute()
+                    .Subscribe()
+                    .DisposeWith(disposables);
             });
         }
 
@@ -114,7 +117,7 @@ namespace Camelotia.Presentation.ViewModels
         
         public ReadOnlyObservableCollection<IProviderViewModel> Providers => _providers;
 
-        public IEnumerable<string> SupportedTypes => _providerStorage.SupportedTypes;
+        public IEnumerable<string> SupportedTypes => _storage.SupportedTypes;
 
         public bool WelcomeScreenCollapsed => _welcomeScreenCollapsed.Value;
 

@@ -101,7 +101,7 @@ namespace Camelotia.Presentation.Tests
 
         private RenameFileViewModel BuildRenameFileViewModel(IScheduler scheduler)
         {
-            return new RenameFileViewModel(_providerViewModel, scheduler, scheduler, _provider);
+            return new RenameFileViewModel(_providerViewModel, _provider, scheduler, scheduler);
         }
     }
 }

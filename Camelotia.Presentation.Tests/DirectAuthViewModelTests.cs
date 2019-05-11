@@ -62,7 +62,7 @@ namespace Camelotia.Presentation.Tests
 
         private DirectAuthViewModel BuildDirectAuthViewModel(IScheduler scheduler)
         {
-            return new DirectAuthViewModel(scheduler, scheduler, _provider);
+            return new DirectAuthViewModel(_provider, scheduler, scheduler);
         }
     }
 }
