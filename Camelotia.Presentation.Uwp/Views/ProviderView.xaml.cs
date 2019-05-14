@@ -2,6 +2,9 @@
 using ReactiveUI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
+using Camelotia.Services.Models;
 
 namespace Camelotia.Presentation.Uwp.Views
 {
@@ -26,6 +29,13 @@ namespace Camelotia.Presentation.Uwp.Views
         {
             get => ViewModel;
             set => ViewModel = (IProviderViewModel)value;
+        }
+        
+        private void OnFileViewTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var element = (FrameworkElement) sender;
+            ViewModel.SelectedFile = (FileModel) element.DataContext;
+            FlyoutBase.ShowAttachedFlyout(element);
         }
     }
 }
