@@ -10,6 +10,8 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.ViewModels
 {
+    public delegate IRenameFileViewModel RenameFileViewModelFactory(IProviderViewModel providerViewModel);
+
     public sealed class RenameFileViewModel : ReactiveObject, IRenameFileViewModel
     {
         private readonly ObservableAsPropertyHelper<string> _errorMessage;

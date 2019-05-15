@@ -10,6 +10,8 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.ViewModels
 {
+    public delegate ICreateFolderViewModel CreateFolderViewModelFactory(IProviderViewModel providerViewModel);
+
     public sealed class CreateFolderViewModel : ReactiveObject, ICreateFolderViewModel
     {
         private readonly ObservableAsPropertyHelper<string> _errorMessage;

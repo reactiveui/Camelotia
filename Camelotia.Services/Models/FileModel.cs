@@ -24,17 +24,5 @@ namespace Camelotia.Services.Models
             Modified = modified?.ToString();
             Name = name;
         }
-
-        public override int GetHashCode() => (Name, Path, IsFolder, Size).GetHashCode();
-
-        public override bool Equals(object obj)
-        {
-            return 
-                obj is FileModel file &&
-                file.Name == Name &&
-                file.Path == Path &&
-                file.IsFolder == IsFolder &&
-                file.Size == Size;
-        }
     }
 }

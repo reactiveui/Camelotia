@@ -131,11 +131,11 @@ namespace Camelotia.Services.Providers
 
         public Task CreateFolder(string path, string name) => throw new NotImplementedException();
 
-        public Task RenameFile(FileModel file, string name) => throw new NotImplementedException();
+        public Task RenameFile(string path, string name) => throw new NotImplementedException();
 
         public Task UploadFile(string to, Stream from, string name) => throw new NotImplementedException();
 
-        public Task Delete(FileModel file) => throw new NotImplementedException();
+        public Task Delete(string path, bool isFolder) => throw new NotImplementedException();
 
         private async void EnsureLoggedInIfTokenSaved()
         {

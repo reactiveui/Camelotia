@@ -26,9 +26,9 @@ namespace Camelotia.Services.Interfaces
 
         Task CreateFolder(string path, string name);
 
-        Task RenameFile(FileModel file, string name);
+        Task RenameFile(string path, string name);
 
-        Task Delete(FileModel file);
+        Task Delete(string path, bool isFolder);
         
         IObservable<bool> IsAuthorized { get; }
         

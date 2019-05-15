@@ -86,15 +86,15 @@ namespace Camelotia.Services.Providers
                 await Task.Delay(1000);
         }
 
-        public async Task RenameFile(FileModel file, string name)
+        public async Task RenameFile(string path, string name)
         {
-            var update = _driveService.Files.Update(new File {Name = name}, file.Path);
+            var update = _driveService.Files.Update(new File {Name = name}, path);
             await update.ExecuteAsync().ConfigureAwait(false);
         }
 
-        public async Task Delete(FileModel file)
+        public async Task Delete(string path, bool isFolder)
         {
-            var delete = _driveService.Files.Delete(file.Path);
+            var delete = _driveService.Files.Delete(path);
             await delete.ExecuteAsync().ConfigureAwait(false);
         }
 

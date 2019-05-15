@@ -80,25 +80,24 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        public async Task RenameFile(FileModel file, string name)
+        public async Task RenameFile(string path, string name)
         {
             using (var connection = _factory())
             {
                 await connection.ConnectAsync();
-                var directoryName = Path.GetDirectoryName(file.Path);
+                var directoryName = Path.GetDirectoryName(path);
                 var newName = Path.Combine(directoryName, name);
-                await connection.RenameAsync(file.Path, newName);
+                await connection.RenameAsync(path, newName);
                 await connection.DisconnectAsync();
             }
         }
 
-        public async Task Delete(FileModel file)
+        public async Task Delete(string path, bool isFolder)
         {
-            var path = file.Path;
             using (var connection = _factory())
             {
                 await connection.ConnectAsync();
-                if (file.IsFolder) await connection.DeleteDirectoryAsync(path);
+                if (isFolder) await connection.DeleteDirectoryAsync(path);
                 else await connection.DeleteFileAsync(path);
                 await connection.DisconnectAsync();
             }

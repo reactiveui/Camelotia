@@ -86,12 +86,12 @@ namespace Camelotia.Services.Providers
             Directory.CreateDirectory(path);
         });
 
-        public Task RenameFile(FileModel file, string name) => Task.Run(() =>
+        public Task RenameFile(string path, string name) => Task.Run(() =>
         {
-            var directoryName = Path.GetDirectoryName(file.Path);
+            var directoryName = Path.GetDirectoryName(path);
             var newName = Path.Combine(directoryName, name);
-            if (IsDirectory(file.Path)) Directory.Move(file.Path, newName);
-            else File.Move(file.Path, newName);
+            if (IsDirectory(path)) Directory.Move(path, newName);
+            else File.Move(path, newName);
         });
 
         public async Task UploadFile(string to, Stream from, string name)
@@ -106,11 +106,11 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        public Task Delete(FileModel file) => Task.Run(() =>
+        public Task Delete(string path, bool isFolder) => Task.Run(() =>
         {
-            var isDirectory = IsDirectory(file.Path);
-            if (isDirectory) Directory.Delete(file.Path, false);
-            else File.Delete(file.Path);
+            var isDirectory = IsDirectory(path);
+            if (isDirectory) Directory.Delete(path, false);
+            else File.Delete(path);
         });
 
         private static string GetSizeOnAllDisks()

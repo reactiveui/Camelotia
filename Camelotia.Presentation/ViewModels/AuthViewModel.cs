@@ -6,6 +6,8 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.ViewModels
 {
+    public delegate IAuthViewModel AuthViewModelFactory(IProvider provider);
+
     public sealed class AuthViewModel : ReactiveObject, IAuthViewModel
     {
         private readonly ObservableAsPropertyHelper<bool> _isAuthenticated;

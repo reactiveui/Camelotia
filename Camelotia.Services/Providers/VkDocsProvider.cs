@@ -127,7 +127,7 @@ namespace Camelotia.Services.Providers
 
         public Task CreateFolder(string path, string name) => throw new NotSupportedException("Folders not supported.");
 
-        public Task RenameFile(FileModel file, string name) => throw new NotSupportedException("Rename not supported.");
+        public Task RenameFile(string path, string name) => throw new NotSupportedException("Rename not supported.");
 
         public async Task UploadFile(string to, Stream from, string name)
         {
@@ -150,9 +150,9 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        public async Task Delete(FileModel file)
+        public async Task Delete(string path, bool isFolder)
         {
-            var id = long.Parse(file.Path);
+            var id = long.Parse(path);
             var users = await _api.Users.GetAsync(new long[0]);
             var currentUser = users.First();
             await _api.Docs.DeleteAsync(currentUser.Id, id);
