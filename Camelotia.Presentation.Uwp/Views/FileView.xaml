@@ -10,10 +10,8 @@
         <MenuFlyout>
             <MenuFlyoutItem Text="Open" Command="{x:Bind ViewModel.Provider.Open, Mode=OneWay}" />
             <MenuFlyoutItem Text="Back" Command="{x:Bind ViewModel.Provider.Back, Mode=OneWay}" />
-            <MenuFlyoutItem Text="Upload" Command="{x:Bind ViewModel.Provider.UploadToCurrentPath, Mode=OneWay}" />
             <MenuFlyoutItem Text="Download" Command="{x:Bind ViewModel.Provider.DownloadSelectedFile, Mode=OneWay}" />
             <MenuFlyoutItem Text="Rename" Command="{x:Bind ViewModel.Provider.Rename.Open, Mode=OneWay}" />
-            <MenuFlyoutItem Text="Create" Command="{x:Bind ViewModel.Provider.Folder.Open, Mode=OneWay}" />
             <MenuFlyoutItem Text="Unselect" Command="{x:Bind ViewModel.Provider.UnselectFile, Mode=OneWay}" />
         </MenuFlyout>
     </FlyoutBase.AttachedFlyout>
