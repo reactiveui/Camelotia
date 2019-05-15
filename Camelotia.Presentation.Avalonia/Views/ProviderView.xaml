@@ -39,7 +39,7 @@
                         Content="Open" />
             </Grid>
             <Border Grid.Row="1" BorderBrush="#f2f2f2" BorderThickness="0 2 0 2">
-                <Grid PointerReleased="OnPointerReleased">
+                <Grid>
                     <ListBox Padding="0"
                              BorderThickness="0"
                              SelectionMode="Toggle"
@@ -48,45 +48,8 @@
                              ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                              SelectedItem="{Binding SelectedFile, Mode=TwoWay}">
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="models:FileModel">
-                                <Grid Background="Transparent">
-                                    <Grid.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="Open" Command="{Binding $parent[ListBox].DataContext.Open}" />
-                                            <MenuItem Header="Back" Command="{Binding $parent[ListBox].DataContext.Back}" />
-                                            <MenuItem Header="Upload" Command="{Binding $parent[ListBox].DataContext.UploadToCurrentPath}" />
-                                            <MenuItem Header="Download" Command="{Binding $parent[ListBox].DataContext.DownloadSelectedFile}" />
-                                            <MenuItem Header="Rename" Command="{Binding $parent[ListBox].DataContext.Rename.Open}" />
-                                            <MenuItem Header="Create" Command="{Binding $parent[ListBox].DataContext.Folder.Open}" />
-                                            <MenuItem Header="Unselect" Command="{Binding $parent[ListBox].DataContext.UnselectFile}" />
-                                        </ContextMenu>
-                                    </Grid.ContextMenu>
-                                    <Grid Margin="6">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="3*" />
-                                            <ColumnDefinition Width="1*" />
-                                            <ColumnDefinition Width="1*" />
-                                            <ColumnDefinition Width="2*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0"
-                                                   Text="{Binding Name}"
-                                                   TextWrapping="Wrap"
-                                                   FontSize="14" />
-                                        <TextBlock Grid.Column="1"
-                                                   Text="Directory"
-                                                   IsVisible="{Binding IsFolder}"
-                                                   Foreground="#777777"
-                                                   FontSize="12" />
-                                        <TextBlock Grid.Column="2"
-                                                   VerticalAlignment="Center"
-                                                   Foreground="#777777"
-                                                   Text="{Binding Size}" />
-                                        <TextBlock Grid.Column="3"
-                                                   VerticalAlignment="Center"
-                                                   Foreground="#777777"
-                                                   Text="{Binding Modified}" />
-                                    </Grid>
-                                </Grid>
+                            <DataTemplate DataType="interfaces:IFileViewModel">
+                                <views:FileView DataContext="{Binding}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

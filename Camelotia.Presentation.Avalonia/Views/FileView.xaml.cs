@@ -5,9 +5,9 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia.Views
 {
-    public sealed class ProviderView : ReactiveUserControl<IProviderViewModel>
+    public sealed class FileView : ReactiveUserControl<IFileViewModel>
     {
-        public ProviderView()
+        public FileView()
         {
             this.WhenActivated(disposables => { });
             AvaloniaXamlLoader.Load(this);
