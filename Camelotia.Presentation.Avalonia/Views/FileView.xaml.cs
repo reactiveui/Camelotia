@@ -1,7 +1,7 @@
 using System;
+using System.ComponentModel;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Interfaces;
@@ -15,13 +15,11 @@ namespace Camelotia.Presentation.Avalonia.Views
         {
             this.WhenActivated(disposables =>
             {
-                Observable.FromEventPattern<PointerReleasedEventArgs>(
-                        handler => PointerReleased += handler,
-                        handler => PointerReleased -= handler)
-                    .Where(args => args.EventArgs.MouseButton == MouseButton.Right)
-                    .Select(args => (FileView)args.Sender)
-                    .Select(element => element.ViewModel)
-                    .Subscribe(file => file.Provider.SelectedFile = file)
+                Observable.FromEventPattern<CancelEventHandler, CancelEventArgs>(
+                        handler => ContextMenu.ContextMenuOpening += handler,
+                        handler => ContextMenu.ContextMenuOpening -= handler)
+                    .Do(args => args.EventArgs.Cancel = false)
+                    .Subscribe(args => ViewModel.Provider.SelectedFile = ViewModel)
                     .DisposeWith(disposables);
             });
             AvaloniaXamlLoader.Load(this);
