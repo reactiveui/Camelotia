@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.7.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.7.0" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.7.0" />
+    <PackageReference Include="Avalonia" Version="0.8.1-cibuild0002371-beta" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.8.1-cibuild0002371-beta" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.8.1-cibuild0002371-beta" />
   </ItemGroup>
 
   <ItemGroup>

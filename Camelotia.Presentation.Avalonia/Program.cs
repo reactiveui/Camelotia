@@ -10,6 +10,7 @@ using Camelotia.Services.Storages;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
 using Avalonia;
+using Avalonia.ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia
 {
