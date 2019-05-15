@@ -21,6 +21,7 @@ namespace Camelotia.Presentation.Tests
         private readonly IRenameFileViewModel _renameFile = Substitute.For<IRenameFileViewModel>();
         private readonly IAuthViewModel _authViewModel = Substitute.For<IAuthViewModel>();
         private readonly IFileManager _fileManager = Substitute.For<IFileManager>();
+        private readonly IFileViewModel _file = Substitute.For<IFileViewModel>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
         
         [Fact]
@@ -171,6 +172,7 @@ namespace Camelotia.Presentation.Tests
             return new ProviderViewModel(
                 x => _createFolder,
                 x => _renameFile,
+                (x, y) => new FileViewModel(y, x), 
                 _authViewModel,
                 _fileManager,
                 _provider,
