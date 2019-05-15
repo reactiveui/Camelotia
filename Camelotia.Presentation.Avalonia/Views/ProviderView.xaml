@@ -5,6 +5,7 @@
              xmlns:models="clr-namespace:Camelotia.Services.Models;assembly=Camelotia.Services"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
+             x:Class="Camelotia.Presentation.Avalonia.Views.ProviderView"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              mc:Ignorable="d" Background="#f7f7f7">
     <Grid>
