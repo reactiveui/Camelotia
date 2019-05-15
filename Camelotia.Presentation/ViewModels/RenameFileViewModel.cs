@@ -64,7 +64,7 @@ namespace Camelotia.Presentation.ViewModels
                 .CombineLatest(oldNameValid, (old, name) => old && name);
             
             _rename = ReactiveCommand.CreateFromTask(
-                () => provider.RenameFile(providerViewModel.SelectedFile, NewName),
+                () => provider.RenameFile(providerViewModel.SelectedFile.Path, NewName),
                 canRename, main);
 
             _isLoading = _rename

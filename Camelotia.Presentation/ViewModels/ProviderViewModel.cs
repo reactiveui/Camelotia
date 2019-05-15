@@ -185,7 +185,7 @@ namespace Camelotia.Presentation.ViewModels
                 .CombineLatest(canInteract, (delete, interact) => delete && interact);
 
             _deleteSelectedFile = ReactiveCommand.CreateFromTask(
-                () => provider.Delete(SelectedFile),
+                () => provider.Delete(SelectedFile.Path, SelectedFile.IsFolder),
                 canDeleteSelection);
 
             _deleteSelectedFile.InvokeCommand(Refresh);

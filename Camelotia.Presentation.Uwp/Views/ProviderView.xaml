@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Camelotia.Services.Models"
     xmlns:views="using:Camelotia.Presentation.Uwp.Views"
-    x:Name="ProviderViewRef"
     d:DesignHeight="500" 
     d:DesignWidth="700"
     mc:Ignorable="d">
@@ -55,55 +54,7 @@
                     </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="models:FileModel">
-                            <Grid Margin="8" Background="Transparent" RightTapped="OnFileViewTapped">
-                                <FlyoutBase.AttachedFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Text="Open" Command="{Binding ViewModel.Open, ElementName=ProviderViewRef}" />
-                                        <MenuFlyoutItem Text="Back" Command="{Binding ViewModel.Back, ElementName=ProviderViewRef}" />
-                                        <MenuFlyoutItem Text="Upload" Command="{Binding ViewModel.UploadToCurrentPath, ElementName=ProviderViewRef}" />
-                                        <MenuFlyoutItem Text="Download" Command="{Binding ViewModel.DownloadSelectedFile, ElementName=ProviderViewRef}" />
-                                        <MenuFlyoutItem Text="Rename" Command="{Binding ViewModel.Rename.Open, ElementName=ProviderViewRef}" />
-                                        <MenuFlyoutItem Text="Create" Command="{Binding ViewModel.Folder.Open, ElementName=ProviderViewRef}" />
-                                        <MenuFlyoutItem Text="Unselect" Command="{Binding ViewModel.UnselectFile, ElementName=ProviderViewRef}" />
-                                    </MenuFlyout>
-                                </FlyoutBase.AttachedFlyout>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="24" />
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="1*" />
-                                    <ColumnDefinition Width="1*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0"
-                                           Text="&#x1F4C1;"
-                                           FontFamily="Segoe UI Symbol"
-                                           Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                           Visibility="{x:Bind IsFolder, Mode=OneTime}"
-                                           FontSize="14" />
-                                <TextBlock Grid.Column="0"
-                                           Text="&#xE729;"
-                                           FontFamily="Segoe MDL2 Assets"
-                                           Foreground="{ThemeResource AppBarSeparatorForegroundThemeBrush}"
-                                           Visibility="{x:Bind IsFile, Mode=OneTime}"
-                                           FontSize="14" />
-                                <TextBlock Grid.Column="1"
-                                           Text="{x:Bind Name, Mode=OneTime}"
-                                           TextTrimming="CharacterEllipsis"
-                                           FontSize="14" />
-                                <TextBlock Grid.Column="2"
-                                           Text="Directory"
-                                           Visibility="{x:Bind IsFolder, Mode=OneTime}"
-                                           Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                           FontSize="12" />
-                                <TextBlock Grid.Column="3"
-                                           VerticalAlignment="Center"
-                                           Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                           Text="{x:Bind Size, Mode=OneTime}" />
-                                <TextBlock Grid.Column="4"
-                                           VerticalAlignment="Center"
-                                           Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                           Text="{x:Bind Modified, Mode=OneTime}" />
-                            </Grid>
+                            <views:FileView ViewModel="{Binding}"/>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
