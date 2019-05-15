@@ -39,7 +39,7 @@
                         Content="Open" />
             </Grid>
             <Border Grid.Row="1" BorderBrush="#f2f2f2" BorderThickness="0 2 0 2">
-                <Grid>
+                <Grid PointerReleased="OnPointerReleased">
                     <ListBox Padding="0"
                              BorderThickness="0"
                              SelectionMode="Toggle"

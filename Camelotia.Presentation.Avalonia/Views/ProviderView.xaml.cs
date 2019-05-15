@@ -1,4 +1,5 @@
-using Avalonia;
+using System;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Interfaces;
@@ -12,6 +13,11 @@ namespace Camelotia.Presentation.Avalonia.Views
         {
             this.WhenActivated(disposables => { });
             AvaloniaXamlLoader.Load(this);
+        }
+
+        public void OnPointerReleased(object sender, PointerReleasedEventArgs args)
+        {
+            Console.WriteLine("Hello");
         }
     }
 }
