@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using ReactiveUI;
 using ReactiveUI.XamForms;
 using System.Reactive.Disposables;

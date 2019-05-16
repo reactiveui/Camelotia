@@ -1,5 +1,3 @@
-using Camelotia.Services.Models;
-using FluentAssertions;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
