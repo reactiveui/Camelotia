@@ -66,7 +66,7 @@ namespace Camelotia.Services.Providers
                        Name = Path.GetFileName(file),
                        IsFolder = IsDirectory(file),
                        Modified = fileInfo.LastWriteTime,
-                       Size = fileInfo.Length
+                       Size = isDirectory ? 0 : fileInfo.Length
                    };
         });
 
