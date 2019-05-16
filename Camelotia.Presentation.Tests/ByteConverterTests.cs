@@ -1,3 +1,5 @@
+using Camelotia.Presentation.Extensions;
+using FluentAssertions;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
@@ -12,7 +14,7 @@ namespace Camelotia.Presentation.Tests
         [InlineData(520185000000, "520.2GB")]
         public void ByteConverterShouldCalculateWithNoPrecisionSupplied(long byteCount, string expectedValue)
         {
-            var stringValue = ByteConverter.BytesToString(byteCount);
+            var stringValue = byteCount.ByteSizeToString();
             stringValue.Should().Be(expectedValue);
         }
         
@@ -25,7 +27,7 @@ namespace Camelotia.Presentation.Tests
         [InlineData(520124960000, 3, "520.125GB")]
         public void ByteConverterShouldCalculate(long byteCount, int precision, string expectedValue)
         {
-            var stringValue = ByteConverter.BytesToString(byteCount, precision);
+            var stringValue = byteCount.ByteSizeToString(precision);
             stringValue.Should().Be(expectedValue);
         }
     }
