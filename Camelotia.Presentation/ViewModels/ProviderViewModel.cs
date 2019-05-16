@@ -8,6 +8,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Threading.Tasks;
+using Camelotia.Presentation.Extensions;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
@@ -17,9 +18,11 @@ using DynamicData;
 
 namespace Camelotia.Presentation.ViewModels
 {
+    public delegate IProviderViewModel ProviderViewModelFactory(IProvider provider, IFileManager files, IAuthViewModel auth);
+
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, ISupportsActivation
     {
-        private readonly ObservableAsPropertyHelper<IEnumerable<FileModel>> _files;
+        private readonly ObservableAsPropertyHelper<IEnumerable<IFileViewModel>> _files;
         private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
         private readonly ObservableAsPropertyHelper<bool> _isCurrentPathEmpty;
         private readonly ReactiveCommand<Unit, Unit> _downloadSelectedFile;
@@ -40,6 +43,7 @@ namespace Camelotia.Presentation.ViewModels
         public ProviderViewModel(
             CreateFolderViewModelFactory createFolder,
             RenameFileViewModelFactory createRename,
+            FileViewModelFactory createFile,
             IAuthViewModel authViewModel,
             IFileManager fileManager,
             IProvider provider,
@@ -66,6 +70,7 @@ namespace Camelotia.Presentation.ViewModels
             
             _files = _refresh
                 .Select(files => files
+                    .Select(file => createFile(file, this))
                     .OrderByDescending(file => file.IsFolder)
                     .ThenBy(file => file.Name)
                     .ToList())
@@ -181,7 +186,7 @@ namespace Camelotia.Presentation.ViewModels
                 .CombineLatest(canInteract, (delete, interact) => delete && interact);
 
             _deleteSelectedFile = ReactiveCommand.CreateFromTask(
-                () => provider.Delete(SelectedFile),
+                () => provider.Delete(SelectedFile.Path, SelectedFile.IsFolder),
                 canDeleteSelection);
 
             _deleteSelectedFile.InvokeCommand(Refresh);
@@ -254,23 +259,25 @@ namespace Camelotia.Presentation.ViewModels
         
         public ICreateFolderViewModel Folder { get; }
 
-        [Reactive] public FileModel SelectedFile { get; set; }
-        
         [Reactive] public int RefreshingIn { get; private set; }
-        
+
+        [Reactive] public IFileViewModel SelectedFile { get; set; }
+
+        public string Size => _provider.Size?.ByteSizeToString() ?? "Unknown";
+
         public string CurrentPath => _currentPath?.Value ?? _provider.InitialPath;
+
+        public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
         
         public ICommand DownloadSelectedFile => _downloadSelectedFile;
 
         public ICommand UploadToCurrentPath => _uploadToCurrentPath;
 
         public ICommand DeleteSelectedFile => _deleteSelectedFile;
-
-        public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
+        
+        public IEnumerable<IFileViewModel> Files => _files?.Value;
 
         public bool CanInteract => _canInteract?.Value ?? true;
-        
-        public IEnumerable<FileModel> Files => _files?.Value;
 
         public string Description => _provider.Description;
         
@@ -285,8 +292,6 @@ namespace Camelotia.Presentation.ViewModels
         public bool IsReady => _isReady.Value;
 
         public string Name => _provider.Name;
-        
-        public string Size => _provider.Size;
 
         public ICommand Refresh => _refresh;
         

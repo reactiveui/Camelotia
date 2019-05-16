@@ -1,0 +1,56 @@
+﻿<UserControl
+    x:Class="Camelotia.Presentation.Uwp.Views.FileView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400"
+    Background="Transparent">
+    <FlyoutBase.AttachedFlyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Text="Open" Command="{x:Bind ViewModel.Provider.Open, Mode=OneWay}" />
+            <MenuFlyoutItem Text="Back" Command="{x:Bind ViewModel.Provider.Back, Mode=OneWay}" />
+            <MenuFlyoutItem Text="Download" Command="{x:Bind ViewModel.Provider.DownloadSelectedFile, Mode=OneWay}" />
+            <MenuFlyoutItem Text="Rename" Command="{x:Bind ViewModel.Provider.Rename.Open, Mode=OneWay}" />
+            <MenuFlyoutItem Text="Unselect" Command="{x:Bind ViewModel.Provider.UnselectFile, Mode=OneWay}" />
+        </MenuFlyout>
+    </FlyoutBase.AttachedFlyout>
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="24" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="0"
+                   Text="&#x1F4C1;"
+                   FontFamily="Segoe UI Symbol"
+                   Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                   Visibility="{x:Bind ViewModel.IsFolder, Mode=OneWay}"
+                   FontSize="14" />
+        <TextBlock Grid.Column="0"
+                   Text="&#xE729;"
+                   FontFamily="Segoe MDL2 Assets"
+                   Foreground="{ThemeResource AppBarSeparatorForegroundThemeBrush}"
+                   Visibility="{x:Bind ViewModel.IsFile, Mode=OneWay}"
+                   FontSize="14" />
+        <TextBlock Grid.Column="1"
+                   Text="{x:Bind ViewModel.Name, Mode=OneWay}"
+                   TextTrimming="CharacterEllipsis"
+                   FontSize="14" />
+        <TextBlock Grid.Column="2"
+                   Text="Directory"
+                   Visibility="{x:Bind ViewModel.IsFolder, Mode=OneWay}"
+                   Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                   FontSize="12" />
+        <TextBlock Grid.Column="3"
+                   VerticalAlignment="Center"
+                   Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                   Text="{x:Bind ViewModel.Size, Mode=OneWay}" />
+        <TextBlock Grid.Column="4"
+                   VerticalAlignment="Center"
+                   Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                   Text="{x:Bind ViewModel.Modified, Mode=OneWay}" />
+    </Grid>
+</UserControl>

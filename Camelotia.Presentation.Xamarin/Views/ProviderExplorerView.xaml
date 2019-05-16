@@ -114,7 +114,7 @@
                     BorderColor="Transparent"
                     BackgroundColor="Transparent"
                     TextColor="#311b92"
-                    Text="fas-file" 
+                    Text="fas-edit" 
                     FontSize="20"/>
             </Grid>
         </Grid>

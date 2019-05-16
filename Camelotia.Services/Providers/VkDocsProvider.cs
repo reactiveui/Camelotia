@@ -36,7 +36,7 @@ namespace Camelotia.Services.Providers
 
         public Guid Id { get; }
         
-        public string Size => "Unknown";
+        public long? Size => null;
 
         public string Name => "Vkontakte Documents";
 
@@ -93,12 +93,13 @@ namespace Camelotia.Services.Providers
         public async Task<IEnumerable<FileModel>> Get(string path)
         {
             var documents = await _api.Docs.GetAsync();
-            return documents.Select(document =>
+            return documents.Select(document => new FileModel
             {
-                var size = string.Empty;
-                if (document.Size.HasValue)
-                    size = ByteConverter.BytesToString(document.Size.Value);
-                return new FileModel(document.Title, document.Id.ToString(), false, size, document.Date);
+                Name = document.Title,
+                Path = document.Id.ToString(),
+                IsFolder = false,
+                Size = document.Size ?? 0,
+                Modified = document.Date
             });
         }
 
@@ -127,7 +128,7 @@ namespace Camelotia.Services.Providers
 
         public Task CreateFolder(string path, string name) => throw new NotSupportedException("Folders not supported.");
 
-        public Task RenameFile(FileModel file, string name) => throw new NotSupportedException("Rename not supported.");
+        public Task RenameFile(string path, string name) => throw new NotSupportedException("Rename not supported.");
 
         public async Task UploadFile(string to, Stream from, string name)
         {
@@ -150,9 +151,9 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        public async Task Delete(FileModel file)
+        public async Task Delete(string path, bool isFolder)
         {
-            var id = long.Parse(file.Path);
+            var id = long.Parse(path);
             var users = await _api.Users.GetAsync(new long[0]);
             var currentUser = users.First();
             await _api.Docs.DeleteAsync(currentUser.Id, id);

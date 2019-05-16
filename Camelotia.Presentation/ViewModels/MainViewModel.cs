@@ -15,7 +15,6 @@ using DynamicData;
 
 namespace Camelotia.Presentation.ViewModels
 {
-
     public sealed class MainViewModel : ReactiveObject, IMainViewModel, ISupportsActivation
     {
         private readonly ReadOnlyObservableCollection<IProviderViewModel> _providers;
@@ -26,8 +25,8 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _unselect;
         private readonly ReactiveCommand<Unit, Unit> _refresh;
         private readonly ReactiveCommand<Unit, Unit> _remove;
-        private readonly IProviderStorage _storage;
         private readonly ReactiveCommand<Unit, Unit> _add;
+        private readonly IProviderStorage _storage;
 
         public MainViewModel(
             ProviderViewModelFactory providerFactory,

@@ -10,6 +10,7 @@ using Camelotia.Services.Storages;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
 using Avalonia;
+using Avalonia.ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia
 {
@@ -37,6 +38,7 @@ namespace Camelotia.Presentation.Avalonia
                 (provider, files, auth) => new ProviderViewModel(
                     model => new CreateFolderViewModel(model, provider, current, main),
                     model => new RenameFileViewModel(model, provider, current, main),
+                    (file, model) => new FileViewModel(model, file),
                     auth, files, provider, current, main
                 ),
                 provider => new AuthViewModel(

@@ -5,6 +5,8 @@
              xmlns:models="clr-namespace:Camelotia.Services.Models;assembly=Camelotia.Services"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
+             x:Class="Camelotia.Presentation.Avalonia.Views.ProviderView"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              mc:Ignorable="d" Background="#f7f7f7">
     <Grid>
         <Grid>
@@ -46,32 +48,8 @@
                              ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                              SelectedItem="{Binding SelectedFile, Mode=TwoWay}">
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="models:FileModel">
-                                <Grid Margin="6">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="3*" />
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="2*" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0"
-                                               Text="{Binding Name}"
-                                               TextWrapping="Wrap"
-                                               FontSize="14" />
-                                    <TextBlock Grid.Column="1"
-                                               Text="Directory"
-                                               IsVisible="{Binding IsFolder}"
-                                               Foreground="#777777"
-                                               FontSize="12" />
-                                    <TextBlock Grid.Column="2"
-                                               VerticalAlignment="Center"
-                                               Foreground="#777777"
-                                               Text="{Binding Size}" />
-                                    <TextBlock Grid.Column="3"
-                                               VerticalAlignment="Center"
-                                               Foreground="#777777"
-                                               Text="{Binding Modified}" />
-                                </Grid>
+                            <DataTemplate DataType="interfaces:IFileViewModel">
+                                <views:FileView DataContext="{Binding}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

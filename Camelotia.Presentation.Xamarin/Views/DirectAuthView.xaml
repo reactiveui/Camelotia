@@ -17,9 +17,9 @@
                 <StackLayout>
                     <Label x:Name="ErrorLabel" Margin="0, 15" TextColor="Red" />
                     <Label Text="Please, enter user name:" Margin="0, 5, 0, 0" />
-                    <Entry x:Name="LoginEntry" />
+                    <Entry x:Name="LoginEntry" Placeholder="Login" />
                     <Label Text="Please, enter password:" Margin="0, 5, 0, 0" />
-                    <Entry x:Name="PasswordEntry" IsPassword="True" />
+                    <Entry x:Name="PasswordEntry" IsPassword="True" Placeholder="Password" />
                     <controls:AccentButton x:Name="LoginButton" Text="Login" />
                 </StackLayout>
             </Frame>

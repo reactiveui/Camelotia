@@ -16,7 +16,7 @@
                 <StackLayout>
                     <Label x:Name="ErrorLabel" Margin="0, 15" TextColor="Red" />
                     <Label Text="Please, enter new file name:" Margin="0, 5, 0, 0" />
-                    <Entry x:Name="NameEntry" />
+                    <Entry x:Name="NameEntry" Placeholder="New file name" />
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="3*" />

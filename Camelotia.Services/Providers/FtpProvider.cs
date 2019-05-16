@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using FluentFTP;
-using VkNet.Model;
 
 namespace Camelotia.Services.Providers
 {
@@ -24,7 +23,7 @@ namespace Camelotia.Services.Providers
 
         public Guid Id { get; }
         
-        public string Size => "Unknown";
+        public long? Size => null;
 
         public string Name => "FTP";
 
@@ -60,12 +59,14 @@ namespace Camelotia.Services.Providers
                 await connection.ConnectAsync();
                 var files = await connection.GetListingAsync(path);
                 await connection.DisconnectAsync();
-
-                return
-                    from file in files
-                    let folder = file.Type == FtpFileSystemObjectType.Directory
-                    let size = ByteConverter.BytesToString(file.Size)
-                    select new FileModel(file.Name, file.FullName, folder, size, file.Modified);
+                return files.Select(file => new FileModel
+                {
+                    IsFolder = file.Type == FtpFileSystemObjectType.Directory,
+                    Modified = file.Modified,
+                    Name = file.Name,
+                    Path = file.FullName,
+                    Size = file.Size
+                });
             }
         }
 
@@ -80,25 +81,24 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        public async Task RenameFile(FileModel file, string name)
+        public async Task RenameFile(string path, string name)
         {
             using (var connection = _factory())
             {
                 await connection.ConnectAsync();
-                var directoryName = Path.GetDirectoryName(file.Path);
+                var directoryName = Path.GetDirectoryName(path);
                 var newName = Path.Combine(directoryName, name);
-                await connection.RenameAsync(file.Path, newName);
+                await connection.RenameAsync(path, newName);
                 await connection.DisconnectAsync();
             }
         }
 
-        public async Task Delete(FileModel file)
+        public async Task Delete(string path, bool isFolder)
         {
-            var path = file.Path;
             using (var connection = _factory())
             {
                 await connection.ConnectAsync();
-                if (file.IsFolder) await connection.DeleteDirectoryAsync(path);
+                if (isFolder) await connection.DeleteDirectoryAsync(path);
                 else await connection.DeleteFileAsync(path);
                 await connection.DisconnectAsync();
             }

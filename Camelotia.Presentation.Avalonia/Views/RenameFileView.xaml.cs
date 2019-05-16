@@ -1,5 +1,5 @@
-using Avalonia;
 using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
 

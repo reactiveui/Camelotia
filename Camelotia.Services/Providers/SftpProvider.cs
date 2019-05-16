@@ -22,8 +22,8 @@ namespace Camelotia.Services.Providers
         }
 
         public Guid Id { get; }
-        
-        public string Size => "Unknown";
+
+        public long? Size => null;
         
         public string Name => "SFTP";
         
@@ -77,12 +77,16 @@ namespace Camelotia.Services.Providers
                 connection.Connect();
                 var contents = connection.ListDirectory(path);
                 connection.Disconnect();
-
-                return
-                    from file in contents
-                    let size = ByteConverter.BytesToString(file.Length)
-                    where file.Name != "." && file.Name != ".."
-                    select new FileModel(file.Name, file.FullName, file.IsDirectory, size, file.LastWriteTime);
+                return contents
+                    .Where(file => file.Name != "." && file.Name != "..")
+                    .Select(file => new FileModel
+                    {
+                        Name = file.Name,
+                        Path = file.FullName,
+                        IsFolder = file.IsDirectory,
+                        Modified = file.LastWriteTime,
+                        Size = file.Length
+                    });
             }
         });
 
@@ -97,24 +101,24 @@ namespace Camelotia.Services.Providers
             }
         });
 
-        public Task RenameFile(FileModel file, string name) => Task.Run(() =>
+        public Task RenameFile(string path, string name) => Task.Run(() =>
         {
             using (var connection = _factory())
             {
                 connection.Connect();
-                var directoryName = Path.GetDirectoryName(file.Path);
+                var directoryName = Path.GetDirectoryName(path);
                 var newName = Path.Combine(directoryName, name);
-                connection.RenameFile(file.Path, newName);
+                connection.RenameFile(path, newName);
                 connection.Disconnect();
             }
         });
 
-        public Task Delete(FileModel file) => Task.Run(() =>
+        public Task Delete(string path, bool isFolder) => Task.Run(() =>
         {
             using (var connection = _factory())
             {
                 connection.Connect();
-                connection.DeleteFile(file.Path);
+                connection.DeleteFile(path);
                 connection.Disconnect();
             }
         });

@@ -1,16 +1,16 @@
 ﻿using System.IO;
-using Camelotia.Services.Models;
 using ReactiveUI;
 using ReactiveUI.XamForms;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using Color = Xamarin.Forms.Color;
+using Camelotia.Presentation.Interfaces;
 
 namespace Camelotia.Presentation.Xamarin.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ProviderExplorerFileView : ReactiveViewCell<FileModel>
+    public partial class ProviderExplorerFileView : ReactiveViewCell<IFileViewModel>
     {
         public ProviderExplorerFileView()
         {
@@ -34,15 +34,17 @@ namespace Camelotia.Presentation.Xamarin.Views
                     .BindTo(this, x => x.IconImage.IconColor)
                     .DisposeWith(disposables);
 
+                var isFolder = this
+                    .WhenAnyValue(x => x.ViewModel.IsFolder)
+                    .Where(folder => folder)
+                    .Select(none => string.Empty);
+
                 this.WhenAnyValue(x => x.ViewModel.Name)
                     .Where(name => ViewModel.IsFile)
                     .Select(Path.GetExtension)
                     .Where(ext => ext?.Length <= 4)
                     .Select(ext => ext.ToUpperInvariant().TrimStart('.'))
-                    .Merge(this
-                        .WhenAnyValue(x => x.ViewModel.IsFolder)
-                        .Where(folder => folder)
-                        .Select(none => string.Empty))
+                    .Merge(isFolder)
                     .BindTo(this, x => x.ExtensionLabel.Text)
                     .DisposeWith(disposables);
             });

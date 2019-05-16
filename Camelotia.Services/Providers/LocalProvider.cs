@@ -15,7 +15,7 @@ namespace Camelotia.Services.Providers
         
         public Guid Id { get; }
         
-        public string Size => GetSizeOnAllDisks();
+        public long? Size => GetSizeOnAllDisks();
 
         public string Name => "Local File System";
 
@@ -45,26 +45,29 @@ namespace Camelotia.Services.Providers
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                var driveQuery = from entity in GetAllDrives()
-                                 let size = ByteConverter.BytesToString(entity.AvailableFreeSpace)
-                                 select new FileModel(entity.Name, entity.Name, true, size);
-                return driveQuery
-                    .ToList()
-                    .AsEnumerable();
+                return GetAllDrives().Select(file => new FileModel
+                {
+                    Name = file.Name,
+                    IsFolder = true,
+                    Size = file.AvailableFreeSpace,
+                    Path = file.Name
+                });
             }
 
             if (!Directory.Exists(path))
                 throw new ArgumentException("Directory doesn't exist.");
 
-            var query = from entity in Directory.GetFileSystemEntries(path)
-                        let isDirectory = IsDirectory(entity)
-                        let fileInfo = new FileInfo(entity)
-                        let size = isDirectory ? "*" : ByteConverter.BytesToString(fileInfo.Length)
-                        select new FileModel(Path.GetFileName(entity), entity, isDirectory, size, fileInfo.LastWriteTime);
-
-            return query
-                .ToList()
-                .AsEnumerable();
+            return from file in Directory.GetFileSystemEntries(path)
+                   let isDirectory = IsDirectory(file)
+                   let fileInfo = new FileInfo(file)
+                   select new FileModel
+                   {
+                       Path = file,
+                       Name = Path.GetFileName(file),
+                       IsFolder = IsDirectory(file),
+                       Modified = fileInfo.LastWriteTime,
+                       Size = isDirectory ? 0 : fileInfo.Length
+                   };
         });
 
         public async Task DownloadFile(string from, Stream to)
@@ -86,12 +89,12 @@ namespace Camelotia.Services.Providers
             Directory.CreateDirectory(path);
         });
 
-        public Task RenameFile(FileModel file, string name) => Task.Run(() =>
+        public Task RenameFile(string path, string name) => Task.Run(() =>
         {
-            var directoryName = Path.GetDirectoryName(file.Path);
+            var directoryName = Path.GetDirectoryName(path);
             var newName = Path.Combine(directoryName, name);
-            if (IsDirectory(file.Path)) Directory.Move(file.Path, newName);
-            else File.Move(file.Path, newName);
+            if (IsDirectory(path)) Directory.Move(path, newName);
+            else File.Move(path, newName);
         });
 
         public async Task UploadFile(string to, Stream from, string name)
@@ -106,20 +109,18 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        public Task Delete(FileModel file) => Task.Run(() =>
+        public Task Delete(string path, bool isFolder) => Task.Run(() =>
         {
-            var isDirectory = IsDirectory(file.Path);
-            if (isDirectory) Directory.Delete(file.Path, false);
-            else File.Delete(file.Path);
+            var isDirectory = IsDirectory(path);
+            if (isDirectory) Directory.Delete(path, false);
+            else File.Delete(path);
         });
 
-        private static string GetSizeOnAllDisks()
+        private static long GetSizeOnAllDisks()
         {
-            var totalBytes = GetAllDrives()
+            return GetAllDrives()
                 .Select(x => x.AvailableFreeSpace)
                 .Sum();
-            
-            return ByteConverter.BytesToString(totalBytes);
         }
 
         private static IEnumerable<DriveInfo> GetAllDrives()

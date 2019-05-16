@@ -131,6 +131,9 @@
     <Compile Include="Views\DirectAuthView.xaml.cs">
       <DependentUpon>DirectAuthView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FileView.xaml.cs">
+      <DependentUpon>FileView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HostAuthView.xaml.cs">
       <DependentUpon>HostAuthView.xaml</DependentUpon>
     </Compile>
@@ -180,6 +183,10 @@
     <Page Include="Views\DirectAuthView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FileView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HostAuthView.xaml">
       <Generator>MSBuild:Compile</Generator>

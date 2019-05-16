@@ -2,39 +2,16 @@ using System;
 
 namespace Camelotia.Services.Models
 {
-    public sealed class FileModel
+    public class FileModel
     {
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public string Path { get; }
+        public string Path { get; set; }
 
-        public bool IsFolder { get; }
+        public long Size { get; set; }
 
-        public bool IsFile => !IsFolder;
+        public bool IsFolder { get; set; }
 
-        public string Size { get; }
-
-        public string Modified { get; }
-        
-        public FileModel(string name, string path, bool isFolder, string size, DateTime? modified = null)
-        {
-            Path = path;
-            Size = size;
-            IsFolder = isFolder;
-            Modified = modified?.ToString();
-            Name = name;
-        }
-
-        public override int GetHashCode() => (Name, Path, IsFolder, Size).GetHashCode();
-
-        public override bool Equals(object obj)
-        {
-            return 
-                obj is FileModel file &&
-                file.Name == Name &&
-                file.Path == Path &&
-                file.IsFolder == IsFolder &&
-                file.Size == Size;
-        }
+        public DateTime? Modified { get; set; }
     }
 }

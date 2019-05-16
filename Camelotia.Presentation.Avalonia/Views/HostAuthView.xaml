@@ -3,6 +3,8 @@
              d:DataContext="{d:DesignInstance interfaces:IHostAuthViewModel, IsDesignTimeCreatable=True}"
              xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             x:Class="Camelotia.Presentation.Avalonia.Views.HostAuthView"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              mc:Ignorable="d" Background="#ffffff">
     <StackPanel VerticalAlignment="Center"
                 HorizontalAlignment="Center"

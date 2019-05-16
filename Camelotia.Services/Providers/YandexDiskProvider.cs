@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Akavache;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
-using Camelotia.Services.Models.Yandex;
 using Newtonsoft.Json;
 
 namespace Camelotia.Services.Providers
@@ -43,7 +42,7 @@ namespace Camelotia.Services.Providers
 
         public Guid Id { get; }
         
-        public string Size => "Unknown";
+        public long? Size => null;
 
         public string Name => "Yandex Disk";
         
@@ -76,15 +75,14 @@ namespace Camelotia.Services.Providers
                 response.EnsureSuccessStatusCode();
 
                 var content = JsonConvert.DeserializeObject<YandexContentResponse>(json);
-                var models = content.Embedded.Items
-                    .Select(file => new FileModel(
-                        file.Name,
-                        file.Path.Replace("disk:", ""),
-                        file.Type == "dir",
-                        ByteConverter.BytesToString(file.Size),
-                        file.Created));
-
-                return models;
+                return content.Embedded.Items.Select(file => new FileModel
+                {
+                    Name = file.Name,
+                    IsFolder = file.Type == "dir",
+                    Path = file.Path.Replace("disk:", ""),
+                    Modified = file.Created,
+                    Size = file.Size
+                });
             }
         }
 
@@ -117,10 +115,10 @@ namespace Camelotia.Services.Providers
                 response.EnsureSuccessStatusCode();
         }
 
-        public async Task RenameFile(FileModel file, string name)
+        public async Task RenameFile(string path, string name)
         {
-            var directoryName = Path.GetDirectoryName(file.Path);
-            var fromPath = WebUtility.UrlEncode(file.Path);
+            var directoryName = Path.GetDirectoryName(path);
+            var fromPath = WebUtility.UrlEncode(path);
             var toPath = Path.Combine(directoryName, name);
             
             var pathUrl = $"{ApiMoveFileUrl}?from={fromPath}&path={toPath}";
@@ -145,9 +143,9 @@ namespace Camelotia.Services.Providers
             }
         }
 
-        public async Task Delete(FileModel file)
+        public async Task Delete(string path, bool isFolder)
         {
-            var encodedPath = WebUtility.UrlEncode(file.Path);
+            var encodedPath = WebUtility.UrlEncode(path);
             var pathUrl = ApiGetPathBase + encodedPath;
             using (var response = await _http.DeleteAsync(pathUrl).ConfigureAwait(false))
                 response.EnsureSuccessStatusCode();
@@ -241,6 +239,48 @@ namespace Camelotia.Services.Providers
             var uri = "https://oauth.yandex.ru/authorize?response_type=code" +
                      $"&client_id={CodeAuthClientId}&redirect_url={redirect}";
             return new Uri(uri);
+        }
+
+        private class YandexContentItemResponse
+        {
+            [JsonProperty("path")]
+            public string Path { get; set; }
+
+            [JsonProperty("type")]
+            public string Type { get; set; }
+
+            [JsonProperty("name")]
+            public string Name { get; set; }
+
+            [JsonProperty("size")]
+            public long Size { get; set; }
+
+            [JsonProperty("created")]
+            public DateTime Created { get; set; }
+        }
+
+        private class YandexContentItemsResponse
+        {
+            [JsonProperty("items")]
+            public IList<YandexContentItemResponse> Items { get; set; }
+        }
+
+        private class YandexContentResponse
+        {
+            [JsonProperty("_embedded")]
+            public YandexContentItemsResponse Embedded { get; set; }
+        }
+
+        private class YandexFileLoadResponse
+        {
+            [JsonProperty("href")]
+            public string Href { get; set; }
+        }
+
+        private class YandexTokenAuthResponse
+        {
+            [JsonProperty("access_token")]
+            public string AccessToken { get; set; }
         }
     }
 }
