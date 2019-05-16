@@ -8,6 +8,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Threading.Tasks;
+using Camelotia.Presentation.Extensions;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
@@ -263,18 +264,20 @@ namespace Camelotia.Presentation.ViewModels
         [Reactive] public int RefreshingIn { get; private set; }
         
         public string CurrentPath => _currentPath?.Value ?? _provider.InitialPath;
+
+        public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
         
         public ICommand DownloadSelectedFile => _downloadSelectedFile;
 
         public ICommand UploadToCurrentPath => _uploadToCurrentPath;
 
         public ICommand DeleteSelectedFile => _deleteSelectedFile;
-
-        public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
-
-        public bool CanInteract => _canInteract?.Value ?? true;
         
         public IEnumerable<IFileViewModel> Files => _files?.Value;
+
+        public string Size => _provider.Size.ByteSizeToString();
+
+        public bool CanInteract => _canInteract?.Value ?? true;
 
         public string Description => _provider.Description;
         
@@ -289,8 +292,6 @@ namespace Camelotia.Presentation.ViewModels
         public bool IsReady => _isReady.Value;
 
         public string Name => _provider.Name;
-        
-        public string Size => _provider.Size;
 
         public ICommand Refresh => _refresh;
         

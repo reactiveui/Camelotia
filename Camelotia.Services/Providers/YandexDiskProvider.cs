@@ -42,7 +42,7 @@ namespace Camelotia.Services.Providers
 
         public Guid Id { get; }
         
-        public string Size => "Unknown";
+        public long Size => 0;
 
         public string Name => "Yandex Disk";
         
@@ -75,15 +75,14 @@ namespace Camelotia.Services.Providers
                 response.EnsureSuccessStatusCode();
 
                 var content = JsonConvert.DeserializeObject<YandexContentResponse>(json);
-                var models = content.Embedded.Items
-                    .Select(file => new FileModel(
-                        file.Name,
-                        file.Path.Replace("disk:", ""),
-                        file.Type == "dir",
-                        ByteConverter.BytesToString(file.Size),
-                        file.Created));
-
-                return models;
+                return content.Embedded.Items.Select(file => new FileModel
+                {
+                    Name = file.Name,
+                    IsFolder = file.Type == "dir",
+                    Path = file.Path.Replace("disk:", ""),
+                    Modified = file.Created,
+                    Size = file.Size
+                });
             }
         }
 

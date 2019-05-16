@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Camelotia.Services.Models
+namespace Camelotia.Presentation.Extensions
 {
     public static class ByteConverter
     {
-        public static string BytesToString(long byteCount, int decimalPrecision = 1)
+        public static string ByteSizeToString(this long byteCount, int decimalPrecision = 1)
         {
             string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
             if (byteCount == 0)

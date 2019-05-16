@@ -36,7 +36,7 @@ namespace Camelotia.Services.Providers
 
         public Guid Id { get; }
         
-        public string Size => "Unknown";
+        public long Size => 0;
 
         public string Name => "Vkontakte Documents";
 
@@ -93,12 +93,13 @@ namespace Camelotia.Services.Providers
         public async Task<IEnumerable<FileModel>> Get(string path)
         {
             var documents = await _api.Docs.GetAsync();
-            return documents.Select(document =>
+            return documents.Select(document => new FileModel
             {
-                var size = string.Empty;
-                if (document.Size.HasValue)
-                    size = ByteConverter.BytesToString(document.Size.Value);
-                return new FileModel(document.Title, document.Id.ToString(), false, size, document.Date);
+                Name = document.Title,
+                Path = document.Id.ToString(),
+                IsFolder = false,
+                Size = document.Size ?? 0,
+                Modified = document.Date
             });
         }
 

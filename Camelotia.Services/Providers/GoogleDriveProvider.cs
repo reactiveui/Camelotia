@@ -39,7 +39,7 @@ namespace Camelotia.Services.Providers
 
         public Guid Id { get; }
 
-        public string Size { get; } = "Unknown";
+        public long Size { get; } = 0;
 
         public string Name { get; } = "Google Drive";
 
@@ -62,14 +62,15 @@ namespace Camelotia.Services.Providers
             var list = _driveService.Files.List();
             list.PageSize = 1000;
             list.Fields = "files(id, name, size, modifiedTime)";
-            
             var response = await list.ExecuteAsync().ConfigureAwait(false);
-            var files = from file in response.Files
-                        let size = file.Size.GetValueOrDefault()
-                        let bytes = ByteConverter.BytesToString(size)
-                        select new FileModel(file.Name, file.Id, false, bytes, file.ModifiedTime);
-
-            return files;
+            return response.Files.Select(file => new FileModel
+            {
+                IsFolder = false,
+                Size = file.Size.GetValueOrDefault(),
+                Modified = file.ModifiedTime,
+                Name = file.Name,
+                Path = file.Id
+            });
         }
 
         public async Task UploadFile(string to, Stream from, string name)

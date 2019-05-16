@@ -32,7 +32,7 @@ namespace Camelotia.Services.Providers
 
         public Guid Id { get; }
         
-        public string Size { get; } = "Unknown";
+        public long Size { get; } = 0;
 
         public string Name { get; } = "GitHub";
 
@@ -86,17 +86,15 @@ namespace Camelotia.Services.Providers
                     Type = RepositoryType.Owner,
                     Sort = RepositorySort.Updated
                 };
-                
-                var repositories = await _gitHub.Repository
-                    .GetAllForCurrent(request)
-                    .ConfigureAwait(false);
-                
-                var repos =
-                    from repo in repositories
-                    let size = ByteConverter.BytesToString(repo.Size)
-                    select new FileModel(repo.Name, repo.Name, true, size, repo.CreatedAt.UtcDateTime);
-                
-                return repos;
+                var repositories = await _gitHub.Repository.GetAllForCurrent(request).ConfigureAwait(false);
+                return repositories.Select(repo => new FileModel
+                {
+                    IsFolder = true,
+                    Modified = repo.CreatedAt.UtcDateTime,
+                    Name = repo.Name,
+                    Path = repo.Name,
+                    Size = repo.Size
+                });
             }
 
             var details = GetRepositoryNameAndFilePath(path);
@@ -104,13 +102,13 @@ namespace Camelotia.Services.Providers
                 .GetAllContents(_currentUserName, details.Repository, details.Path)
                 .ConfigureAwait(false);
 
-            var files =
-                from file in contents
-                let size = ByteConverter.BytesToString(file.Size)
-                let filePath = Path.Combine(details.Repository, file.Path)
-                select new FileModel(file.Name, filePath, file.Type == "dir", size);
-
-            return files;
+            return contents.Select(file => new FileModel
+            {
+                Name = file.Name,
+                IsFolder = file.Type == "dir",
+                Path = Path.Combine(details.Repository, file.Path),
+                Size = file.Size
+            });
         }
 
         public async Task DownloadFile(string from, Stream to)

@@ -23,7 +23,7 @@ namespace Camelotia.Services.Providers
 
         public Guid Id { get; }
         
-        public string Size => "Unknown";
+        public long Size => 0;
         
         public string Name => "SFTP";
         
@@ -77,12 +77,16 @@ namespace Camelotia.Services.Providers
                 connection.Connect();
                 var contents = connection.ListDirectory(path);
                 connection.Disconnect();
-
-                return
-                    from file in contents
-                    let size = ByteConverter.BytesToString(file.Length)
-                    where file.Name != "." && file.Name != ".."
-                    select new FileModel(file.Name, file.FullName, file.IsDirectory, size, file.LastWriteTime);
+                return contents
+                    .Where(file => file.Name != "." && file.Name != "..")
+                    .Select(file => new FileModel
+                    {
+                        Name = file.Name,
+                        Path = file.FullName,
+                        IsFolder = file.IsDirectory,
+                        Modified = file.LastWriteTime,
+                        Size = file.Length
+                    });
             }
         });
 
