@@ -259,10 +259,12 @@ namespace Camelotia.Presentation.ViewModels
         
         public ICreateFolderViewModel Folder { get; }
 
-        [Reactive] public IFileViewModel SelectedFile { get; set; }
-        
         [Reactive] public int RefreshingIn { get; private set; }
-        
+
+        [Reactive] public IFileViewModel SelectedFile { get; set; }
+
+        public string Size => _provider.Size?.ByteSizeToString() ?? "Unknown";
+
         public string CurrentPath => _currentPath?.Value ?? _provider.InitialPath;
 
         public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
@@ -274,8 +276,6 @@ namespace Camelotia.Presentation.ViewModels
         public ICommand DeleteSelectedFile => _deleteSelectedFile;
         
         public IEnumerable<IFileViewModel> Files => _files?.Value;
-
-        public string Size => _provider.Size.ByteSizeToString();
 
         public bool CanInteract => _canInteract?.Value ?? true;
 

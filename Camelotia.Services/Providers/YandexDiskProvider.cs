@@ -42,7 +42,7 @@ namespace Camelotia.Services.Providers
 
         public Guid Id { get; }
         
-        public long Size => 0;
+        public long? Size => null;
 
         public string Name => "Yandex Disk";
         

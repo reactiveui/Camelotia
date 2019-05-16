@@ -15,7 +15,7 @@ namespace Camelotia.Services.Providers
         
         public Guid Id { get; }
         
-        public long Size => GetSizeOnAllDisks();
+        public long? Size => GetSizeOnAllDisks();
 
         public string Name => "Local File System";
 

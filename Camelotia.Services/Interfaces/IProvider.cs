@@ -10,7 +10,7 @@ namespace Camelotia.Services.Interfaces
     {
         Guid Id { get; }
         
-        long Size { get; }
+        long? Size { get; }
         
         string Name { get; }
         

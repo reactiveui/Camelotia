@@ -39,7 +39,7 @@ namespace Camelotia.Services.Providers
 
         public Guid Id { get; }
 
-        public long Size { get; } = 0;
+        public long? Size { get; } = null;
 
         public string Name { get; } = "Google Drive";
 
