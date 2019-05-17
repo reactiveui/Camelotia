@@ -27,6 +27,7 @@ namespace Camelotia.Presentation.Avalonia.Views
                 Observable.FromEventPattern<RoutedEventArgs>(
                         handler => DoubleTapped += handler,
                         handler => DoubleTapped -= handler)
+                    .Do(args => ViewModel.Provider.SelectedFile = ViewModel)
                     .Select(args => Unit.Default)
                     .InvokeCommand(this, x => x.ViewModel.Provider.Open)
                     .DisposeWith(disposables);
