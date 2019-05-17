@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Windows.UI.Xaml;
@@ -20,19 +21,19 @@ namespace Camelotia.Presentation.Uwp.Views
             InitializeComponent();
             this.WhenActivated(disposables =>
             {
-                var controlRightTapped = Observable
-                    .FromEventPattern<RightTappedEventHandler, RightTappedRoutedEventArgs>(
+                Observable.FromEventPattern<RightTappedEventHandler, RightTappedRoutedEventArgs>(
                         handler => RightTapped += handler,
                         handler => RightTapped -= handler)
-                    .Select(args => (FileView) args.Sender);
-
-                controlRightTapped
-                    .Select(element => element.ViewModel)
-                    .Subscribe(file => file.Provider.SelectedFile = file)
+                    .Select(args => (FileView) args.Sender)
+                    .Do(sender => sender.ViewModel.Provider.SelectedFile = sender.ViewModel)
+                    .Subscribe(FlyoutBase.ShowAttachedFlyout)
                     .DisposeWith(disposables);
 
-                controlRightTapped
-                    .Subscribe(FlyoutBase.ShowAttachedFlyout)
+                Observable.FromEventPattern<DoubleTappedEventHandler, DoubleTappedRoutedEventArgs>(
+                        handler => DoubleTapped += handler,
+                        handler => DoubleTapped -= handler)
+                    .Select(args => Unit.Default)
+                    .InvokeCommand(this, x => x.ViewModel.Provider.Open)
                     .DisposeWith(disposables);
             });
         }
