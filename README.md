@@ -2,7 +2,7 @@
 
 File manager for cloud storages. Supports Yandex Disk, Google Drive, VK Documents, GitHub, FTP, SFTP. The app runs on Windows, Linux, MacOS, XBox, Surface Hub and HoloLens. Built with [ReactiveUI](https://github.com/reactiveui/ReactiveUI).
 
-## Compiling Avalonia app
+### Compiling Avalonia app
 
 You can compile .NET Standard libraries, run tests and run an Avalonia application on Windows, Linux and macOS operating systems. Make sure you have latest [.NET Core SDK](https://dot.net/) installed.
 
@@ -17,7 +17,7 @@ dotnet run
 
 On Windows, double-click the `./run.bat` file.
 
-## Compiling Universal Windows Platform app
+### Compiling Universal Windows Platform app
 
 You can compile Universal Windows Platform Camelotia app only on latest Windows 10. Make sure you have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/).
 
@@ -25,7 +25,7 @@ You can compile Universal Windows Platform Camelotia app only on latest Windows 
 
 Supports light and dark themes!
 
-## Compiling Xamarin Forms app
+### Compiling Xamarin Forms app
 
 To compile the Xamarin Forms Android application, you need to install appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there.
 
