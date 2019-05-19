@@ -24,7 +24,7 @@ jobs:
     displayName: 'Windows Build'
   - script: |
       mkdir $(Build.SourcesDirectory)\results
-      dotnet test --logger trx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura Camelotia.Presentation.Tests
+      dotnet test --logger trx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude=[xunit.*]* Camelotia.Presentation.Tests
       copy $(Build.SourcesDirectory)\Camelotia.Presentation.Tests\coverage.cobertura.xml $(Build.SourcesDirectory)\results
       dotnet tool install dotnet-reportgenerator-globaltool --tool-path . --version 4.0.0-rc4
       reportgenerator "-reports:$(Build.SourcesDirectory)\results\coverage.cobertura.xml" "-targetdir:results" "-reporttypes:HTMLInline;HTMLChart"
