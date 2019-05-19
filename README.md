@@ -1,4 +1,4 @@
- <p align="left"><img src="logo/horizontal.png" alt="Camelotia" height="80px"></p>
+<p align="left"><img src="assets/horizontal.png" alt="Camelotia" height="80px"></p>
 
 [![Build Status](https://worldbeater.visualstudio.com/Camelotia/_apis/build/status/Camelotia-CI)](https://worldbeater.visualstudio.com/Camelotia/_build/latest?definitionId=1) [![Pull Requests](https://img.shields.io/github/issues-pr/worldbeater/camelotia.svg)](https://github.com/worldbeater/Camelotia/pulls) [![Issues](https://img.shields.io/github/issues/worldbeater/camelotia.svg)](https://github.com/worldbeater/Camelotia/issues) ![License](https://img.shields.io/github/license/worldbeater/camelotia.svg) ![Size](https://img.shields.io/github/repo-size/worldbeater/camelotia.svg) [![Code Coverage](https://img.shields.io/azure-devops/coverage/worldbeater/Camelotia/1.svg)](https://worldbeater.visualstudio.com/Camelotia/_build/latest?definitionId=1)
 
@@ -8,7 +8,7 @@ File manager for cloud storages. Supports Yandex Disk, Google Drive, VK Document
 
 You can compile .NET Standard libraries, run tests and run an Avalonia application on Windows, Linux and macOS operating systems. Make sure you have latest [.NET Core SDK](https://dot.net/) installed.
 
-<img src="./UiAvalonia.png" width="550">
+<img src="assets/UiAvalonia.png" width="550">
 
 ```sh
 # Linux or MacOS shell
@@ -23,7 +23,7 @@ On Windows, double-click the `./run.bat` file.
 
 You can compile Universal Windows Platform Camelotia app only on latest Windows 10. Make sure you have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/).
 
-<img src="./UiWindows1.jpg" width="550"> 
+<img src="assets/UiWindows1.jpg" width="550"> 
 
 Supports light and dark themes!
 
@@ -31,7 +31,7 @@ Supports light and dark themes!
 
 To compile the Xamarin Forms Android application, you need to install appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there.
 
-<img src="./UiAndroid1.png" width="220"> <img src="./UiAndroid2.png" width="220"> <img src="./UiAndroid3.png" width="220">
+<img src="assets/UiAndroid1.png" width="220"> <img src="assets/UiAndroid2.png" width="220"> <img src="assets/UiAndroid3.png" width="220">
 
 ### Adding Custom Providers
 
