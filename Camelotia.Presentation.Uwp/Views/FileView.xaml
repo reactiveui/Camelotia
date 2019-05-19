@@ -15,7 +15,7 @@
             <MenuFlyoutItem Text="Unselect" Command="{x:Bind ViewModel.Provider.UnselectFile, Mode=OneWay}" />
         </MenuFlyout>
     </FlyoutBase.AttachedFlyout>
-    <Grid Margin="8">
+    <Grid Padding="8" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="24" />
             <ColumnDefinition Width="2*" />
