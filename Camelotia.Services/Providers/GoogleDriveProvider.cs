@@ -27,25 +27,26 @@ namespace Camelotia.Services.Providers
         
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
         private readonly IBlobCache _blobCache;
+        private readonly ProviderModel _model;
         private DriveService _driveService;
         
-        public GoogleDriveProvider(Guid id, IBlobCache blobCache)
+        public GoogleDriveProvider(ProviderModel model, IBlobCache blobCache)
         {
-            Id = id;
+            _model = model;
             _blobCache = blobCache;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
 
-        public Guid Id { get; }
+        public long? Size => null;
 
-        public long? Size { get; } = null;
+        public Guid Id => _model.Id;
 
-        public string Name { get; } = "Google Drive";
+        public string Name => _model.Type;
 
-        public string Description { get; } = "Google Drive file system.";
+        public DateTime Created => _model.Created;
 
-        public string InitialPath { get; } = "/";
+        public string InitialPath => "/";
 
         public IObservable<bool> IsAuthorized => _isAuthorized;
 

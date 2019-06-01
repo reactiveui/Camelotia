@@ -59,12 +59,12 @@
                     <DataTemplate DataType="interfaces:IProviderViewModel">
                         <Grid>
                             <StackPanel Margin="10">
-                                <TextBlock Text="{Binding Name, Mode=OneTime}"
+                                <TextBlock Text="{Binding Name}"
                                            Foreground="White"
                                            FontSize="15" />
                                 <StackPanel Orientation="Horizontal" Margin="0 5">
                                     <TextBlock Text="Size: " Foreground="#eeeeee" />
-                                    <TextBlock Text="{Binding Size, Mode=OneTime}" Foreground="#eeeeee" />
+                                    <TextBlock Text="{Binding Size}" Foreground="#eeeeee" />
                                 </StackPanel>
                                 <TextBlock Text="{Binding Description}"
                                            TextWrapping="Wrap"

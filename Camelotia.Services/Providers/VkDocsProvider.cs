@@ -23,24 +23,25 @@ namespace Camelotia.Services.Providers
     public sealed class VkDocsProvider : IProvider
     {
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>();
+        private readonly ProviderModel _model;
         private readonly IBlobCache _blobCache;
         private IVkApi _api = new VkApi();
         
-        public VkDocsProvider(Guid id, IBlobCache blobCache)
+        public VkDocsProvider(ProviderModel model, IBlobCache blobCache)
         {
-            Id = id;
+            _model = model;
             _blobCache = blobCache;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
-
-        public Guid Id { get; }
         
         public long? Size => null;
 
-        public string Name => "Vkontakte Documents";
+        public Guid Id => _model.Id;
 
-        public string Description => "Vkontakte documents provider.";
+        public string Name => _model.Type;
+
+        public DateTime Created => _model.Created;
 
         public IObservable<bool> IsAuthorized => _isAuthorized;
 

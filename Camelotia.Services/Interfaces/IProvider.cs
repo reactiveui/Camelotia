@@ -14,7 +14,7 @@ namespace Camelotia.Services.Interfaces
         
         string Name { get; }
         
-        string Description { get; }
+        DateTime Created { get; }
         
         string InitialPath { get; }
 
@@ -23,6 +23,8 @@ namespace Camelotia.Services.Interfaces
         Task UploadFile(string to, Stream from, string name);
 
         Task DownloadFile(string from, Stream to);
+
+        bool CanCreateFolder { get; }
 
         Task CreateFolder(string path, string name);
 
@@ -33,16 +35,14 @@ namespace Camelotia.Services.Interfaces
         IObservable<bool> IsAuthorized { get; }
         
         bool SupportsDirectAuth { get; }
-        
+
+        Task DirectAuth(string login, string password);
+
         bool SupportsHostAuth { get; }
-        
-        bool SupportsOAuth { get; }
-        
-        bool CanCreateFolder { get; }
 
         Task HostAuth(string address, int port, string login, string password);
 
-        Task DirectAuth(string login, string password);
+        bool SupportsOAuth { get; }
 
         Task OAuth();
 

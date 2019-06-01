@@ -12,6 +12,7 @@ using Camelotia.Services.Interfaces;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
 using DynamicData;
+using DynamicData.Binding;
 
 namespace Camelotia.Presentation.ViewModels
 {
@@ -41,8 +42,9 @@ namespace Camelotia.Presentation.ViewModels
                 storage.Refresh,
                 outputScheduler: main);
             
-            var providers = storage.Providers();
+            var providers = storage.Read();
             providers.Transform(x => providerFactory(x, files, authFactory(x)))
+                .Sort(SortExpressionComparer<IProviderViewModel>.Descending(x => x.Created))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .StartWithEmpty()
                 .Bind(out _providers)
@@ -60,7 +62,6 @@ namespace Camelotia.Presentation.ViewModels
 
             providers.Where(changes => changes.Any())
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .OnItemAdded(x => SelectedProvider = Providers.LastOrDefault())
                 .OnItemRemoved(x => SelectedProvider = null)
                 .Subscribe();
 

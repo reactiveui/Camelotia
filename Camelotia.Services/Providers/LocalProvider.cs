@@ -11,15 +11,17 @@ namespace Camelotia.Services.Providers
 {
     public sealed class LocalProvider : IProvider
     {
-        public LocalProvider(Guid id) => Id = id;
-        
-        public Guid Id { get; }
-        
+        private readonly ProviderModel _model;
+
+        public LocalProvider(ProviderModel model) => _model = model;
+
+        public Guid Id => _model.Id;
+
+        public string Name => _model.Type;
+
+        public DateTime Created => _model.Created;
+
         public long? Size => GetSizeOnAllDisks();
-
-        public string Name => "Local File System";
-
-        public string Description => "Provides access to files stored locally.";
 
         public IObservable<bool> IsAuthorized { get; } = Observable.Return(true);
 

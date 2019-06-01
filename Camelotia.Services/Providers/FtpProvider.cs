@@ -13,23 +13,24 @@ namespace Camelotia.Services.Providers
     public sealed class FtpProvider : IProvider
     {
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
+        private readonly ProviderModel _model;
         private Func<FtpClient> _factory;
 
-        public FtpProvider(Guid id)
+        public FtpProvider(ProviderModel model)
         {
-            Id = id;
+            _model = model;
             _isAuthorized.OnNext(false);
         }
 
-        public Guid Id { get; }
-        
         public long? Size => null;
 
-        public string Name => "FTP";
+        public Guid Id => _model.Id;
 
         public string InitialPath => "/";
 
-        public string Description => "FTP remote file system.";
+        public string Name => _model.Type;
+
+        public DateTime Created => _model.Created;
 
         public IObservable<bool> IsAuthorized => _isAuthorized;
 

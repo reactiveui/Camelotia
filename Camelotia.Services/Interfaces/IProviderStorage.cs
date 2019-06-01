@@ -9,7 +9,7 @@ namespace Camelotia.Services.Interfaces
     {
         IEnumerable<string> SupportedTypes { get; }
 
-        IObservable<IChangeSet<IProvider, Guid>> Providers();
+        IObservable<IChangeSet<IProvider, Guid>> Read();
 
         Task Add(string type);
 

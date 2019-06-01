@@ -52,6 +52,8 @@ namespace Camelotia.Presentation.Interfaces
         string CurrentPath { get; }
         
         string Description { get; }
+
+        DateTime Created { get; }
         
         string Name { get; }
         
