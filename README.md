@@ -23,7 +23,7 @@ On Windows, double-click the `./run.bat` file.
 
 You can compile Universal Windows Platform Camelotia app only on latest Windows 10. Make sure you have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/).
 
-<img src="assets/UiWindows1.jpg" width="550"> 
+<img src="assets/UiWindows1.png" width="550"> 
 
 Supports light and dark themes!
 
