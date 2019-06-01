@@ -18,17 +18,6 @@ namespace Camelotia.Presentation.ViewModels
             _file = file;
         }
 
-        public override int GetHashCode() => (Name, Path, IsFolder, Size).GetHashCode();
-
-        public override bool Equals(object instance)
-        {
-            return instance is FileViewModel file &&
-                   file.Name == Name &&
-                   file.Path == Path &&
-                   file.IsFolder == IsFolder &&
-                   file.Size == Size;
-        }
-
         public IProviderViewModel Provider { get; }
 
         public string Modified => _file.Modified?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
@@ -42,5 +31,16 @@ namespace Camelotia.Presentation.ViewModels
         public string Name => _file.Name;
 
         public string Path => _file.Path;
+
+        public override int GetHashCode() => (Name, Path, IsFolder, Size).GetHashCode();
+
+        public override bool Equals(object instance)
+        {
+            return instance is FileViewModel file &&
+                   file.Name == Name &&
+                   file.Path == Path &&
+                   file.IsFolder == IsFolder &&
+                   file.Size == Size;
+        }
     }
 }

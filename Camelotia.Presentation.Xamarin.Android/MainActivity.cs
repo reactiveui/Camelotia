@@ -4,6 +4,7 @@ using Camelotia.Presentation.Xamarin.Droid.Services;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Providers;
 using Camelotia.Services.Storages;
+using Camelotia.Services.Models;
 using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
@@ -70,7 +71,7 @@ namespace Camelotia.Presentation.Xamarin.Droid
                     provider, current, main
                 ),
                 new ProviderStorage(
-                    new Dictionary<string, Func<Guid, IProvider>>
+                    new Dictionary<string, Func<ProviderModel, IProvider>>
                     {
                         ["Vkontakte Docs"] = id => new VkDocsProvider(id, cache),
                         ["Yandex Disk"] = id => new YandexDiskProvider(id, login, cache),

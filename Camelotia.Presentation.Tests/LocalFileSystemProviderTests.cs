@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
+using Camelotia.Services.Models;
 using Camelotia.Services.Providers;
 using FluentAssertions;
 using Xunit;
@@ -13,14 +14,24 @@ namespace Camelotia.Presentation.Tests
     {
         private static readonly Guid LocalIdentifier = Guid.NewGuid();
         private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
-        private readonly IProvider _provider = new LocalProvider(LocalIdentifier);
+        private readonly IProvider _provider = new LocalProvider(new ProviderModel
+        {
+            Id = LocalIdentifier,
+            Created = DateTime.Now,
+            Type = "Local"
+        });
 
         [Fact]
-        public void ShouldExposeCorrectId() => _provider.Id.Should().Be(LocalIdentifier);
-        
+        public void ShouldExposeCorrectId()
+        {
+            _provider.Name.Should().Be("Local");
+            _provider.Id.Should().Be(LocalIdentifier);
+        }
+
         [Fact]
         public async Task LocalFileSystemShouldNotSupportAuth()
         {
+            _provider.SupportsHostAuth.Should().BeFalse();
             _provider.SupportsDirectAuth.Should().BeFalse();
             _provider.SupportsOAuth.Should().BeFalse();
             await _provider.DirectAuth(string.Empty, string.Empty);
@@ -56,6 +67,10 @@ namespace Camelotia.Presentation.Tests
         }
 
         [Fact]
-        public void ShouldImplementNonNullInitialPath() => _provider.InitialPath.Should().NotBeNull();
+        public void ShouldImplementNonNullInitialPath()
+        {
+            _provider.InitialPath.Should().NotBeNull();
+            _provider.InitialPath.Should().Be(string.Empty);
+        }
     }
 }

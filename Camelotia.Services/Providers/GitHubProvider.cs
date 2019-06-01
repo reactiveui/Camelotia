@@ -6,9 +6,9 @@ using System.Net.Http;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Akavache;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
+using Akavache;
 using Octokit;
 
 namespace Camelotia.Services.Providers
@@ -20,25 +20,26 @@ namespace Camelotia.Services.Providers
         private readonly ISubject<bool> _isAuthenticated = new ReplaySubject<bool>(1);
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IBlobCache _blobCache;
+        private readonly ProviderModel _model;
         private string _currentUserName;
         
-        public GitHubProvider(Guid id, IBlobCache blobCache)
+        public GitHubProvider(ProviderModel model, IBlobCache blobCache)
         {
-            Id = id;
+            _model = model;
             _blobCache = blobCache;
             _isAuthenticated.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
 
-        public Guid Id { get; }
-        
-        public long? Size { get; } = null;
+        public long? Size => null;
 
-        public string Name { get; } = "GitHub";
+        public Guid Id => _model.Id;
 
-        public string Description { get; } = "GitHub repositories provider.";
+        public string Name => _model.Type;
 
-        public string InitialPath { get; } = string.Empty;
+        public DateTime Created => _model.Created;
+
+        public string InitialPath => string.Empty;
 
         public IObservable<bool> IsAuthorized => _isAuthenticated;
         

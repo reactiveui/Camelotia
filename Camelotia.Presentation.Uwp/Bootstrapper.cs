@@ -4,6 +4,7 @@ using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Providers;
 using Camelotia.Services.Storages;
+using Camelotia.Services.Models;
 using System.Reactive.Concurrency;
 using System.Collections.Generic;
 using ReactiveUI;
@@ -36,7 +37,7 @@ namespace Camelotia.Presentation.Uwp
                     provider, current, main
                 ),
                 new ProviderStorage(
-                    new Dictionary<string, Func<Guid, IProvider>>
+                    new Dictionary<string, Func<ProviderModel, IProvider>>
                     {
                         ["Yandex Disk"] = id => new YandexDiskProvider(id, login, cache),
                         ["Vkontakte Docs"] = id => new VkDocsProvider(id, cache),

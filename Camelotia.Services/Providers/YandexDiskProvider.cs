@@ -8,10 +8,10 @@ using System.Net.Http.Headers;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Akavache;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Newtonsoft.Json;
+using Akavache;
 
 namespace Camelotia.Services.Providers
 {
@@ -30,23 +30,24 @@ namespace Camelotia.Services.Providers
         private readonly HttpClient _http = new HttpClient();
         private readonly IAuthenticator _authenticator;
         private readonly IBlobCache _blobCache;
+        private readonly ProviderModel _model;
 
-        public YandexDiskProvider(Guid id, IAuthenticator authenticator, IBlobCache blobCache)
+        public YandexDiskProvider(ProviderModel model, IAuthenticator authenticator, IBlobCache blobCache)
         {
-            Id = id;
+            _model = model;
             _blobCache = blobCache;
             _authenticator = authenticator;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
 
-        public Guid Id { get; }
-        
         public long? Size => null;
 
-        public string Name => "Yandex Disk";
-        
-        public string Description => "Yandex Disk file provider.";
+        public Guid Id => _model.Id;
+
+        public string Name => _model.Type;
+
+        public DateTime Created => _model.Created;
 
         public IObservable<bool> IsAuthorized => _isAuthorized;
 

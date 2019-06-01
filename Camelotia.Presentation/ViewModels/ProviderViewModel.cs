@@ -267,6 +267,8 @@ namespace Camelotia.Presentation.ViewModels
 
         public string CurrentPath => _currentPath?.Value ?? _provider.InitialPath;
 
+        public string Description => $"{_provider.Name} file system.";
+
         public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
         
         public ICommand DownloadSelectedFile => _downloadSelectedFile;
@@ -278,10 +280,10 @@ namespace Camelotia.Presentation.ViewModels
         public IEnumerable<IFileViewModel> Files => _files?.Value;
 
         public bool CanInteract => _canInteract?.Value ?? true;
-
-        public string Description => _provider.Description;
         
         public ICommand UnselectFile => _unselectFile;
+
+        public DateTime Created => _provider.Created;
 
         public bool CanLogout => _canLogout.Value;
         

@@ -8,6 +8,7 @@ using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Providers;
 using Camelotia.Services.Storages;
 using Camelotia.Services.Interfaces;
+using Camelotia.Services.Models;
 using ReactiveUI;
 using Avalonia;
 using Avalonia.ReactiveUI;
@@ -48,7 +49,7 @@ namespace Camelotia.Presentation.Avalonia
                     provider, current, main
                 ),
                 new ProviderStorage(
-                    new Dictionary<string, Func<Guid, IProvider>>
+                    new Dictionary<string, Func<ProviderModel, IProvider>>
                     {
                         ["Local File System"] = id => new LocalProvider(id),
                         ["Vkontakte Docs"] = id => new VkDocsProvider(id, cache),
