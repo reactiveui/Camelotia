@@ -62,6 +62,7 @@ namespace Camelotia.Presentation.ViewModels
 
             providers.Where(changes => changes.Any())
                 .ObserveOn(RxApp.MainThreadScheduler)
+                .OnItemAdded(x => SelectedProvider = Providers.FirstOrDefault())
                 .OnItemRemoved(x => SelectedProvider = null)
                 .Subscribe();
 

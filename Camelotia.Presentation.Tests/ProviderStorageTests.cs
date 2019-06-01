@@ -22,7 +22,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public async Task ShouldResolveAllSupportedProviders()
         {
-            var provider = new ProviderStorage(new Dictionary<string, Func<Guid, IProvider>>
+            var provider = new ProviderStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
                 [typeof(LocalProvider).Name] = id => new LocalProvider(id),
                 [typeof(VkDocsProvider).Name] = id => new VkDocsProvider(id, _blobCache),
@@ -32,7 +32,7 @@ namespace Camelotia.Presentation.Tests
             await provider.Add(typeof(LocalProvider).Name);
             await provider.Add(typeof(VkDocsProvider).Name);
             await provider.Add(typeof(YandexDiskProvider).Name);
-            var providers = provider.Providers().AsAggregator();
+            var providers = provider.Read().AsAggregator();
             
             Assert.Equal(3, providers.Data.Count);
             Assert.Contains(providers.Data.Items, x => x is LocalProvider);
@@ -43,13 +43,13 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public async Task ShouldResolveOnlySpecifiedProvidersIfNeeded()
         {
-            var provider = new ProviderStorage(new Dictionary<string, Func<Guid, IProvider>>
+            var provider = new ProviderStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
                 [typeof(LocalProvider).Name] = id => new LocalProvider(id),
             }, _blobCache);
             
             await provider.Add(typeof(LocalProvider).Name);
-            var providers = provider.Providers().AsAggregator();
+            var providers = provider.Read().AsAggregator();
 
             Assert.Equal(1, providers.Data.Count);
             Assert.Contains(providers.Data.Items, x => x is LocalProvider);
@@ -60,13 +60,13 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public async Task ShouldRemoveProviders()
         {
-            var provider = new ProviderStorage(new Dictionary<string, Func<Guid, IProvider>>
+            var provider = new ProviderStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
                 [typeof(LocalProvider).Name] = id => new LocalProvider(id),
             }, _blobCache);
             
             await provider.Add(typeof(LocalProvider).Name);
-            var providers = provider.Providers().AsAggregator();
+            var providers = provider.Read().AsAggregator();
             Assert.Equal(1, providers.Data.Count);
 
             await provider.Remove(providers.Data.Items.First().Id);
@@ -87,13 +87,13 @@ namespace Camelotia.Presentation.Tests
                 }
             }));
             
-            var provider = new ProviderStorage(new Dictionary<string, Func<Guid, IProvider>>
+            var provider = new ProviderStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
                 [typeof(LocalProvider).Name] = id => new LocalProvider(id),
             }, _blobCache);
 
             await provider.Refresh();
-            var providers = provider.Providers().AsAggregator();
+            var providers = provider.Read().AsAggregator();
             Assert.Equal(1, providers.Data.Count);
             Assert.Contains(providers.Data.Items, x => x is LocalProvider);
             Assert.DoesNotContain(providers.Data.Items, x => x is VkDocsProvider);

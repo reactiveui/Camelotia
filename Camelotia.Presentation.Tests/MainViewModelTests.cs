@@ -22,9 +22,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldIndicateWhenLoadingAndReady() => new TestScheduler().With(scheduler =>
         {
-            _providerStorage
-                .Providers()
-                .Returns(Observable.Return(new ChangeSet<IProvider, Guid>()));
+            _providerStorage.Read().Returns(Observable.Return(new ChangeSet<IProvider, Guid>()));
             
             var model = BuildMainViewModel(scheduler);
             model.IsLoading.Should().BeFalse();
@@ -50,7 +48,7 @@ namespace Camelotia.Presentation.Tests
             var collection = new ObservableCollectionExtended<IProvider>();
             var set = collection.ToObservableChangeSet(x => x.Id);
             
-            _providerStorage.Providers().Returns(set);
+            _providerStorage.Read().Returns(set);
             _providerStorage
                 .When(storage => storage.Refresh())
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
@@ -72,7 +70,7 @@ namespace Camelotia.Presentation.Tests
             var collection = new ObservableCollectionExtended<IProvider>();
             var set = collection.ToObservableChangeSet(x => x.Id);
             
-            _providerStorage.Providers().Returns(set);
+            _providerStorage.Read().Returns(set);
             _providerStorage
                 .When(storage => storage.Refresh())
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
@@ -92,9 +90,9 @@ namespace Camelotia.Presentation.Tests
         public void ShouldUnselectSelectedProvider() => new TestScheduler().With(scheduler =>
         {
             var collection = new ObservableCollectionExtended<IProvider>();
-            var set = collection.ToObservableChangeSet(x => x.Id);
+            var changes = collection.ToObservableChangeSet(x => x.Id);
 
-            _providerStorage.Providers().Returns(set);
+            _providerStorage.Read().Returns(changes);
             _providerStorage
                 .When(storage => storage.Refresh())
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
@@ -116,10 +114,53 @@ namespace Camelotia.Presentation.Tests
             model.SelectedProvider.Should().BeNull();
         });
 
-        private MainViewModel BuildMainViewModel(IScheduler scheduler)
+        [Fact]
+        public void ShouldOrderProvidersBasedOnDateAdded() => new TestScheduler().With(scheduler =>
+        {
+            var collection = new ObservableCollectionExtended<IProvider>
+            {
+                BuildProviderCreatedAt(new DateTime(2000, 1, 1, 1, 1, 1)),
+                BuildProviderCreatedAt(new DateTime(2015, 1, 1, 1, 1, 1)),
+                BuildProviderCreatedAt(new DateTime(2010, 1, 1, 1, 1, 1))
+            };
+            var changes = collection.ToObservableChangeSet(x => x.Id);
+            _providerStorage.Read().Returns(changes);
+
+            var model = BuildMainViewModel(scheduler, (provider, _, __) =>
+            {
+                var id = provider.Id;
+                var created = provider.Created;
+                var entry = Substitute.For<IProviderViewModel>();
+                entry.Created.Returns(created);
+                entry.Id.Returns(id);
+                return entry;
+            });
+
+            model.Providers.Should().BeEmpty();
+            model.Refresh.Execute(null);
+            scheduler.AdvanceBy(3);
+
+            model.Providers.Should().NotBeEmpty();
+            model.Providers.Count.Should().Be(3);
+
+            model.Providers[0].Created.Should().Be(new DateTime(2015, 1, 1, 1, 1, 1));
+            model.Providers[1].Created.Should().Be(new DateTime(2010, 1, 1, 1, 1, 1));
+            model.Providers[2].Created.Should().Be(new DateTime(2000, 1, 1, 1, 1, 1));
+        });
+
+        private IProvider BuildProviderCreatedAt(DateTime date)
+        {
+            var id = Guid.NewGuid();
+            var provider = Substitute.For<IProvider>();
+            provider.Created.Returns(date);
+            provider.Id.Returns(id);
+            return provider;
+        }
+
+        private MainViewModel BuildMainViewModel(IScheduler scheduler, ProviderViewModelFactory factory = null)
         {
             return new MainViewModel(
-                (provider, files, auth) => Substitute.For<IProviderViewModel>(),
+                factory ?? ((provider, files, auth) => Substitute.For<IProviderViewModel>()),
                 provider => Substitute.For<IAuthViewModel>(),
                 _providerStorage,
                 _fileManager,

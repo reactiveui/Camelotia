@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
@@ -65,14 +66,16 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldInheritMetaDataFromProvider() => new TestScheduler().With(scheduler =>
         {
+            var now = DateTime.Now;
             _provider.Name.Returns("Foo");
             _provider.Size.Returns(42);
-            _provider.Description.Returns("Bar");
+            _provider.Created.Returns(now);
 
             var model = BuildProviderViewModel(scheduler);
             model.Name.Should().Be("Foo");
             model.Size.Should().Be("42B");
-            model.Description.Should().Be("Bar");
+            model.Description.Should().Be("Foo file system.");
+            model.Created.Should().Be(now);
         });
 
         [Fact]
