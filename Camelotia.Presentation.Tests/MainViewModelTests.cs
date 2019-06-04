@@ -126,7 +126,7 @@ namespace Camelotia.Presentation.Tests
             var changes = collection.ToObservableChangeSet(x => x.Id);
             _providerStorage.Read().Returns(changes);
 
-            var model = BuildMainViewModel(scheduler, (provider, _, __) =>
+            var model = BuildMainViewModel(scheduler, (provider, _) =>
             {
                 var id = provider.Id;
                 var created = provider.Created;
@@ -160,10 +160,9 @@ namespace Camelotia.Presentation.Tests
         private MainViewModel BuildMainViewModel(IScheduler scheduler, ProviderViewModelFactory factory = null)
         {
             return new MainViewModel(
-                factory ?? ((provider, files, auth) => Substitute.For<IProviderViewModel>()),
+                factory ?? ((provider, auth) => Substitute.For<IProviderViewModel>()),
                 provider => Substitute.For<IAuthViewModel>(),
                 _providerStorage,
-                _fileManager,
                 scheduler,
                 scheduler
             );

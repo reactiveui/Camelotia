@@ -18,7 +18,7 @@ using DynamicData;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public delegate IProviderViewModel ProviderViewModelFactory(IProvider provider, IFileManager files, IAuthViewModel auth);
+    public delegate IProviderViewModel ProviderViewModelFactory(IProvider provider, IAuthViewModel auth);
 
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, ISupportsActivation
     {

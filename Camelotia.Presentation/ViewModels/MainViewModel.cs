@@ -33,7 +33,6 @@ namespace Camelotia.Presentation.ViewModels
             ProviderViewModelFactory providerFactory,
             AuthViewModelFactory authFactory,
             IProviderStorage storage, 
-            IFileManager files,
             IScheduler current,
             IScheduler main)
         {
@@ -43,7 +42,7 @@ namespace Camelotia.Presentation.ViewModels
                 outputScheduler: main);
             
             var providers = storage.Read();
-            providers.Transform(x => providerFactory(x, files, authFactory(x)))
+            providers.Transform(x => providerFactory(x, authFactory(x)))
                 .Sort(SortExpressionComparer<IProviderViewModel>.Descending(x => x.Created))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .StartWithEmpty()

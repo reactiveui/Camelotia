@@ -56,9 +56,10 @@ namespace Camelotia.Presentation.Xamarin.Droid
             Akavache.BlobCache.ApplicationName = "Camelotia";
             var cache = Akavache.BlobCache.UserAccount;
             var login = new AndroidYandexAuthenticator(this);
+            var files = new AndroidFileManager(this);
 
             return new MainViewModel(
-                (provider, files, auth) => new ProviderViewModel(
+                (provider, auth) => new ProviderViewModel(
                     model => new CreateFolderViewModel(model, provider, current, main),
                     model => new RenameFileViewModel(model, provider, current, main),
                     (file, model) => new FileViewModel(model, file), 
@@ -81,7 +82,6 @@ namespace Camelotia.Presentation.Xamarin.Droid
                     },
                     cache
                 ),
-                new AndroidFileManager(this),
                 current, main
             );
         }
