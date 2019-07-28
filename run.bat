@@ -1,6 +1,6 @@
 @echo off
 echo Starting app...
-cd Camelotia.Presentation.Avalonia
+cd src\Camelotia.Presentation.Avalonia
 dotnet clean
 dotnet restore
 dotnet build
