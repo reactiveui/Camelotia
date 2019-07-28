@@ -12,8 +12,8 @@
   <ItemGroup>
     <PackageReference Include="ReactiveUI.XamForms" Version="9.19.5" />
     <PackageReference Include="Xamarin.Forms" Version="4.1.0.618606" />
-    <PackageReference Include="Xam.Plugin.Iconize" Version="3.5.0.129" />
-    <PackageReference Include="Xam.Plugin.Iconize.FontAwesome" Version="3.5.0.129" />
+    <PackageReference Include="Xam.Plugin.Iconize" Version="3.5.0.112" />
+    <PackageReference Include="Xam.Plugin.Iconize.FontAwesome" Version="3.5.0.112" />
   </ItemGroup>
 
   <ItemGroup>
