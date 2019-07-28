@@ -17,5 +17,11 @@
             <Setter Property="Padding" Value="7"/>
             <Setter Property="Margin" Value="5"/>
         </Style>
+        <Style Selector="Button.Rounded:pointerover">
+            <Setter Property="Background" Value="#002979"/>
+        </Style>
+        <Style Selector="Button.Rounded:pressed">
+            <Setter Property="Background" Value="#001261"/>
+        </Style>
     </Application.Styles>
 </Application>
