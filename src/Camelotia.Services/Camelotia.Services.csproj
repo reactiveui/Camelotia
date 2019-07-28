@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="DynamicData" Version="6.12.9" />
-    <PackageReference Include="akavache" Version="6.5.1" />
+    <PackageReference Include="akavache" Version="6.5.20" />
     <PackageReference Include="FluentFTP" Version="27.0.0" />
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.40.2.1649" />
     <PackageReference Include="Octokit" Version="0.32.0" />
