@@ -1,3 +1,3 @@
 #!/bin/bash
-cd Camelotia.Presentation.Avalonia
+cd src/Camelotia.Presentation.Avalonia
 dotnet run

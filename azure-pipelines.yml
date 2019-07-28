@@ -5,9 +5,12 @@ jobs:
   variables:
     buildConfiguration: 'Release'
   steps:
-  - script: dotnet build --configuration $(buildConfiguration) $(Build.SourcesDirectory)/Camelotia.Presentation.Avalonia/Camelotia.Presentation.Avalonia.csproj
+  - task: DotNetCoreInstaller@0
+    inputs:
+      version: '2.2.203'
+  - script: dotnet build --configuration $(buildConfiguration) $(Build.SourcesDirectory)/src/Camelotia.Presentation.Avalonia/Camelotia.Presentation.Avalonia.csproj
     displayName: 'Linux Build'
-  - script: dotnet test --logger trx Camelotia.Presentation.Tests
+  - script: dotnet test --logger trx src/Camelotia.Presentation.Tests
     displayName: 'Linux Unit Tests'
   - task: PublishTestResults@2
     inputs:
@@ -16,16 +19,19 @@ jobs:
 
 - job: Windows
   pool:
-    vmImage: 'vs2017-win2016'
+    vmImage: 'windows-2019'
   variables:
     buildConfiguration: 'Release'
   steps:
-  - script: dotnet build --configuration $(buildConfiguration) $(Build.SourcesDirectory)/Camelotia.Presentation.Avalonia/Camelotia.Presentation.Avalonia.csproj
+  - task: DotNetCoreInstaller@0
+    inputs:
+      version: '2.2.203'
+  - script: dotnet build --configuration $(buildConfiguration) $(Build.SourcesDirectory)/src/Camelotia.Presentation.Avalonia/Camelotia.Presentation.Avalonia.csproj
     displayName: 'Windows Build'
   - script: |
       mkdir $(Build.SourcesDirectory)\results
-      dotnet test --logger trx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude=[xunit.*]* Camelotia.Presentation.Tests
-      copy $(Build.SourcesDirectory)\Camelotia.Presentation.Tests\coverage.cobertura.xml $(Build.SourcesDirectory)\results
+      dotnet test --logger trx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude=[xunit.*]* src/Camelotia.Presentation.Tests
+      copy $(Build.SourcesDirectory)\src\Camelotia.Presentation.Tests\coverage.cobertura.xml $(Build.SourcesDirectory)\results
       dotnet tool install dotnet-reportgenerator-globaltool --tool-path . --version 4.0.0-rc4
       reportgenerator "-reports:$(Build.SourcesDirectory)\results\coverage.cobertura.xml" "-targetdir:results" "-reporttypes:HTMLInline;HTMLChart"
     displayName: 'Windows Unit Tests'
