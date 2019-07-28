@@ -5,6 +5,12 @@ jobs:
   variables:
     buildConfiguration: 'Release'
   steps:
+  - task: UseDotNet@2
+    displayName: 'Install latest .NET Core SDK'
+    inputs:
+      packageType: sdk
+      version: 2.2.203
+      installationPath: $(Agent.ToolsDirectory)/dotnet
   - script: dotnet build --configuration $(buildConfiguration) $(Build.SourcesDirectory)/src/Camelotia.Presentation.Avalonia/Camelotia.Presentation.Avalonia.csproj
     displayName: 'Linux Build'
   - script: dotnet test --logger trx src/Camelotia.Presentation.Tests
@@ -20,6 +26,12 @@ jobs:
   variables:
     buildConfiguration: 'Release'
   steps:
+  - task: UseDotNet@2
+    displayName: 'Install latest .NET Core SDK'
+    inputs:
+      packageType: sdk
+      version: 2.2.203
+      installationPath: $(Agent.ToolsDirectory)/dotnet
   - script: dotnet build --configuration $(buildConfiguration) $(Build.SourcesDirectory)/src/Camelotia.Presentation.Avalonia/Camelotia.Presentation.Avalonia.csproj
     displayName: 'Windows Build'
   - script: |
