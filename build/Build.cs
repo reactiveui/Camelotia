@@ -43,7 +43,7 @@ internal class Build : NukeBuild
     Target Clean => _ => _
         .Before(Restore)
         .Executes(() => SourceDirectory
-            .GlobDirectories("**/bin", "**/obj")
+            .GlobDirectories("**/bin", "**/obj", "**/artifacts")
             .ForEach(DeleteDirectory));
 
     Target Restore => _ => _
@@ -82,7 +82,7 @@ internal class Build : NukeBuild
                     .AddProperty("Exclude", "[xunit.*]*")
                     .AddProperty("CoverletOutput", ArtifactsDirectory / CoverageFileName))));
 
-    private Target Run => _ => _
+    Target Run => _ => _
         .DependsOn(Test)
         .Executes(() =>
         {
