@@ -15,25 +15,25 @@ using static Nuke.Common.Tools.MSBuild.MSBuildTasks;
 [UnsetVisualStudioEnvironmentVariables]
 internal class Build : NukeBuild
 {
-    private const string InteractiveProjectName = "Camelotia.Presentation.Avalonia";
-    private const string CoverageFileName = "coverage.cobertura.xml";
+    const string InteractiveProjectName = "Camelotia.Presentation.Avalonia";
+    const string CoverageFileName = "coverage.cobertura.xml";
 
-    public static int Main() => Execute<Build>(x => x.Run);
+    public static int Main() => Execute<Build>(x => x.RunInteractive);
     
-    [Parameter] public readonly string Configuration = IsLocalBuild ? "Debug" : "Release";
-    [Parameter] public readonly bool Interactive;
-    [Parameter] public readonly bool Full;
+    [Parameter] readonly string Configuration = IsLocalBuild ? "Debug" : "Release";
+    [Parameter] readonly bool Interactive;
+    [Parameter] readonly bool Full;
 
     AbsolutePath SourceDirectory => RootDirectory / "src";
     AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
 
     Target Clean => _ => _
-        .Before(Test)
+        .Before(RunUnitTests)
         .Executes(() => SourceDirectory
             .GlobDirectories("**/bin", "**/obj", "**/artifacts", "**/AppPackages", "**/BundleArtifacts")
             .ForEach(DeleteDirectory));
     
-    Target Test => _ => _
+    Target RunUnitTests => _ => _
         .DependsOn(Clean)
         .Executes(() => SourceDirectory
             .GlobFiles("**/*.Tests.csproj")
@@ -48,7 +48,7 @@ internal class Build : NukeBuild
                     .AddProperty("CoverletOutput", ArtifactsDirectory / CoverageFileName))));
 
     Target CompileAvaloniaApp => _ => _
-        .DependsOn(Test)
+        .DependsOn(RunUnitTests)
         .Executes(() => SourceDirectory
             .GlobFiles("**/*.Avalonia.csproj")
             .ForEach(path =>
@@ -57,7 +57,7 @@ internal class Build : NukeBuild
                     .SetConfiguration(Configuration))));
 
     Target CompileUniversalWindowsApp => _ => _
-        .DependsOn(Test)
+        .DependsOn(RunUnitTests)
         .Executes(() =>
         {
             var execute = EnvironmentInfo.IsWin && Full;
@@ -71,14 +71,20 @@ internal class Build : NukeBuild
                 .SetTargets("Restore"));
             Logger.Success("Successfully restored UAP packages.");
 
-            new[] { MSBuildTargetPlatform.x64,
-                    MSBuildTargetPlatform.x86,
+            new[] { MSBuildTargetPlatform.x86,
+                    MSBuildTargetPlatform.x64,
                     MSBuildTargetPlatform.arm }
                 .ForEach(BuildApp);
 
             void BuildApp(MSBuildTargetPlatform platform)
             {
-                Logger.Normal($"Building UAP project for {platform}");
+                Logger.Normal($"Cleaning UAP project...");
+                MSBuild(settings => settings
+                    .SetProjectFile(project)
+                    .SetTargets("Clean"));
+                Logger.Success("Successfully managed to clean UAP project.");
+
+                Logger.Normal($"Building UAP project for {platform}...");
                 MSBuild(settings => settings
                     .SetProjectFile(project)
                     .SetTargets("Build")
@@ -87,28 +93,37 @@ internal class Build : NukeBuild
                     .SetProperty("AppxPackageSigningEnabled", false)
                     .SetProperty("UapAppxPackageBuildMode", "CI")
                     .SetProperty("AppxBundle", "Always"));
-                Logger.Success($"Successfully built UAP project for {platform}");
+                Logger.Success($"Successfully built UAP project for {platform}.");
             }
         });
 
     Target CompileXamarinAndroidApp => _ => _
-        .DependsOn(Test)
+        .DependsOn(RunUnitTests)
         .Executes(() =>
         {
             var execute = EnvironmentInfo.IsWin && Full;
             Logger.Normal($"Should compile for Android: {execute}");
             if (!execute) return;
-            
+
+            Logger.Normal("Restoring packages required by Xamarin Android...");
             var project = SourceDirectory.GlobFiles("**/*.Xamarin.Droid.csproj").First();
             MSBuild(settings => settings
                 .SetProjectFile(project)
-                .SetConfiguration(Configuration)
-                .SetTargetPlatform(MSBuildTargetPlatform.x86));
+                .SetTargets("Restore"));
+            Logger.Success("Successfully restored Xamarin Android packages.");
+
+            Logger.Normal($"Building Xamarin Android project...");
+            MSBuild(settings => settings
+                .SetProjectFile(project)
+                .SetTargets("Build")
+                .SetConfiguration(Configuration));
+            Logger.Success($"Successfully built Xamarin Android project.");
         });
 
-    Target Run => _ => _
+    Target RunInteractive => _ => _
         .DependsOn(CompileAvaloniaApp)
         .DependsOn(CompileUniversalWindowsApp)
+        .DependsOn(CompileXamarinAndroidApp)
         .Executes(() => SourceDirectory
             .GlobFiles($"**/{InteractiveProjectName}.csproj")
             .Where(x => Interactive)

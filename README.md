@@ -23,7 +23,7 @@ On Windows, execute the following from command line:
 ```sh
 # Windows command line
 git clone https://github.com/worldbeater/Camelotia
-powershell -ExecutionPolicy Unrestricted ./build.ps1 --interactive
+cd ./Camelotia && powershell -ExecutionPolicy Unrestricted ./build.ps1 --interactive
 ```
 
 ## Compiling Universal Windows Platform app
