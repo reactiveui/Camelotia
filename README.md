@@ -15,14 +15,14 @@ To build, test and run the project on Linux or MacOS, execute the following:
 ```sh
 # Linux or MacOS shell
 git clone https://github.com/worldbeater/Camelotia
-cd ./Camelotia
-bash ./build.sh --interactive
+cd ./Camelotia && bash ./build.sh --interactive
 ```
 
 On Windows, execute the following from command line:
 
 ```sh
 # Windows command line
+git clone https://github.com/worldbeater/Camelotia
 powershell -ExecutionPolicy Unrestricted ./build.ps1 --interactive
 ```
 
