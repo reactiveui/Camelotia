@@ -56,7 +56,7 @@ internal class Build : NukeBuild
                     .SetProjectFile(path)
                     .SetConfiguration(Configuration))));
 
-    private Target CompileUniversalWindowsApp => _ => _
+    Target CompileUniversalWindowsApp => _ => _
         .DependsOn(Test)
         .Executes(() =>
         {

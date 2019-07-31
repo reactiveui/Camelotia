@@ -1,4 +1,4 @@
-<p align="left"><img src="images/horizontal.png" alt="Camelotia" height="80px"></p>
+<p><img src="images/horizontal.png" alt="Camelotia" height="80px"></p>
 
 [![Build Status](https://worldbeater.visualstudio.com/Camelotia/_apis/build/status/Camelotia-CI)](https://worldbeater.visualstudio.com/Camelotia/_build/latest?definitionId=1) [![Pull Requests](https://img.shields.io/github/issues-pr/worldbeater/camelotia.svg)](https://github.com/worldbeater/Camelotia/pulls) [![Issues](https://img.shields.io/github/issues/worldbeater/camelotia.svg)](https://github.com/worldbeater/Camelotia/issues) ![License](https://img.shields.io/github/license/worldbeater/camelotia.svg) ![Size](https://img.shields.io/github/repo-size/worldbeater/camelotia.svg) [![Code Coverage](https://img.shields.io/azure-devops/coverage/worldbeater/Camelotia/1.svg)](https://worldbeater.visualstudio.com/Camelotia/_build/latest?definitionId=1)
 
@@ -10,14 +10,21 @@ You can compile .NET Standard libraries, run tests and run an Avalonia applicati
 
 <img src="images/UiAvalonia.png" width="550">
 
+To build, test and run the project on Linux or MacOS, execute the following:
+
 ```sh
 # Linux or MacOS shell
 git clone https://github.com/worldbeater/Camelotia
-cd src/Camelotia/Camelotia.Presentation.Avalonia
-dotnet run
+cd ./Camelotia
+bash ./build.sh --interactive
 ```
 
-On Windows, double-click the `./run.bat` file.
+On Windows, execute the following from command line:
+
+```sh
+# Windows command line
+powershell -ExecutionPolicy Unrestricted ./build.ps1 --interactive
+```
 
 ## Compiling Universal Windows Platform app
 
