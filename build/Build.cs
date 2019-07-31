@@ -20,14 +20,9 @@ internal class Build : NukeBuild
 
     public static int Main() => Execute<Build>(x => x.Run);
     
-    [Parameter("Compilation configuration, can either be Debug or Release.")] 
-    public readonly string Configuration = IsLocalBuild ? "Debug" : "Release";
-    
-    [Parameter("If interactive is set to true, a GUI launches.")]
-    public readonly bool Interactive;
-    
-    [Parameter("If full is set to true, then all projects will build.")]
-    public readonly bool Full;
+    [Parameter] public readonly string Configuration = IsLocalBuild ? "Debug" : "Release";
+    [Parameter] public readonly bool Interactive;
+    [Parameter] public readonly bool Full;
 
     AbsolutePath SourceDirectory => RootDirectory / "src";
     AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
@@ -35,10 +30,11 @@ internal class Build : NukeBuild
     Target Clean => _ => _
         .Before(Test)
         .Executes(() => SourceDirectory
-            .GlobDirectories("**/bin", "**/obj", "**/artifacts")
+            .GlobDirectories("**/bin", "**/obj", "**/artifacts", "**/AppPackages", "**/BundleArtifacts")
             .ForEach(DeleteDirectory));
     
     Target Test => _ => _
+        .DependsOn(Clean)
         .Executes(() => SourceDirectory
             .GlobFiles("**/*.Tests.csproj")
             .ForEach(path =>
@@ -65,14 +61,34 @@ internal class Build : NukeBuild
         .Executes(() =>
         {
             var execute = EnvironmentInfo.IsWin && Full;
-            Logger.Normal($"Should compile for Universal Windows: {execute}");
+            Logger.Info($"Should compile for Universal Windows: {execute}");
             if (!execute) return;
-            
+
+            Logger.Normal("Restoring packages required by UAP...");
             var project = SourceDirectory.GlobFiles("**/*.Uwp.csproj").First();
             MSBuild(settings => settings
                 .SetProjectFile(project)
-                .SetConfiguration(Configuration)
-                .SetTargetPlatform(MSBuildTargetPlatform.x86));
+                .SetTargets("Restore"));
+            Logger.Success("Successfully restored UAP packages.");
+
+            new[] { MSBuildTargetPlatform.x64,
+                    MSBuildTargetPlatform.x86,
+                    MSBuildTargetPlatform.arm }
+                .ForEach(BuildApp);
+
+            void BuildApp(MSBuildTargetPlatform platform)
+            {
+                Logger.Normal($"Building UAP project for {platform}");
+                MSBuild(settings => settings
+                    .SetProjectFile(project)
+                    .SetTargets("Build")
+                    .SetConfiguration(Configuration)
+                    .SetTargetPlatform(platform)
+                    .SetProperty("AppxPackageSigningEnabled", false)
+                    .SetProperty("UapAppxPackageBuildMode", "CI")
+                    .SetProperty("AppxBundle", "Always"));
+                Logger.Success($"Successfully built UAP project for {platform}");
+            }
         });
 
     Target CompileXamarinAndroidApp => _ => _
@@ -83,7 +99,7 @@ internal class Build : NukeBuild
             Logger.Normal($"Should compile for Android: {execute}");
             if (!execute) return;
             
-            var project = SourceDirectory.GlobFiles("**/*.Xamarin.Android.csproj").First();
+            var project = SourceDirectory.GlobFiles("**/*.Xamarin.Droid.csproj").First();
             MSBuild(settings => settings
                 .SetProjectFile(project)
                 .SetConfiguration(Configuration)
@@ -93,7 +109,6 @@ internal class Build : NukeBuild
     Target Run => _ => _
         .DependsOn(CompileAvaloniaApp)
         .DependsOn(CompileUniversalWindowsApp)
-        .DependsOn(CompileXamarinAndroidApp)
         .Executes(() => SourceDirectory
             .GlobFiles($"**/{InteractiveProjectName}.csproj")
             .Where(x => Interactive)

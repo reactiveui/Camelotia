@@ -1,0 +1,1 @@
+powershell -ExecutionPolicy Unrestricted ./build.ps1 --interactive
