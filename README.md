@@ -27,7 +27,7 @@ cd ./Camelotia && powershell -ExecutionPolicy Unrestricted ./build.ps1 --interac
 
 ### Compiling Universal Windows Platform app
 
-<img src="images/UiWindows1.png" width="500"> 
+<img src="images/UiWindows.png" width="450"> 
 
 You can compile Universal Windows Platform Camelotia app only on latest Windows 10. Make sure you have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Use `Camelotia.Uwp.sln` solution file.
 
@@ -35,7 +35,7 @@ You can compile Universal Windows Platform Camelotia app only on latest Windows 
 
 To compile the Xamarin Forms Android application, you need to install appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there. Use `Camelotia.Xamarin.sln` solution file.
 
-<img src="images/UiAndroid1.png" width="220"> <img src="images/UiAndroid2.png" width="220"> <img src="images/UiAndroid3.png" width="220">
+<img src="images/UiAndroid.png" width="450"> 
 
 ### Technologies and Tools Used
 
