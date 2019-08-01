@@ -113,10 +113,12 @@ internal class Build : NukeBuild
             Logger.Success("Successfully restored Xamarin Android packages.");
 
             Logger.Normal($"Building Xamarin Android project...");
+            var java = Environment.GetEnvironmentVariable("JAVA_HOME");
             MSBuild(settings => settings
                 .SetProjectFile(project)
                 .SetTargets("Build")
-                .SetConfiguration(Configuration));
+                .SetConfiguration(Configuration)
+                .SetProperty("JavaSdkDirectory", java));
             Logger.Success($"Successfully built Xamarin Android project.");
         });
 
