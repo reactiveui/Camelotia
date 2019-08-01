@@ -24,12 +24,15 @@ namespace Camelotia.Presentation.Tests
             var authorized = new Subject<bool>();
             _provider.IsAuthorized.Returns(authorized);
             var model = BuildAuthViewModel(scheduler);
-                
+
+            scheduler.Start();
             model.IsAuthenticated.Should().BeFalse();
+            model.IsAnonymous.Should().BeTrue();
             authorized.OnNext(true);
             
-            scheduler.AdvanceBy(2);    
+            scheduler.Start();
             model.IsAuthenticated.Should().BeTrue();
+            model.IsAnonymous.Should().BeFalse();
         });
 
         [Fact]
@@ -38,12 +41,15 @@ namespace Camelotia.Presentation.Tests
             var model = BuildAuthViewModel(scheduler);
             model.SupportsDirectAuth.Should().BeFalse();
             model.SupportsOAuth.Should().BeFalse();
+            model.SupportsHostAuth.Should().BeFalse();
 
-            _provider.SupportsDirectAuth.Returns(true);
-            _provider.SupportsOAuth.Returns(true);
+            _provider.SupportsDirectAuth.ReturnsForAnyArgs(true);
+            _provider.SupportsOAuth.ReturnsForAnyArgs(true);
+            _provider.SupportsHostAuth.ReturnsForAnyArgs(false);
 
             model.SupportsDirectAuth.Should().BeTrue();
             model.SupportsOAuth.Should().BeTrue();
+            model.SupportsHostAuth.Should().BeFalse();
         });
 
         [Fact]
@@ -51,6 +57,7 @@ namespace Camelotia.Presentation.Tests
         {
             var model = BuildAuthViewModel(scheduler);
             model.DirectAuth.Should().Be(_directAuthViewModel);
+            model.HostAuth.Should().Be(_hostAuthViewModel);
             model.OAuth.Should().Be(_oAuthViewModel);
         });
 

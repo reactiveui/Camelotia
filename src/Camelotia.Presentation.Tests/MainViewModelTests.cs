@@ -17,7 +17,6 @@ namespace Camelotia.Presentation.Tests
     public sealed class MainViewModelTests
     {
         private readonly IProviderStorage _providerStorage = Substitute.For<IProviderStorage>();
-        private readonly IFileManager _fileManager = Substitute.For<IFileManager>();
 
         [Fact]
         public void ShouldIndicateWhenLoadingAndReady() => new TestScheduler().With(scheduler =>
