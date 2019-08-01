@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Nuke.Common;
 using Nuke.Common.Execution;
+using Nuke.Common.IO;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.MSBuild;
 using Nuke.Common.Utilities.Collections;
@@ -31,7 +32,8 @@ internal class Build : NukeBuild
     Target Clean => _ => _
         .Before(RunUnitTests)
         .Executes(() => SourceDirectory
-            .GlobDirectories("**/bin", "**/obj", "**/artifacts", "**/AppPackages", "**/BundleArtifacts")
+            .GlobDirectories("**/bin", "**/obj", "**/AppPackages", "**/BundleArtifacts")
+            .Concat(RootDirectory.GlobDirectories("**/artifacts"))
             .ForEach(DeleteDirectory));
     
     Target RunUnitTests => _ => _
@@ -92,6 +94,7 @@ internal class Build : NukeBuild
                     .SetConfiguration(Configuration)
                     .SetTargetPlatform(platform)
                     .SetProperty("AppxPackageSigningEnabled", false)
+                    .SetProperty("AppxPackageDir", ArtifactsDirectory)
                     .SetProperty("UapAppxPackageBuildMode", "CI")
                     .SetProperty("AppxBundle", "Always"));
                 Logger.Success($"Successfully built UAP project for {platform}.");
@@ -121,6 +124,20 @@ internal class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetProperty("JavaSdkDirectory", java));
             Logger.Success($"Successfully built Xamarin Android project.");
+
+            Logger.Normal("Signing Android package...");
+            MSBuild(settings => settings
+                .SetProjectFile(project)
+                .SetTargets("SignAndroidPackage")
+                .SetConfiguration(Configuration)
+                .SetProperty("JavaSdkDirectory", java));
+            Logger.Success($"Successfully signed Xamarin Android APK.");
+
+            Logger.Normal("Moving APK files to artifacts directory...");
+            SourceDirectory
+                .GlobFiles("**/bin/**/*-Signed.apk")
+                .ForEach(file => MoveFileToDirectory(file, ArtifactsDirectory));
+            Logger.Success($"Successfully moved APK files.");
         });
 
     Target RunInteractive => _ => _
