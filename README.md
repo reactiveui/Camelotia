@@ -8,7 +8,7 @@ File manager for cloud storages. Supports Yandex Disk, Google Drive, VK Document
 
 <img src="images/UiAvalonia.png" width="450">
 
-You can compile .NET Standard libraries, run tests and run an Avalonia application on Windows, Linux and macOS operating systems. Make sure you have latest [.NET Core SDK](https://dot.net/) installed. To browse the sources, use `Camelotia.Avalonia.sln` file. Camelotia uses [Nuke Build](https://github.com/nuke-build/nuke) to build and test the solution. To run the build scripts on Linux or MacOS, execute the following commands:
+In order to compile .NET Standard libraries, run tests and run an Avalonia application on Windows, Linux and macOS operating systems make sure to have latest [.NET Core SDK](https://dot.net/) installed. Launch the `Camelotia.Avalonia.sln` file to browse or to edit source files. Camelotia uses [Nuke Build](https://github.com/nuke-build/nuke) to build and test the solution. Execute the following commands to run the build scripts on Linux or MacOS:
 
 ```sh
 # Linux or MacOS shell. Launches Avalonia GUI after build.
@@ -29,11 +29,11 @@ cd ./Camelotia && powershell -ExecutionPolicy Unrestricted ./build.ps1 --interac
 
 <img src="images/UiWindows.png" width="450"> 
 
-You can compile Universal Windows Platform Camelotia app only on latest Windows 10. Make sure you have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Use `Camelotia.Uwp.sln` solution file.
+Universal Windows Platform Camelotia app can be compiled only on latest Windows 10. Make sure to have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Launch the `Camelotia.Uwp.sln` solution file.
 
 ### Compiling Xamarin Forms app
 
-To compile the Xamarin Forms Android application, you need to install appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there. Use `Camelotia.Xamarin.sln` solution file.
+To compile the Xamarin Forms Android application, install the appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there. Launch the `Camelotia.Xamarin.sln` solution file.
 
 <img src="images/UiAndroid.png" width="450"> 
 
