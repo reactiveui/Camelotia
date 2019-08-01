@@ -22,20 +22,15 @@ namespace Camelotia.Presentation.Tests
         });
 
         [Fact]
-        public void ShouldExposeCorrectId()
+        public void VerifyDefaultPropertyValues()
         {
             _provider.Name.Should().Be("Local");
             _provider.Id.Should().Be(LocalIdentifier);
-        }
+            _provider.InitialPath.Should().Be(string.Empty);
 
-        [Fact]
-        public async Task LocalFileSystemShouldNotSupportAuth()
-        {
             _provider.SupportsHostAuth.Should().BeFalse();
             _provider.SupportsDirectAuth.Should().BeFalse();
             _provider.SupportsOAuth.Should().BeFalse();
-            await _provider.DirectAuth(string.Empty, string.Empty);
-            await _provider.OAuth();
         }
 
         [Fact]
@@ -64,13 +59,6 @@ namespace Camelotia.Presentation.Tests
             foreach (var model in real)
                 expected.Should().Contain(drive =>
                     model.Name == drive.Name && model.IsFolder);
-        }
-
-        [Fact]
-        public void ShouldImplementNonNullInitialPath()
-        {
-            _provider.InitialPath.Should().NotBeNull();
-            _provider.InitialPath.Should().Be(string.Empty);
         }
     }
 }

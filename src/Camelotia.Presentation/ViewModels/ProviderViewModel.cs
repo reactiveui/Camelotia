@@ -75,7 +75,10 @@ namespace Camelotia.Presentation.ViewModels
                     .ThenBy(file => file.Name)
                     .ToList())
                 .StartWithEmpty()
-                .Where(files => Files == null || !files.SequenceEqual(Files))
+                .Where(files => Files == null ||
+                                files.Count != Files.Count() ||
+                                !files.All(x => Files.Any(y => x.Path == y.Path && 
+                                                               x.Modified == y.Modified)))
                 .ToProperty(this, x => x.Files, scheduler: current);
 
             _isLoading = _refresh
