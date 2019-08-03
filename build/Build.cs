@@ -81,7 +81,7 @@ internal class Build : NukeBuild
 
             void BuildApp(MSBuildTargetPlatform platform)
             {
-                Logger.Normal($"Cleaning UAP project...");
+                Logger.Normal("Cleaning UAP project...");
                 MSBuild(settings => settings
                     .SetProjectFile(project)
                     .SetTargets("Clean"));
@@ -106,7 +106,7 @@ internal class Build : NukeBuild
         .Executes(() =>
         {
             var execute = EnvironmentInfo.IsWin && Full;
-            Logger.Normal($"Should compile for Android: {execute}");
+            Logger.Info($"Should compile for Android: {execute}");
             if (!execute) return;
 
             Logger.Normal("Restoring packages required by Xamarin Android...");
@@ -116,14 +116,14 @@ internal class Build : NukeBuild
                 .SetTargets("Restore"));
             Logger.Success("Successfully restored Xamarin Android packages.");
 
-            Logger.Normal($"Building Xamarin Android project...");
+            Logger.Normal("Building Xamarin Android project...");
             var java = Environment.GetEnvironmentVariable("JAVA_HOME");
             MSBuild(settings => settings
                 .SetProjectFile(project)
                 .SetTargets("Build")
                 .SetConfiguration(Configuration)
                 .SetProperty("JavaSdkDirectory", java));
-            Logger.Success($"Successfully built Xamarin Android project.");
+            Logger.Success("Successfully built Xamarin Android project.");
 
             Logger.Normal("Signing Android package...");
             MSBuild(settings => settings
@@ -131,19 +131,43 @@ internal class Build : NukeBuild
                 .SetTargets("SignAndroidPackage")
                 .SetConfiguration(Configuration)
                 .SetProperty("JavaSdkDirectory", java));
-            Logger.Success($"Successfully signed Xamarin Android APK.");
+            Logger.Success("Successfully signed Xamarin Android APK.");
 
             Logger.Normal("Moving APK files to artifacts directory...");
             SourceDirectory
                 .GlobFiles("**/bin/**/*-Signed.apk")
                 .ForEach(file => MoveFileToDirectory(file, ArtifactsDirectory));
-            Logger.Success($"Successfully moved APK files.");
+            Logger.Success("Successfully moved APK files.");
+        });
+
+    Target CompileWindowsPresentationApp => _ => _
+        .DependsOn(RunUnitTests)
+        .Executes(() =>
+        {
+            var execute = EnvironmentInfo.IsWin && Full;
+            Logger.Info($"Should compile for WPF: {execute}");
+            if (!execute) return;
+
+            Logger.Normal("Restoring packages required by WPF app...");
+            var project = SourceDirectory.GlobFiles("**/*.Wpf.csproj").First();
+            MSBuild(settings => settings
+                .SetProjectFile(project)
+                .SetTargets("Restore"));
+            Logger.Success("Successfully restored Wpf packages.");
+
+            Logger.Normal("Building WPF project...");
+            MSBuild(settings => settings
+                .SetProjectFile(project)
+                .SetTargets("Build")
+                .SetConfiguration(Configuration));
+            Logger.Success("Successfully built WPF project.");
         });
 
     Target RunInteractive => _ => _
         .DependsOn(CompileAvaloniaApp)
         .DependsOn(CompileUniversalWindowsApp)
         .DependsOn(CompileXamarinAndroidApp)
+        .DependsOn(CompileWindowsPresentationApp)
         .Executes(() => SourceDirectory
             .GlobFiles($"**/{InteractiveProjectName}.csproj")
             .Where(x => Interactive)
