@@ -1,0 +1,51 @@
+﻿<UserControl
+    x:Class="Camelotia.Presentation.Wpf.Views.HostAuthView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    d:DesignHeight="300" 
+    d:DesignWidth="300"
+    mc:Ignorable="d" >
+    <materialDesign:Card Width="300" VerticalAlignment="Center">
+        <StackPanel VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Margin="20">
+            <ProgressBar HorizontalAlignment="Stretch"
+                         IsIndeterminate="{Binding IsBusy}"
+                         Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibility}}"
+                         Margin="0 5" />
+            <StackPanel Visibility="{Binding HasErrors, Converter={StaticResource BooleanToVisibility}}"
+                        Background="{StaticResource PrimaryHueDarkBrush}"
+                        Margin="0 5">
+                <StackPanel Margin="10">
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="White"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </StackPanel>
+            <Grid Margin="0 15 0 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" 
+                         materialDesign:HintAssist.Hint="Host address"
+                         Text="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Margin="5 0 0 0" 
+                         materialDesign:HintAssist.Hint="Port"
+                         Text="{Binding Port, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+            <TextBox Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     materialDesign:HintAssist.Hint="User name"
+                     Margin="0 10" />
+            <TextBox Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     materialDesign:HintAssist.Hint="Password"
+                     Margin="0 5 0 15" />
+            <Button Content="Login"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding Login}" />
+        </StackPanel>
+    </materialDesign:Card>
+</UserControl>

@@ -95,6 +95,12 @@
                                HorizontalAlignment="Center" />
                 </StackPanel>
             </Grid>
+            <Grid Visibility="{Binding Folder.IsVisible, Converter={StaticResource BooleanToVisibility}}" Background="#fff">
+                <views:CreateFolderView DataContext="{Binding Folder}" />
+            </Grid>
+            <Grid Visibility="{Binding Rename.IsVisible, Converter={StaticResource BooleanToVisibility}}" Background="#fff">
+                <views:RenameFileView DataContext="{Binding Rename}" />
+            </Grid>
         </Grid>
         <Border Grid.Row="2" 
                 BorderBrush="#eeeeee" 
@@ -186,6 +192,9 @@
                     Style="{StaticResource MaterialDesignFlatButton}"
                     Padding="0"
                     Margin="5" />
+        </Grid>
+        <Grid Grid.Row="1" Visibility="{Binding Auth.IsAnonymous, Converter={StaticResource BooleanToVisibility}}">
+            <views:AuthView DataContext="{Binding Auth}" />
         </Grid>
     </Grid>
 </UserControl>
