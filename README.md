@@ -39,7 +39,7 @@ To compile the Xamarin Forms Android application, install the appropriate Androi
 
 ### Compiling Windows Presentation Foundation app
 
-The app was ported to Windows Presentation Framework to make the cloud file manager controls reusable across most popular .NET implementations, so one could easily embedd parts of Camelotia into their own applications. To compile the WPF app, remember to check the Desktop Development section in Visual Studio Installer. Then, open the `Camelotia.Wpf.sln` file in Visual Studio 2019.
+The app was ported to WPF to make the cloud file manager controls reusable across most popular .NET implementations, so one could easily embed parts of Camelotia into their own applications. To compile the WPF app, ensure the Desktop Development section is checked in Visual Studio Installer. Then, open the `Camelotia.Wpf.sln` file in Visual Studio 2019.
 
 <img src="images/UiPresentation.png" width="450">
 
