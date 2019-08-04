@@ -37,6 +37,12 @@ To compile the Xamarin Forms Android application, install the appropriate Androi
 
 <img src="images/UiAndroid.png" width="450"> 
 
+### Compiling Windows Presentation Foundation app
+
+The app was ported to Windows Presentation Framework to make the cloud file manager controls reusable across most popular .NET implementations, so one could easily embedd parts of Camelotia into their own applications. To compile the WPF app, remember to check the Desktop Development section in Visual Studio Installer. Then, open the `Camelotia.Wpf.sln` file in Visual Studio 2019.
+
+<img src="images/UiPresentation.png" width="450">
+
 ### Technologies and Tools Used
 
 - <a href="https://reactiveui.net/">ReactiveUI</a> modern MVVM framework
@@ -52,5 +58,8 @@ To compile the Xamarin Forms Android application, install the appropriate Androi
 - <a href="https://github.com/robinrodricks/FluentFTP">FluentFTP</a> FTP implementation
 - <a href="https://github.com/sshnet/SSH.NET/">SSH.NET</a> SFTP implementation
 - <a href="https://github.com/vknet/vk">VkNet</a> Vkontakte SDK for .NET
-- <a href="https://github.com/googleapis/google-api-dotnet-client">Google Drive</a> SDK for .NET
+- <a href="https://github.com/googleapis/google-api-dotnet-client">Google Drive</a> client SDK for .NET
+- <a href="https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit">Material Design</a> XAML controls and styles
+- <a href="https://github.com/MahApps/MahApps.Metro">MahApps Metro</a> XAML controls and styled windows
+- <a href="https://reactiveui.net/docs/handbook/events/">ReactiveUI.Events</a> turning regular events into observables
 - <a href="https://www.jetbrains.com/rider/">JetBrains Rider</a> and <a href="https://visualstudio.microsoft.com/">Microsoft Visual Studio</a> IDEs
