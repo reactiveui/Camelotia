@@ -2,7 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
-             StartupUri="Views/MainView.xaml">
+             ShutdownMode="OnExplicitShutdown"
+             Startup="OnApplicationStartup"
+             x:Name="CamelotiaApp">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -18,6 +20,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.Flyout.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <system:Double x:Key="WindowTitleFontSize">12</system:Double>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
             <SolidColorBrush x:Key="HighlightBrush" Color="{DynamicResource Primary700}"/>
             <SolidColorBrush x:Key="AccentBaseColorBrush" Color="{DynamicResource Primary600}" />
             <SolidColorBrush x:Key="AccentColorBrush" Color="{DynamicResource Primary500}"/>

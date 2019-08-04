@@ -6,6 +6,8 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:Camelotia.Presentation.Wpf.Views"
+    d:DataContext="{d:DesignInstance interfaces:IMainViewModel, IsDesignTimeCreatable=False}"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     TextElement.FontWeight="Regular"
     TextElement.FontSize="13"
@@ -18,10 +20,10 @@
     WindowStartupLocation="CenterScreen"
     SaveWindowPosition="False"
     ResizeBorderThickness="5"
-    GlowBrush="Black"
     BorderThickness="0"
-    mc:Ignorable="d"
-    Title="Camelotia">
+    GlowBrush="Black"
+    Title="Camelotia"
+    mc:Ignorable="d">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -66,34 +68,37 @@
                      ItemsSource="{Binding Providers, Mode=OneWay}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="70" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <materialDesign:PackIcon 
-                                Grid.Column="0" 
-                                Kind="CloudCircle"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Foreground="{StaticResource PrimaryHueDarkBrush}"
-                                Height="60" 
-                                Width="60" />
-                            <StackPanel Grid.Column="1" Margin="5">
-                                <TextBlock FontSize="15" 
-                                           Text="{Binding Name}" 
-                                           Foreground="{StaticResource PrimaryHueDarkBrush}" />
-                                <StackPanel Orientation="Horizontal" Margin="0 5">
-                                    <TextBlock Text="Size: " 
-                                               Foreground="{StaticResource PrimaryHueLightForegroundBrush}" />
-                                    <TextBlock Text="{Binding Size}" 
-                                               Foreground="{StaticResource PrimaryHueLightForegroundBrush}" />
+                        <materialDesign:TransitioningContent>
+                            <materialDesign:TransitioningContent.OpeningEffects>
+                                <materialDesign:TransitionEffect Kind="SlideInFromRight" />
+                            </materialDesign:TransitioningContent.OpeningEffects>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="70" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <materialDesign:PackIcon 
+                                    Grid.Column="0" 
+                                    Kind="CloudCircle"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Foreground="{StaticResource PrimaryHueDarkBrush}"
+                                    Height="60" 
+                                    Width="60" />
+                                <StackPanel Grid.Column="1" Margin="5">
+                                    <TextBlock FontSize="15" 
+                                               Text="{Binding Name}" 
+                                               Foreground="{StaticResource PrimaryHueDarkBrush}" />
+                                    <TextBlock Foreground="{StaticResource PrimaryHueLightForegroundBrush}" Margin="0 5">
+                                        <Run Text="Size: " />
+                                        <Run Text="{Binding Size, Mode=OneWay}" />
+                                    </TextBlock>
+                                    <TextBlock Foreground="{StaticResource MaterialDesignTextBoxBorder}"
+                                               Text="{Binding Description}"
+                                               TextWrapping="Wrap" />
                                 </StackPanel>
-                                <TextBlock Foreground="{StaticResource MaterialDesignTextBoxBorder}"
-                                           Text="{Binding Description}"
-                                           TextWrapping="Wrap" />
-                            </StackPanel>
-                        </Grid>
+                            </Grid>
+                        </materialDesign:TransitioningContent>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
@@ -117,7 +122,18 @@
             </Border>
         </Grid>
         <Grid Grid.Column="1">
-            
+            <views:ProviderView DataContext="{Binding SelectedProvider, Mode=OneWay}" />
+            <Grid Background="#FFFFFF" Visibility="{Binding WelcomeScreenVisible, Converter={StaticResource BooleanToVisibility}}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="CloudOutline"
+                                             HorizontalAlignment="Center"
+                                             Foreground="{StaticResource PrimaryHueDarkBrush}"
+                                             Height="90" Width="90" />
+                    <TextBlock Text="Select existing provider or add a new one!" 
+                               Foreground="{StaticResource MaterialDesignTextBoxBorder}"
+                               Margin="10" />
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </mah:MetroWindow>

@@ -13,7 +13,7 @@ namespace Camelotia.Presentation.Wpf
         public MainView()
         {
             InitializeComponent();
-            DataContext = ViewModel = new Bootstrapper().MainViewModel;
+            DataContextChanged += (sender, args) => ViewModel = DataContext as IMainViewModel;
             this.WhenActivated(disposable => { });
         }
 
