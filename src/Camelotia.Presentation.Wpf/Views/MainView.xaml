@@ -23,7 +23,7 @@
     GlowBrush="Black"
     Title="Camelotia"
     mc:Ignorable="d"
-    Height="400"
+    Height="500"
     Width="800">
     <Grid>
         <Grid.ColumnDefinitions>

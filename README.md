@@ -41,7 +41,7 @@ To compile the <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/"
 
 <img src="images/UiPresentation.png" width="450">
 
-The app was ported to WPF to make the cloud file manager controls reusable across most popular .NET implementations, so one could easily embed parts of Camelotia into their own applications by simply copying and pasteing the source files. The app is compatible with Windows versions lower than 10. To compile the WPF app, ensure the "Desktop Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Then, open the `Camelotia.Wpf.sln` file in Visual Studio 2019.
+The app was ported to WPF to make the cloud file manager controls reusable across most popular .NET implementations, so one could easily embed parts of Camelotia into their own applications by simply copying and pasting the source files. The app is compatible with Windows versions lower than 10. To compile the WPF app, ensure the "Desktop Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Then, open the `Camelotia.Wpf.sln` file in Visual Studio 2019.
 
 ### Technologies and Tools Used
 
@@ -62,4 +62,5 @@ The app was ported to WPF to make the cloud file manager controls reusable acros
 - <a href="https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit">Material Design</a> XAML controls and styles
 - <a href="https://github.com/MahApps/MahApps.Metro">MahApps Metro</a> XAML controls and styled windows
 - <a href="https://reactiveui.net/docs/handbook/events/">ReactiveUI.Events</a> turning regular events into observables
+- <a href="https://github.com/Fody/Costura">Costura.Fody</a> which embeds references as resources
 - <a href="https://www.jetbrains.com/rider/">JetBrains Rider</a> and <a href="https://visualstudio.microsoft.com/">Microsoft Visual Studio</a> IDEs
