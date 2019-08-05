@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camelotia.Services", "Camelotia.Services\Camelotia.Services.csproj", "{283B8F56-AB9F-4556-AB93-AAC54171841C}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camelotia.Presentation.Xamarin.Droid", "Camelotia.Presentation.Xamarin.Android\Camelotia.Presentation.Xamarin.Droid.csproj", "{24CE3C36-16B9-426D-AA0C-5961ECF8D88C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camelotia.Presentation.Xamarin", "Camelotia.Presentation.Xamarin\Camelotia.Presentation.Xamarin.csproj", "{F019715C-675A-463B-AF36-58585F6FA7DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camelotia.Presentation.Wpf", "Camelotia.Presentation.Wpf\Camelotia.Presentation.Wpf.csproj", "{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -187,6 +189,26 @@ Global
 		{F019715C-675A-463B-AF36-58585F6FA7DF}.Release|x64.Build.0 = Release|Any CPU
 		{F019715C-675A-463B-AF36-58585F6FA7DF}.Release|x86.ActiveCfg = Release|Any CPU
 		{F019715C-675A-463B-AF36-58585F6FA7DF}.Release|x86.Build.0 = Release|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Debug|ARM.Build.0 = Debug|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Debug|x64.Build.0 = Debug|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Debug|x86.Build.0 = Debug|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Release|ARM.ActiveCfg = Release|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Release|ARM.Build.0 = Release|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Release|ARM64.Build.0 = Release|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Release|x64.ActiveCfg = Release|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Release|x64.Build.0 = Release|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Release|x86.ActiveCfg = Release|Any CPU
+		{E9EEEBF4-5F8D-480C-BD0A-9E5801189424}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
