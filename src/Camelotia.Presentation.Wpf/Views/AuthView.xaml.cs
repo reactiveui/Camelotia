@@ -1,10 +1,10 @@
 ﻿using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
+using System;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Reactive.Disposables;
-using System;
 
 namespace Camelotia.Presentation.Wpf.Views
 {
@@ -27,6 +27,11 @@ namespace Camelotia.Presentation.Wpf.Views
                 this.WhenAnyValue(x => x.ViewModel.SupportsHostAuth)
                     .Where(supports => supports)
                     .Subscribe(supports => AuthTabs.SelectedIndex = 1)
+                    .DisposeWith(disposable);
+
+                this.WhenAnyValue(x => x.ViewModel.SupportsOAuth)
+                    .Where(supports => supports)
+                    .Subscribe(supports => AuthTabs.SelectedIndex = 2)
                     .DisposeWith(disposable);
             });
         }

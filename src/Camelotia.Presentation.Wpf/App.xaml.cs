@@ -45,6 +45,7 @@ namespace Camelotia.Presentation.Wpf
                         ["Local Storage"] = id => new LocalProvider(id),
                         ["Yandex Disk"] = id => new YandexDiskProvider(id, login, cache),
                         ["Vkontakte Docs"] = id => new VkDocsProvider(id, cache),
+                        ["Google Drive"] = id => new GoogleDriveProvider(id, cache),
                         ["FTP"] = id => new FtpProvider(id),
                         ["SFTP"] = id => new SftpProvider(id),
                         ["GitHub"] = id => new GitHubProvider(id, cache)

@@ -11,31 +11,21 @@
     <TabControl x:Name="AuthTabs">
         <TabItem>
             <TabItem.Header>
-                <TextBlock FontSize="15" Margin="5" Text="Direct Auth"
-                           Visibility="{Binding SupportsDirectAuth, Converter={StaticResource BooleanToVisibility}}" />
+                <TextBlock FontSize="15" Margin="5" Text="Direct Auth" Visibility="{Binding SupportsDirectAuth, Converter={StaticResource BooleanToVisibility}}" />
             </TabItem.Header>
             <local:DirectAuthView DataContext="{Binding DirectAuth}" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
-                <TextBlock FontSize="15" Margin="5" Text="Host Auth"
-                           Visibility="{Binding SupportsHostAuth, Converter={StaticResource BooleanToVisibility}}" />
+                <TextBlock FontSize="15" Margin="5" Text="Host Auth" Visibility="{Binding SupportsHostAuth, Converter={StaticResource BooleanToVisibility}}" />
             </TabItem.Header>
             <local:HostAuthView DataContext="{Binding HostAuth}" />
         </TabItem>
-        <!--
         <TabItem>
             <TabItem.Header>
-                <TextBlock Text="OAuth" Visibility="{Binding SupportsOAuth, Converter={StaticResource BooleanToVisibility}}" />
+                <TextBlock FontSize="15" Margin="5" Text="Open Auth" Visibility="{Binding SupportsOAuth, Converter={StaticResource BooleanToVisibility}}" />
             </TabItem.Header>
-            <views:OAuthView DataContext="{Binding OAuth}" />
+            <local:OAuthView DataContext="{Binding OAuth}" />
         </TabItem>
-        <TabItem>
-            <TabItem.Header>
-                <TextBlock Text="Host Auth" Visibility="{Binding SupportsHostAuth, Converter={StaticResource BooleanToVisibility}}" />
-            </TabItem.Header>
-            <views:HostAuthView DataContext="{Binding HostAuth}" />
-        </TabItem>
-        -->
     </TabControl>
 </UserControl>
