@@ -32,17 +32,17 @@ cd ./Camelotia && powershell -ExecutionPolicy Unrestricted ./build.ps1 --interac
 
 <a href="https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide">Universal Windows Platform</a> Camelotia app is compatible with Windows 10-based devices, such as PCs, Xbox One and HoloLens. The app can be compiled only on latest Windows 10. Make sure to have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Launch the `Camelotia.Uwp.sln` solution file.
 
+### Compiling Windows Presentation Foundation app
+
+<img src="images/UiPresentation.png" width="450">
+
+The app was ported to WPF to make the cloud file manager controls reusable across most popular .NET implementations, so one could easily embed parts of Camelotia into their own applications by simply copying and pasting the source files. The app is also compatible with Windows versions lower than 10, such as Windows 7 or 8. To compile the WPF app, ensure the "Desktop Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Then, open the `Camelotia.Wpf.sln` file in Visual Studio 2019.
+
 ### Compiling Xamarin Forms app
 
 <img src="images/UiAndroid.png" width="450"> 
 
 To compile the <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/">Xamarin.Forms</a> Android application, install the appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there. Launch the `Camelotia.Xamarin.sln` solution file.
-
-### Compiling Windows Presentation Foundation app
-
-<img src="images/UiPresentation.png" width="450">
-
-The app was ported to WPF to make the cloud file manager controls reusable across most popular .NET implementations, so one could easily embed parts of Camelotia into their own applications by simply copying and pasting the source files. The app is compatible with Windows versions lower than 10. To compile the WPF app, ensure the "Desktop Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Then, open the `Camelotia.Wpf.sln` file in Visual Studio 2019.
 
 ### Technologies and Tools Used
 
