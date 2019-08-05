@@ -8,10 +8,10 @@ File manager for cloud storages. Supports Yandex Disk, Google Drive, VK Document
 
 <img src="images/UiAvalonia.png" width="450">
 
-In order to compile .NET Standard libraries, run tests and run an Avalonia application on Windows, Linux and macOS operating systems make sure to have latest [.NET Core SDK](https://dot.net/) installed. Launch the `Camelotia.Avalonia.sln` file to browse or to edit source files. Camelotia uses [Nuke Build](https://github.com/nuke-build/nuke) to build and test the solution. Execute the following commands to run the build scripts on Linux or MacOS:
+In order to compile .NET Standard libraries, run tests and run the <a href="http://github.com/avaloniaui">Avalonia</a> application on Windows, Linux or MacOS operating system make sure to have latest [.NET Core SDK](https://dot.net/) installed. Launch the `Camelotia.Avalonia.sln` file to browse or to edit source files. Camelotia uses [Nuke Build](https://github.com/nuke-build/nuke) to build and test the solution. Execute the following commands to run the build scripts on Linux or MacOS:
 
 ```sh
-# Linux or MacOS shell. Launches Avalonia GUI after build.
+# Linux or MacOS shell. Launches the Avalonia app after build.
 git clone https://github.com/worldbeater/Camelotia
 cd ./Camelotia && bash ./build.sh --interactive
 ```
@@ -19,8 +19,8 @@ cd ./Camelotia && bash ./build.sh --interactive
 On Windows, execute the following command line:
 
 ```sh
-# Windows command line. Launches Avalonia GUI after build.
-# Use --full option to compile Android and UWP apps as well.
+# Windows command line. Launches the Avalonia app after build.
+# Use the --full option to compile Android, UWP and WPF apps as well.
 git clone https://github.com/worldbeater/Camelotia
 cd ./Camelotia && powershell -ExecutionPolicy Unrestricted ./build.ps1 --interactive
 ```
@@ -29,19 +29,19 @@ cd ./Camelotia && powershell -ExecutionPolicy Unrestricted ./build.ps1 --interac
 
 <img src="images/UiWindows.png" width="450"> 
 
-Universal Windows Platform Camelotia app can be compiled only on latest Windows 10. Make sure to have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Launch the `Camelotia.Uwp.sln` solution file.
+<a href="https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide">Universal Windows Platform</a> Camelotia app is compatible with Windows 10-based devices, such as PCs, Xbox One and HoloLens. The app can be compiled only on latest Windows 10. Make sure to have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Launch the `Camelotia.Uwp.sln` solution file.
 
 ### Compiling Xamarin Forms app
 
-To compile the Xamarin Forms Android application, install the appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there. Launch the `Camelotia.Xamarin.sln` solution file.
-
 <img src="images/UiAndroid.png" width="450"> 
+
+To compile the <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/">Xamarin.Forms</a> Android application, install the appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there. Launch the `Camelotia.Xamarin.sln` solution file.
 
 ### Compiling Windows Presentation Foundation app
 
-The app was ported to WPF to make the cloud file manager controls reusable across most popular .NET implementations, so one could easily embed parts of Camelotia into their own applications. To compile the WPF app, ensure the Desktop Development section is checked in Visual Studio Installer. Then, open the `Camelotia.Wpf.sln` file in Visual Studio 2019.
-
 <img src="images/UiPresentation.png" width="450">
+
+The app was ported to WPF to make the cloud file manager controls reusable across most popular .NET implementations, so one could easily embed parts of Camelotia into their own applications by simply copying and pasteing the source files. The app is compatible with Windows versions lower than 10. To compile the WPF app, ensure the "Desktop Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Then, open the `Camelotia.Wpf.sln` file in Visual Studio 2019.
 
 ### Technologies and Tools Used
 
