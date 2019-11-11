@@ -47,9 +47,12 @@ To compile the <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/"
 ### Technologies and Tools Used
 
 - <a href="https://reactiveui.net/">ReactiveUI</a> modern MVVM framework
-- <a href="https://github.com/reactiveui/Akavache">Akavache</a> persistent key-value store
+- <a href="https://github.com/reactiveui/DynamicData">DynamicData</a> reactive collections
 - <a href="http://github.com/avaloniaui">AvaloniaUI</a> cross-platform XAML-based GUI framework
+- <a href="https://github.com/reactiveui/Akavache">Akavache</a> persistent key-value store
 - <a href="https://github.com/nuke-build/nuke">Nuke</a> build automation system for C#/.NET
+- <a href="https://github.com/xunit/xunit">XUnit</a> unit testing tool for .NET
+- <a href="https://github.com/tonerdo/coverlet">Coverlet</a> code coverage analyzer
 - <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a> mocking library
 - <a href="https://github.com/fluentassertions/fluentassertions">FluentAssertions</a> assertions library
 - <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/">Xamarin.Forms</a> mobile GUI framework

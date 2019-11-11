@@ -16,7 +16,7 @@ using DynamicData.Binding;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public sealed class MainViewModel : ReactiveObject, IMainViewModel, ISupportsActivation
+    public sealed class MainViewModel : ReactiveObject, IMainViewModel, IActivatableViewModel
     {
         private readonly ReadOnlyObservableCollection<IProviderViewModel> _providers;
         private readonly ObservableAsPropertyHelper<bool> _welcomeScreenCollapsed;

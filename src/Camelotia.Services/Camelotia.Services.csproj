@@ -5,14 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DynamicData" Version="6.12.9" />
-    <PackageReference Include="akavache" Version="6.5.20" />
-    <PackageReference Include="FluentFTP" Version="27.0.0" />
-    <PackageReference Include="Google.Apis.Drive.v3" Version="1.40.2.1649" />
-    <PackageReference Include="Octokit" Version="0.32.0" />
+    <PackageReference Include="DynamicData" Version="6.13.21" />
+    <PackageReference Include="akavache" Version="6.9.10" />
+    <PackageReference Include="FluentFTP" Version="28.0.1" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.42.0.1750" />
+    <PackageReference Include="Octokit" Version="0.36.0" />
     <PackageReference Include="ssh.net" Version="2016.1.0" />
-    <PackageReference Include="System.Reactive" Version="4.1.5" />
-    <PackageReference Include="VkNet" Version="1.44.0" />
+    <PackageReference Include="System.Reactive" Version="4.2.0" />
+    <PackageReference Include="VkNet" Version="1.47.0" />
   </ItemGroup>
 
 </Project>
