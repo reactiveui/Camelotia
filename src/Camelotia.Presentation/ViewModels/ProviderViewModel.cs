@@ -20,7 +20,7 @@ namespace Camelotia.Presentation.ViewModels
 {
     public delegate IProviderViewModel ProviderViewModelFactory(IProvider provider, IAuthViewModel auth);
 
-    public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, ISupportsActivation
+    public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
     {
         private readonly ObservableAsPropertyHelper<IEnumerable<IFileViewModel>> _files;
         private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
