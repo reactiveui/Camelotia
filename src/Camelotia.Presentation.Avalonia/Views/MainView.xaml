@@ -50,6 +50,7 @@
                         Margin="0 6 6 12" />
             </Grid>
             <ListBox Grid.Row="2"
+                     Classes="Menu"
                      Padding="0" BorderThickness="0"
                      IsVisible="{Binding IsReady}"
                      SelectedItem="{Binding SelectedProvider, Mode=TwoWay}"
