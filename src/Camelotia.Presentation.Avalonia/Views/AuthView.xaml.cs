@@ -15,7 +15,7 @@ namespace Camelotia.Presentation.Avalonia.Views
         {
             this.WhenActivated(disposables =>
             {
-                var tabs = this.FindControl<TabControl>("AuthTabs");
+                var tabs = this.FindControl<Carousel>("AuthTabs");
                 this.WhenAnyValue(x => x.ViewModel.SupportsDirectAuth)
                     .Where(supports => supports)
                     .Subscribe(supports => tabs.SelectedIndex = 0)

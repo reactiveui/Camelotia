@@ -11,7 +11,7 @@
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="42" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -25,7 +25,7 @@
                 <Button Grid.Column="0"
                         Command="{Binding Back}"
                         HorizontalAlignment="Stretch"
-                        Classes="Rounded"
+                        Classes="Primary"
                         Content="Back" />
                 <TextBlock Grid.Column="1"
                            Text="{Binding CurrentPath}"
@@ -35,7 +35,6 @@
                 <Button Grid.Column="2"
                         Command="{Binding Open}"
                         HorizontalAlignment="Stretch"
-                        Classes="Rounded"
                         Content="Open" />
             </Grid>
             <Border Grid.Row="1" BorderBrush="#f2f2f2" BorderThickness="0 2 0 2">
@@ -102,12 +101,12 @@
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
                         Content="Delete"
-                        Classes="Rounded"
+                        Classes="Primary"
                         HorizontalAlignment="Stretch"
                         Command="{Binding DeleteSelectedFile}" />
                 <Button Grid.Column="1"
                         Content="Rename"
-                        Classes="Rounded"
+                        Classes="Primary"
                         HorizontalAlignment="Stretch"
                         Command="{Binding Rename.Open}"/>
                 <StackPanel Grid.Column="2" Orientation="Horizontal" 
@@ -117,12 +116,12 @@
                 </StackPanel>
                 <Button Grid.Column="3"
                         Content="Upload"
-                        Classes="Rounded"
+                        Classes="Primary"
                         HorizontalAlignment="Stretch"
                         Command="{Binding UploadToCurrentPath}" />
                 <Button Grid.Column="4"
                         Content="Download"
-                        Classes="Rounded"
+                        Classes="Primary"
                         HorizontalAlignment="Stretch"
                         Command="{Binding DownloadSelectedFile}" />
             </Grid>
@@ -136,12 +135,11 @@
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
                         Content="Logout"
-                        Classes="Rounded"
                         HorizontalAlignment="Stretch"
                         Command="{Binding Logout}" />
                 <Button Grid.Column="1"
                         Content="Unselect"
-                        Classes="Rounded"
+                        Classes="Primary"
                         HorizontalAlignment="Stretch"
                         Command="{Binding UnselectFile}" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal" 
@@ -152,12 +150,11 @@
                 </StackPanel>
                 <Button Grid.Column="3" 
                         Content="New folder" 
-                        Classes="Rounded" 
+                        Classes="Primary"
                         HorizontalAlignment="Stretch" 
                         Command="{Binding Folder.Open}"/>
                 <Button Grid.Column="4"
                         Content="Refresh"
-                        Classes="Rounded"
                         HorizontalAlignment="Stretch"
                         Command="{Binding Refresh}" />
             </Grid>
