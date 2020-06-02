@@ -9,6 +9,7 @@
         </Style>
         <Style Selector="ListBox.Menu > ListBoxItem">
             <Setter Property="BorderBrush" Value="#33f0f0f0" />
+            <Setter Property="Padding" Value="0 5" />
         </Style>
         <Style Selector="ListBox.Menu > ListBoxItem:selected /template/ ContentPresenter">
             <Setter Property="BorderBrush" Value="#77f0f0f0" />

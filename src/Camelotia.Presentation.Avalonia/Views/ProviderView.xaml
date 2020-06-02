@@ -40,6 +40,7 @@
             <Border Grid.Row="1" BorderBrush="#f2f2f2" BorderThickness="0 2 0 2">
                 <Grid>
                     <ListBox Padding="0"
+                             Background="#ffffff"
                              BorderThickness="0"
                              SelectionMode="Toggle"
                              Items="{Binding Files}"
