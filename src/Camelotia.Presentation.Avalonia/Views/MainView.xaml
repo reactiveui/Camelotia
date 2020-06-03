@@ -6,17 +6,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         x:Class="Camelotia.Presentation.Avalonia.Views.MainView"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        mc:Ignorable="d"
-        Background="#f0f0f0"
-        FontFamily="Ubuntu"
-        MinHeight="590"
-        MinWidth="750">
+        mc:Ignorable="d" FontFamily="Ubuntu" MinHeight="590" MinWidth="750">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0" Background="{DynamicResource ThemeAccentBrush}">
+        <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -25,7 +21,6 @@
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0"
                        Text="Camelotia"
-                       Foreground="#ffffff"
                        FontSize="17"
                        Margin="12" />
             <Grid Grid.Row="1">
@@ -33,24 +28,19 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <DropDown Grid.Column="0" 
+                <ComboBox Grid.Column="0" 
                           Margin="12 6 12 12"
-                          Foreground="#002171"
-                          BorderBrush="#ffffff"
-                          Background="#ffffff"
                           Items="{Binding SupportedTypes, Mode=OneWay}"
                           SelectedItem="{Binding SelectedSupportedType, Mode=TwoWay}" />
                 <Button Grid.Column="1"
                         BorderThickness="0"
                         HorizontalAlignment="Stretch"
                         Command="{Binding Add}"
-                        Background="Transparent"
-                        Foreground="#ffffff"
                         Content="Add"
+                        Padding="20 0"
                         Margin="0 6 6 12" />
             </Grid>
             <ListBox Grid.Row="2"
-                     Classes="Menu"
                      Padding="0" BorderThickness="0"
                      IsVisible="{Binding IsReady}"
                      SelectedItem="{Binding SelectedProvider, Mode=TwoWay}"
@@ -61,15 +51,13 @@
                         <Grid>
                             <StackPanel Margin="10">
                                 <TextBlock Text="{Binding Name}"
-                                           Foreground="White"
                                            FontSize="15" />
                                 <StackPanel Orientation="Horizontal" Margin="0 5">
-                                    <TextBlock Text="Size: " Foreground="#eeeeee" />
-                                    <TextBlock Text="{Binding Size}" Foreground="#eeeeee" />
+                                    <TextBlock Text="Size: " />
+                                    <TextBlock Text="{Binding Size}" />
                                 </StackPanel>
                                 <TextBlock Text="{Binding Description}"
-                                           TextWrapping="Wrap"
-                                           Foreground="#eeeeee" />
+                                           TextWrapping="Wrap" />
                             </StackPanel>
                         </Grid>
                     </DataTemplate>
@@ -84,8 +72,6 @@
                         BorderThickness="0"
                         HorizontalAlignment="Stretch"
                         Command="{Binding Remove}"
-                        Background="Transparent"
-                        Foreground="#ffffff"
                         Content="Remove"
                         Margin="6" />
             </Grid>
@@ -108,7 +94,7 @@
                 </Carousel.DataTemplates>
             </Carousel>
             <Grid IsVisible="{Binding WelcomeScreenVisible, Mode=OneWay}"
-                  Background="#f0f0f0">
+                  Background="{DynamicResource ThemeCardBrush}">
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center">
                     <TextBlock Text="Select existing provider or add a new one!" 

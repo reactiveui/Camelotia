@@ -7,7 +7,7 @@
              xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
              x:Class="Camelotia.Presentation.Avalonia.Views.ProviderView"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             mc:Ignorable="d" Background="#f7f7f7">
+             mc:Ignorable="d">
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
@@ -16,7 +16,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
+            <Grid Grid.Row="0" Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="4*" />
@@ -35,12 +35,15 @@
                 <Button Grid.Column="2"
                         Command="{Binding Open}"
                         HorizontalAlignment="Stretch"
+                        Classes="Primary"
                         Content="Open" />
             </Grid>
-            <Border Grid.Row="1" BorderBrush="#f2f2f2" BorderThickness="0 2 0 2">
+            <Border Grid.Row="1" 
+                    BorderThickness="0 2 0 2"
+                    BorderBrush="{DynamicResource ThemeBorderLowBrush}">
                 <Grid>
                     <ListBox Padding="0"
-                             Background="#ffffff"
+                             Background="{DynamicResource ThemeCardBrush}"
                              BorderThickness="0"
                              SelectionMode="Toggle"
                              Items="{Binding Files}"
@@ -53,46 +56,47 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Grid IsVisible="{Binding HasErrors}" Background="#f7f7f7">
+                    <Grid IsVisible="{Binding HasErrors}" 
+                          Background="{DynamicResource ThemeCardBrush}">
                         <StackPanel VerticalAlignment="Center">
                             <Ellipse Width="10" Height="10"
                                      HorizontalAlignment="Center"
                                      Fill="#ff0000"
                                      Margin="10" />
                             <TextBlock HorizontalAlignment="Center"
-                                       Text="Can't perform the operation, an error has occured."
-                                       Foreground="#000000" />
+                                       Text="Can't perform the operation, an error has occured."/>
                         </StackPanel>
                     </Grid>
-                    <Grid IsVisible="{Binding IsCurrentPathEmpty}" Background="#f7f7f7">
+                    <Grid IsVisible="{Binding IsCurrentPathEmpty}" Background="{DynamicResource ThemeCardBrush}">
                         <StackPanel VerticalAlignment="Center">
                             <Ellipse Width="10" Height="10"
                                      HorizontalAlignment="Center"
                                      Fill="#ff0000"
                                      Margin="10" />
                             <TextBlock HorizontalAlignment="Center"
-                                       Text="Whoops, no files here!"
-                                       Foreground="#000000" />
+                                       Text="Whoops, no files here!" />
                         </StackPanel>
                     </Grid>
-                    <Grid IsVisible="{Binding IsLoading}" Background="#f7f7f7">
+                    <Grid IsVisible="{Binding IsLoading}" 
+                          Background="{DynamicResource ThemeCardBrush}">
                         <StackPanel VerticalAlignment="Center">
                             <ProgressBar HorizontalAlignment="Stretch"
                                          IsIndeterminate="{Binding IsLoading}" />
                             <TextBlock HorizontalAlignment="Center"
-                                       Text="Please, wait..."
-                                       Foreground="#000000" />
+                                       Text="Please, wait..." />
                         </StackPanel>
                     </Grid>
-                    <Grid IsVisible="{Binding Folder.IsVisible}" Background="#f7f7f7">
+                    <Grid IsVisible="{Binding Folder.IsVisible}" 
+                          Background="{DynamicResource ThemeCardBrush}">
                         <views:CreateFolderView DataContext="{Binding Folder}" />
                     </Grid>
-                    <Grid IsVisible="{Binding Rename.IsVisible}" Background="#f7f7f7">
+                    <Grid IsVisible="{Binding Rename.IsVisible}" 
+                          Background="{DynamicResource ThemeCardBrush}">
                         <views:RenameFileView DataContext="{Binding Rename}" />
                     </Grid>
                 </Grid>
             </Border>
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="2" Margin="5 5 5 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -136,6 +140,7 @@
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
                         Content="Logout"
+                        Classes="Primary"
                         HorizontalAlignment="Stretch"
                         Command="{Binding Logout}" />
                 <Button Grid.Column="1"
@@ -145,12 +150,11 @@
                         Command="{Binding UnselectFile}" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal" 
                             Margin="5" VerticalAlignment="Center">
-                    <TextBlock Text="Refreshing in: " Foreground="#aaaaaa" />
-                    <TextBlock Text="{Binding RefreshingIn}"
-                               Foreground="#888888" />
+                    <TextBlock Text="Refreshing in: " />
+                    <TextBlock Text="{Binding RefreshingIn}" />
                 </StackPanel>
                 <Button Grid.Column="3" 
-                        Content="New folder" 
+                        Content="Create" 
                         Classes="Primary"
                         HorizontalAlignment="Stretch" 
                         Command="{Binding Folder.Open}"/>

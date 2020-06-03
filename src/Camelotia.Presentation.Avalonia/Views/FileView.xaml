@@ -18,7 +18,7 @@
             <MenuItem Header="Unselect" Command="{Binding Provider.UnselectFile}" />
         </ContextMenu>
     </UserControl.ContextMenu>
-    <Grid Margin="6">
+    <Grid Margin="10 0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="1*" />
@@ -27,20 +27,22 @@
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Column="0"
                    Text="{Binding Name}"
+                   VerticalAlignment="Center"
                    TextWrapping="Wrap"
                    FontSize="14" />
-        <TextBlock Grid.Column="1"
-                   Text="Directory"
-                   IsVisible="{Binding IsFolder}"
-                   Foreground="#777777"
-                   FontSize="12" />
-        <TextBlock Grid.Column="2"
-                   VerticalAlignment="Center"
-                   Foreground="#777777"
-                   Text="{Binding Size}" />
-        <TextBlock Grid.Column="3"
-                   VerticalAlignment="Center"
-                   Foreground="#777777"
-                   Text="{Binding Modified}" />
+        <TextBox Grid.Column="1"
+                 Classes="Badge"
+                 Text="Directory"
+                 IsVisible="{Binding IsFolder}"
+                 FontSize="12" />
+        <TextBox Grid.Column="2"
+                 Classes="Badge"
+                 VerticalAlignment="Center"
+                 IsVisible="{Binding IsFile}"
+                 Text="{Binding Size}" />
+        <TextBox Grid.Column="3"
+                 Classes="PrimaryBadge"
+                 VerticalAlignment="Center"
+                 Text="{Binding Modified}" />
     </Grid>
 </UserControl>

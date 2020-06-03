@@ -6,7 +6,7 @@
              xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
              x:Class="Camelotia.Presentation.Avalonia.Views.AuthView"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             mc:Ignorable="d" Background="#ffffff">
+             mc:Ignorable="d">
     <Carousel Name="AuthTabs">
         <Carousel.PageTransition>
             <PageSlide Duration="0.25" Orientation="Vertical" />
