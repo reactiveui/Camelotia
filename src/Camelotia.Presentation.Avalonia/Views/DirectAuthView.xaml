@@ -10,8 +10,7 @@
                 HorizontalAlignment="Center"
                 Width="300">
         <TextBlock Text="Password Auth"
-                   Foreground="#002171"
-                   FontSize="16"
+                   Classes="Heading"
                    Margin="0 10" />
         <ProgressBar HorizontalAlignment="Stretch"
                      IsIndeterminate="{Binding IsBusy}"
@@ -27,14 +26,14 @@
             </StackPanel>
         </StackPanel>
         <TextBlock Text="Please, enter your user name:" Margin="0 5" />
-        <TextBox Text="{Binding Username, Mode=TwoWay}" />
+        <TextBox Watermark="User name..." Text="{Binding Username, Mode=TwoWay}" />
         <TextBlock Text="Please, enter your password:" Margin="0 5" />
         <TextBox Text="{Binding Password, Mode=TwoWay}"
+                 Watermark="Password..."
                  PasswordChar="*" />
         <Button Content="Login"
                 HorizontalAlignment="Stretch"
                 Command="{Binding Login}"
-                Classes="Rounded"
                 Margin="0 10" />
     </StackPanel>
 </UserControl>

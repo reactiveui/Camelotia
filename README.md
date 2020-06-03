@@ -49,6 +49,7 @@ To compile the <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/"
 - <a href="https://reactiveui.net/">ReactiveUI</a> modern MVVM framework
 - <a href="https://github.com/reactiveui/DynamicData">DynamicData</a> reactive collections
 - <a href="http://github.com/avaloniaui">AvaloniaUI</a> cross-platform XAML-based GUI framework
+- <a href="http://github.com/worldbeater/citrus.avalonia">Citrus</a> bright and modern AvaloniaUI theme
 - <a href="https://github.com/reactiveui/Akavache">Akavache</a> persistent key-value store
 - <a href="https://github.com/nuke-build/nuke">Nuke</a> build automation system for C#/.NET
 - <a href="https://github.com/xunit/xunit">XUnit</a> unit testing tool for .NET

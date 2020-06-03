@@ -16,7 +16,7 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0" Background="#002171">
+        <Grid Grid.Column="0" Background="{DynamicResource ThemeAccentBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -50,6 +50,7 @@
                         Margin="0 6 6 12" />
             </Grid>
             <ListBox Grid.Row="2"
+                     Classes="Menu"
                      Padding="0" BorderThickness="0"
                      IsVisible="{Binding IsReady}"
                      SelectedItem="{Binding SelectedProvider, Mode=TwoWay}"
@@ -80,14 +81,6 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
-                        BorderThickness="0"
-                        HorizontalAlignment="Stretch"
-                        Command="{Binding Refresh}"
-                        Background="Transparent"
-                        Foreground="#ffffff"
-                        Content="Refresh"
-                        Margin="6" />
-                <Button Grid.Column="1"
                         BorderThickness="0"
                         HorizontalAlignment="Stretch"
                         Command="{Binding Remove}"

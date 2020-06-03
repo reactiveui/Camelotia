@@ -10,8 +10,7 @@
                 HorizontalAlignment="Center"
                 Width="300">
         <TextBlock Text="OAuth"
-                   Foreground="#002171"
-                   FontSize="16"
+                   Classes="Heading"
                    Margin="0 10" />
         <ProgressBar HorizontalAlignment="Stretch"
                      IsIndeterminate="{Binding IsBusy}"
@@ -29,7 +28,6 @@
         <Button Content="Login"
                 HorizontalAlignment="Stretch"
                 Command="{Binding Login}"
-                Classes="Rounded"
                 Margin="0 10" />
     </StackPanel>
 </UserControl>
