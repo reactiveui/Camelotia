@@ -5,9 +5,6 @@ jobs:
   variables:
     buildConfiguration: 'Release'
   steps:
-  - task: DotNetCoreInstaller@0
-    inputs:
-      version: '2.2.203'
   - script: cd $(Build.SourcesDirectory) && bash ./build.sh
     displayName: 'Linux Build and Tests'
   - task: PublishTestResults@2
