@@ -130,7 +130,7 @@
                         HorizontalAlignment="Stretch"
                         Command="{Binding DownloadSelectedFile}" />
             </Grid>
-            <Grid Grid.Row="3">
+            <Grid Grid.Row="3" Margin="5 0 5 5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />

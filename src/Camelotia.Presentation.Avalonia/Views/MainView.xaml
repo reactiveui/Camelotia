@@ -6,7 +6,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         x:Class="Camelotia.Presentation.Avalonia.Views.MainView"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        mc:Ignorable="d" FontFamily="Ubuntu" MinHeight="590" MinWidth="750">
+        mc:Ignorable="d" FontFamily="Ubuntu" 
+        MinHeight="590" MinWidth="850"
+        Height="590" Width="850">
+    <Window.Styles>
+        <!-- The first StyleInclude here will be replaced at runtime, 
+             see Services/AvaloniaStyleManager.cs for more info. Other
+             styles will override any styles defined before them. -->
+        <StyleInclude Source="avares://Citrus.Avalonia/Sea.xaml"/>
+        <Style Selector="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="10" />
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+    </Window.Styles>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -63,17 +79,20 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Grid Grid.Row="3">
+            <Grid Grid.Row="3" Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
-                        BorderThickness="0"
                         HorizontalAlignment="Stretch"
                         Command="{Binding Remove}"
-                        Content="Remove"
-                        Margin="6" />
+                        Content="Remove" />
+                <Button Grid.Column="1"
+                        Classes="Primary"
+                        Name="SwitchThemeButton"
+                        HorizontalAlignment="Stretch"
+                        Content="Switch Theme" />
             </Grid>
             <ProgressBar Grid.Row="2"
                          Orientation="Vertical"

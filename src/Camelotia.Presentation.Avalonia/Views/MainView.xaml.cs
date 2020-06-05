@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Interfaces;
@@ -7,6 +8,8 @@ namespace Camelotia.Presentation.Avalonia.Views
 {
     public sealed class MainView : ReactiveWindow<IMainViewModel>
     {
+        public Button SwitchThemeButton => this.FindControl<Button>("SwitchThemeButton");
+        
         public MainView()
         {
             this.WhenActivated(disposables => { });

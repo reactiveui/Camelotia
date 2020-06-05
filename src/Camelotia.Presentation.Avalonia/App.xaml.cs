@@ -11,6 +11,7 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Reactive.Concurrency;
+using Avalonia.Controls;
 
 namespace Camelotia.Presentation.Avalonia
 {
@@ -31,9 +32,11 @@ namespace Camelotia.Presentation.Avalonia
             var cache = Akavache.BlobCache.UserAccount;
 
             var window = new MainView();
-            var login = new AvaloniaYandexAuthenticator();
             var files = new AvaloniaFileManager(window);
+            var styles = new AvaloniaStyleManager(window);
+            window.SwitchThemeButton.Click += (sender, args) => styles.UseNextTheme(); 
 
+            var login = new AvaloniaYandexAuthenticator();
             var context = new MainViewModel(
                 (provider, auth) => new ProviderViewModel(
                     model => new CreateFolderViewModel(model, provider, current, main),
