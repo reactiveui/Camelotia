@@ -1,11 +1,9 @@
 using System.IO;
-using System.Reactive.Concurrency;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
 using Microsoft.Reactive.Testing;
-using ReactiveUI.Testing;
 using NSubstitute;
 using Xunit;
 
@@ -16,61 +14,62 @@ namespace Camelotia.Presentation.Tests
         private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
         private readonly IProviderViewModel _providerViewModel = Substitute.For<IProviderViewModel>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly TestScheduler _scheduler = new TestScheduler();
 
         [Fact]
-        public void ShouldProperlyInitializeCreateFolderViewModel() => new TestScheduler().With(scheduler =>
+        public void ShouldProperlyInitializeCreateFolderViewModel()
         {
-            var model = BuildCreateFolderViewModel(scheduler);
+            var model = BuildCreateFolderViewModel();
             model.Name.Should().BeNullOrEmpty();
             model.Path.Should().BeNullOrEmpty();
-            
+
             model.ErrorMessage.Should().BeNullOrEmpty();
             model.HasErrors.Should().BeFalse();
             model.IsVisible.Should().BeFalse();
-        });
+        }
 
         [Fact]
-        public void ShouldChangeVisibility() => new TestScheduler().With(scheduler =>
+        public void ShouldChangeVisibility()
         {
             _providerViewModel.CanInteract.Returns(true);
             _providerViewModel.CurrentPath.Returns(Separator);
             _provider.CanCreateFolder.Returns(true);
             
-            var model = BuildCreateFolderViewModel(scheduler);
-            scheduler.AdvanceBy(2);
+            var model = BuildCreateFolderViewModel();
+            _scheduler.AdvanceBy(2);
             
             model.Open.CanExecute(null).Should().BeTrue();
             model.Close.CanExecute(null).Should().BeFalse();
             model.IsVisible.Should().BeFalse();
             
             model.Open.Execute(null);
-            scheduler.AdvanceBy(2);
+            _scheduler.AdvanceBy(2);
             model.Open.CanExecute(null).Should().BeFalse();
             model.Close.CanExecute(null).Should().BeTrue();
             model.IsVisible.Should().BeTrue();
 
             model.Close.Execute(null);
-            scheduler.AdvanceBy(2);
+            _scheduler.AdvanceBy(2);
             model.Open.CanExecute(null).Should().BeTrue();
             model.Close.CanExecute(null).Should().BeFalse();
             model.IsVisible.Should().BeFalse();
-        });
+        }
 
         [Fact]
-        public void ShouldCreateFolderSuccessfullyAndCloseViewModel() => new TestScheduler().With(scheduler =>
+        public void ShouldCreateFolderSuccessfullyAndCloseViewModel()
         {
             _providerViewModel.CanInteract.Returns(true);
             _providerViewModel.CurrentPath.Returns(Separator);
             _provider.CanCreateFolder.Returns(true);
 
-            var model = BuildCreateFolderViewModel(scheduler);
-            scheduler.AdvanceBy(2);
+            var model = BuildCreateFolderViewModel();
+            _scheduler.AdvanceBy(2);
             
             model.IsVisible.Should().BeFalse();
             model.Close.CanExecute(null).Should().BeFalse();
             model.Open.CanExecute(null).Should().BeTrue();
             model.Open.Execute(null);
-            scheduler.AdvanceBy(3);
+            _scheduler.AdvanceBy(3);
 
             model.IsVisible.Should().BeTrue();
             model.Create.CanExecute(null).Should().BeFalse();
@@ -84,11 +83,11 @@ namespace Camelotia.Presentation.Tests
             model.Name = "Foo";
             model.Create.CanExecute(null).Should().BeTrue();
             model.Create.Execute(null);
-            scheduler.AdvanceBy(2);
+            _scheduler.AdvanceBy(2);
             
             model.IsLoading.Should().BeTrue();
             model.Create.CanExecute(null).Should().BeFalse();
-            scheduler.AdvanceBy(3);
+            _scheduler.AdvanceBy(3);
             
             model.IsLoading.Should().BeFalse();
             model.Create.CanExecute(null).Should().BeFalse();
@@ -98,11 +97,11 @@ namespace Camelotia.Presentation.Tests
             
             model.Close.CanExecute(null).Should().BeFalse();
             model.Open.CanExecute(null).Should().BeTrue();
-        });
+        }
 
-        private CreateFolderViewModel BuildCreateFolderViewModel(IScheduler scheduler)
+        private CreateFolderViewModel BuildCreateFolderViewModel()
         {
-            return new CreateFolderViewModel(_providerViewModel, _provider, scheduler, scheduler);
+            return new CreateFolderViewModel(_providerViewModel, _provider, _scheduler, _scheduler);
         }
     }
 }

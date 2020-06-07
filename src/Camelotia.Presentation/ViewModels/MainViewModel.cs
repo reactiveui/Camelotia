@@ -44,7 +44,7 @@ namespace Camelotia.Presentation.ViewModels
             var providers = storage.Read();
             providers.Transform(x => providerFactory(x, authFactory(x)))
                 .Sort(SortExpressionComparer<IProviderViewModel>.Descending(x => x.Created))
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(main)
                 .StartWithEmpty()
                 .Bind(out _providers)
                 .Subscribe();
@@ -60,7 +60,7 @@ namespace Camelotia.Presentation.ViewModels
                 .ToProperty(this, x => x.IsReady, scheduler: current);
 
             providers.Where(changes => changes.Any())
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(main)
                 .OnItemAdded(x => SelectedProvider = Providers.FirstOrDefault())
                 .OnItemRemoved(x => SelectedProvider = null)
                 .Subscribe();

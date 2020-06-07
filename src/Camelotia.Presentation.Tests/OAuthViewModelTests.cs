@@ -1,11 +1,9 @@
 using System;
-using System.Reactive.Concurrency;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
 using Microsoft.Reactive.Testing;
 using NSubstitute;
-using ReactiveUI.Testing;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
@@ -13,43 +11,44 @@ namespace Camelotia.Presentation.Tests
     public sealed class OAuthViewModelTests
     {
         private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly TestScheduler _scheduler = new TestScheduler();
 
         [Fact]
-        public void ShouldBeBusyWhenLoggingIn() => new TestScheduler().With(scheduler =>
+        public void ShouldBeBusyWhenLoggingIn() 
         {
-            var model = BuildOAuthViewModel(scheduler);
+            var model = BuildOAuthViewModel();
             model.IsBusy.Should().BeFalse();
             model.Login.CanExecute(null).Should().BeTrue();
             model.Login.Execute(null);
             
-            scheduler.AdvanceBy(2);    
+            _scheduler.AdvanceBy(2);    
             model.IsBusy.Should().BeTrue();
             
-            scheduler.AdvanceBy(2);
+            _scheduler.AdvanceBy(2);
             model.IsBusy.Should().BeFalse();
-        });
+        }
 
         [Fact]
-        public void HasErrorsShouldTriggerWhenProviderBreaks() => new TestScheduler().With(scheduler =>
+        public void HasErrorsShouldTriggerWhenProviderBreaks() 
         {
             _provider.OAuth().Returns(x => throw new Exception("example"));
             
-            var model = BuildOAuthViewModel(scheduler);    
+            var model = BuildOAuthViewModel();    
             model.ErrorMessage.Should().BeNullOrEmpty();
             model.HasErrors.Should().BeFalse();
             
             model.Login.CanExecute(null).Should().BeTrue();
             model.Login.Execute(null);
-            scheduler.AdvanceBy(2);
+            _scheduler.AdvanceBy(2);
 
             model.HasErrors.Should().BeTrue();
             model.ErrorMessage.Should().NotBeNullOrEmpty();
             model.ErrorMessage.Should().Be("example");
-        });
+        }
 
-        private OAuthViewModel BuildOAuthViewModel(IScheduler scheduler)
+        private OAuthViewModel BuildOAuthViewModel()
         {
-            return new OAuthViewModel(_provider, scheduler, scheduler);
+            return new OAuthViewModel(_provider, _scheduler, _scheduler);
         }
     }
 }

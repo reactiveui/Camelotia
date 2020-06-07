@@ -24,14 +24,14 @@ namespace Camelotia.Presentation.Tests
         {
             var provider = new ProviderStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
-                [typeof(LocalProvider).Name] = id => new LocalProvider(id),
-                [typeof(VkDocsProvider).Name] = id => new VkDocsProvider(id, _blobCache),
-                [typeof(YandexDiskProvider).Name] = id => new YandexDiskProvider(id, _authenticator, _blobCache),
+                [nameof(LocalProvider)] = id => new LocalProvider(id),
+                [nameof(VkDocsProvider)] = id => new VkDocsProvider(id, _blobCache),
+                [nameof(YandexDiskProvider)] = id => new YandexDiskProvider(id, _authenticator, _blobCache),
             }, _blobCache);
 
-            await provider.Add(typeof(LocalProvider).Name);
-            await provider.Add(typeof(VkDocsProvider).Name);
-            await provider.Add(typeof(YandexDiskProvider).Name);
+            await provider.Add(nameof(LocalProvider));
+            await provider.Add(nameof(VkDocsProvider));
+            await provider.Add(nameof(YandexDiskProvider));
             var providers = provider.Read().AsAggregator();
             
             Assert.Equal(3, providers.Data.Count);
@@ -45,10 +45,10 @@ namespace Camelotia.Presentation.Tests
         {
             var provider = new ProviderStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
-                [typeof(LocalProvider).Name] = id => new LocalProvider(id),
+                [nameof(LocalProvider)] = id => new LocalProvider(id),
             }, _blobCache);
             
-            await provider.Add(typeof(LocalProvider).Name);
+            await provider.Add(nameof(LocalProvider));
             var providers = provider.Read().AsAggregator();
 
             Assert.Equal(1, providers.Data.Count);
@@ -62,10 +62,10 @@ namespace Camelotia.Presentation.Tests
         {
             var provider = new ProviderStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
-                [typeof(LocalProvider).Name] = id => new LocalProvider(id),
+                [nameof(LocalProvider)] = id => new LocalProvider(id),
             }, _blobCache);
             
-            await provider.Add(typeof(LocalProvider).Name);
+            await provider.Add(nameof(LocalProvider));
             var providers = provider.Read().AsAggregator();
             Assert.Equal(1, providers.Data.Count);
 
@@ -83,13 +83,13 @@ namespace Camelotia.Presentation.Tests
                 {
                     Id = identity,
                     Token = "12345",
-                    Type = typeof(LocalProvider).Name
+                    Type = nameof(LocalProvider)
                 }
             }));
             
             var provider = new ProviderStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
-                [typeof(LocalProvider).Name] = id => new LocalProvider(id),
+                [nameof(LocalProvider)] = id => new LocalProvider(id),
             }, _blobCache);
 
             await provider.Refresh();
