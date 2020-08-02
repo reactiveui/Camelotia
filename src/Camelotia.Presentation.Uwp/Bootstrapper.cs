@@ -16,9 +16,6 @@ namespace Camelotia.Presentation.Uwp
     {
         public static IMainViewModel BuildMainViewModel()
         {
-            var current = CurrentThreadScheduler.Instance;
-            var main = RxApp.MainThreadScheduler;
-
             Akavache.BlobCache.ApplicationName = "Camelotia";
             var cache = Akavache.BlobCache.UserAccount;
             var login = new UniversalWindowsYandexAuthenticator();
@@ -26,18 +23,18 @@ namespace Camelotia.Presentation.Uwp
 
             return new MainViewModel(
                 (provider, auth) => new ProviderViewModel(
-                    model => new CreateFolderViewModel(model, provider, current, main),
-                    model => new RenameFileViewModel(model, provider, current, main),
+                    model => new CreateFolderViewModel(model, provider),
+                    model => new RenameFileViewModel(model, provider),
                     (file, model) => new FileViewModel(model, file),
-                    auth, files, provider, current, main
+                    auth, files, provider
                 ),
                 provider => new AuthViewModel(
-                    new DirectAuthViewModel(provider, current, main),
-                    new HostAuthViewModel(provider, current, main),
-                    new OAuthViewModel(provider, current, main),
-                    provider, current, main
+                    new DirectAuthViewModel(provider),
+                    new HostAuthViewModel(provider),
+                    new OAuthViewModel(provider),
+                    provider
                 ),
-                new ProviderStorage(
+                new AkavacheStorage(
                     new Dictionary<string, Func<ProviderModel, IProvider>>
                     {
                         ["Yandex Disk"] = id => new YandexDiskProvider(id, login, cache),
@@ -47,8 +44,7 @@ namespace Camelotia.Presentation.Uwp
                         ["GitHub"] = id => new GitHubProvider(id, cache)
                     },
                     cache
-                ),
-                current, main
+                )
             );
         }
     }

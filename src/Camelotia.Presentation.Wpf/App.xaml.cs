@@ -18,9 +18,6 @@ namespace Camelotia.Presentation.Wpf
 
         private void OnApplicationStartup(object sender, StartupEventArgs e)
         {
-            var current = CurrentThreadScheduler.Instance;
-            var main = RxApp.MainThreadScheduler;
-
             Akavache.BlobCache.ApplicationName = "Camelotia";
             var cache = Akavache.BlobCache.UserAccount;
             var login = new WindowsPresentationYandexAuthenticator();
@@ -28,18 +25,18 @@ namespace Camelotia.Presentation.Wpf
 
             var mainViewModel = new MainViewModel(
                 (provider, auth) => new ProviderViewModel(
-                    model => new CreateFolderViewModel(model, provider, current, main),
-                    model => new RenameFileViewModel(model, provider, current, main),
+                    model => new CreateFolderViewModel(model, provider),
+                    model => new RenameFileViewModel(model, provider),
                     (file, model) => new FileViewModel(model, file),
-                    auth, files, provider, current, main
+                    auth, files, provider
                 ),
                 provider => new AuthViewModel(
-                    new DirectAuthViewModel(provider, current, main),
-                    new HostAuthViewModel(provider, current, main),
-                    new OAuthViewModel(provider, current, main),
-                    provider, current, main
+                    new DirectAuthViewModel(provider),
+                    new HostAuthViewModel(provider),
+                    new OAuthViewModel(provider),
+                    provider
                 ),
-                new ProviderStorage(
+                new AkavacheStorage(
                     new Dictionary<string, Func<ProviderModel, IProvider>>
                     {
                         ["Local Storage"] = id => new LocalProvider(id),
@@ -51,8 +48,7 @@ namespace Camelotia.Presentation.Wpf
                         ["GitHub"] = id => new GitHubProvider(id, cache)
                     },
                     cache
-                ),
-                current, main
+                )
             );
 
             var window = new MainView { DataContext = mainViewModel };
