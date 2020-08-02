@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camelotia.Presentation", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camelotia.Presentation.Avalonia", "Camelotia.Presentation.Avalonia\Camelotia.Presentation.Avalonia.csproj", "{557CB17D-8989-48E5-82FD-3C2106EE4BAE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camelotia.Presentation.Tests", "Camelotia.Presentation.Tests\Camelotia.Presentation.Tests.csproj", "{AE41666B-41D1-4044-9752-7CD4460C1A90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camelotia.Tests", "Camelotia.Tests\Camelotia.Tests.csproj", "{AE41666B-41D1-4044-9752-7CD4460C1A90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

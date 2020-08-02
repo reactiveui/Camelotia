@@ -1,35 +1,32 @@
-﻿using System;
-using System.IO;
+using System;
 using Akavache;
-using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Camelotia.Services.Providers;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests.Services
+namespace Camelotia.Tests.Services
 {
-    public sealed class YandexFileSystemProviderTests
+    public sealed class GoogleDriveProviderTests
     {
-        private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
         private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
         private readonly ProviderModel _model = new ProviderModel
         {
             Id = Guid.NewGuid(),
-            Type = "Yandex",
-            Created = DateTime.Now
+            Created = DateTime.Now,
+            Type = "Google Drive"
         };
 
         [Fact]
         public void VerifyDefaultPropertyValues()
         {
-            var provider = new YandexDiskProvider(_model, _authenticator, _blobCache);
-            provider.InitialPath.Should().Be(Path.DirectorySeparatorChar.ToString());
+            var provider = new GoogleDriveProvider(_model, _blobCache);
+            provider.InitialPath.Should().Be("/");
 
-            provider.CanCreateFolder.Should().BeTrue();
+            provider.CanCreateFolder.Should().BeFalse();
             provider.Created.Should().Be(_model.Created);
-            provider.Name.Should().Be("Yandex");
+            provider.Name.Should().Be("Google Drive");
             provider.Id.Should().Be(_model.Id);
 
             provider.SupportsDirectAuth.Should().BeFalse();

@@ -7,7 +7,7 @@ using NSubstitute;
 using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests.ViewModels
+namespace Camelotia.Tests.Presentation
 {
     public sealed class RenameFileViewModelTests
     {

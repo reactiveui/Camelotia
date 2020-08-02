@@ -12,7 +12,7 @@ using DynamicData.Tests;
 using NSubstitute;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests.Services
+namespace Camelotia.Tests.Services
 {
     public sealed class ProviderStorageTests
     {

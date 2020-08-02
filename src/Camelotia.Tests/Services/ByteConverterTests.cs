@@ -2,7 +2,7 @@ using Camelotia.Services.Extensions;
 using FluentAssertions;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests.Services
+namespace Camelotia.Tests.Services
 {
     public sealed class ByteConverterTests
     {
