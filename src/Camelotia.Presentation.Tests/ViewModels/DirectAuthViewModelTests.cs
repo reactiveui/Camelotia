@@ -8,17 +8,11 @@ using NSubstitute;
 using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Presentation.Tests.ViewModels
 {
     public sealed class DirectAuthViewModelTests
     {
         private readonly IProvider _provider = Substitute.For<IProvider>();
-        
-        public DirectAuthViewModelTests()
-        {
-            RxApp.MainThreadScheduler = Scheduler.Immediate;
-            RxApp.TaskpoolScheduler = Scheduler.Immediate;
-        }
 
         [Fact]
         public void LoginCommandShouldStayDisabledUntilInputIsValid()
@@ -33,10 +27,8 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void HasErrorsShouldTriggerWhenProviderBreaks()
         {
-            _provider
-                .DirectAuth("hello", "world")
-                .Returns(x => throw new Exception("example"));
-                
+            _provider.DirectAuth("hello", "world").Returns(x => throw new Exception("example"));
+            
             var model = BuildDirectAuthViewModel();
             model.HasErrors.Should().BeFalse();
                 
@@ -63,6 +55,8 @@ namespace Camelotia.Presentation.Tests
 
         private DirectAuthViewModel BuildDirectAuthViewModel()
         {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
             return new DirectAuthViewModel(_provider);
         }
     }

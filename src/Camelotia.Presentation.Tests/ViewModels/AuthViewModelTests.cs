@@ -8,7 +8,7 @@ using NSubstitute;
 using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Presentation.Tests.ViewModels
 {
     public sealed class AuthViewModelTests
     {
@@ -17,12 +17,6 @@ namespace Camelotia.Presentation.Tests
         private readonly IOAuthViewModel _open = Substitute.For<IOAuthViewModel>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
         
-        public AuthViewModelTests()
-        {
-            RxApp.MainThreadScheduler = Scheduler.Immediate;
-            RxApp.TaskpoolScheduler = Scheduler.Immediate;
-        }
-
         [Fact]
         public void IsAuthenticatedPropertyShouldDependOnFileProvider()
         {
@@ -64,6 +58,11 @@ namespace Camelotia.Presentation.Tests
             model.OAuth.Should().Be(_open);
         }
 
-        private AuthViewModel BuildAuthViewModel() => new AuthViewModel(_direct, _host, _open, _provider);
+        private AuthViewModel BuildAuthViewModel()
+        {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
+            return new AuthViewModel(_direct, _host, _open, _provider);
+        }
     }
 }

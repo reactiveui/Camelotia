@@ -8,18 +8,12 @@ using NSubstitute;
 using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Presentation.Tests.ViewModels
 {
     public sealed class HostAuthViewModelTests
     {
         private readonly IProvider _provider = Substitute.For<IProvider>();
 
-        public HostAuthViewModelTests()
-        {
-            RxApp.MainThreadScheduler = Scheduler.Immediate;
-            RxApp.TaskpoolScheduler = Scheduler.Immediate;
-        }
-        
         [Fact]
         public void LoginCommandShouldStayDisabledUntilInputIsValid()
         {
@@ -35,9 +29,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void HasErrorsShouldTriggerWhenProviderBreaks()
         {
-            _provider
-                .HostAuth("10.10.10.10", 5000, "hello", "world")
-                .Returns(x => throw new Exception("example"));
+            _provider.HostAuth("10.10.10.10", 5000, "hello", "world").Returns(x => throw new Exception("example"));
                 
             var model = BuildHostAuthViewModel();
             model.HasErrors.Should().BeFalse();
@@ -87,6 +79,11 @@ namespace Camelotia.Presentation.Tests
             model.Login.CanExecute(null).Should().BeTrue();
         }
 
-        private HostAuthViewModel BuildHostAuthViewModel() => new HostAuthViewModel(_provider);
+        private HostAuthViewModel BuildHostAuthViewModel()
+        {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
+            return new HostAuthViewModel(_provider);
+        }
     }
 }

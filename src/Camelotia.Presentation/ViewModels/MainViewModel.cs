@@ -27,12 +27,12 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _refresh;
         private readonly ReactiveCommand<Unit, Unit> _remove;
         private readonly ReactiveCommand<Unit, Unit> _add;
-        private readonly IProviderStorage _storage;
+        private readonly IStorage _storage;
 
         public MainViewModel(
             ProviderViewModelFactory providerFactory,
             AuthViewModelFactory authFactory,
-            IProviderStorage storage)
+            IStorage storage)
         {
             _storage = storage;
             _refresh = ReactiveCommand.CreateFromTask(storage.Refresh);

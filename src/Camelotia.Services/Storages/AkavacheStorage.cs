@@ -10,14 +10,14 @@ using Akavache;
 
 namespace Camelotia.Services.Storages
 {
-    public sealed class ProviderStorage : IProviderStorage
+    public sealed class AkavacheStorage : IStorage
     {
         private readonly SourceCache<IProvider, Guid> _connectable = new SourceCache<IProvider, Guid>(x => x.Id);
         private readonly IDictionary<string, Func<ProviderModel, IProvider>> _factories;
         private readonly IObservable<IChangeSet<IProvider, Guid>> _connection; 
         private readonly IBlobCache _blobCache;
 
-        public ProviderStorage(
+        public AkavacheStorage(
             IDictionary<string, Func<ProviderModel, IProvider>> factories,
             IBlobCache blobCache)
         {

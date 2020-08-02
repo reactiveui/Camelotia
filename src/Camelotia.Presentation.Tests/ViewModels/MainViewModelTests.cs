@@ -11,18 +11,12 @@ using NSubstitute;
 using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Presentation.Tests.ViewModels
 {
     public sealed class MainViewModelTests
     {
-        private readonly IProviderStorage _storage = Substitute.For<IProviderStorage>();
+        private readonly IStorage _storage = Substitute.For<IStorage>();
 
-        public MainViewModelTests()
-        {
-            RxApp.MainThreadScheduler = Scheduler.Immediate;
-            RxApp.TaskpoolScheduler = Scheduler.Immediate;
-        }
-        
         [Fact]
         public void ShouldIndicateWhenLoadingAndReady() 
         {
@@ -45,7 +39,6 @@ namespace Camelotia.Presentation.Tests
         {
             var collection = new ObservableCollectionExtended<IProvider>();
             var set = collection.ToObservableChangeSet(x => x.Id);
-            
             _storage.Read().Returns(set);
             _storage
                 .When(storage => storage.Refresh())
@@ -64,7 +57,6 @@ namespace Camelotia.Presentation.Tests
         {
             var collection = new ObservableCollectionExtended<IProvider>();
             var set = collection.ToObservableChangeSet(x => x.Id);
-            
             _storage.Read().Returns(set);
             _storage
                 .When(storage => storage.Refresh())
@@ -83,7 +75,6 @@ namespace Camelotia.Presentation.Tests
         {
             var collection = new ObservableCollectionExtended<IProvider>();
             var changes = collection.ToObservableChangeSet(x => x.Id);
-
             _storage.Read().Returns(changes);
             _storage
                 .When(storage => storage.Refresh())
@@ -143,6 +134,8 @@ namespace Camelotia.Presentation.Tests
 
         private MainViewModel BuildMainViewModel(ProviderViewModelFactory factory = null)
         {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
             return new MainViewModel(
                 factory ?? ((provider, auth) => Substitute.For<IProviderViewModel>()),
                 provider => Substitute.For<IAuthViewModel>(),

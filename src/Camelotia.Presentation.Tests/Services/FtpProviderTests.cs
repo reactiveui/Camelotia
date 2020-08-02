@@ -4,7 +4,7 @@ using Camelotia.Services.Providers;
 using FluentAssertions;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Presentation.Tests.Services
 {
     public sealed class FtpProviderTests
     {

@@ -8,18 +8,12 @@ using NSubstitute;
 using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Presentation.Tests.ViewModels
 {
     public sealed class OAuthViewModelTests
     {
         private readonly IProvider _provider = Substitute.For<IProvider>();
 
-        public OAuthViewModelTests()
-        {
-            RxApp.MainThreadScheduler = Scheduler.Immediate;
-            RxApp.TaskpoolScheduler = Scheduler.Immediate;;
-        }
-        
         [Fact]
         public void ShouldBeBusyWhenLoggingIn() 
         {
@@ -50,6 +44,11 @@ namespace Camelotia.Presentation.Tests
             model.ErrorMessage.Should().Be("example");
         }
 
-        private OAuthViewModel BuildOAuthViewModel() => new OAuthViewModel(_provider);
+        private OAuthViewModel BuildOAuthViewModel()
+        {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
+            return new OAuthViewModel(_provider);
+        }
     }
 }

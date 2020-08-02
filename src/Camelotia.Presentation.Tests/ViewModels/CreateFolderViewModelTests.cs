@@ -8,7 +8,7 @@ using NSubstitute;
 using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Presentation.Tests.ViewModels
 {
     public sealed class CreateFolderViewModelTests
     {
@@ -16,12 +16,6 @@ namespace Camelotia.Presentation.Tests
         private readonly IProviderViewModel _model = Substitute.For<IProviderViewModel>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
         
-        public CreateFolderViewModelTests()
-        {
-            RxApp.MainThreadScheduler = Scheduler.Immediate;
-            RxApp.TaskpoolScheduler = Scheduler.Immediate;
-        }
-
         [Fact]
         public void ShouldProperlyInitializeCreateFolderViewModel()
         {
@@ -93,6 +87,11 @@ namespace Camelotia.Presentation.Tests
             model.Open.CanExecute(null).Should().BeTrue();
         }
 
-        private CreateFolderViewModel BuildCreateFolderViewModel() => new CreateFolderViewModel(_model, _provider);
+        private CreateFolderViewModel BuildCreateFolderViewModel()
+        {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
+            return new CreateFolderViewModel(_model, _provider);
+        }
     }
 }

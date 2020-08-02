@@ -12,7 +12,7 @@ using NSubstitute;
 using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Presentation.Tests.ViewModels
 {
     public sealed class ProviderViewModelTests
     {
@@ -23,12 +23,6 @@ namespace Camelotia.Presentation.Tests
         private readonly IFileManager _files = Substitute.For<IFileManager>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
 
-        public ProviderViewModelTests()
-        {
-            RxApp.MainThreadScheduler = Scheduler.Immediate;
-            RxApp.TaskpoolScheduler = Scheduler.Immediate;
-        }
-        
         [Fact]
         public void ShouldDisplayLoadingReadyIndicatorsProperly() 
         {
@@ -152,14 +146,18 @@ namespace Camelotia.Presentation.Tests
             model.Open.CanExecute(null).Should().BeFalse();
         }
 
-        private ProviderViewModel BuildProviderViewModel() =>
-            new ProviderViewModel(
+        private ProviderViewModel BuildProviderViewModel()
+        {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
+            return new ProviderViewModel(
                 x => _folder,
                 x => _rename,
-                (x, y) => new FileViewModel(y, x), 
+                (x, y) => new FileViewModel(y, x),
                 _auth,
                 _files,
                 _provider
             );
+        }
     }
 }

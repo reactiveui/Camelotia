@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Camelotia.Presentation.Extensions
+namespace Camelotia.Services.Extensions
 {
     public static class ByteConverter
     {

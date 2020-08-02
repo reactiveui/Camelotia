@@ -42,7 +42,7 @@ namespace Camelotia.Presentation.Avalonia
                     new OAuthViewModel(provider),
                     provider
                 ),
-                new ProviderStorage(
+                new AkavacheStorage(
                     new Dictionary<string, Func<ProviderModel, IProvider>>
                     {
                         ["Local File System"] = id => new LocalProvider(id),

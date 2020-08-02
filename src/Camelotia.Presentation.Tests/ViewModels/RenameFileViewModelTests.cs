@@ -7,7 +7,7 @@ using NSubstitute;
 using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Presentation.Tests.ViewModels
 {
     public sealed class RenameFileViewModelTests
     {
@@ -15,12 +15,6 @@ namespace Camelotia.Presentation.Tests
         private readonly IFileViewModel _file = Substitute.For<IFileViewModel>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
 
-        public RenameFileViewModelTests()
-        {
-            RxApp.TaskpoolScheduler = Scheduler.Immediate;
-            RxApp.MainThreadScheduler = Scheduler.Immediate;
-        }
-        
         [Fact]
         public void ShouldProperlyInitializeRenameFileViewModel() 
         {
@@ -93,6 +87,11 @@ namespace Camelotia.Presentation.Tests
             model.Open.CanExecute(null).Should().BeTrue();
         }
 
-        private RenameFileViewModel BuildRenameFileViewModel() => new RenameFileViewModel(_model, _provider);
+        private RenameFileViewModel BuildRenameFileViewModel()
+        {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
+            return new RenameFileViewModel(_model, _provider);
+        }
     }
 }

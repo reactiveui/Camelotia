@@ -6,7 +6,7 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Presentation.Tests.Services
 {
     public sealed class GithubProviderTests
     {

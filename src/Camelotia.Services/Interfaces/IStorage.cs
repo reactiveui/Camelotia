@@ -5,7 +5,7 @@ using DynamicData;
 
 namespace Camelotia.Services.Interfaces
 {
-    public interface IProviderStorage
+    public interface IStorage
     {
         IEnumerable<string> SupportedTypes { get; }
 
