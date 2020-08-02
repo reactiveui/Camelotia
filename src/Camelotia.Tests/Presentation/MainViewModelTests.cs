@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
@@ -6,21 +7,20 @@ using Camelotia.Services.Interfaces;
 using DynamicData;
 using DynamicData.Binding;
 using FluentAssertions;
-using Microsoft.Reactive.Testing;
 using NSubstitute;
+using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Tests.Presentation
 {
     public sealed class MainViewModelTests
     {
-        private readonly IProviderStorage _providerStorage = Substitute.For<IProviderStorage>();
-        private readonly TestScheduler _scheduler = new TestScheduler();
+        private readonly IStorage _storage = Substitute.For<IStorage>();
 
         [Fact]
         public void ShouldIndicateWhenLoadingAndReady() 
         {
-            _providerStorage.Read().Returns(Observable.Return(new ChangeSet<IProvider, Guid>()));
+            _storage.Read().Returns(Observable.Return(new ChangeSet<IProvider, Guid>()));
             
             var model = BuildMainViewModel();
             model.IsLoading.Should().BeFalse();
@@ -28,12 +28,6 @@ namespace Camelotia.Presentation.Tests
                 
             model.Refresh.CanExecute(null).Should().BeTrue();
             model.Refresh.Execute(null);
-            _scheduler.AdvanceBy(2);
-                
-            model.Providers.Should().BeEmpty();
-            model.IsLoading.Should().BeTrue();
-            model.IsReady.Should().BeFalse();
-            _scheduler.AdvanceBy(2);
                 
             model.Providers.Should().BeEmpty();
             model.IsLoading.Should().BeFalse();
@@ -45,18 +39,14 @@ namespace Camelotia.Presentation.Tests
         {
             var collection = new ObservableCollectionExtended<IProvider>();
             var set = collection.ToObservableChangeSet(x => x.Id);
-            
-            _providerStorage.Read().Returns(set);
-            _providerStorage
+            _storage.Read().Returns(set);
+            _storage
                 .When(storage => storage.Refresh())
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
                 
             var model = BuildMainViewModel();
-            _scheduler.AdvanceBy(2);
-
             model.Providers.Should().BeEmpty();
             model.Refresh.Execute(null);
-            _scheduler.AdvanceBy(3);
                 
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
@@ -67,18 +57,14 @@ namespace Camelotia.Presentation.Tests
         {
             var collection = new ObservableCollectionExtended<IProvider>();
             var set = collection.ToObservableChangeSet(x => x.Id);
-            
-            _providerStorage.Read().Returns(set);
-            _providerStorage
+            _storage.Read().Returns(set);
+            _storage
                 .When(storage => storage.Refresh())
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
                 
             var model = BuildMainViewModel();
-            _scheduler.AdvanceBy(2);
-                
             model.Providers.Should().BeEmpty();
             model.Activator.Activate();
-            _scheduler.AdvanceBy(4);
                 
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
@@ -89,25 +75,20 @@ namespace Camelotia.Presentation.Tests
         {
             var collection = new ObservableCollectionExtended<IProvider>();
             var changes = collection.ToObservableChangeSet(x => x.Id);
-
-            _providerStorage.Read().Returns(changes);
-            _providerStorage
+            _storage.Read().Returns(changes);
+            _storage
                 .When(storage => storage.Refresh())
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
 
             var model = BuildMainViewModel();
-            _scheduler.AdvanceBy(2);
-
             model.Providers.Should().BeEmpty();
             model.Refresh.Execute(null);
-            _scheduler.AdvanceBy(3);
 
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
             model.Unselect.CanExecute(null).Should().BeTrue();
             model.Unselect.Execute(null);
 
-            _scheduler.AdvanceBy(3);
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().BeNull();
         }
@@ -122,7 +103,7 @@ namespace Camelotia.Presentation.Tests
                 BuildProviderCreatedAt(new DateTime(2010, 1, 1, 1, 1, 1))
             };
             var changes = collection.ToObservableChangeSet(x => x.Id);
-            _providerStorage.Read().Returns(changes);
+            _storage.Read().Returns(changes);
 
             var model = BuildMainViewModel((provider, _) =>
             {
@@ -134,10 +115,6 @@ namespace Camelotia.Presentation.Tests
                 return entry;
             });
 
-            model.Providers.Should().BeEmpty();
-            model.Refresh.Execute(null);
-            _scheduler.AdvanceBy(3);
-
             model.Providers.Should().NotBeEmpty();
             model.Providers.Count.Should().Be(3);
 
@@ -146,7 +123,7 @@ namespace Camelotia.Presentation.Tests
             model.Providers[2].Created.Should().Be(new DateTime(2000, 1, 1, 1, 1, 1));
         }
 
-        private IProvider BuildProviderCreatedAt(DateTime date)
+        private static IProvider BuildProviderCreatedAt(DateTime date)
         {
             var id = Guid.NewGuid();
             var provider = Substitute.For<IProvider>();
@@ -157,12 +134,12 @@ namespace Camelotia.Presentation.Tests
 
         private MainViewModel BuildMainViewModel(ProviderViewModelFactory factory = null)
         {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
             return new MainViewModel(
                 factory ?? ((provider, auth) => Substitute.For<IProviderViewModel>()),
                 provider => Substitute.For<IAuthViewModel>(),
-                _providerStorage,
-                _scheduler,
-                _scheduler
+                _storage
             );
         }
     }

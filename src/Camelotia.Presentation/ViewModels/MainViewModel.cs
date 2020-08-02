@@ -27,40 +27,36 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _refresh;
         private readonly ReactiveCommand<Unit, Unit> _remove;
         private readonly ReactiveCommand<Unit, Unit> _add;
-        private readonly IProviderStorage _storage;
+        private readonly IStorage _storage;
 
         public MainViewModel(
             ProviderViewModelFactory providerFactory,
             AuthViewModelFactory authFactory,
-            IProviderStorage storage, 
-            IScheduler current,
-            IScheduler main)
+            IStorage storage)
         {
             _storage = storage;
-            _refresh = ReactiveCommand.CreateFromTask(
-                storage.Refresh,
-                outputScheduler: main);
+            _refresh = ReactiveCommand.CreateFromTask(storage.Refresh);
             
             var providers = storage.Read();
             providers.Transform(x => providerFactory(x, authFactory(x)))
                 .Sort(SortExpressionComparer<IProviderViewModel>.Descending(x => x.Created))
-                .ObserveOn(main)
                 .StartWithEmpty()
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _providers)
                 .Subscribe();
             
             _isLoading = _refresh
                 .IsExecuting
-                .ToProperty(this, x => x.IsLoading, scheduler: current);
+                .ToProperty(this, x => x.IsLoading);
             
             _isReady = _refresh
                 .IsExecuting
                 .Skip(1)
                 .Select(executing => !executing)
-                .ToProperty(this, x => x.IsReady, scheduler: current);
+                .ToProperty(this, x => x.IsReady);
 
             providers.Where(changes => changes.Any())
-                .ObserveOn(main)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .OnItemAdded(x => SelectedProvider = Providers.FirstOrDefault())
                 .OnItemRemoved(x => SelectedProvider = null)
                 .Subscribe();
@@ -104,7 +100,7 @@ namespace Camelotia.Presentation.ViewModels
             {
                 SelectedSupportedType = SupportedTypes.FirstOrDefault();
                 _refresh.Execute()
-                    .Subscribe()
+                    .Subscribe(o => { }, e => { })
                     .DisposeWith(disposables);
             });
         }

@@ -1,31 +1,30 @@
 using System;
+using System.Reactive.Concurrency;
+using System.Threading.Tasks;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
-using Microsoft.Reactive.Testing;
 using NSubstitute;
+using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Tests.Presentation
 {
     public sealed class OAuthViewModelTests
     {
         private readonly IProvider _provider = Substitute.For<IProvider>();
-        private readonly TestScheduler _scheduler = new TestScheduler();
 
         [Fact]
         public void ShouldBeBusyWhenLoggingIn() 
         {
+            _provider.OAuth().Returns(new Task(() => { }));
+            
             var model = BuildOAuthViewModel();
             model.IsBusy.Should().BeFalse();
             model.Login.CanExecute(null).Should().BeTrue();
             model.Login.Execute(null);
             
-            _scheduler.AdvanceBy(2);    
             model.IsBusy.Should().BeTrue();
-            
-            _scheduler.AdvanceBy(2);
-            model.IsBusy.Should().BeFalse();
         }
 
         [Fact]
@@ -39,7 +38,6 @@ namespace Camelotia.Presentation.Tests
             
             model.Login.CanExecute(null).Should().BeTrue();
             model.Login.Execute(null);
-            _scheduler.AdvanceBy(2);
 
             model.HasErrors.Should().BeTrue();
             model.ErrorMessage.Should().NotBeNullOrEmpty();
@@ -48,7 +46,9 @@ namespace Camelotia.Presentation.Tests
 
         private OAuthViewModel BuildOAuthViewModel()
         {
-            return new OAuthViewModel(_provider, _scheduler, _scheduler);
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
+            return new OAuthViewModel(_provider);
         }
     }
 }

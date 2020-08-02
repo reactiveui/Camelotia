@@ -7,7 +7,7 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Tests.Services
 {
     public sealed class VkontakteFileSystemProviderTests
     {

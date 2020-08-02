@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Akavache;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Camelotia.Services.Providers;
 using Camelotia.Services.Storages;
 using DynamicData.Tests;
 using NSubstitute;
-using Akavache;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Tests.Services
 {
     public sealed class ProviderStorageTests
     {
@@ -22,7 +22,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public async Task ShouldResolveAllSupportedProviders()
         {
-            var provider = new ProviderStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
+            var provider = new AkavacheStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
                 [nameof(LocalProvider)] = id => new LocalProvider(id),
                 [nameof(VkDocsProvider)] = id => new VkDocsProvider(id, _blobCache),
@@ -43,7 +43,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public async Task ShouldResolveOnlySpecifiedProvidersIfNeeded()
         {
-            var provider = new ProviderStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
+            var provider = new AkavacheStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
                 [nameof(LocalProvider)] = id => new LocalProvider(id),
             }, _blobCache);
@@ -60,7 +60,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public async Task ShouldRemoveProviders()
         {
-            var provider = new ProviderStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
+            var provider = new AkavacheStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
                 [nameof(LocalProvider)] = id => new LocalProvider(id),
             }, _blobCache);
@@ -87,7 +87,7 @@ namespace Camelotia.Presentation.Tests
                 }
             }));
             
-            var provider = new ProviderStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
+            var provider = new AkavacheStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
                 [nameof(LocalProvider)] = id => new LocalProvider(id),
             }, _blobCache);

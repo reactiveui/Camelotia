@@ -1,6 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             d:DataContext="{d:DesignInstance interfaces:IProviderViewModel, IsDesignTimeCreatable=True}"
+             d:DataContext="{d:DesignInstance interfaces:IFileViewModel, IsDesignTimeCreatable=True}"
              xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
              xmlns:models="clr-namespace:Camelotia.Services.Models;assembly=Camelotia.Services"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

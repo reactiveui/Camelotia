@@ -15,30 +15,20 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _isBusy;
         private readonly ReactiveCommand<Unit, Unit> _login;
         
-        public OAuthViewModel(
-            IProvider provider,
-            IScheduler current,
-            IScheduler main)
+        public OAuthViewModel(IProvider provider)
         {
-            _login = ReactiveCommand.CreateFromTask(
-                provider.OAuth,
-                outputScheduler: main);
+            _login = ReactiveCommand.CreateFromTask(provider.OAuth);
+            _isBusy = _login.IsExecuting.ToProperty(this, x => x.IsBusy);
 
-            _errorMessage = _login
-                .ThrownExceptions
+            _errorMessage = _login.ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"OAuth error occured in {provider.Name}")
-                .ToProperty(this, x => x.ErrorMessage, scheduler: current);
+                .ToProperty(this, x => x.ErrorMessage);
 
-            _hasErrors = _login
-                .ThrownExceptions
+            _hasErrors = _login.ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
-                .ToProperty(this, x => x.HasErrors, scheduler: current);
-            
-            _isBusy = _login
-                .IsExecuting
-                .ToProperty(this, x => x.IsBusy, scheduler: current);
+                .ToProperty(this, x => x.HasErrors);
         }
         
         public string ErrorMessage => _errorMessage.Value;

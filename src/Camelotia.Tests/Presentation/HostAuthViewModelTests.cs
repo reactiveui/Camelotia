@@ -1,18 +1,19 @@
 using System;
+using System.Reactive.Concurrency;
+using System.Threading.Tasks;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
-using Microsoft.Reactive.Testing;
 using NSubstitute;
+using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Presentation.Tests
+namespace Camelotia.Tests.Presentation
 {
     public sealed class HostAuthViewModelTests
     {
         private readonly IProvider _provider = Substitute.For<IProvider>();
-        private readonly TestScheduler _scheduler = new TestScheduler();
-        
+
         [Fact]
         public void LoginCommandShouldStayDisabledUntilInputIsValid()
         {
@@ -28,9 +29,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void HasErrorsShouldTriggerWhenProviderBreaks()
         {
-            _provider
-                .HostAuth("10.10.10.10", 5000, "hello", "world")
-                .Returns(x => throw new Exception("example"));
+            _provider.HostAuth("10.10.10.10", 5000, "hello", "world").Returns(x => throw new Exception("example"));
                 
             var model = BuildHostAuthViewModel();
             model.HasErrors.Should().BeFalse();
@@ -40,8 +39,7 @@ namespace Camelotia.Presentation.Tests
             model.Password = "world";
             model.Address = "10.10.10.10";
             model.Login.Execute(null);
-                
-            _scheduler.AdvanceBy(2);
+            
             model.HasErrors.Should().BeTrue();
             model.ErrorMessage.Should().Be("example");
         }
@@ -49,6 +47,8 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldBeBusyWhenLoggingIn()
         {
+            _provider.HostAuth("10.10.10.10", 5000, "hello", "world").Returns(new Task(() => { }));
+            
             var model = BuildHostAuthViewModel();
             model.IsBusy.Should().BeFalse();
 
@@ -57,12 +57,7 @@ namespace Camelotia.Presentation.Tests
             model.Password = "world";
             model.Address = "10.10.10.10";
             model.Login.Execute(null);
-                
-            _scheduler.AdvanceBy(2);
             model.IsBusy.Should().BeTrue();
-                
-            _scheduler.AdvanceBy(2);
-            model.IsBusy.Should().BeFalse();
         }
 
         [Fact]
@@ -86,7 +81,9 @@ namespace Camelotia.Presentation.Tests
 
         private HostAuthViewModel BuildHostAuthViewModel()
         {
-            return new HostAuthViewModel(_provider, _scheduler, _scheduler);
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
+            return new HostAuthViewModel(_provider);
         }
     }
 }
