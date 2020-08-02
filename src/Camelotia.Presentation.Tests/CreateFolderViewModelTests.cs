@@ -13,7 +13,7 @@ namespace Camelotia.Presentation.Tests
     public sealed class CreateFolderViewModelTests
     {
         private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
-        private readonly IProviderViewModel _providerViewModel = Substitute.For<IProviderViewModel>();
+        private readonly IProviderViewModel _model = Substitute.For<IProviderViewModel>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
         
         public CreateFolderViewModelTests()
@@ -37,8 +37,8 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldChangeVisibility()
         {
-            _providerViewModel.CanInteract.Returns(true);
-            _providerViewModel.CurrentPath.Returns(Separator);
+            _model.CanInteract.Returns(true);
+            _model.CurrentPath.Returns(Separator);
             _provider.CanCreateFolder.Returns(true);
             
             var model = BuildCreateFolderViewModel();
@@ -60,8 +60,8 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldCreateFolderSuccessfullyAndCloseViewModel()
         {
-            _providerViewModel.CanInteract.Returns(true);
-            _providerViewModel.CurrentPath.Returns(Separator);
+            _model.CanInteract.Returns(true);
+            _model.CurrentPath.Returns(Separator);
             _provider.CanCreateFolder.Returns(true);
 
             var model = BuildCreateFolderViewModel();
@@ -93,9 +93,6 @@ namespace Camelotia.Presentation.Tests
             model.Open.CanExecute(null).Should().BeTrue();
         }
 
-        private CreateFolderViewModel BuildCreateFolderViewModel()
-        {
-            return new CreateFolderViewModel(_providerViewModel, _provider);
-        }
+        private CreateFolderViewModel BuildCreateFolderViewModel() => new CreateFolderViewModel(_model, _provider);
     }
 }

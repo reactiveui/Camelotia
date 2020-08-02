@@ -17,10 +17,10 @@ namespace Camelotia.Presentation.Tests
     public sealed class ProviderViewModelTests
     {
         private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
-        private readonly ICreateFolderViewModel _createFolder = Substitute.For<ICreateFolderViewModel>();
-        private readonly IRenameFileViewModel _renameFile = Substitute.For<IRenameFileViewModel>();
-        private readonly IAuthViewModel _authViewModel = Substitute.For<IAuthViewModel>();
-        private readonly IFileManager _fileManager = Substitute.For<IFileManager>();
+        private readonly ICreateFolderViewModel _folder = Substitute.For<ICreateFolderViewModel>();
+        private readonly IRenameFileViewModel _rename = Substitute.For<IRenameFileViewModel>();
+        private readonly IAuthViewModel _auth = Substitute.For<IAuthViewModel>();
+        private readonly IFileManager _files = Substitute.For<IFileManager>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
 
         public ProviderViewModelTests()
@@ -93,7 +93,7 @@ namespace Camelotia.Presentation.Tests
         {
             var file = new FileModel { Name = "foo", Path = Separator + "foo", IsFolder = true };
             _provider.Get(Separator).Returns(Enumerable.Repeat(file, 1));
-            _authViewModel.IsAuthenticated.Returns(true);
+            _auth.IsAuthenticated.Returns(true);
             _provider.InitialPath.Returns(Separator);
 
             var model = BuildProviderViewModel();
@@ -118,8 +118,8 @@ namespace Camelotia.Presentation.Tests
         public void ShouldRefreshContentOfCurrentPathWhenFileIsUploaded() 
         {
             _provider.InitialPath.Returns(Separator);            
-            _fileManager.OpenRead().Returns(("example", Stream.Null));
-            _authViewModel.IsAuthenticated.Returns(true);
+            _files.OpenRead().Returns(("example", Stream.Null));
+            _auth.IsAuthenticated.Returns(true);
 
             var model = BuildProviderViewModel();
             model.CurrentPath.Should().Be(Separator);
@@ -133,7 +133,7 @@ namespace Camelotia.Presentation.Tests
         {
             var file = new FileModel { Name = "foo", Path = Separator + "foo", IsFolder = true };
             _provider.Get(Separator).Returns(Enumerable.Repeat(file, 1));
-            _authViewModel.IsAuthenticated.Returns(true);
+            _auth.IsAuthenticated.Returns(true);
             _provider.InitialPath.Returns(Separator);
 
             var model = BuildProviderViewModel();
@@ -152,16 +152,14 @@ namespace Camelotia.Presentation.Tests
             model.Open.CanExecute(null).Should().BeFalse();
         }
 
-        private ProviderViewModel BuildProviderViewModel()
-        {
-            return new ProviderViewModel(
-                x => _createFolder,
-                x => _renameFile,
+        private ProviderViewModel BuildProviderViewModel() =>
+            new ProviderViewModel(
+                x => _folder,
+                x => _rename,
                 (x, y) => new FileViewModel(y, x), 
-                _authViewModel,
-                _fileManager,
+                _auth,
+                _files,
                 _provider
             );
-        }
     }
 }

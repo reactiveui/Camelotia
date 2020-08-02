@@ -11,7 +11,7 @@ namespace Camelotia.Presentation.Tests
 {
     public sealed class RenameFileViewModelTests
     {
-        private readonly IProviderViewModel _providerViewModel = Substitute.For<IProviderViewModel>();
+        private readonly IProviderViewModel _model = Substitute.For<IProviderViewModel>();
         private readonly IFileViewModel _file = Substitute.For<IFileViewModel>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
 
@@ -36,8 +36,8 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldChangeVisibility() 
         {
-            _providerViewModel.CanInteract.Returns(true);
-            _providerViewModel.SelectedFile.Returns(_file);
+            _model.CanInteract.Returns(true);
+            _model.SelectedFile.Returns(_file);
             _file.Name.Returns("foo");
 
             var model = BuildRenameFileViewModel();
@@ -59,12 +59,11 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldRenameFileSuccessfullyAndCloseViewModel() 
         {
-            _providerViewModel.CanInteract.Returns(true);
-            _providerViewModel.SelectedFile.Returns(_file);
+            _model.CanInteract.Returns(true);
+            _model.SelectedFile.Returns(_file);
             _file.Name.Returns("foo");
             
             var model = BuildRenameFileViewModel();
-
             model.OldName.Should().Be("foo");
             model.IsVisible.Should().BeFalse();
             model.Close.CanExecute(null).Should().BeFalse();
@@ -94,9 +93,6 @@ namespace Camelotia.Presentation.Tests
             model.Open.CanExecute(null).Should().BeTrue();
         }
 
-        private RenameFileViewModel BuildRenameFileViewModel()
-        {
-            return new RenameFileViewModel(_providerViewModel, _provider);
-        }
+        private RenameFileViewModel BuildRenameFileViewModel() => new RenameFileViewModel(_model, _provider);
     }
 }

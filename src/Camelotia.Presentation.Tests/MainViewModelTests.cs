@@ -15,7 +15,7 @@ namespace Camelotia.Presentation.Tests
 {
     public sealed class MainViewModelTests
     {
-        private readonly IProviderStorage _providerStorage = Substitute.For<IProviderStorage>();
+        private readonly IProviderStorage _storage = Substitute.For<IProviderStorage>();
 
         public MainViewModelTests()
         {
@@ -26,7 +26,7 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldIndicateWhenLoadingAndReady() 
         {
-            _providerStorage.Read().Returns(Observable.Return(new ChangeSet<IProvider, Guid>()));
+            _storage.Read().Returns(Observable.Return(new ChangeSet<IProvider, Guid>()));
             
             var model = BuildMainViewModel();
             model.IsLoading.Should().BeFalse();
@@ -46,8 +46,8 @@ namespace Camelotia.Presentation.Tests
             var collection = new ObservableCollectionExtended<IProvider>();
             var set = collection.ToObservableChangeSet(x => x.Id);
             
-            _providerStorage.Read().Returns(set);
-            _providerStorage
+            _storage.Read().Returns(set);
+            _storage
                 .When(storage => storage.Refresh())
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
                 
@@ -65,8 +65,8 @@ namespace Camelotia.Presentation.Tests
             var collection = new ObservableCollectionExtended<IProvider>();
             var set = collection.ToObservableChangeSet(x => x.Id);
             
-            _providerStorage.Read().Returns(set);
-            _providerStorage
+            _storage.Read().Returns(set);
+            _storage
                 .When(storage => storage.Refresh())
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
                 
@@ -84,8 +84,8 @@ namespace Camelotia.Presentation.Tests
             var collection = new ObservableCollectionExtended<IProvider>();
             var changes = collection.ToObservableChangeSet(x => x.Id);
 
-            _providerStorage.Read().Returns(changes);
-            _providerStorage
+            _storage.Read().Returns(changes);
+            _storage
                 .When(storage => storage.Refresh())
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
 
@@ -112,7 +112,7 @@ namespace Camelotia.Presentation.Tests
                 BuildProviderCreatedAt(new DateTime(2010, 1, 1, 1, 1, 1))
             };
             var changes = collection.ToObservableChangeSet(x => x.Id);
-            _providerStorage.Read().Returns(changes);
+            _storage.Read().Returns(changes);
 
             var model = BuildMainViewModel((provider, _) =>
             {
@@ -146,7 +146,7 @@ namespace Camelotia.Presentation.Tests
             return new MainViewModel(
                 factory ?? ((provider, auth) => Substitute.For<IProviderViewModel>()),
                 provider => Substitute.For<IAuthViewModel>(),
-                _providerStorage
+                _storage
             );
         }
     }

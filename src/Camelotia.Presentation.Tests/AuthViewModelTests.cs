@@ -17,7 +17,11 @@ namespace Camelotia.Presentation.Tests
         private readonly IOAuthViewModel _open = Substitute.For<IOAuthViewModel>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
         
-        public AuthViewModelTests() => RxApp.MainThreadScheduler = RxApp.TaskpoolScheduler = Scheduler.Immediate;
+        public AuthViewModelTests()
+        {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
+        }
 
         [Fact]
         public void IsAuthenticatedPropertyShouldDependOnFileProvider()

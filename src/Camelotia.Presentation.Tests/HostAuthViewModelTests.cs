@@ -87,9 +87,6 @@ namespace Camelotia.Presentation.Tests
             model.Login.CanExecute(null).Should().BeTrue();
         }
 
-        private HostAuthViewModel BuildHostAuthViewModel()
-        {
-            return new HostAuthViewModel(_provider);
-        }
+        private HostAuthViewModel BuildHostAuthViewModel() => new HostAuthViewModel(_provider);
     }
 }
