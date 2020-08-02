@@ -46,9 +46,7 @@ namespace Camelotia.Presentation.ViewModels
             FileViewModelFactory createFile,
             IAuthViewModel authViewModel,
             IFileManager fileManager,
-            IProvider provider,
-            IScheduler current,
-            IScheduler main)
+            IProvider provider)
         {
             _provider = provider;
             Folder = createFolder(this);
@@ -62,11 +60,11 @@ namespace Camelotia.Presentation.ViewModels
 
             _canInteract = canInteract
                 .DistinctUntilChanged()
-                .ToProperty(this, x => x.CanInteract, scheduler: current);
+                .ToProperty(this, x => x.CanInteract);
             
             _refresh = ReactiveCommand.CreateFromTask(
                 () => provider.Get(CurrentPath),
-                canInteract, main);
+                canInteract);
             
             _files = _refresh
                 .Select(files => files
@@ -74,22 +72,25 @@ namespace Camelotia.Presentation.ViewModels
                     .OrderByDescending(file => file.IsFolder)
                     .ThenBy(file => file.Name)
                     .ToList())
-                .StartWithEmpty()
-                .Where(files => Files == null ||
-                                files.Count != Files.Count() ||
-                                !files.All(x => Files.Any(y => x.Path == y.Path && 
-                                                               x.Modified == y.Modified)))
-                .ToProperty(this, x => x.Files, scheduler: current);
+                .Where(files =>
+                {
+                    var yes = Files == null ||
+                           files.Count != Files.Count() ||
+                           !files.All(x => Files.Any(y => x.Path == y.Path &&
+                                                          x.Modified == y.Modified));
+                    return yes;
+                })
+                .ToProperty(this, x => x.Files);
 
             _isLoading = _refresh
                 .IsExecuting
-                .ToProperty(this, x => x.IsLoading, scheduler: current);
+                .ToProperty(this, x => x.IsLoading);
             
             _isReady = _refresh
                 .IsExecuting
                 .Select(executing => !executing)
                 .Skip(1)
-                .ToProperty(this, x => x.IsReady, scheduler: current);
+                .ToProperty(this, x => x.IsReady);
             
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
@@ -99,7 +100,7 @@ namespace Camelotia.Presentation.ViewModels
             
             _open = ReactiveCommand.Create(
                 () => Path.Combine(CurrentPath, SelectedFile.Name),
-                canOpenCurrentPath, main);
+                canOpenCurrentPath);
 
             var canCurrentPathGoBack = this
                 .WhenAnyValue(x => x.CurrentPath)
@@ -109,13 +110,13 @@ namespace Camelotia.Presentation.ViewModels
             
             _back = ReactiveCommand.Create(
                 () => Path.GetDirectoryName(CurrentPath), 
-                canCurrentPathGoBack, main);
+                canCurrentPathGoBack);
 
             _currentPath = _open
                 .Merge(_back)
                 .DistinctUntilChanged()
                 .Log(this, $"Current path changed in {provider.Name}")
-                .ToProperty(this, x => x.CurrentPath, provider.InitialPath, scheduler: current);
+                .ToProperty(this, x => x.CurrentPath, provider.InitialPath);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Skip(1)
@@ -130,13 +131,13 @@ namespace Camelotia.Presentation.ViewModels
                 .Skip(1)
                 .Where(files => files != null)
                 .Select(files => !files.Any())
-                .ToProperty(this, x => x.IsCurrentPathEmpty, scheduler: current);
+                .ToProperty(this, x => x.IsCurrentPathEmpty);
 
             _hasErrors = _refresh
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_refresh.Select(x => false))
-                .ToProperty(this, x => x.HasErrors, scheduler: current);
+                .ToProperty(this, x => x.HasErrors);
 
             var canUploadToCurrentPath = this
                 .WhenAnyValue(x => x.CurrentPath)
@@ -150,8 +151,7 @@ namespace Camelotia.Presentation.ViewModels
                     .Where(response => response.Name != null && response.Stream != null)
                     .Select(x => _provider.UploadFile(CurrentPath, x.Stream, x.Name))
                     .SelectMany(task => task.ToObservable()), 
-                canUploadToCurrentPath,
-                main);
+                canUploadToCurrentPath);
 
             _uploadToCurrentPath.InvokeCommand(_refresh);
 
@@ -167,8 +167,7 @@ namespace Camelotia.Presentation.ViewModels
                     .Where(stream => stream != null)
                     .Select(stream => _provider.DownloadFile(SelectedFile.Path, stream))
                     .SelectMany(task => task.ToObservable()), 
-                canDownloadSelectedFile,
-                main);
+                canDownloadSelectedFile);
             
             var isAuthEnabled = provider.SupportsDirectAuth || provider.SupportsOAuth;
             var canLogout = provider
@@ -176,11 +175,10 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(loggedIn => loggedIn && isAuthEnabled)
                 .DistinctUntilChanged()
                 .CombineLatest(canInteract, (logout, interact) => logout && interact)
-                .ObserveOn(main);
+                .ObserveOn(RxApp.MainThreadScheduler);
 
             _logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
-            _canLogout = canLogout
-                .ToProperty(this, x => x.CanLogout, scheduler: current);
+            _canLogout = canLogout.ToProperty(this, x => x.CanLogout);
 
             var canDeleteSelection = this
                 .WhenAnyValue(x => x.SelectedFile)
@@ -226,7 +224,7 @@ namespace Camelotia.Presentation.ViewModels
                 Observable.Timer(interval, interval)
                     .Select(unit => RefreshingIn - 1)
                     .Where(value => value >= 0)
-                    .ObserveOn(main)
+                    .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(x => RefreshingIn = x)
                     .DisposeWith(disposable);
 

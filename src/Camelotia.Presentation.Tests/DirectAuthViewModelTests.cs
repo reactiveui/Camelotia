@@ -1,9 +1,11 @@
 using System;
+using System.Reactive.Concurrency;
+using System.Threading.Tasks;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
-using Microsoft.Reactive.Testing;
 using NSubstitute;
+using ReactiveUI;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
@@ -11,8 +13,13 @@ namespace Camelotia.Presentation.Tests
     public sealed class DirectAuthViewModelTests
     {
         private readonly IProvider _provider = Substitute.For<IProvider>();
-        private readonly TestScheduler _scheduler = new TestScheduler();
         
+        public DirectAuthViewModelTests()
+        {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
+        }
+
         [Fact]
         public void LoginCommandShouldStayDisabledUntilInputIsValid()
         {
@@ -36,8 +43,6 @@ namespace Camelotia.Presentation.Tests
             model.Username = "hello";
             model.Password = "world";
             model.Login.Execute(null);
-                
-            _scheduler.AdvanceBy(2);
             model.HasErrors.Should().BeTrue();
             model.ErrorMessage.Should().Be("example");
         }
@@ -45,23 +50,20 @@ namespace Camelotia.Presentation.Tests
         [Fact]
         public void ShouldBeBusyWhenLoggingIn()
         {
+            _provider.DirectAuth("hello", "world").Returns(new Task(() => { }));
+            
             var model = BuildDirectAuthViewModel();
             model.IsBusy.Should().BeFalse();
             
             model.Username = "hello";
             model.Password = "world";
             model.Login.Execute(null);
-                
-            _scheduler.AdvanceBy(2);
             model.IsBusy.Should().BeTrue();
-                
-            _scheduler.AdvanceBy(2);
-            model.IsBusy.Should().BeFalse();
         }
 
         private DirectAuthViewModel BuildDirectAuthViewModel()
         {
-            return new DirectAuthViewModel(_provider, _scheduler, _scheduler);
+            return new DirectAuthViewModel(_provider);
         }
     }
 }

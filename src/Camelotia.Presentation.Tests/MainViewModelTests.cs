@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
@@ -6,8 +7,8 @@ using Camelotia.Services.Interfaces;
 using DynamicData;
 using DynamicData.Binding;
 using FluentAssertions;
-using Microsoft.Reactive.Testing;
 using NSubstitute;
+using ReactiveUI;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
@@ -15,8 +16,13 @@ namespace Camelotia.Presentation.Tests
     public sealed class MainViewModelTests
     {
         private readonly IProviderStorage _providerStorage = Substitute.For<IProviderStorage>();
-        private readonly TestScheduler _scheduler = new TestScheduler();
 
+        public MainViewModelTests()
+        {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
+        }
+        
         [Fact]
         public void ShouldIndicateWhenLoadingAndReady() 
         {
@@ -28,12 +34,6 @@ namespace Camelotia.Presentation.Tests
                 
             model.Refresh.CanExecute(null).Should().BeTrue();
             model.Refresh.Execute(null);
-            _scheduler.AdvanceBy(2);
-                
-            model.Providers.Should().BeEmpty();
-            model.IsLoading.Should().BeTrue();
-            model.IsReady.Should().BeFalse();
-            _scheduler.AdvanceBy(2);
                 
             model.Providers.Should().BeEmpty();
             model.IsLoading.Should().BeFalse();
@@ -52,11 +52,8 @@ namespace Camelotia.Presentation.Tests
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
                 
             var model = BuildMainViewModel();
-            _scheduler.AdvanceBy(2);
-
             model.Providers.Should().BeEmpty();
             model.Refresh.Execute(null);
-            _scheduler.AdvanceBy(3);
                 
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
@@ -74,11 +71,8 @@ namespace Camelotia.Presentation.Tests
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
                 
             var model = BuildMainViewModel();
-            _scheduler.AdvanceBy(2);
-                
             model.Providers.Should().BeEmpty();
             model.Activator.Activate();
-            _scheduler.AdvanceBy(4);
                 
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
@@ -96,18 +90,14 @@ namespace Camelotia.Presentation.Tests
                 .Do(args => collection.Add(Substitute.For<IProvider>()));
 
             var model = BuildMainViewModel();
-            _scheduler.AdvanceBy(2);
-
             model.Providers.Should().BeEmpty();
             model.Refresh.Execute(null);
-            _scheduler.AdvanceBy(3);
 
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
             model.Unselect.CanExecute(null).Should().BeTrue();
             model.Unselect.Execute(null);
 
-            _scheduler.AdvanceBy(3);
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().BeNull();
         }
@@ -134,10 +124,6 @@ namespace Camelotia.Presentation.Tests
                 return entry;
             });
 
-            model.Providers.Should().BeEmpty();
-            model.Refresh.Execute(null);
-            _scheduler.AdvanceBy(3);
-
             model.Providers.Should().NotBeEmpty();
             model.Providers.Count.Should().Be(3);
 
@@ -146,7 +132,7 @@ namespace Camelotia.Presentation.Tests
             model.Providers[2].Created.Should().Be(new DateTime(2000, 1, 1, 1, 1, 1));
         }
 
-        private IProvider BuildProviderCreatedAt(DateTime date)
+        private static IProvider BuildProviderCreatedAt(DateTime date)
         {
             var id = Guid.NewGuid();
             var provider = Substitute.For<IProvider>();
@@ -160,9 +146,7 @@ namespace Camelotia.Presentation.Tests
             return new MainViewModel(
                 factory ?? ((provider, auth) => Substitute.For<IProviderViewModel>()),
                 provider => Substitute.For<IAuthViewModel>(),
-                _providerStorage,
-                _scheduler,
-                _scheduler
+                _providerStorage
             );
         }
     }

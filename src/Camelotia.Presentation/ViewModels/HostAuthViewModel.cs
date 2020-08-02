@@ -17,10 +17,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _isBusy;
         private readonly ReactiveCommand<Unit, Unit> _login;
         
-        public HostAuthViewModel(
-            IProvider provider,
-            IScheduler current,
-            IScheduler main)
+        public HostAuthViewModel(IProvider provider)
         {
             var canLogin = this
                 .WhenAnyValue(
@@ -37,23 +34,23 @@ namespace Camelotia.Presentation.ViewModels
             
             _login = ReactiveCommand.CreateFromTask(
                 () => provider.HostAuth(Address, int.Parse(Port), Username, Password),
-                canLogin, main);
+                canLogin);
 
             _errorMessage = _login
                 .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Host auth error occured in {provider.Name}")
-                .ToProperty(this, x => x.ErrorMessage, scheduler: current);
+                .ToProperty(this, x => x.ErrorMessage);
 
             _hasErrors = _login
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
-                .ToProperty(this, x => x.HasErrors, scheduler: current);
+                .ToProperty(this, x => x.HasErrors);
 
             _isBusy = _login
                 .IsExecuting
-                .ToProperty(this, x => x.IsBusy, scheduler: current);
+                .ToProperty(this, x => x.IsBusy);
             
             _login.Subscribe(x =>
             {

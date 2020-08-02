@@ -1,14 +1,15 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using FluentAssertions;
-using Microsoft.Reactive.Testing;
 using NSubstitute;
+using ReactiveUI;
 using Xunit;
 
 namespace Camelotia.Presentation.Tests
@@ -21,7 +22,12 @@ namespace Camelotia.Presentation.Tests
         private readonly IAuthViewModel _authViewModel = Substitute.For<IAuthViewModel>();
         private readonly IFileManager _fileManager = Substitute.For<IFileManager>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
-        private readonly TestScheduler _scheduler = new TestScheduler();
+
+        public ProviderViewModelTests()
+        {
+            RxApp.MainThreadScheduler = Scheduler.Immediate;
+            RxApp.TaskpoolScheduler = Scheduler.Immediate;
+        }
         
         [Fact]
         public void ShouldDisplayLoadingReadyIndicatorsProperly() 
@@ -31,13 +37,6 @@ namespace Camelotia.Presentation.Tests
             model.IsReady.Should().BeFalse();
                 
             model.Refresh.Execute(null);
-            _scheduler.AdvanceBy(2);
-                
-            model.IsLoading.Should().BeTrue();
-            model.IsReady.Should().BeFalse();
-            _scheduler.AdvanceBy(2);
-                
-            model.IsLoading.Should().BeFalse();
             model.IsReady.Should().BeTrue();
         }
 
@@ -45,17 +44,14 @@ namespace Camelotia.Presentation.Tests
         public void ShouldDisplayCurrentPathProperly() 
         {
             _provider.InitialPath.Returns(Separator);
+            _provider.Get(Separator).ReturnsForAnyArgs(Enumerable.Empty<FileModel>());
             
             var model = BuildProviderViewModel();
             model.IsCurrentPathEmpty.Should().BeFalse();
             model.CurrentPath.Should().Be(Separator);
-            _scheduler.AdvanceBy(2);
-                
-            model.IsCurrentPathEmpty.Should().BeFalse();
-            model.Files.Should().BeEmpty();
+            model.Files.Should().BeNullOrEmpty();
+
             model.Refresh.Execute(null);
-            _scheduler.AdvanceBy(4);
-                
             model.IsCurrentPathEmpty.Should().BeTrue();
             model.CurrentPath.Should().Be(Separator);
             model.Files.Should().BeEmpty();
@@ -84,15 +80,11 @@ namespace Camelotia.Presentation.Tests
             _provider.SupportsDirectAuth.Returns(true);
 
             var model = BuildProviderViewModel();
-            model.Logout.CanExecute(null).Should().BeFalse();
-            
-            _scheduler.AdvanceBy(2);
             model.Logout.CanExecute(null).Should().BeTrue();
             model.Logout.Execute(null);
-            _provider.Received(1).Logout();
             
             authorized.OnNext(false);
-            _scheduler.AdvanceBy(2);
+            _provider.Received(1).Logout();
             model.Logout.CanExecute(null).Should().BeFalse();            
         }
 
@@ -107,7 +99,6 @@ namespace Camelotia.Presentation.Tests
             var model = BuildProviderViewModel();
             using (model.Activator.Activate())
             {
-                _scheduler.AdvanceBy(3);
                 model.Files.Should().NotBeEmpty();
                 model.CurrentPath.Should().Be(Separator);
                 
@@ -115,13 +106,10 @@ namespace Camelotia.Presentation.Tests
                 model.Open.CanExecute(null).Should().BeTrue();
                 model.Open.Execute(null);
                 
-                _scheduler.AdvanceBy(3);
                 model.CurrentPath.Should().Be(Separator + "foo");
-
                 model.Back.CanExecute(null).Should().BeTrue();
                 model.Back.Execute(null);
                 
-                _scheduler.AdvanceBy(3);
                 model.CurrentPath.Should().Be(Separator);
             }
         }
@@ -137,8 +125,6 @@ namespace Camelotia.Presentation.Tests
             model.CurrentPath.Should().Be(Separator);
             model.UploadToCurrentPath.CanExecute(null).Should().BeTrue();
             model.UploadToCurrentPath.Execute(null);
-            
-            _scheduler.AdvanceBy(2);
             _provider.Received(1).Get(Separator);
         }
 
@@ -153,7 +139,6 @@ namespace Camelotia.Presentation.Tests
             var model = BuildProviderViewModel();
             model.Refresh.Execute(null);
 
-            _scheduler.AdvanceBy(3);
             model.Files.Should().NotBeEmpty();
             model.CurrentPath.Should().Be(Separator);
 
@@ -162,7 +147,6 @@ namespace Camelotia.Presentation.Tests
             model.Open.CanExecute(null).Should().BeTrue();
             model.Open.Execute(null);
 
-            _scheduler.AdvanceBy(4);
             model.CurrentPath.Should().Be(Separator + "foo");
             model.SelectedFile.Should().BeNull();
             model.Open.CanExecute(null).Should().BeFalse();
@@ -176,9 +160,7 @@ namespace Camelotia.Presentation.Tests
                 (x, y) => new FileViewModel(y, x), 
                 _authViewModel,
                 _fileManager,
-                _provider,
-                _scheduler,
-                _scheduler
+                _provider
             );
         }
     }

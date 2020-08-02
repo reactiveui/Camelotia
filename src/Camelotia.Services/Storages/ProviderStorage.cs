@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
@@ -15,6 +14,7 @@ namespace Camelotia.Services.Storages
     {
         private readonly SourceCache<IProvider, Guid> _connectable = new SourceCache<IProvider, Guid>(x => x.Id);
         private readonly IDictionary<string, Func<ProviderModel, IProvider>> _factories;
+        private readonly IObservable<IChangeSet<IProvider, Guid>> _connection; 
         private readonly IBlobCache _blobCache;
 
         public ProviderStorage(
@@ -23,11 +23,12 @@ namespace Camelotia.Services.Storages
         {
             _blobCache = blobCache;
             _factories = factories;
+            _connection = _connectable.Connect().Publish().RefCount();
         }
 
         public IEnumerable<string> SupportedTypes => _factories.Keys;
 
-        public IObservable<IChangeSet<IProvider, Guid>> Read() => _connectable.Connect();
+        public IObservable<IChangeSet<IProvider, Guid>> Read() => _connection;
 
         public Task Add(string typeName) => Task.Run(() =>
         {
@@ -57,10 +58,7 @@ namespace Camelotia.Services.Storages
         public async Task Refresh()
         {
             _connectable.Clear();
-            var models = await _blobCache
-                .GetAllObjects<ProviderModel>()
-                .SubscribeOn(Scheduler.Default);
-
+            var models = await _blobCache.GetAllObjects<ProviderModel>();
             var providers = models
                 .Where(model => model != null && _factories.ContainsKey(model.Type))
                 .Select(model => _factories[model.Type](model));

@@ -18,9 +18,7 @@ namespace Camelotia.Presentation.ViewModels
             IDirectAuthViewModel directAuth,
             IHostAuthViewModel hostAuth,
             IOAuthViewModel oAuth,
-            IProvider provider,
-            IScheduler current,
-            IScheduler main)
+            IProvider provider)
         {
             OAuth = oAuth;
             HostAuth = hostAuth;
@@ -30,14 +28,14 @@ namespace Camelotia.Presentation.ViewModels
             _isAuthenticated = _provider
                 .IsAuthorized
                 .DistinctUntilChanged()
-                .ObserveOn(main)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Log(this, $"Authentication state changed for {provider.Name}")
-                .ToProperty(this, x => x.IsAuthenticated, scheduler: current);
+                .ToProperty(this, x => x.IsAuthenticated);
 
             _isAnonymous = this
                 .WhenAnyValue(x => x.IsAuthenticated)
                 .Select(authenticated => !authenticated)
-                .ToProperty(this, x => x.IsAnonymous, scheduler: current);
+                .ToProperty(this, x => x.IsAnonymous);
         }
 
         public bool SupportsDirectAuth => _provider.SupportsDirectAuth;
