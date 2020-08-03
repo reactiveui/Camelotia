@@ -16,7 +16,7 @@
                          IsIndeterminate="{Binding IsBusy}"
                          Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibility}}"
                          Margin="0 5" />
-            <StackPanel Visibility="{Binding HasErrors, Converter={StaticResource BooleanToVisibility}}"
+            <StackPanel Visibility="{Binding HasErrorMessage, Converter={StaticResource BooleanToVisibility}}"
                         Background="{StaticResource PrimaryHueDarkBrush}"
                         Margin="0 5">
                 <StackPanel Margin="10">

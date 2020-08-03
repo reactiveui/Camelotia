@@ -56,7 +56,7 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Grid IsVisible="{Binding HasErrors}" 
+                    <Grid IsVisible="{Binding HasErrorMessage}" 
                           Background="{DynamicResource ThemeCardBrush}">
                         <StackPanel VerticalAlignment="Center">
                             <Ellipse Width="10" Height="10"

@@ -27,12 +27,12 @@ namespace Camelotia.Tests.Presentation
         }
 
         [Fact]
-        public void HasErrorsShouldTriggerWhenProviderBreaks()
+        public void HasErrorMessageShouldTriggerWhenProviderBreaks()
         {
             _provider.HostAuth("10.10.10.10", 5000, "hello", "world").Returns(x => throw new Exception("example"));
                 
             var model = BuildHostAuthViewModel();
-            model.HasErrors.Should().BeFalse();
+            model.HasErrorMessage.Should().BeFalse();
                 
             model.Port = "5000";
             model.Username = "hello";
@@ -40,7 +40,7 @@ namespace Camelotia.Tests.Presentation
             model.Address = "10.10.10.10";
             model.Login.Execute(null);
             
-            model.HasErrors.Should().BeTrue();
+            model.HasErrorMessage.Should().BeTrue();
             model.ErrorMessage.Should().Be("example");
         }
 

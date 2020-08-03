@@ -12,8 +12,8 @@ namespace Camelotia.Presentation.ViewModels
 {
     public sealed class DirectAuthViewModel : ReactiveObject, IDirectAuthViewModel
     {
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ObservableAsPropertyHelper<string> _errorMessage;
-        private readonly ObservableAsPropertyHelper<bool> _hasErrors;
         private readonly ObservableAsPropertyHelper<bool> _isBusy;
         private readonly ReactiveCommand<Unit, Unit> _login;
         
@@ -38,11 +38,11 @@ namespace Camelotia.Presentation.ViewModels
                 .Log(this, $"Direct auth error occured in {provider.Name}")
                 .ToProperty(this, x => x.ErrorMessage);
 
-            _hasErrors = _login
+            _hasErrorMessage = _login
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
-                .ToProperty(this, x => x.HasErrors);
+                .ToProperty(this, x => x.HasErrorMessage);
 
             _isBusy = _login
                 .IsExecuting
@@ -61,7 +61,7 @@ namespace Camelotia.Presentation.ViewModels
         
         public string ErrorMessage => _errorMessage.Value;
 
-        public bool HasErrors => _hasErrors.Value;
+        public bool HasErrorMessage => _hasErrorMessage.Value;
 
         public bool IsBusy => _isBusy.Value;
         

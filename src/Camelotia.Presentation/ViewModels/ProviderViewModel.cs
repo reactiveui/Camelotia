@@ -25,12 +25,12 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<IEnumerable<IFileViewModel>> _files;
         private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
         private readonly ObservableAsPropertyHelper<bool> _isCurrentPathEmpty;
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ReactiveCommand<Unit, Unit> _downloadSelectedFile;
         private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
         private readonly ReactiveCommand<Unit, Unit> _deleteSelectedFile;
         private readonly ObservableAsPropertyHelper<string> _currentPath;
         private readonly ObservableAsPropertyHelper<bool> _canInteract;
-        private readonly ObservableAsPropertyHelper<bool> _hasErrors;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _canLogout;
         private readonly ObservableAsPropertyHelper<bool> _isReady;
@@ -133,11 +133,11 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(files => !files.Any())
                 .ToProperty(this, x => x.IsCurrentPathEmpty);
 
-            _hasErrors = _refresh
+            _hasErrorMessage = _refresh
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_refresh.Select(x => false))
-                .ToProperty(this, x => x.HasErrors);
+                .ToProperty(this, x => x.HasErrorMessage);
 
             var canUploadToCurrentPath = this
                 .WhenAnyValue(x => x.CurrentPath)
@@ -290,7 +290,7 @@ namespace Camelotia.Presentation.ViewModels
         
         public bool IsLoading => _isLoading.Value;
 
-        public bool HasErrors => _hasErrors.Value;
+        public bool HasErrorMessage => _hasErrorMessage.Value;
 
         public bool IsReady => _isReady.Value;
 

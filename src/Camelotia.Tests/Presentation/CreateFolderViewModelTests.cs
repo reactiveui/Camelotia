@@ -24,7 +24,7 @@ namespace Camelotia.Tests.Presentation
             model.Path.Should().BeNullOrEmpty();
 
             model.ErrorMessage.Should().BeNullOrEmpty();
-            model.HasErrors.Should().BeFalse();
+            model.HasErrorMessage.Should().BeFalse();
             model.IsVisible.Should().BeFalse();
         }
 
@@ -67,7 +67,7 @@ namespace Camelotia.Tests.Presentation
             model.IsVisible.Should().BeTrue();
             model.Create.CanExecute(null).Should().BeFalse();
             model.ErrorMessage.Should().BeNullOrEmpty();
-            model.HasErrors.Should().BeFalse();
+            model.HasErrorMessage.Should().BeFalse();
             model.IsLoading.Should().BeFalse();
 
             model.Close.CanExecute(null).Should().BeTrue();

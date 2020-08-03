@@ -14,10 +14,10 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class RenameFileViewModel : ReactiveObject, IRenameFileViewModel
     {
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ObservableAsPropertyHelper<string> _errorMessage;
         private readonly ObservableAsPropertyHelper<string> _oldName;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
-        private readonly ObservableAsPropertyHelper<bool> _hasErrors;
         private readonly ReactiveCommand<Unit, Unit> _rename;
         private readonly ReactiveCommand<Unit, Unit> _close;
         private readonly ReactiveCommand<Unit, Unit> _open;
@@ -69,11 +69,11 @@ namespace Camelotia.Presentation.ViewModels
                 .IsExecuting
                 .ToProperty(this, x => x.IsLoading);
 
-            _hasErrors = _rename
+            _hasErrorMessage = _rename
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_close.Select(x => false))
-                .ToProperty(this, x => x.HasErrors);
+                .ToProperty(this, x => x.HasErrorMessage);
 
             _errorMessage = _rename
                 .ThrownExceptions
@@ -92,7 +92,7 @@ namespace Camelotia.Presentation.ViewModels
 
         public string ErrorMessage => _errorMessage.Value;
 
-        public bool HasErrors => _hasErrors.Value;
+        public bool HasErrorMessage => _hasErrorMessage.Value;
 
         public bool IsLoading => _isLoading.Value;
 

@@ -58,7 +58,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <Grid Visibility="{x:Bind ViewModel.HasErrors, Mode=OneWay}"
+                <Grid Visibility="{x:Bind ViewModel.HasErrorMessage, Mode=OneWay}"
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                         <Ellipse Width="10" Height="10"

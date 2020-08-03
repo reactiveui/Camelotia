@@ -9,11 +9,11 @@ namespace Camelotia.Presentation.Interfaces
         
         bool IsVisible { get; set; }
         
-        bool HasErrors { get; }
-        
         string Name { get; set; }
         
         string Path { get; }
+        
+        bool HasErrorMessage { get; }
         
         string ErrorMessage { get; }
         

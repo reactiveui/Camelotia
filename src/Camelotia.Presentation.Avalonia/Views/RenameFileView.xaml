@@ -16,7 +16,7 @@
                      IsIndeterminate="{Binding IsLoading}"
                      IsVisible="{Binding IsLoading}"
                      Margin="0 5" />
-        <StackPanel IsVisible="{Binding HasErrors}"
+        <StackPanel IsVisible="{Binding HasErrorMessage}"
                     Background="#ffeeee"
                     Margin="0 5">
             <StackPanel Margin="10">

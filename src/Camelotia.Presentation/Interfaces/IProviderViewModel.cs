@@ -41,7 +41,7 @@ namespace Camelotia.Presentation.Interfaces
         
         bool IsReady { get; }
         
-        bool HasErrors { get; }
+        bool HasErrorMessage { get; }
         
         bool CanLogout { get; }
         

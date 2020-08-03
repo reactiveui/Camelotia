@@ -11,7 +11,7 @@ namespace Camelotia.Presentation.Interfaces
         
         ICommand Login { get; }
         
-        bool HasErrors { get; }
+        bool HasErrorMessage { get; }
         
         string ErrorMessage { get; }
         

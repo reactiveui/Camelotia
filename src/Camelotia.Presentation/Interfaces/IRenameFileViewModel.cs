@@ -13,9 +13,9 @@ namespace Camelotia.Presentation.Interfaces
         
         string NewName { get; set; }
         
-        string ErrorMessage { get; }
+        bool HasErrorMessage { get; }
         
-        bool HasErrors { get; }
+        string ErrorMessage { get; }
         
         ICommand Rename { get; }
         

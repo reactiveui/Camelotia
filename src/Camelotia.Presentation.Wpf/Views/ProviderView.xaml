@@ -58,7 +58,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Grid Visibility="{Binding HasErrors, Converter={StaticResource BooleanToVisibility}}"
+            <Grid Visibility="{Binding HasErrorMessage, Converter={StaticResource BooleanToVisibility}}"
                   Background="{StaticResource MaterialDesignPaper}">
                 <StackPanel VerticalAlignment="Center">
                     <materialDesign:PackIcon Kind="CloudAlert"
