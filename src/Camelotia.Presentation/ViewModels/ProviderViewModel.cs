@@ -70,14 +70,7 @@ namespace Camelotia.Presentation.ViewModels
                     .OrderByDescending(file => file.IsFolder)
                     .ThenBy(file => file.Name)
                     .ToList())
-                .Where(files =>
-                {
-                    var yes = Files == null ||
-                           files.Count != Files.Count() ||
-                           !files.All(x => Files.Any(y => x.Path == y.Path &&
-                                                          x.Modified == y.Modified));
-                    return yes;
-                })
+                .Where(files => Files == null || !files.SequenceEqual(Files))
                 .ToProperty(this, x => x.Files);
 
             _isLoading = _refresh
@@ -167,11 +160,13 @@ namespace Camelotia.Presentation.ViewModels
                     .SelectMany(task => task.ToObservable()), 
                 canDownloadSelectedFile);
             
-            var isAuthEnabled = provider.SupportsDirectAuth || provider.SupportsOAuth;
             var canLogout = provider
                 .IsAuthorized
-                .Select(loggedIn => loggedIn && isAuthEnabled)
                 .DistinctUntilChanged()
+                .Select(loggedIn => loggedIn && (
+                    provider.SupportsDirectAuth ||
+                    provider.SupportsOAuth || 
+                    provider.SupportsHostAuth))
                 .CombineLatest(canInteract, (logout, interact) => logout && interact)
                 .ObserveOn(RxApp.MainThreadScheduler);
 
