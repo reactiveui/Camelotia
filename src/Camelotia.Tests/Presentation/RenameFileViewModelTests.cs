@@ -86,6 +86,25 @@ namespace Camelotia.Tests.Presentation
             model.Close.CanExecute(null).Should().BeFalse();
             model.Open.CanExecute(null).Should().BeTrue();
         }
+        
+        [Fact]
+        public void ShouldUpdateValidationsForProperties()
+        {
+            _model.SelectedFile.Returns(_file);
+            _file.Name.Returns("foo");
+            
+            var model = BuildRenameFileViewModel();
+            model.Rename.CanExecute(null).Should().BeFalse();
+            model.GetErrors(string.Empty).Should().HaveCount(1);
+            model.GetErrors(nameof(model.NewName)).Should().HaveCount(1);
+            model.HasErrors.Should().BeTrue();
+
+            model.NewName = "bar";
+            model.Rename.CanExecute(null).Should().BeTrue();
+            model.GetErrors(string.Empty).Should().BeEmpty();
+            model.GetErrors(nameof(model.NewName)).Should().BeEmpty();
+            model.HasErrors.Should().BeFalse();
+        }
 
         private RenameFileViewModel BuildRenameFileViewModel()
         {

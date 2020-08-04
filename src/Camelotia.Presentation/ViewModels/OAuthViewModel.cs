@@ -1,5 +1,4 @@
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using Camelotia.Presentation.Interfaces;

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Threading.Tasks;
@@ -14,7 +13,6 @@ using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
-using DynamicData;
 
 namespace Camelotia.Presentation.ViewModels
 {

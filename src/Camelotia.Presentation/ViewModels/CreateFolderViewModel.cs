@@ -1,18 +1,19 @@
 using System;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
 
 namespace Camelotia.Presentation.ViewModels
 {
     public delegate ICreateFolderViewModel CreateFolderViewModelFactory(IProviderViewModel providerViewModel);
 
-    public sealed class CreateFolderViewModel : ReactiveObject, ICreateFolderViewModel
+    public sealed class CreateFolderViewModel : ReactiveValidationObject<CreateFolderViewModel>, ICreateFolderViewModel
     {
         private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ObservableAsPropertyHelper<string> _errorMessage;
@@ -23,35 +24,32 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _open;
         
         public CreateFolderViewModel(
-            IProviderViewModel providerViewModel,
+            IProviderViewModel owner,
             IProvider provider)
         {
-            _path = providerViewModel
+            _path = owner
                 .WhenAnyValue(x => x.CurrentPath)
                 .ToProperty(this, x => x.Path);
             
-            var canInteract = providerViewModel
-                .WhenAnyValue(x => x.CanInteract);
-            
-            var pathValid = this
-                .WhenAnyValue(x => x.Path)
-                .Select(path => !string.IsNullOrWhiteSpace(path));
-            
-            var canCreateFolder = this
-                .WhenAnyValue(x => x.Name)
-                .Select(name => !string.IsNullOrWhiteSpace(name))
-                .CombineLatest(pathValid, (name, path) => name && path);
+            this.ValidationRule(x => x.Name,
+                name => !string.IsNullOrWhiteSpace(name),
+                "Folder name shouldn't be empty.");
+
+            var pathRule = this.ValidationRule(x => x.Path,
+                path => !string.IsNullOrWhiteSpace(path),
+                "Path shouldn't be empty");
             
             _create = ReactiveCommand.CreateFromTask(
                 () => provider.CreateFolder(Path, Name),
-                canCreateFolder);
-
-            var canCreate = Observable.Return(provider.CanCreateFolder);
+                this.IsValid());
+            
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => !visible)
-                .CombineLatest(canCreate, pathValid, (visible, can, path) => visible && path && can)
-                .CombineLatest(canInteract, (open, interact) => open && interact);
+                .CombineLatest(
+                    owner.WhenAnyValue(x => x.CanInteract),
+                    pathRule.WhenAnyValue(x => x.IsValid), 
+                    (visible, interact, path) => visible && provider.CanCreateFolder && interact && path);
             
             _open = ReactiveCommand.Create(
                 () => { IsVisible = true; },

@@ -7,11 +7,8 @@ using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Camelotia.Services.Providers;
 using Camelotia.Services.Storages;
-using ReactiveUI;
 using System;
 using System.Collections.Generic;
-using System.Reactive.Concurrency;
-using Avalonia.Controls;
 
 namespace Camelotia.Presentation.Avalonia
 {

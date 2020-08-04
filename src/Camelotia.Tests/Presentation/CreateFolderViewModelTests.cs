@@ -86,6 +86,24 @@ namespace Camelotia.Tests.Presentation
             model.Close.CanExecute(null).Should().BeFalse();
             model.Open.CanExecute(null).Should().BeTrue();
         }
+        
+        [Fact]
+        public void ShouldUpdateValidationsForProperties()
+        {
+            _model.CurrentPath.Returns(Separator);
+            
+            var model = BuildCreateFolderViewModel();
+            model.Create.CanExecute(null).Should().BeFalse();
+            model.GetErrors(string.Empty).Should().HaveCount(1);
+            model.GetErrors(nameof(model.Name)).Should().HaveCount(1);
+            model.HasErrors.Should().BeTrue();
+
+            model.Name = "Example";
+            model.Create.CanExecute(null).Should().BeTrue();
+            model.GetErrors(string.Empty).Should().BeEmpty();
+            model.GetErrors(nameof(model.Name)).Should().BeEmpty();
+            model.HasErrors.Should().BeFalse();
+        }
 
         private CreateFolderViewModel BuildCreateFolderViewModel()
         {

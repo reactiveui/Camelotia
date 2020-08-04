@@ -30,7 +30,7 @@
             <TextBlock Text="{Binding OldName}" />
         </StackPanel>
         <TextBlock Text="Please, enter new file name:" Margin="0 5" />
-        <TextBox Text="{Binding NewName, Mode=TwoWay}" />
+        <TextBox Text="{Binding NewName, Mode=TwoWay}" Watermark="File name..." />
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
