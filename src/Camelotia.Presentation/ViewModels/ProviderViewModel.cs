@@ -133,8 +133,7 @@ namespace Camelotia.Presentation.ViewModels
             var canUploadToCurrentPath = this
                 .WhenAnyValue(x => x.CurrentPath)
                 .Select(path => path != null)
-                .CombineLatest(_refresh.IsExecuting, (up, loading) => up && !loading)
-                .CombineLatest(canInteract, (upload, interact) => upload && interact);
+                .CombineLatest(_refresh.IsExecuting, canInteract, (up, loading, can) => up && can && !loading);
                 
             _uploadToCurrentPath = ReactiveCommand.CreateFromObservable(
                 () => Observable
@@ -149,8 +148,7 @@ namespace Camelotia.Presentation.ViewModels
             var canDownloadSelectedFile = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && !file.IsFolder)
-                .CombineLatest(_refresh.IsExecuting, (down, loading) => down && !loading)
-                .CombineLatest(canInteract, (download, interact) => download && interact);
+                .CombineLatest(_refresh.IsExecuting, canInteract, (down, loading, can) => down && !loading && can);
                 
             _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
                 () => Observable
@@ -213,8 +211,7 @@ namespace Camelotia.Presentation.ViewModels
                     .InvokeCommand(_refresh)
                     .DisposeWith(disposable);
 
-                var interval = TimeSpan.FromSeconds(1);
-                Observable.Timer(interval, interval)
+                Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
                     .Select(unit => RefreshingIn - 1)
                     .Where(value => value >= 0)
                     .ObserveOn(RxApp.MainThreadScheduler)
@@ -229,9 +226,8 @@ namespace Camelotia.Presentation.ViewModels
                     .InvokeCommand(_refresh)
                     .DisposeWith(disposable);
 
-                const int refreshPeriod = 30;
-                _refresh.Select(results => refreshPeriod)
-                    .StartWith(refreshPeriod)
+                _refresh.Select(results => 30)
+                    .StartWith(30)
                     .Subscribe(x => RefreshingIn = x)
                     .DisposeWith(disposable);
 
@@ -239,7 +235,8 @@ namespace Camelotia.Presentation.ViewModels
                     .Skip(1)
                     .Where(interact => interact)
                     .Select(x => Unit.Default)
-                    .InvokeCommand(_refresh);
+                    .InvokeCommand(_refresh)
+                    .DisposeWith(disposable);
             });
         }
 
