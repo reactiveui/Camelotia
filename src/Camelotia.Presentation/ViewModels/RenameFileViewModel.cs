@@ -23,9 +23,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _close;
         private readonly ReactiveCommand<Unit, Unit> _open;
         
-        public RenameFileViewModel(
-            IProviderViewModel owner,
-            IProvider provider)
+        public RenameFileViewModel(IProviderViewModel owner, IProvider provider)
         {
             _oldName = owner
                 .WhenAnyValue(x => x.SelectedFile)

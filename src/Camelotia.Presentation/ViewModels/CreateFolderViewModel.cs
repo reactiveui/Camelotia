@@ -23,9 +23,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _close;
         private readonly ReactiveCommand<Unit, Unit> _open;
         
-        public CreateFolderViewModel(
-            IProviderViewModel owner,
-            IProvider provider)
+        public CreateFolderViewModel(IProviderViewModel owner, IProvider provider)
         {
             _path = owner
                 .WhenAnyValue(x => x.CurrentPath)

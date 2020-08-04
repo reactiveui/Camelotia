@@ -14,14 +14,14 @@ namespace Camelotia.Presentation.ViewModels
         private readonly IProvider _provider;
         
         public AuthViewModel(
-            IDirectAuthViewModel directAuth,
-            IHostAuthViewModel hostAuth,
-            IOAuthViewModel oAuth,
+            IDirectAuthViewModel direct,
+            IHostAuthViewModel host,
+            IOAuthViewModel open,
             IProvider provider)
         {
-            OAuth = oAuth;
-            HostAuth = hostAuth;
-            DirectAuth = directAuth;
+            OAuth = open;
+            HostAuth = host;
+            DirectAuth = direct;
             _provider = provider;
 
             _isAuthenticated = _provider
