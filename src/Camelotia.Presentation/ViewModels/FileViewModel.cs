@@ -31,5 +31,25 @@ namespace Camelotia.Presentation.ViewModels
         public string Name => _file.Name;
 
         public string Path => _file.Path;
+
+        public override bool Equals(object obj)
+        {
+            if (obj is FileViewModel other)
+                return Equals(_file.Path, other._file.Path) &&
+                       Equals(_file.Modified, other._file.Modified) &&
+                       Equals(Provider, other.Provider);
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = _file.Path.GetHashCode();
+                hashCode = (hashCode * 397) ^ _file.Modified.GetHashCode();
+                hashCode = (hashCode * 397) ^ Provider.GetHashCode();
+                return hashCode;
+            }
+        }
     }
 }

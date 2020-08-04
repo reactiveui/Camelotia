@@ -22,7 +22,7 @@
                          IsIndeterminate="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
                          Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
                          Margin="0 5" />
-            <StackPanel Visibility="{x:Bind ViewModel.HasErrors, Mode=OneWay}"
+            <StackPanel Visibility="{x:Bind ViewModel.HasErrorMessage, Mode=OneWay}"
                         Background="{ThemeResource SystemControlAccentAcrylicWindowAccentMediumHighBrush}"
                         Margin="0 5">
                 <StackPanel Margin="12">

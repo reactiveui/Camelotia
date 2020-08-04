@@ -28,18 +28,18 @@ namespace Camelotia.Tests.Presentation
         }
 
         [Fact]
-        public void HasErrorsShouldTriggerWhenProviderBreaks() 
+        public void HasErrorMessageShouldTriggerWhenProviderBreaks() 
         {
             _provider.OAuth().Returns(x => throw new Exception("example"));
             
             var model = BuildOAuthViewModel();    
             model.ErrorMessage.Should().BeNullOrEmpty();
-            model.HasErrors.Should().BeFalse();
+            model.HasErrorMessage.Should().BeFalse();
             
             model.Login.CanExecute(null).Should().BeTrue();
             model.Login.Execute(null);
 
-            model.HasErrors.Should().BeTrue();
+            model.HasErrorMessage.Should().BeTrue();
             model.ErrorMessage.Should().NotBeNullOrEmpty();
             model.ErrorMessage.Should().Be("example");
         }

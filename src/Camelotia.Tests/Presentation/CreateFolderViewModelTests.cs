@@ -24,7 +24,7 @@ namespace Camelotia.Tests.Presentation
             model.Path.Should().BeNullOrEmpty();
 
             model.ErrorMessage.Should().BeNullOrEmpty();
-            model.HasErrors.Should().BeFalse();
+            model.HasErrorMessage.Should().BeFalse();
             model.IsVisible.Should().BeFalse();
         }
 
@@ -67,7 +67,7 @@ namespace Camelotia.Tests.Presentation
             model.IsVisible.Should().BeTrue();
             model.Create.CanExecute(null).Should().BeFalse();
             model.ErrorMessage.Should().BeNullOrEmpty();
-            model.HasErrors.Should().BeFalse();
+            model.HasErrorMessage.Should().BeFalse();
             model.IsLoading.Should().BeFalse();
 
             model.Close.CanExecute(null).Should().BeTrue();
@@ -85,6 +85,24 @@ namespace Camelotia.Tests.Presentation
             
             model.Close.CanExecute(null).Should().BeFalse();
             model.Open.CanExecute(null).Should().BeTrue();
+        }
+        
+        [Fact]
+        public void ShouldUpdateValidationsForProperties()
+        {
+            _model.CurrentPath.Returns(Separator);
+            
+            var model = BuildCreateFolderViewModel();
+            model.Create.CanExecute(null).Should().BeFalse();
+            model.GetErrors(string.Empty).Should().HaveCount(1);
+            model.GetErrors(nameof(model.Name)).Should().HaveCount(1);
+            model.HasErrors.Should().BeTrue();
+
+            model.Name = "Example";
+            model.Create.CanExecute(null).Should().BeTrue();
+            model.GetErrors(string.Empty).Should().BeEmpty();
+            model.GetErrors(nameof(model.Name)).Should().BeEmpty();
+            model.HasErrors.Should().BeFalse();
         }
 
         private CreateFolderViewModel BuildCreateFolderViewModel()

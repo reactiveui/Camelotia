@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Threading.Tasks;
@@ -14,7 +13,6 @@ using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
-using DynamicData;
 
 namespace Camelotia.Presentation.ViewModels
 {
@@ -25,12 +23,12 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<IEnumerable<IFileViewModel>> _files;
         private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
         private readonly ObservableAsPropertyHelper<bool> _isCurrentPathEmpty;
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ReactiveCommand<Unit, Unit> _downloadSelectedFile;
         private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
         private readonly ReactiveCommand<Unit, Unit> _deleteSelectedFile;
         private readonly ObservableAsPropertyHelper<string> _currentPath;
         private readonly ObservableAsPropertyHelper<bool> _canInteract;
-        private readonly ObservableAsPropertyHelper<bool> _hasErrors;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _canLogout;
         private readonly ObservableAsPropertyHelper<bool> _isReady;
@@ -72,14 +70,7 @@ namespace Camelotia.Presentation.ViewModels
                     .OrderByDescending(file => file.IsFolder)
                     .ThenBy(file => file.Name)
                     .ToList())
-                .Where(files =>
-                {
-                    var yes = Files == null ||
-                           files.Count != Files.Count() ||
-                           !files.All(x => Files.Any(y => x.Path == y.Path &&
-                                                          x.Modified == y.Modified));
-                    return yes;
-                })
+                .Where(files => Files == null || !files.SequenceEqual(Files))
                 .ToProperty(this, x => x.Files);
 
             _isLoading = _refresh
@@ -88,8 +79,8 @@ namespace Camelotia.Presentation.ViewModels
             
             _isReady = _refresh
                 .IsExecuting
-                .Select(executing => !executing)
                 .Skip(1)
+                .Select(executing => !executing)
                 .ToProperty(this, x => x.IsReady);
             
             var canOpenCurrentPath = this
@@ -133,17 +124,17 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(files => !files.Any())
                 .ToProperty(this, x => x.IsCurrentPathEmpty);
 
-            _hasErrors = _refresh
+            _hasErrorMessage = _refresh
                 .ThrownExceptions
                 .Select(exception => true)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Merge(_refresh.Select(x => false))
-                .ToProperty(this, x => x.HasErrors);
+                .ToProperty(this, x => x.HasErrorMessage);
 
             var canUploadToCurrentPath = this
                 .WhenAnyValue(x => x.CurrentPath)
                 .Select(path => path != null)
-                .CombineLatest(_refresh.IsExecuting, (up, loading) => up && !loading)
-                .CombineLatest(canInteract, (upload, interact) => upload && interact);
+                .CombineLatest(_refresh.IsExecuting, canInteract, (up, loading, can) => up && can && !loading);
                 
             _uploadToCurrentPath = ReactiveCommand.CreateFromObservable(
                 () => Observable
@@ -158,8 +149,7 @@ namespace Camelotia.Presentation.ViewModels
             var canDownloadSelectedFile = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && !file.IsFolder)
-                .CombineLatest(_refresh.IsExecuting, (down, loading) => down && !loading)
-                .CombineLatest(canInteract, (download, interact) => download && interact);
+                .CombineLatest(_refresh.IsExecuting, canInteract, (down, loading, can) => down && !loading && can);
                 
             _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
                 () => Observable
@@ -169,11 +159,13 @@ namespace Camelotia.Presentation.ViewModels
                     .SelectMany(task => task.ToObservable()), 
                 canDownloadSelectedFile);
             
-            var isAuthEnabled = provider.SupportsDirectAuth || provider.SupportsOAuth;
             var canLogout = provider
                 .IsAuthorized
-                .Select(loggedIn => loggedIn && isAuthEnabled)
                 .DistinctUntilChanged()
+                .Select(loggedIn => loggedIn && (
+                    provider.SupportsDirectAuth ||
+                    provider.SupportsOAuth || 
+                    provider.SupportsHostAuth))
                 .CombineLatest(canInteract, (logout, interact) => logout && interact)
                 .ObserveOn(RxApp.MainThreadScheduler);
 
@@ -220,8 +212,7 @@ namespace Camelotia.Presentation.ViewModels
                     .InvokeCommand(_refresh)
                     .DisposeWith(disposable);
 
-                var interval = TimeSpan.FromSeconds(1);
-                Observable.Timer(interval, interval)
+                Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
                     .Select(unit => RefreshingIn - 1)
                     .Where(value => value >= 0)
                     .ObserveOn(RxApp.MainThreadScheduler)
@@ -236,9 +227,8 @@ namespace Camelotia.Presentation.ViewModels
                     .InvokeCommand(_refresh)
                     .DisposeWith(disposable);
 
-                const int refreshPeriod = 30;
-                _refresh.Select(results => refreshPeriod)
-                    .StartWith(refreshPeriod)
+                _refresh.Select(results => 30)
+                    .StartWith(30)
                     .Subscribe(x => RefreshingIn = x)
                     .DisposeWith(disposable);
 
@@ -246,7 +236,8 @@ namespace Camelotia.Presentation.ViewModels
                     .Skip(1)
                     .Where(interact => interact)
                     .Select(x => Unit.Default)
-                    .InvokeCommand(_refresh);
+                    .InvokeCommand(_refresh)
+                    .DisposeWith(disposable);
             });
         }
 
@@ -290,7 +281,7 @@ namespace Camelotia.Presentation.ViewModels
         
         public bool IsLoading => _isLoading.Value;
 
-        public bool HasErrors => _hasErrors.Value;
+        public bool HasErrorMessage => _hasErrorMessage.Value;
 
         public bool IsReady => _isReady.Value;
 

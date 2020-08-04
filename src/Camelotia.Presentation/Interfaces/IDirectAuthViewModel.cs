@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace Camelotia.Presentation.Interfaces
 {
-    public interface IDirectAuthViewModel : INotifyPropertyChanged
+    public interface IDirectAuthViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
     {
         string Username { get; set; }
         
@@ -11,7 +11,7 @@ namespace Camelotia.Presentation.Interfaces
         
         ICommand Login { get; }
         
-        bool HasErrors { get; }
+        bool HasErrorMessage { get; }
         
         string ErrorMessage { get; }
         

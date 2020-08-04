@@ -23,7 +23,7 @@ namespace Camelotia.Presentation.Xamarin.Views
                     .DisposeWith(disposables);
                 this.OneWayBind(ViewModel, x => x.ErrorMessage, x => x.ErrorLabel.Text)
                     .DisposeWith(disposables);
-                this.OneWayBind(ViewModel, x => x.HasErrors, x => x.ErrorLabel.IsVisible)
+                this.OneWayBind(ViewModel, x => x.HasErrorMessage, x => x.ErrorLabel.IsVisible)
                     .DisposeWith(disposables);
             });
         }

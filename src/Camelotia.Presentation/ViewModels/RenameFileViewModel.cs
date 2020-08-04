@@ -1,48 +1,54 @@
 using System;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
 
 namespace Camelotia.Presentation.ViewModels
 {
     public delegate IRenameFileViewModel RenameFileViewModelFactory(IProviderViewModel providerViewModel);
 
-    public sealed class RenameFileViewModel : ReactiveObject, IRenameFileViewModel
+    public sealed class RenameFileViewModel : ReactiveValidationObject<RenameFileViewModel>, IRenameFileViewModel
     {
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ObservableAsPropertyHelper<string> _errorMessage;
         private readonly ObservableAsPropertyHelper<string> _oldName;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
-        private readonly ObservableAsPropertyHelper<bool> _hasErrors;
         private readonly ReactiveCommand<Unit, Unit> _rename;
         private readonly ReactiveCommand<Unit, Unit> _close;
         private readonly ReactiveCommand<Unit, Unit> _open;
         
-        public RenameFileViewModel(
-            IProviderViewModel providerViewModel,
-            IProvider provider)
+        public RenameFileViewModel(IProviderViewModel owner, IProvider provider)
         {
-            _oldName = providerViewModel
+            _oldName = owner
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file?.Name)
                 .ToProperty(this, x => x.OldName);
+            
+            this.ValidationRule(x => x.NewName,
+                name => !string.IsNullOrWhiteSpace(name),
+                "New name shouldn't be empty.");
 
-            var canInteract = providerViewModel
-                .WhenAnyValue(x => x.CanInteract);
+            var oldRule = this.ValidationRule(x => x.OldName,
+                name => !string.IsNullOrWhiteSpace(name),
+                "Old name shouldn't be empty.");
             
-            var oldNameValid = this
-                .WhenAnyValue(x => x.OldName)
-                .Select(old => !string.IsNullOrWhiteSpace(old));
-            
+            _rename = ReactiveCommand.CreateFromTask(
+                () => provider.RenameFile(owner.SelectedFile.Path, NewName),
+                this.IsValid());
+
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => !visible)
-                .CombineLatest(oldNameValid, (visible, old) => visible && old)
-                .CombineLatest(canInteract, (open, interact) => open && interact);
+                .CombineLatest(
+                    oldRule.WhenAnyValue(x => x.IsValid), 
+                    owner.WhenAnyValue(x => x.CanInteract), 
+                    (visible, old, interact) => visible && old && interact);
             
             _open = ReactiveCommand.Create(
                 () => { IsVisible = true; },
@@ -56,24 +62,15 @@ namespace Camelotia.Presentation.ViewModels
                 () => { IsVisible = false; },
                 canClose);
 
-            var canRename = this
-                .WhenAnyValue(x => x.NewName)
-                .Select(name => !string.IsNullOrWhiteSpace(name))
-                .CombineLatest(oldNameValid, (old, name) => old && name);
-            
-            _rename = ReactiveCommand.CreateFromTask(
-                () => provider.RenameFile(providerViewModel.SelectedFile.Path, NewName),
-                canRename);
-
             _isLoading = _rename
                 .IsExecuting
                 .ToProperty(this, x => x.IsLoading);
 
-            _hasErrors = _rename
+            _hasErrorMessage = _rename
                 .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_close.Select(x => false))
-                .ToProperty(this, x => x.HasErrors);
+                .ToProperty(this, x => x.HasErrorMessage);
 
             _errorMessage = _rename
                 .ThrownExceptions
@@ -92,7 +89,7 @@ namespace Camelotia.Presentation.ViewModels
 
         public string ErrorMessage => _errorMessage.Value;
 
-        public bool HasErrors => _hasErrors.Value;
+        public bool HasErrorMessage => _hasErrorMessage.Value;
 
         public bool IsLoading => _isLoading.Value;
 

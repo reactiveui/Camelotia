@@ -16,7 +16,7 @@
                      IsIndeterminate="{Binding IsLoading}"
                      IsVisible="{Binding IsLoading}"
                      Margin="0 5" />
-        <StackPanel IsVisible="{Binding HasErrors}"
+        <StackPanel IsVisible="{Binding HasErrorMessage}"
                     Background="#ffeeee"
                     Margin="0 5">
             <StackPanel Margin="10">
@@ -30,7 +30,7 @@
             <TextBlock Text="{Binding OldName}" />
         </StackPanel>
         <TextBlock Text="Please, enter new file name:" Margin="0 5" />
-        <TextBox Text="{Binding NewName, Mode=TwoWay}" />
+        <TextBox Text="{Binding NewName, Mode=TwoWay}" Watermark="File name..." />
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />

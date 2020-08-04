@@ -25,17 +25,17 @@ namespace Camelotia.Tests.Presentation
         }
 
         [Fact]
-        public void HasErrorsShouldTriggerWhenProviderBreaks()
+        public void HasErrorMessageShouldTriggerWhenProviderBreaks()
         {
             _provider.DirectAuth("hello", "world").Returns(x => throw new Exception("example"));
             
             var model = BuildDirectAuthViewModel();
-            model.HasErrors.Should().BeFalse();
+            model.HasErrorMessage.Should().BeFalse();
                 
             model.Username = "hello";
             model.Password = "world";
             model.Login.Execute(null);
-            model.HasErrors.Should().BeTrue();
+            model.HasErrorMessage.Should().BeTrue();
             model.ErrorMessage.Should().Be("example");
         }
 
@@ -51,6 +51,31 @@ namespace Camelotia.Tests.Presentation
             model.Password = "world";
             model.Login.Execute(null);
             model.IsBusy.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ShouldUpdateValidationsForProperties()
+        {
+            var model = BuildDirectAuthViewModel();
+            model.Login.CanExecute(null).Should().BeFalse();
+            model.GetErrors(string.Empty).Should().HaveCount(2);
+            model.GetErrors(nameof(model.Username)).Should().NotBeEmpty();
+            model.GetErrors(nameof(model.Password)).Should().NotBeEmpty();
+            model.HasErrors.Should().BeTrue();
+
+            model.Username = "Jotaro";
+            model.Login.CanExecute(null).Should().BeFalse();
+            model.GetErrors(string.Empty).Should().HaveCount(1);
+            model.GetErrors(nameof(model.Username)).Should().BeEmpty();
+            model.GetErrors(nameof(model.Password)).Should().NotBeEmpty();
+            model.HasErrors.Should().BeTrue();
+
+            model.Password = "qwerty";
+            model.Login.CanExecute(null).Should().BeTrue();
+            model.GetErrors(string.Empty).Should().BeEmpty();
+            model.GetErrors(nameof(model.Username)).Should().BeEmpty();
+            model.GetErrors(nameof(model.Password)).Should().BeEmpty();
+            model.HasErrors.Should().BeFalse();
         }
 
         private DirectAuthViewModel BuildDirectAuthViewModel()

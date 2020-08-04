@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace Camelotia.Presentation.Interfaces
 {
-    public interface IRenameFileViewModel : INotifyPropertyChanged
+    public interface IRenameFileViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
     {
         bool IsLoading { get; }
         
@@ -13,9 +13,9 @@ namespace Camelotia.Presentation.Interfaces
         
         string NewName { get; set; }
         
-        string ErrorMessage { get; }
+        bool HasErrorMessage { get; }
         
-        bool HasErrors { get; }
+        string ErrorMessage { get; }
         
         ICommand Rename { get; }
         

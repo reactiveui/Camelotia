@@ -19,7 +19,7 @@
                      IsIndeterminate="{Binding IsLoading}"
                      Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibility}}"
                      Margin="0 5" />
-        <StackPanel Visibility="{Binding HasErrors, Converter={StaticResource BooleanToVisibility}}"
+        <StackPanel Visibility="{Binding HasErrorMessage, Converter={StaticResource BooleanToVisibility}}"
                     Background="#ffeeee"
                     Margin="0 5">
             <StackPanel Margin="10">
