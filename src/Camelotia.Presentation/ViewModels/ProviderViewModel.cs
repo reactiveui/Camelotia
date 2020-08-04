@@ -79,8 +79,8 @@ namespace Camelotia.Presentation.ViewModels
             
             _isReady = _refresh
                 .IsExecuting
-                .Select(executing => !executing)
                 .Skip(1)
+                .Select(executing => !executing)
                 .ToProperty(this, x => x.IsReady);
             
             var canOpenCurrentPath = this
@@ -127,6 +127,7 @@ namespace Camelotia.Presentation.ViewModels
             _hasErrorMessage = _refresh
                 .ThrownExceptions
                 .Select(exception => true)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Merge(_refresh.Select(x => false))
                 .ToProperty(this, x => x.HasErrorMessage);
 

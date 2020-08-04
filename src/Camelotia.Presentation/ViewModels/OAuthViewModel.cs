@@ -17,14 +17,19 @@ namespace Camelotia.Presentation.ViewModels
         public OAuthViewModel(IProvider provider)
         {
             _login = ReactiveCommand.CreateFromTask(provider.OAuth);
-            _isBusy = _login.IsExecuting.ToProperty(this, x => x.IsBusy);
+            
+            _isBusy = _login
+                .IsExecuting
+                .ToProperty(this, x => x.IsBusy);
 
-            _errorMessage = _login.ThrownExceptions
+            _errorMessage = _login
+                .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"OAuth error occured in {provider.Name}")
                 .ToProperty(this, x => x.ErrorMessage);
 
-            _hasErrorMessage = _login.ThrownExceptions
+            _hasErrorMessage = _login
+                .ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
                 .ToProperty(this, x => x.HasErrorMessage);
