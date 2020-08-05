@@ -20,18 +20,12 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
     {
-        private readonly ObservableAsPropertyHelper<IEnumerable<IFileViewModel>> _files;
+        private readonly ObservableAsPropertyHelper<bool> _canInteract;
+        private readonly ObservableAsPropertyHelper<string> _currentPath;
         private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
-        private readonly ObservableAsPropertyHelper<bool> _isCurrentPathEmpty;
-        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ReactiveCommand<Unit, Unit> _downloadSelectedFile;
         private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
         private readonly ReactiveCommand<Unit, Unit> _deleteSelectedFile;
-        private readonly ObservableAsPropertyHelper<string> _currentPath;
-        private readonly ObservableAsPropertyHelper<bool> _canInteract;
-        private readonly ObservableAsPropertyHelper<bool> _isLoading;
-        private readonly ObservableAsPropertyHelper<bool> _canLogout;
-        private readonly ObservableAsPropertyHelper<bool> _isReady;
         private readonly ReactiveCommand<Unit, Unit> _unselectFile;
         private readonly ReactiveCommand<Unit, string> _back;
         private readonly ReactiveCommand<Unit, string> _open;
@@ -64,24 +58,20 @@ namespace Camelotia.Presentation.ViewModels
                 () => provider.Get(CurrentPath),
                 canInteract);
             
-            _files = _refresh
-                .Select(files => files
+            _refresh.Select(files => files
                     .Select(file => createFile(file, this))
                     .OrderByDescending(file => file.IsFolder)
                     .ThenBy(file => file.Name)
                     .ToList())
                 .Where(files => Files == null || !files.SequenceEqual(Files))
-                .ToProperty(this, x => x.Files);
+                .ToPropertyEx(this, x => x.Files);
 
-            _isLoading = _refresh
-                .IsExecuting
-                .ToProperty(this, x => x.IsLoading);
+            _refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
             
-            _isReady = _refresh
-                .IsExecuting
+            _refresh.IsExecuting
                 .Skip(1)
                 .Select(executing => !executing)
-                .ToProperty(this, x => x.IsReady);
+                .ToPropertyEx(this, x => x.IsReady);
             
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
@@ -103,8 +93,7 @@ namespace Camelotia.Presentation.ViewModels
                 () => Path.GetDirectoryName(CurrentPath), 
                 canCurrentPathGoBack);
 
-            _currentPath = _open
-                .Merge(_back)
+            _currentPath = _open.Merge(_back)
                 .DistinctUntilChanged()
                 .Log(this, $"Current path changed in {provider.Name}")
                 .ToProperty(this, x => x.CurrentPath, provider.InitialPath);
@@ -117,19 +106,17 @@ namespace Camelotia.Presentation.ViewModels
             this.WhenAnyValue(x => x.CurrentPath)
                 .Subscribe(path => SelectedFile = null);
 
-            _isCurrentPathEmpty = this
-                .WhenAnyValue(x => x.Files)
+            this.WhenAnyValue(x => x.Files)
                 .Skip(1)
                 .Where(files => files != null)
                 .Select(files => !files.Any())
-                .ToProperty(this, x => x.IsCurrentPathEmpty);
+                .ToPropertyEx(this, x => x.IsCurrentPathEmpty);
 
-            _hasErrorMessage = _refresh
-                .ThrownExceptions
+            _refresh.ThrownExceptions
                 .Select(exception => true)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Merge(_refresh.Select(x => false))
-                .ToProperty(this, x => x.HasErrorMessage);
+                .ToPropertyEx(this, x => x.HasErrorMessage);
 
             var canUploadToCurrentPath = this
                 .WhenAnyValue(x => x.CurrentPath)
@@ -170,7 +157,7 @@ namespace Camelotia.Presentation.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler);
 
             _logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
-            _canLogout = canLogout.ToProperty(this, x => x.CanLogout);
+            canLogout.ToPropertyEx(this, x => x.CanLogout);
 
             var canDeleteSelection = this
                 .WhenAnyValue(x => x.SelectedFile)
@@ -241,6 +228,30 @@ namespace Camelotia.Presentation.ViewModels
             });
         }
 
+        [Reactive]
+        public int RefreshingIn { get; private set; }
+
+        [Reactive]
+        public IFileViewModel SelectedFile { get; set; }
+
+        [ObservableAsProperty]
+        public bool IsCurrentPathEmpty { get; }
+        
+        [ObservableAsProperty]
+        public IEnumerable<IFileViewModel> Files { get; }
+
+        [ObservableAsProperty]
+        public bool CanLogout { get; }
+        
+        [ObservableAsProperty]
+        public bool IsLoading { get; }
+
+        [ObservableAsProperty]
+        public bool HasErrorMessage { get; }
+
+        [ObservableAsProperty]
+        public bool IsReady { get; }
+
         public Guid Id => _provider.Id;
         
         public IAuthViewModel Auth { get; }
@@ -251,39 +262,23 @@ namespace Camelotia.Presentation.ViewModels
         
         public ICreateFolderViewModel Folder { get; }
 
-        [Reactive] public int RefreshingIn { get; private set; }
-
-        [Reactive] public IFileViewModel SelectedFile { get; set; }
-
         public string Size => _provider.Size?.ByteSizeToString() ?? "Unknown";
 
         public string CurrentPath => _currentPath?.Value ?? _provider.InitialPath;
 
         public string Description => $"{_provider.Name} file system.";
-
-        public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
         
         public ICommand DownloadSelectedFile => _downloadSelectedFile;
 
         public ICommand UploadToCurrentPath => _uploadToCurrentPath;
 
         public ICommand DeleteSelectedFile => _deleteSelectedFile;
-        
-        public IEnumerable<IFileViewModel> Files => _files?.Value;
 
         public bool CanInteract => _canInteract?.Value ?? true;
         
         public ICommand UnselectFile => _unselectFile;
 
         public DateTime Created => _provider.Created;
-
-        public bool CanLogout => _canLogout.Value;
-        
-        public bool IsLoading => _isLoading.Value;
-
-        public bool HasErrorMessage => _hasErrorMessage.Value;
-
-        public bool IsReady => _isReady.Value;
 
         public string Name => _provider.Name;
 

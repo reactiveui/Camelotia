@@ -13,9 +13,6 @@ namespace Camelotia.Presentation.ViewModels
 {
     public sealed class DirectAuthViewModel : ReactiveValidationObject<DirectAuthViewModel>, IDirectAuthViewModel
     {
-        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
-        private readonly ObservableAsPropertyHelper<string> _errorMessage;
-        private readonly ObservableAsPropertyHelper<bool> _isBusy;
         private readonly ReactiveCommand<Unit, Unit> _login;
         
         public DirectAuthViewModel(IProvider provider)
@@ -31,22 +28,18 @@ namespace Camelotia.Presentation.ViewModels
             _login = ReactiveCommand.CreateFromTask(
                 () => provider.DirectAuth(Username, Password),
                 this.IsValid());
-
-            _errorMessage = _login
-                .ThrownExceptions
+            
+            _login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
+            
+            _login.ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Direct auth error occured in {provider.Name}")
-                .ToProperty(this, x => x.ErrorMessage);
+                .ToPropertyEx(this, x => x.ErrorMessage);
 
-            _hasErrorMessage = _login
-                .ThrownExceptions
+            _login.ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
-                .ToProperty(this, x => x.HasErrorMessage);
-
-            _isBusy = _login
-                .IsExecuting
-                .ToProperty(this, x => x.IsBusy);
+                .ToPropertyEx(this, x => x.HasErrorMessage);
 
             _login.Subscribe(x =>
             {
@@ -55,15 +48,20 @@ namespace Camelotia.Presentation.ViewModels
             });
         }
         
-        [Reactive] public string Username { get; set; }
+        [Reactive]
+        public string Username { get; set; }
         
-        [Reactive] public string Password { get; set; }
+        [Reactive]
+        public string Password { get; set; }
         
-        public string ErrorMessage => _errorMessage.Value;
+        [ObservableAsProperty]
+        public string ErrorMessage { get; }
 
-        public bool HasErrorMessage => _hasErrorMessage.Value;
+        [ObservableAsProperty]
+        public bool HasErrorMessage { get; }
 
-        public bool IsBusy => _isBusy.Value;
+        [ObservableAsProperty]
+        public bool IsBusy { get; }
         
         public ICommand Login => _login;
     }
