@@ -57,9 +57,8 @@ namespace Camelotia.Presentation.ViewModels
                 canClose);
 
             _create.InvokeCommand(_close);
-            _close.Subscribe(x => Name = string.Empty);
-
             _create.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            _close.Subscribe(x => Name = string.Empty);
 
             _create.ThrownExceptions
                 .Select(exception => true)

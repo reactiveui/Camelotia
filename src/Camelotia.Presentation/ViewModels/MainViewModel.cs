@@ -89,9 +89,7 @@ namespace Camelotia.Presentation.ViewModels
             this.WhenActivated(disposables =>
             {
                 SelectedSupportedType = SupportedTypes.FirstOrDefault();
-                _refresh.Execute()
-                    .Subscribe(o => { }, e => { })
-                    .DisposeWith(disposables);
+                _refresh.Execute().Subscribe(o => { }, e => { }).DisposeWith(disposables);
             });
         }
         
