@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Camelotia.Tests.Services
 {
-    public sealed class ProviderStorageTests
+    public sealed class StorageTests
     {
         private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
         private readonly IObjectBlobCache _blobCache = Substitute.For<IObjectBlobCache>();
