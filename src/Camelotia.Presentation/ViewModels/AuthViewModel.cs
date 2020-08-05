@@ -2,6 +2,7 @@ using System.Reactive.Linq;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace Camelotia.Presentation.ViewModels
 {
@@ -9,8 +10,6 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class AuthViewModel : ReactiveObject, IAuthViewModel
     {
-        private readonly ObservableAsPropertyHelper<bool> _isAuthenticated;
-        private readonly ObservableAsPropertyHelper<bool> _isAnonymous;
         private readonly IProvider _provider;
         
         public AuthViewModel(
@@ -23,29 +22,29 @@ namespace Camelotia.Presentation.ViewModels
             HostAuth = host;
             DirectAuth = direct;
             _provider = provider;
-
-            _isAuthenticated = _provider
-                .IsAuthorized
+            
+            _provider.IsAuthorized
                 .DistinctUntilChanged()
-                .ObserveOn(RxApp.MainThreadScheduler)
                 .Log(this, $"Authentication state changed for {provider.Name}")
-                .ToProperty(this, x => x.IsAuthenticated);
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToPropertyEx(this, x => x.IsAuthenticated);
 
-            _isAnonymous = this
-                .WhenAnyValue(x => x.IsAuthenticated)
+            this.WhenAnyValue(x => x.IsAuthenticated)
                 .Select(authenticated => !authenticated)
-                .ToProperty(this, x => x.IsAnonymous);
+                .ToPropertyEx(this, x => x.IsAnonymous);
         }
+
+        [ObservableAsProperty]
+        public bool IsAuthenticated { get; }
+
+        [ObservableAsProperty]
+        public bool IsAnonymous { get; }
 
         public bool SupportsDirectAuth => _provider.SupportsDirectAuth;
 
         public bool SupportsHostAuth => _provider.SupportsHostAuth;
 
         public bool SupportsOAuth => _provider.SupportsOAuth;
-
-        public bool IsAuthenticated => _isAuthenticated.Value;
-
-        public bool IsAnonymous => _isAnonymous.Value;
 
         public IDirectAuthViewModel DirectAuth { get; }
         

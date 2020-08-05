@@ -15,19 +15,14 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class CreateFolderViewModel : ReactiveValidationObject<CreateFolderViewModel>, ICreateFolderViewModel
     {
-        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
-        private readonly ObservableAsPropertyHelper<string> _errorMessage;
-        private readonly ObservableAsPropertyHelper<bool> _isLoading;
-        private readonly ObservableAsPropertyHelper<string> _path;
         private readonly ReactiveCommand<Unit, Unit> _create;
-        private readonly ReactiveCommand<Unit, Unit> _close;
-        private readonly ReactiveCommand<Unit, Unit> _open;
+        private readonly ReactiveCommand<Unit, bool> _close;
+        private readonly ReactiveCommand<Unit, bool> _open;
         
         public CreateFolderViewModel(IProviderViewModel owner, IProvider provider)
         {
-            _path = owner
-                .WhenAnyValue(x => x.CurrentPath)
-                .ToProperty(this, x => x.Path);
+            owner.WhenAnyValue(x => x.CurrentPath)
+                .ToPropertyEx(this, x => x.Path);
             
             this.ValidationRule(x => x.Name,
                 name => !string.IsNullOrWhiteSpace(name),
@@ -41,58 +36,62 @@ namespace Camelotia.Presentation.ViewModels
                 () => provider.CreateFolder(Path, Name),
                 this.IsValid());
             
+            _create.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+
+            var canInteract = owner
+                .WhenAnyValue(x => x.CanInteract)
+                .Skip(1)
+                .StartWith(true);
+            
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => !visible)
                 .CombineLatest(
-                    owner.WhenAnyValue(x => x.CanInteract),
+                    canInteract,
                     pathRule.WhenAnyValue(x => x.IsValid), 
                     (visible, interact, path) => visible && provider.CanCreateFolder && interact && path);
             
-            _open = ReactiveCommand.Create(
-                () => { IsVisible = true; },
-                canOpen);
-
             var canClose = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => visible);
             
-            _close = ReactiveCommand.Create(
-                () => { IsVisible = false; },
-                canClose);
-
-            _create.InvokeCommand(_close);
+            _open = ReactiveCommand.Create(() => true, canOpen);
+            _close = ReactiveCommand.Create(() => false, canClose);
+            
+            _close.Merge(_open).Subscribe(visible => IsVisible = visible);
             _close.Subscribe(x => Name = string.Empty);
 
-            _hasErrorMessage = _create
-                .ThrownExceptions
+            _create.ThrownExceptions
                 .Select(exception => true)
                 .Merge(_close.Select(unit => false))
-                .ToProperty(this, x => x.HasErrorMessage);
+                .ToPropertyEx(this, x => x.HasErrorMessage);
 
-            _errorMessage = _create
-                .ThrownExceptions
+            _create.ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Create folder error occured in {provider.Name}")
                 .Merge(_close.Select(unit => string.Empty))
-                .ToProperty(this, x => x.ErrorMessage);
-
-            _isLoading = _create
-                .IsExecuting
-                .ToProperty(this, x => x.IsLoading);
+                .ToPropertyEx(this, x => x.ErrorMessage);
+            
+            _create.InvokeCommand(_close);
         }
 
-        [Reactive] public string Name { get; set; }
+        [Reactive]
+        public string Name { get; set; }
         
-        [Reactive] public bool IsVisible { get; set; }
+        [Reactive]
+        public bool IsVisible { get; set; }
 
-        public string ErrorMessage => _errorMessage.Value;
+        [ObservableAsProperty]
+        public string ErrorMessage { get; }
 
-        public bool HasErrorMessage => _hasErrorMessage.Value;
+        [ObservableAsProperty]
+        public bool HasErrorMessage { get; }
 
-        public bool IsLoading => _isLoading.Value;
+        [ObservableAsProperty]
+        public bool IsLoading { get; }
 
-        public string Path => _path.Value;
+        [ObservableAsProperty]
+        public string Path { get; }
         
         public ICommand Create => _create;
         

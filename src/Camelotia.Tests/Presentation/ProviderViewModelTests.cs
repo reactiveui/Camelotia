@@ -146,6 +146,24 @@ namespace Camelotia.Tests.Presentation
             model.Open.CanExecute(null).Should().BeFalse();
         }
 
+        [Fact]
+        public void ShouldNotPublishNullCurrentPathValues()
+        {
+            var file = new FileModel { Name = "foo", Path = Separator + "foo", IsFolder = true };
+            _provider.Get(Separator).Returns(Enumerable.Repeat(file, 1));
+            _auth.IsAuthenticated.Returns(true);
+            _provider.InitialPath.Returns(Separator);
+
+            var model = BuildProviderViewModel();
+            model.Refresh.Execute(null);
+            
+            model.Files.Should().NotBeEmpty();
+            model.CurrentPath.Should().Be(Separator);
+            model.Back.Execute(null);
+
+            model.CurrentPath.Should().Be(Separator);
+        }
+        
         private ProviderViewModel BuildProviderViewModel()
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;

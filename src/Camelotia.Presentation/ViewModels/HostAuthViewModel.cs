@@ -13,9 +13,6 @@ namespace Camelotia.Presentation.ViewModels
 {
     public sealed class HostAuthViewModel : ReactiveValidationObject<HostAuthViewModel>, IHostAuthViewModel
     {
-        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
-        private readonly ObservableAsPropertyHelper<string> _errorMessage;
-        private readonly ObservableAsPropertyHelper<bool> _isBusy;
         private readonly ReactiveCommand<Unit, Unit> _login;
         
         public HostAuthViewModel(IProvider provider)
@@ -40,22 +37,18 @@ namespace Camelotia.Presentation.ViewModels
                 () => provider.HostAuth(Address, int.Parse(Port), Username, Password),
                 this.IsValid());
 
-            _errorMessage = _login
-                .ThrownExceptions
+            _login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
+            
+            _login.ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Host auth error occured in {provider.Name}")
-                .ToProperty(this, x => x.ErrorMessage);
+                .ToPropertyEx(this, x => x.ErrorMessage);
 
-            _hasErrorMessage = _login
-                .ThrownExceptions
+            _login.ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
-                .ToProperty(this, x => x.HasErrorMessage);
+                .ToPropertyEx(this, x => x.HasErrorMessage);
 
-            _isBusy = _login
-                .IsExecuting
-                .ToProperty(this, x => x.IsBusy);
-            
             _login.Subscribe(x =>
             {
                 Username = string.Empty;
@@ -65,19 +58,26 @@ namespace Camelotia.Presentation.ViewModels
             });
         }
         
-        [Reactive] public string Port { get; set; }
+        [Reactive]
+        public string Port { get; set; }
         
-        [Reactive] public string Address { get; set; }
+        [Reactive] 
+        public string Address { get; set; }
         
-        [Reactive] public string Username { get; set; }
+        [Reactive] 
+        public string Username { get; set; }
         
-        [Reactive] public string Password { get; set; }
+        [Reactive] 
+        public string Password { get; set; }
         
-        public string ErrorMessage => _errorMessage.Value;
+        [ObservableAsProperty]
+        public string ErrorMessage { get; }
+        
+        [ObservableAsProperty]
+        public bool HasErrorMessage { get; }
 
-        public bool HasErrorMessage => _hasErrorMessage.Value;
-
-        public bool IsBusy => _isBusy.Value;
+        [ObservableAsProperty]
+        public bool IsBusy { get; }
         
         public ICommand Login => _login;
     }

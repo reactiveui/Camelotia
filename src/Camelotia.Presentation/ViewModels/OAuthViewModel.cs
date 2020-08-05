@@ -4,42 +4,38 @@ using System.Windows.Input;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace Camelotia.Presentation.ViewModels
 {
     public sealed class OAuthViewModel : ReactiveObject, IOAuthViewModel
     {
-        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
-        private readonly ObservableAsPropertyHelper<string> _errorMessage;
-        private readonly ObservableAsPropertyHelper<bool> _isBusy;
         private readonly ReactiveCommand<Unit, Unit> _login;
         
         public OAuthViewModel(IProvider provider)
         {
             _login = ReactiveCommand.CreateFromTask(provider.OAuth);
-            
-            _isBusy = _login
-                .IsExecuting
-                .ToProperty(this, x => x.IsBusy);
+            _login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
 
-            _errorMessage = _login
-                .ThrownExceptions
+            _login.ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"OAuth error occured in {provider.Name}")
-                .ToProperty(this, x => x.ErrorMessage);
+                .ToPropertyEx(this, x => x.ErrorMessage);
 
-            _hasErrorMessage = _login
-                .ThrownExceptions
+            _login.ThrownExceptions
                 .Select(exception => true)
                 .Merge(_login.Select(unit => false))
-                .ToProperty(this, x => x.HasErrorMessage);
+                .ToPropertyEx(this, x => x.HasErrorMessage);
         }
         
-        public string ErrorMessage => _errorMessage.Value;
+        [ObservableAsProperty]
+        public string ErrorMessage { get; }
 
-        public bool HasErrorMessage => _hasErrorMessage.Value;
+        [ObservableAsProperty]
+        public bool HasErrorMessage { get; }
         
-        public bool IsBusy => _isBusy.Value;
+        [ObservableAsProperty]
+        public bool IsBusy { get; }
         
         public ICommand Login => _login;
     }
