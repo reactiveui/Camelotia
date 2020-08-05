@@ -21,7 +21,6 @@ namespace Camelotia.Presentation.ViewModels
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
     {
         private readonly ObservableAsPropertyHelper<bool> _canInteract;
-        private readonly ObservableAsPropertyHelper<string> _currentPath;
         private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
         private readonly ReactiveCommand<Unit, Unit> _downloadSelectedFile;
         private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
@@ -85,6 +84,7 @@ namespace Camelotia.Presentation.ViewModels
 
             var canCurrentPathGoBack = this
                 .WhenAnyValue(x => x.CurrentPath)
+                .Where(path => path != null)
                 .Select(path => path.Length > provider.InitialPath.Length)
                 .CombineLatest(_refresh.IsExecuting, (valid, busy) => valid && !busy)
                 .CombineLatest(canInteract, (back, interact) => back && interact);
@@ -93,11 +93,11 @@ namespace Camelotia.Presentation.ViewModels
                 () => Path.GetDirectoryName(CurrentPath), 
                 canCurrentPathGoBack);
 
-            _currentPath = _open
-                .Merge(_back)
+            _open.Merge(_back)
+                .Select(path => path ?? provider.InitialPath)
                 .DistinctUntilChanged()
                 .Log(this, $"Current path changed in {provider.Name}")
-                .ToProperty(this, x => x.CurrentPath, provider.InitialPath);
+                .ToPropertyEx(this, x => x.CurrentPath, provider.InitialPath);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Skip(1)
@@ -240,6 +240,9 @@ namespace Camelotia.Presentation.ViewModels
         
         [ObservableAsProperty]
         public IEnumerable<IFileViewModel> Files { get; }
+        
+        [ObservableAsProperty]
+        public string CurrentPath { get; }
 
         [ObservableAsProperty]
         public bool CanLogout { get; }
@@ -254,8 +257,6 @@ namespace Camelotia.Presentation.ViewModels
         public bool IsReady { get; }
         
         public bool CanInteract => _canInteract?.Value ?? true;
-        
-        public string CurrentPath => _currentPath?.Value ?? _provider.InitialPath;
 
         public IAuthViewModel Auth { get; }
         
