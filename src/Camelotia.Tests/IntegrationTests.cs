@@ -22,7 +22,7 @@ namespace Camelotia.Tests
         private readonly IFileManager _files = Substitute.For<IFileManager>();
 
         [Fact]
-        public async Task ShouldWireUpAppViewModels()
+        public void ShouldWireUpAppViewModels()
         {
             var main = ComposeMainViewModel();
             using (main.Activator.Activate())
@@ -32,12 +32,6 @@ namespace Camelotia.Tests
                 main.Providers.Should().BeEmpty();
                 main.Add.Execute(null);
 
-                // Wait for the ReadOnlyObservableCollection to refresh.
-                // Still figuring out how to synchronize SourceCache and
-                // ReadOnlyObservableCollection immediately.
-                while (main.Providers.Any() == false)
-                    await Task.Delay(100);
-                
                 main.Providers.Should().NotBeEmpty();
                 main.Providers[0].Name.Should().Be(nameof(LocalProvider));
                 main.Providers[0].CanInteract.Should().BeTrue();

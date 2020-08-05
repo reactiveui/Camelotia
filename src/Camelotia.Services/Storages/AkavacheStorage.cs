@@ -30,7 +30,7 @@ namespace Camelotia.Services.Storages
 
         public IObservable<IChangeSet<IProvider, Guid>> Read() => _connection;
 
-        public Task Add(string typeName) => Task.Run(() =>
+        public async Task Add(string typeName)
         {
             var guid = Guid.NewGuid();
             var type = _factories.Keys.First(x => x == typeName);
@@ -42,18 +42,18 @@ namespace Camelotia.Services.Storages
                 Created = DateTime.Now
             };
 
-            _blobCache.InsertObject(guid.ToString(), model).Subscribe();
+            await _blobCache.InsertObject(guid.ToString(), model);
             var provider = _factories[type](model);
             _connectable.AddOrUpdate(provider);
-        });
+        }
 
-        public Task Remove(Guid id) => Task.Run(() =>
+        public async Task Remove(Guid id)
         {
             var persistentId = id.ToString();
-            _blobCache.InvalidateObject<ProviderModel>(persistentId).Subscribe();
+            await _blobCache.InvalidateObject<ProviderModel>(persistentId);
             var provider = _connectable.Items.First(x => x.Id == id);
             _connectable.Remove(provider);
-        });
+        }
 
         public async Task Refresh()
         {
