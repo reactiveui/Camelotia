@@ -93,7 +93,8 @@ namespace Camelotia.Presentation.ViewModels
                 () => Path.GetDirectoryName(CurrentPath), 
                 canCurrentPathGoBack);
 
-            _currentPath = _open.Merge(_back)
+            _currentPath = _open
+                .Merge(_back)
                 .DistinctUntilChanged()
                 .Log(this, $"Current path changed in {provider.Name}")
                 .ToProperty(this, x => x.CurrentPath, provider.InitialPath);
@@ -251,36 +252,36 @@ namespace Camelotia.Presentation.ViewModels
 
         [ObservableAsProperty]
         public bool IsReady { get; }
-
-        public Guid Id => _provider.Id;
         
+        public bool CanInteract => _canInteract?.Value ?? true;
+        
+        public string CurrentPath => _currentPath?.Value ?? _provider.InitialPath;
+
         public IAuthViewModel Auth { get; }
         
-        public IRenameFileViewModel Rename { get; }
-
-        public ViewModelActivator Activator { get; }
+        public IRenameFileViewModel Rename { get; }  
         
         public ICreateFolderViewModel Folder { get; }
 
+        public ViewModelActivator Activator { get; }
+        
+        public Guid Id => _provider.Id;
+        
+        public string Name => _provider.Name;
+        
+        public DateTime Created => _provider.Created;
+
         public string Size => _provider.Size?.ByteSizeToString() ?? "Unknown";
 
-        public string CurrentPath => _currentPath?.Value ?? _provider.InitialPath;
-
         public string Description => $"{_provider.Name} file system.";
-        
+
         public ICommand DownloadSelectedFile => _downloadSelectedFile;
 
         public ICommand UploadToCurrentPath => _uploadToCurrentPath;
 
         public ICommand DeleteSelectedFile => _deleteSelectedFile;
 
-        public bool CanInteract => _canInteract?.Value ?? true;
-        
         public ICommand UnselectFile => _unselectFile;
-
-        public DateTime Created => _provider.Created;
-
-        public string Name => _provider.Name;
 
         public ICommand Refresh => _refresh;
         

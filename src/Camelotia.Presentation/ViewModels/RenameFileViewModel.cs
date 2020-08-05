@@ -16,8 +16,8 @@ namespace Camelotia.Presentation.ViewModels
     public sealed class RenameFileViewModel : ReactiveValidationObject<RenameFileViewModel>, IRenameFileViewModel
     {
         private readonly ReactiveCommand<Unit, Unit> _rename;
-        private readonly ReactiveCommand<Unit, Unit> _close;
-        private readonly ReactiveCommand<Unit, Unit> _open;
+        private readonly ReactiveCommand<Unit, bool> _close;
+        private readonly ReactiveCommand<Unit, bool> _open;
         
         public RenameFileViewModel(IProviderViewModel owner, IProvider provider)
         {
@@ -36,6 +36,8 @@ namespace Camelotia.Presentation.ViewModels
             _rename = ReactiveCommand.CreateFromTask(
                 () => provider.RenameFile(owner.SelectedFile.Path, NewName),
                 this.IsValid());
+            
+            _rename.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
 
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
@@ -45,19 +47,15 @@ namespace Camelotia.Presentation.ViewModels
                     owner.WhenAnyValue(x => x.CanInteract), 
                     (visible, old, interact) => visible && old && interact);
             
-            _open = ReactiveCommand.Create(
-                () => { IsVisible = true; },
-                canOpen);
-            
             var canClose = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => visible);
             
-            _close = ReactiveCommand.Create(
-                () => { IsVisible = false; },
-                canClose);
-
-            _rename.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            _open = ReactiveCommand.Create(() => true, canOpen);
+            _close = ReactiveCommand.Create(() => false, canClose);
+            
+            _close.Merge(_open).Subscribe(visible => IsVisible = visible);
+            _close.Subscribe(x => NewName = string.Empty);
 
             _rename.ThrownExceptions
                 .Select(exception => true)
@@ -71,7 +69,6 @@ namespace Camelotia.Presentation.ViewModels
                 .ToPropertyEx(this, x => x.ErrorMessage);
 
             _rename.InvokeCommand(_close);
-            _close.Subscribe(x => NewName = string.Empty);
         }
         
         [Reactive] 

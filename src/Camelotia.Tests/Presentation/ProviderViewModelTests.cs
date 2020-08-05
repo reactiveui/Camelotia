@@ -145,7 +145,7 @@ namespace Camelotia.Tests.Presentation
             model.SelectedFile.Should().BeNull();
             model.Open.CanExecute(null).Should().BeFalse();
         }
-
+        
         private ProviderViewModel BuildProviderViewModel()
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;

@@ -22,10 +22,11 @@ namespace Camelotia.Presentation.ViewModels
             HostAuth = host;
             DirectAuth = direct;
             _provider = provider;
+            
             _provider.IsAuthorized
                 .DistinctUntilChanged()
-                .ObserveOn(RxApp.MainThreadScheduler)
                 .Log(this, $"Authentication state changed for {provider.Name}")
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .ToPropertyEx(this, x => x.IsAuthenticated);
 
             this.WhenAnyValue(x => x.IsAuthenticated)
@@ -33,17 +34,17 @@ namespace Camelotia.Presentation.ViewModels
                 .ToPropertyEx(this, x => x.IsAnonymous);
         }
 
-        public bool SupportsDirectAuth => _provider.SupportsDirectAuth;
-
-        public bool SupportsHostAuth => _provider.SupportsHostAuth;
-
-        public bool SupportsOAuth => _provider.SupportsOAuth;
-
         [ObservableAsProperty]
         public bool IsAuthenticated { get; }
 
         [ObservableAsProperty]
         public bool IsAnonymous { get; }
+
+        public bool SupportsDirectAuth => _provider.SupportsDirectAuth;
+
+        public bool SupportsHostAuth => _provider.SupportsHostAuth;
+
+        public bool SupportsOAuth => _provider.SupportsOAuth;
 
         public IDirectAuthViewModel DirectAuth { get; }
         

@@ -16,8 +16,8 @@ namespace Camelotia.Presentation.ViewModels
     public sealed class CreateFolderViewModel : ReactiveValidationObject<CreateFolderViewModel>, ICreateFolderViewModel
     {
         private readonly ReactiveCommand<Unit, Unit> _create;
-        private readonly ReactiveCommand<Unit, Unit> _close;
-        private readonly ReactiveCommand<Unit, Unit> _open;
+        private readonly ReactiveCommand<Unit, bool> _close;
+        private readonly ReactiveCommand<Unit, bool> _open;
         
         public CreateFolderViewModel(IProviderViewModel owner, IProvider provider)
         {
@@ -36,6 +36,8 @@ namespace Camelotia.Presentation.ViewModels
                 () => provider.CreateFolder(Path, Name),
                 this.IsValid());
             
+            _create.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => !visible)
@@ -44,20 +46,14 @@ namespace Camelotia.Presentation.ViewModels
                     pathRule.WhenAnyValue(x => x.IsValid), 
                     (visible, interact, path) => visible && provider.CanCreateFolder && interact && path);
             
-            _open = ReactiveCommand.Create(
-                () => { IsVisible = true; },
-                canOpen);
-
             var canClose = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => visible);
             
-            _close = ReactiveCommand.Create(
-                () => { IsVisible = false; },
-                canClose);
-
-            _create.InvokeCommand(_close);
-            _create.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            _open = ReactiveCommand.Create(() => true, canOpen);
+            _close = ReactiveCommand.Create(() => false, canClose);
+            
+            _close.Merge(_open).Subscribe(visible => IsVisible = visible);
             _close.Subscribe(x => Name = string.Empty);
 
             _create.ThrownExceptions
@@ -70,6 +66,8 @@ namespace Camelotia.Presentation.ViewModels
                 .Log(this, $"Create folder error occured in {provider.Name}")
                 .Merge(_close.Select(unit => string.Empty))
                 .ToPropertyEx(this, x => x.ErrorMessage);
+            
+            _create.InvokeCommand(_close);
         }
 
         [Reactive]
