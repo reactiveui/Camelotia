@@ -14,7 +14,7 @@ using NSubstitute;
 using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Tests.Presentation
+namespace Camelotia.Tests
 {
     public sealed class IntegrationTests
     {
