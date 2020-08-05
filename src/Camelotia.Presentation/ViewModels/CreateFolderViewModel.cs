@@ -37,12 +37,17 @@ namespace Camelotia.Presentation.ViewModels
                 this.IsValid());
             
             _create.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+
+            var canInteract = owner
+                .WhenAnyValue(x => x.CanInteract)
+                .Skip(1)
+                .StartWith(true);
             
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => !visible)
                 .CombineLatest(
-                    owner.WhenAnyValue(x => x.CanInteract),
+                    canInteract,
                     pathRule.WhenAnyValue(x => x.IsValid), 
                     (visible, interact, path) => visible && provider.CanCreateFolder && interact && path);
             

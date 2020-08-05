@@ -39,13 +39,18 @@ namespace Camelotia.Presentation.ViewModels
             
             _rename.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
 
+            var canInteract = owner
+                .WhenAnyValue(x => x.CanInteract)
+                .Skip(1)
+                .StartWith(true);
+            
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => !visible)
                 .CombineLatest(
+                    canInteract,
                     oldRule.WhenAnyValue(x => x.IsValid), 
-                    owner.WhenAnyValue(x => x.CanInteract), 
-                    (visible, old, interact) => visible && old && interact);
+                    (visible, interact, old) => visible && old && interact);
             
             var canClose = this
                 .WhenAnyValue(x => x.IsVisible)

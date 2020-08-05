@@ -20,7 +20,6 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
     {
-        private readonly ObservableAsPropertyHelper<bool> _canInteract;
         private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
         private readonly ReactiveCommand<Unit, Unit> _downloadSelectedFile;
         private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
@@ -49,9 +48,7 @@ namespace Camelotia.Presentation.ViewModels
                     x => x.Rename.IsVisible,
                     (folder, rename) => !folder && !rename);
 
-            _canInteract = canInteract
-                .DistinctUntilChanged()
-                .ToProperty(this, x => x.CanInteract);
+            canInteract.ToPropertyEx(this, x => x.CanInteract);
             
             _refresh = ReactiveCommand.CreateFromTask(
                 () => provider.Get(CurrentPath),
@@ -256,7 +253,8 @@ namespace Camelotia.Presentation.ViewModels
         [ObservableAsProperty]
         public bool IsReady { get; }
         
-        public bool CanInteract => _canInteract?.Value ?? true;
+        [ObservableAsProperty]
+        public bool CanInteract { get; }
 
         public IAuthViewModel Auth { get; }
         
