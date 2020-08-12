@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
+using Camelotia.Presentation.Extensions;
 using Camelotia.Presentation.Interfaces;
-using Camelotia.Services.Extensions;
 using Camelotia.Services.Models;
 using ReactiveUI;
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Camelotia.Services.Extensions
+namespace Camelotia.Presentation.Extensions
 {
-    public static class ByteConverter
+    public static class ByteConversionExtensions
     {
         public static string ByteSizeToString(this long byteCount, int decimalPrecision = 1)
         {

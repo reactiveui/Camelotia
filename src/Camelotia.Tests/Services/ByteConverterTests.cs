@@ -1,4 +1,4 @@
-using Camelotia.Services.Extensions;
+using Camelotia.Presentation.Extensions;
 using FluentAssertions;
 using Xunit;
 
