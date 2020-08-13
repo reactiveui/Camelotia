@@ -2,6 +2,8 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using System;
+using Camelotia.Presentation.AppState;
+using Camelotia.Presentation.Extensions;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI.Fody.Helpers;
@@ -15,7 +17,7 @@ namespace Camelotia.Presentation.ViewModels
     {
         private readonly ReactiveCommand<Unit, Unit> _login;
         
-        public HostAuthViewModel(IProvider provider)
+        public HostAuthViewModel(HostAuthState state, IProvider provider)
         {
             this.ValidationRule(x => x.Username,
                 name => !string.IsNullOrWhiteSpace(name),
@@ -56,6 +58,11 @@ namespace Camelotia.Presentation.ViewModels
                 Address = string.Empty;
                 Port = string.Empty;
             });
+
+            this.AutoUpdate(state, x => x.Username, x => x.Username);
+            this.AutoUpdate(state, x => x.Password, x => x.Password);
+            this.AutoUpdate(state, x => x.Address, x => x.Address);
+            this.AutoUpdate(state, x => x.Port, x => x.Port);
         }
         
         [Reactive]

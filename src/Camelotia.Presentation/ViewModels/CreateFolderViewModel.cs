@@ -2,6 +2,8 @@ using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
+using Camelotia.Presentation.AppState;
+using Camelotia.Presentation.Extensions;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI.Fody.Helpers;
@@ -19,10 +21,9 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, bool> _close;
         private readonly ReactiveCommand<Unit, bool> _open;
         
-        public CreateFolderViewModel(IProviderViewModel owner, IProvider provider)
+        public CreateFolderViewModel(CreateFolderState state, IProviderViewModel owner, IProvider provider)
         {
-            owner.WhenAnyValue(x => x.CurrentPath)
-                .ToPropertyEx(this, x => x.Path);
+            owner.WhenAnyValue(x => x.CurrentPath).ToPropertyEx(this, x => x.Path);
             
             this.ValidationRule(x => x.Name,
                 name => !string.IsNullOrWhiteSpace(name),
@@ -60,6 +61,8 @@ namespace Camelotia.Presentation.ViewModels
             
             _close.Merge(_open).Subscribe(visible => IsVisible = visible);
             _close.Subscribe(x => Name = string.Empty);
+            
+            _create.InvokeCommand(_close);
 
             _create.ThrownExceptions
                 .Select(exception => true)
@@ -71,8 +74,8 @@ namespace Camelotia.Presentation.ViewModels
                 .Log(this, $"Create folder error occured in {provider.Name}")
                 .Merge(_close.Select(unit => string.Empty))
                 .ToPropertyEx(this, x => x.ErrorMessage);
-            
-            _create.InvokeCommand(_close);
+
+            this.AutoUpdate(state, x => x.Name, x => x.Name);
         }
 
         [Reactive]

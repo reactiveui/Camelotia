@@ -1,4 +1,5 @@
 using System.Reactive.Concurrency;
+using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
@@ -14,6 +15,7 @@ namespace Camelotia.Tests.Presentation
         private readonly IProviderViewModel _model = Substitute.For<IProviderViewModel>();
         private readonly IFileViewModel _file = Substitute.For<IFileViewModel>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly RenameFileState _state = new RenameFileState();
 
         [Fact]
         public void ShouldProperlyInitializeRenameFileViewModel() 
@@ -106,11 +108,22 @@ namespace Camelotia.Tests.Presentation
             model.HasErrors.Should().BeFalse();
         }
 
+        [Fact]
+        public void ShouldUpdateStateProperties()
+        {
+            const string file = "File Name";
+            var model = BuildRenameFileViewModel();
+            _state.NewName.Should().BeNullOrWhiteSpace();
+
+            model.NewName = file;
+            _state.NewName.Should().Be(file);
+        }
+
         private RenameFileViewModel BuildRenameFileViewModel()
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
-            return new RenameFileViewModel(_model, _provider);
+            return new RenameFileViewModel(_state, _model, _provider);
         }
     }
 }

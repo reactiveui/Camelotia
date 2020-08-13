@@ -169,12 +169,9 @@ namespace Camelotia.Tests.Presentation
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
             return new ProviderViewModel(
-                x => _folder,
-                x => _rename,
+                x => _folder, x => _rename, x => _auth,
                 (x, y) => new FileViewModel(y, x),
-                _auth,
-                _files,
-                _provider
+                _files, _provider
             );
         }
     }

@@ -24,16 +24,18 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _add;
         private readonly IStorage _storage;
 
-        public MainViewModel(
-            ProviderViewModelFactory providerFactory,
-            AuthViewModelFactory authFactory,
-            IStorage storage)
+        public MainViewModel(ProviderViewModelFactory providerFactory, IStorage storage)
         {
             _storage = storage;
             _refresh = ReactiveCommand.CreateFromTask(storage.Refresh);
             
-            var providers = storage.Read().ObserveOn(RxApp.MainThreadScheduler);
-            providers.Transform(x => providerFactory(x, authFactory(x)))
+            var providers = storage
+                .Read()
+                .Publish()
+                .RefCount()
+                .ObserveOn(RxApp.MainThreadScheduler);
+            
+            providers.Transform(x => providerFactory(x))
                 .Sort(SortExpressionComparer<IProviderViewModel>.Descending(x => x.Created))
                 .StartWithEmpty()
                 .Bind(out _providers)

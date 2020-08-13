@@ -2,6 +2,8 @@ using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
+using Camelotia.Presentation.AppState;
+using Camelotia.Presentation.Extensions;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI.Fody.Helpers;
@@ -19,11 +21,9 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, bool> _close;
         private readonly ReactiveCommand<Unit, bool> _open;
         
-        public RenameFileViewModel(IProviderViewModel owner, IProvider provider)
+        public RenameFileViewModel(RenameFileState state, IProviderViewModel owner, IProvider provider)
         {
-            owner.WhenAnyValue(x => x.SelectedFile)
-                .Select(file => file?.Name)
-                .ToPropertyEx(this, x => x.OldName);
+            owner.WhenAnyValue(x => x.SelectedFile.Name).ToPropertyEx(this, x => x.OldName);
             
             this.ValidationRule(x => x.NewName,
                 name => !string.IsNullOrWhiteSpace(name),
@@ -62,6 +62,8 @@ namespace Camelotia.Presentation.ViewModels
             _close.Merge(_open).Subscribe(visible => IsVisible = visible);
             _close.Subscribe(x => NewName = string.Empty);
 
+            _rename.InvokeCommand(_close);
+            
             _rename.ThrownExceptions
                 .Select(exception => true)
                 .Merge(_close.Select(x => false))
@@ -73,7 +75,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Merge(_close.Select(x => string.Empty))
                 .ToPropertyEx(this, x => x.ErrorMessage);
 
-            _rename.InvokeCommand(_close);
+            this.AutoUpdate(state, x => x.NewName, x => x.NewName);
         }
         
         [Reactive] 

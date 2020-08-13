@@ -16,7 +16,7 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public delegate IProviderViewModel ProviderViewModelFactory(IProvider provider, IAuthViewModel auth);
+    public delegate IProviderViewModel ProviderViewModelFactory(IProvider provider);
 
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
     {
@@ -33,8 +33,8 @@ namespace Camelotia.Presentation.ViewModels
         public ProviderViewModel(
             CreateFolderViewModelFactory createFolder,
             RenameFileViewModelFactory createRename,
+            AuthViewModelFactory authFactory,
             FileViewModelFactory createFile,
-            IAuthViewModel authViewModel,
             IFileManager fileManager,
             IProvider provider)
         {
@@ -187,7 +187,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Log(this, $"Exception occured in provider {provider.Name}")
                 .Subscribe();
 
-            Auth = authViewModel;
+            Auth = authFactory(provider);
             Activator = new ViewModelActivator();
             this.WhenActivated(disposable =>
             {

@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Concurrency;
-using System.Threading.Tasks;
 using Akavache;
+using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
@@ -20,6 +19,7 @@ namespace Camelotia.Tests
     {
         private readonly IObjectBlobCache _blobCache = Substitute.For<IObjectBlobCache>();
         private readonly IFileManager _files = Substitute.For<IFileManager>();
+        private readonly MainState _state = new MainState();
 
         [Fact]
         public void ShouldWireUpAppViewModels()
@@ -45,17 +45,17 @@ namespace Camelotia.Tests
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
             return new MainViewModel(
-                (provider, auth) => new ProviderViewModel(
+                provider => new ProviderViewModel(
                     model => new CreateFolderViewModel(model, provider),
                     model => new RenameFileViewModel(model, provider),
+                    model => new AuthViewModel(
+                        new DirectAuthViewModel(provider),
+                        new HostAuthViewModel(provider),
+                        new OAuthViewModel(provider),
+                        provider
+                    ), 
                     (file, model) => new FileViewModel(model, file),
-                    auth, _files, provider
-                ),
-                provider => new AuthViewModel(
-                    new DirectAuthViewModel(provider),
-                    new HostAuthViewModel(provider),
-                    new OAuthViewModel(provider),
-                    provider
+                    _files, provider
                 ),
                 new AkavacheStorage(
                     new Dictionary<string, Func<ProviderModel, IProvider>>

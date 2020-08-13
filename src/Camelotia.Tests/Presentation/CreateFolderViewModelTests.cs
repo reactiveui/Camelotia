@@ -1,5 +1,6 @@
 using System.IO;
 using System.Reactive.Concurrency;
+using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
@@ -15,6 +16,7 @@ namespace Camelotia.Tests.Presentation
         private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
         private readonly IProviderViewModel _model = Substitute.For<IProviderViewModel>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly CreateFolderState _state = new CreateFolderState();
         
         [Fact]
         public void ShouldProperlyInitializeCreateFolderViewModel()
@@ -105,11 +107,23 @@ namespace Camelotia.Tests.Presentation
             model.HasErrors.Should().BeFalse();
         }
 
+        [Fact]
+        public void ShouldUpdateStateProperties()
+        {
+            const string name = "Secret Folder";
+            
+            var model = BuildCreateFolderViewModel();
+            _state.Name.Should().BeNullOrWhiteSpace();
+            
+            model.Name = name;
+            _state.Name.Should().Be(name);
+        }
+
         private CreateFolderViewModel BuildCreateFolderViewModel()
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
-            return new CreateFolderViewModel(_model, _provider);
+            return new CreateFolderViewModel(_state, _model, _provider);
         }
     }
 }

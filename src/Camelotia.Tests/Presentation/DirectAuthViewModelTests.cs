@@ -1,6 +1,7 @@
 using System;
 using System.Reactive.Concurrency;
 using System.Threading.Tasks;
+using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
@@ -13,6 +14,7 @@ namespace Camelotia.Tests.Presentation
     public sealed class DirectAuthViewModelTests
     {
         private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly DirectAuthState _state = new DirectAuthState();
 
         [Fact]
         public void LoginCommandShouldStayDisabledUntilInputIsValid()
@@ -77,12 +79,29 @@ namespace Camelotia.Tests.Presentation
             model.GetErrors(nameof(model.Password)).Should().BeEmpty();
             model.HasErrors.Should().BeFalse();
         }
+        
+        [Fact]
+        public void ShouldUpdateStateProperties()
+        {
+            const string user = "Joseph";
+            const string pass = "qwerty";
+            
+            var model = BuildDirectAuthViewModel();
+            _state.Username.Should().BeNullOrWhiteSpace();
+            _state.Password.Should().BeNullOrWhiteSpace();
+
+            model.Username = user;
+            model.Password = pass;
+
+            _state.Username.Should().Be(user);
+            _state.Password.Should().Be(pass);
+        }
 
         private DirectAuthViewModel BuildDirectAuthViewModel()
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
-            return new DirectAuthViewModel(_provider);
+            return new DirectAuthViewModel(_state, _provider);
         }
     }
 }
