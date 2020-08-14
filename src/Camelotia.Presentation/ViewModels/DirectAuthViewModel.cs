@@ -49,8 +49,8 @@ namespace Camelotia.Presentation.ViewModels
                 Password = string.Empty;
             });
 
-            this.AutoUpdate(state, x => x.Username, x => x.Username);
-            this.AutoUpdate(state, x => x.Password, x => x.Password);
+            this.AutoUpdate(x => x.Username, state, x => x.Username);
+            this.AutoUpdate(x => x.Password, state, x => x.Password);
         }
         
         [Reactive]

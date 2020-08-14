@@ -7,32 +7,27 @@ namespace Camelotia.Presentation.Extensions
 {
     public static class AppStateExtensions
     {
-        public static IDisposable AutoUpdate<TAppState, TReactiveObject, TProperty>(
-            this TReactiveObject viewModel,
-            TAppState appState,
-            Expression<Func<TReactiveObject, TProperty>> viewModelProperty,
-            Expression<Func<TAppState, TProperty>> appStateProperty,
-            bool useInitialStatePropertyValue = true) 
-            where TReactiveObject : class, IReactiveObject
+        public static IDisposable AutoUpdate<TDestinationObject, TSourceObject, TProperty>(
+            this TSourceObject source,
+            Expression<Func<TSourceObject, TProperty>> sourceProperty,
+            TDestinationObject destination,
+            Expression<Func<TDestinationObject, TProperty>> destinationProperty,
+            bool assignInitialValueToSourceFromDestination = true) 
+            where TSourceObject : class
+            where TDestinationObject : class
         {
-            if (viewModel == null) throw new ArgumentNullException(nameof(viewModel));
-            if (viewModelProperty == null) throw new ArgumentNullException(nameof(viewModelProperty));
-            if (appState == null) throw new ArgumentNullException(nameof(appState));
-            if (appStateProperty == null) throw new ArgumentNullException(nameof(appStateProperty));
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (sourceProperty == null) throw new ArgumentNullException(nameof(sourceProperty));
+            if (destination == null) throw new ArgumentNullException(nameof(destination));
+            if (destinationProperty == null) throw new ArgumentNullException(nameof(destinationProperty));
+            if (assignInitialValueToSourceFromDestination)
+                SetProperty(source, sourceProperty, destinationProperty.Compile()(destination));
             
-            if (useInitialStatePropertyValue)
-            {
-                var propertyValue = appStateProperty.Compile()(appState);
-                if (propertyValue != null)
-                    SetProperty(viewModel, viewModelProperty, propertyValue);
-            }
-            
-            return viewModel
-                .WhenAnyValue(viewModelProperty)
-                .Subscribe(value => SetProperty(appState, appStateProperty, value));
+            return source
+                .WhenAnyValue(sourceProperty)
+                .Subscribe(value => SetProperty(destination, destinationProperty, value));
 
-            void SetProperty<TObject>(
-                TObject instance,
+            void SetProperty<TObject>(TObject instance,
                 Expression<Func<TObject, TProperty>> property, 
                 TProperty value)
             {

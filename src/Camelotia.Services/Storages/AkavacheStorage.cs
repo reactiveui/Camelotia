@@ -12,18 +12,20 @@ namespace Camelotia.Services.Storages
 {
     public sealed class AkavacheStorage : IStorage
     {
-        private readonly SourceCache<IProvider, Guid> _connectable = new SourceCache<IProvider, Guid>(x => x.Id);
+        private readonly SourceCache<ProviderModel, Guid> _connectable = new SourceCache<ProviderModel, Guid>(x => x.Id);
         private readonly IDictionary<string, Func<ProviderModel, IProvider>> _factories;
         private readonly IObservable<IChangeSet<IProvider, Guid>> _connection; 
         private readonly IBlobCache _blobCache;
 
-        public AkavacheStorage(
-            IDictionary<string, Func<ProviderModel, IProvider>> factories,
-            IBlobCache blobCache)
+        public AkavacheStorage(IDictionary<string, Func<ProviderModel, IProvider>> factories, IBlobCache blobCache)
         {
             _blobCache = blobCache;
             _factories = factories;
-            _connection = _connectable.Connect().Publish().RefCount();
+            _connection = _connectable
+                .Connect()
+                .Publish()
+                .RefCount()
+                .Transform(model => _factories[model.Type](model));
         }
 
         public IEnumerable<string> SupportedTypes => _factories.Keys;
@@ -43,31 +45,22 @@ namespace Camelotia.Services.Storages
             };
 
             await _blobCache.InsertObject(guid.ToString(), model);
-            var provider = _factories[type](model);
-            _connectable.AddOrUpdate(provider);
+            _connectable.AddOrUpdate(model);
         }
 
         public async Task Remove(Guid id)
         {
             var persistentId = id.ToString();
             await _blobCache.InvalidateObject<ProviderModel>(persistentId);
-            var provider = _connectable.Items.First(x => x.Id == id);
-            _connectable.Remove(provider);
+            _connectable.Remove(id);
         }
 
         public async Task Refresh()
         {
             _connectable.Clear();
             var models = await _blobCache.GetAllObjects<ProviderModel>();
-            var providers = models
-                .Where(model => model != null && _factories.ContainsKey(model.Type))
-                .Select(model => _factories[model.Type](model));
-
-            _connectable.Edit(cache =>
-            {
-                foreach (var provider in providers)
-                    cache.AddOrUpdate(provider);
-            });
+            var relevant = models.Where(model => model != null && _factories.ContainsKey(model.Type));
+            _connectable.AddOrUpdate(relevant);
         }
     }
 }

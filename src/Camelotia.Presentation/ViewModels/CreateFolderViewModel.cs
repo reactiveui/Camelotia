@@ -75,7 +75,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Merge(_close.Select(unit => string.Empty))
                 .ToPropertyEx(this, x => x.ErrorMessage);
 
-            this.AutoUpdate(state, x => x.Name, x => x.Name);
+            this.AutoUpdate(x => x.Name, state, x => x.Name);
         }
 
         [Reactive]

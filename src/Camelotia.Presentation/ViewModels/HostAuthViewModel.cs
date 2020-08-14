@@ -59,10 +59,10 @@ namespace Camelotia.Presentation.ViewModels
                 Port = string.Empty;
             });
 
-            this.AutoUpdate(state, x => x.Username, x => x.Username);
-            this.AutoUpdate(state, x => x.Password, x => x.Password);
-            this.AutoUpdate(state, x => x.Address, x => x.Address);
-            this.AutoUpdate(state, x => x.Port, x => x.Port);
+            this.AutoUpdate(x => x.Username, state, x => x.Username);
+            this.AutoUpdate(x => x.Password, state, x => x.Password);
+            this.AutoUpdate(x => x.Address, state, x => x.Address);
+            this.AutoUpdate(x => x.Port, state, x => x.Port);
         }
         
         [Reactive]
