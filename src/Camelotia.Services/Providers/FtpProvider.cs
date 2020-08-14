@@ -28,7 +28,7 @@ namespace Camelotia.Services.Providers
 
         public string InitialPath => "/";
 
-        public string Name => _model.Type;
+        public string Name => _model.Type.ToString();
 
         public DateTime Created => _model.Created;
 
