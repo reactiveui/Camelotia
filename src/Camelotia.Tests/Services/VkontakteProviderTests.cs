@@ -11,7 +11,6 @@ namespace Camelotia.Tests.Services
 {
     public sealed class VkontakteFileSystemProviderTests
     {
-        private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
         private readonly ProviderModel _model = new ProviderModel
         {
             Id = Guid.NewGuid(),
@@ -22,7 +21,7 @@ namespace Camelotia.Tests.Services
         [Fact]
         public void VerifyDefaultPropertyValues()
         {
-            var provider = new VkDocsProvider(_model, _blobCache);
+            var provider = new VkDocsProvider(_model);
             provider.InitialPath.Should().Be(Path.DirectorySeparatorChar.ToString());
 
             provider.CanCreateFolder.Should().BeFalse();

@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
-using Akavache;
 using Octokit;
 
 namespace Camelotia.Services.Providers
@@ -19,14 +17,12 @@ namespace Camelotia.Services.Providers
         private readonly GitHubClient _gitHub = new GitHubClient(new ProductHeaderValue(GithubApplicationId));
         private readonly ISubject<bool> _isAuthenticated = new ReplaySubject<bool>(1);
         private readonly HttpClient _httpClient = new HttpClient();
-        private readonly IBlobCache _blobCache;
         private readonly ProviderModel _model;
         private string _currentUserName;
         
-        public GitHubProvider(ProviderModel model, IBlobCache blobCache)
+        public GitHubProvider(ProviderModel model)
         {
             _model = model;
-            _blobCache = blobCache;
             _isAuthenticated.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
@@ -60,13 +56,8 @@ namespace Camelotia.Services.Providers
             _currentUserName = login;
             _gitHub.Credentials = new Credentials(login, password);
             await _gitHub.User.Current();
-            
-            var persistentId = Id.ToString();
-            var model = await _blobCache.GetObject<ProviderModel>(persistentId);
-            model.Token = password;
-            model.User = login;
-            
-            await _blobCache.InsertObject(persistentId, model);
+            _model.Token = password;
+            _model.User = login;
             _isAuthenticated.OnNext(true);
         }
 
@@ -136,13 +127,11 @@ namespace Camelotia.Services.Providers
 
         public Task Delete(string path, bool isFolder) => throw new NotImplementedException();
 
-        private async void EnsureLoggedInIfTokenSaved()
+        private void EnsureLoggedInIfTokenSaved()
         {
-            var persistentId = Id.ToString();
-            var model = await _blobCache.GetOrFetchObject(persistentId, () => Task.FromResult(default(ProviderModel)));
-            if (model?.User == null || model?.Token == null) return;   
-            _gitHub.Credentials = new Credentials(model.User, model.Token);
-            _currentUserName = model.User;
+            if (_model?.User == null || _model?.Token == null) return;   
+            _gitHub.Credentials = new Credentials(_model.User, _model.Token);
+            _currentUserName = _model.User;
             _isAuthenticated.OnNext(true);
         }
 

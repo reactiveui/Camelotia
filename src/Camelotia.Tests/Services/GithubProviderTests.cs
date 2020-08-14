@@ -10,7 +10,6 @@ namespace Camelotia.Tests.Services
 {
     public sealed class GithubProviderTests
     {
-        private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
         private readonly ProviderModel _model = new ProviderModel
         {
             Id = Guid.NewGuid(),
@@ -21,7 +20,7 @@ namespace Camelotia.Tests.Services
         [Fact]
         public void VerifyDefaultPropertyValues()
         {
-            var provider = new GitHubProvider(_model, _blobCache);
+            var provider = new GitHubProvider(_model);
             provider.InitialPath.Should().Be(string.Empty);
 
             provider.CanCreateFolder.Should().BeFalse();

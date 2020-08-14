@@ -25,8 +25,8 @@ namespace Camelotia.Tests.Services
             var provider = new AkavacheStorage(new Dictionary<string, Func<ProviderModel, IProvider>>
             {
                 [nameof(LocalProvider)] = id => new LocalProvider(id),
-                [nameof(VkDocsProvider)] = id => new VkDocsProvider(id, _blobCache),
-                [nameof(YandexDiskProvider)] = id => new YandexDiskProvider(id, _authenticator, _blobCache),
+                [nameof(VkDocsProvider)] = id => new VkDocsProvider(id),
+                [nameof(YandexDiskProvider)] = id => new YandexDiskProvider(id, _authenticator),
             }, _blobCache);
 
             await provider.Add(nameof(LocalProvider));

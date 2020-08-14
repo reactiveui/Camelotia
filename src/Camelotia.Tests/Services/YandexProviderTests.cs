@@ -13,7 +13,6 @@ namespace Camelotia.Tests.Services
     public sealed class YandexFileSystemProviderTests
     {
         private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
-        private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
         private readonly ProviderModel _model = new ProviderModel
         {
             Id = Guid.NewGuid(),
@@ -24,7 +23,7 @@ namespace Camelotia.Tests.Services
         [Fact]
         public void VerifyDefaultPropertyValues()
         {
-            var provider = new YandexDiskProvider(_model, _authenticator, _blobCache);
+            var provider = new YandexDiskProvider(_model, _authenticator);
             provider.InitialPath.Should().Be(Path.DirectorySeparatorChar.ToString());
 
             provider.CanCreateFolder.Should().BeTrue();
