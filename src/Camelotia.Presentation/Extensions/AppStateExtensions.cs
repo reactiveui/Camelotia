@@ -27,7 +27,7 @@ namespace Camelotia.Presentation.Extensions
                 .WhenAnyValue(sourceProperty)
                 .Subscribe(value => SetProperty(destination, destinationProperty, value));
 
-            void SetProperty<TObject>(TObject instance,
+            static void SetProperty<TObject>(TObject instance,
                 Expression<Func<TObject, TProperty>> property, 
                 TProperty value)
             {
