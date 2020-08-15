@@ -54,7 +54,8 @@ namespace Camelotia.Tests
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
-            return new MainViewModel(_state,
+            return new MainViewModel(
+                _state,
                 new ProviderFactory(_authenticator, _cache), 
                 (state, provider) => new ProviderViewModel(
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
@@ -66,7 +67,9 @@ namespace Camelotia.Tests
                         new OAuthViewModel(provider),
                         provider
                     ), 
-                    _files, provider));
+                    _files, provider
+                )
+            );
         }
     }
 }

@@ -1,14 +1,13 @@
 using Avalonia;
 using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Avalonia.Services;
 using Camelotia.Presentation.Avalonia.Views;
 using Camelotia.Presentation.ViewModels;
-using Camelotia.Services.Interfaces;
-using Camelotia.Services.Models;
-using Camelotia.Services.Providers;
-using Camelotia.Services.Storages;
-using System;
-using System.Collections.Generic;
+using Camelotia.Presentation.AppState;
+using Camelotia.Presentation.Infrastructure;
+using Camelotia.Services;
+using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia
 {
@@ -18,39 +17,30 @@ namespace Camelotia.Presentation.Avalonia
 
         public override void OnFrameworkInitializationCompleted()
         {
-            Akavache.BlobCache.ApplicationName = "Camelotia";
-            var cache = Akavache.BlobCache.UserAccount;
+            var suspension = new AutoSuspendHelper(ApplicationLifetime);
+            RxApp.SuspensionHost.CreateNewAppState = () => new MainState();
+            RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver("appstate.json"));
+            suspension.OnFrameworkInitializationCompleted();
+            
             var window = new MainView();
-            var files = new AvaloniaFileManager(window);
             var styles = new AvaloniaStyleManager(window);
-            window.SwitchThemeButton.Click += (sender, args) => styles.UseNextTheme(); 
+            window.SwitchThemeButton.Click += (sender, args) => styles.UseNextTheme();
 
-            var login = new AvaloniaYandexAuthenticator();
             var context = new MainViewModel(
-                (provider, auth) => new ProviderViewModel(
-                    model => new CreateFolderViewModel(model, provider),
-                    model => new RenameFileViewModel(model, provider),
-                    (file, model) => new FileViewModel(model, file),
-                    auth, files, provider
-                ),
-                provider => new AuthViewModel(
-                    new DirectAuthViewModel(provider),
-                    new HostAuthViewModel(provider),
-                    new OAuthViewModel(provider),
+                RxApp.SuspensionHost.GetAppState<MainState>(),
+                new ProviderFactory(new AvaloniaYandexAuthenticator(), Akavache.BlobCache.UserAccount),
+                (state, provider) => new ProviderViewModel(
+                    owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
+                    owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
+                    (file, owner) => new FileViewModel(owner, file),
+                    new AuthViewModel(
+                        new DirectAuthViewModel(state.AuthState.DirectAuthState, provider),
+                        new HostAuthViewModel(state.AuthState.HostAuthState, provider),
+                        new OAuthViewModel(provider),
+                        provider
+                    ), 
+                    new AvaloniaFileManager(window),
                     provider
-                ),
-                new AkavacheStorage(
-                    new Dictionary<string, Func<ProviderModel, IProvider>>
-                    {
-                        ["Local File System"] = id => new LocalProvider(id),
-                        ["Vkontakte Docs"] = id => new VkDocsProvider(id, cache),
-                        ["Yandex Disk"] = id => new YandexDiskProvider(id, login, cache),
-                        ["FTP"] = id => new FtpProvider(id),
-                        ["SFTP"] = id => new SftpProvider(id),
-                        ["GitHub"] = id => new GitHubProvider(id, cache),
-                        ["Google Drive"] = id => new GoogleDriveProvider(id, cache)
-                    },
-                    cache
                 )
             );
 
