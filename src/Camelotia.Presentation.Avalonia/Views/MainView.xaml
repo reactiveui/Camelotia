@@ -23,7 +23,7 @@
             <Setter Property="Padding" Value="0" />
         </Style>
     </Window.Styles>
-    <Grid>
+    <Grid Background="{DynamicResource ThemeBackgroundBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="2*" />

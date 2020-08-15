@@ -44,6 +44,7 @@ namespace Camelotia.Presentation.ViewModels
 
             Providers.ToObservableChangeSet(x => x.Id)
                 .Where(changes => changes.Any())
+                .Delay(TimeSpan.FromSeconds(0.5))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .OnItemAdded(x => SelectedProvider = Providers.FirstOrDefault())
                 .OnItemRemoved(x => SelectedProvider = null)
