@@ -76,6 +76,7 @@ namespace Camelotia.Presentation.ViewModels
                 .ToPropertyEx(this, x => x.ErrorMessage);
 
             this.AutoUpdate(x => x.NewName, state, x => x.NewName);
+            this.AutoUpdate(x => x.IsVisible, state, x => x.IsVisible);
         }
         
         [Reactive] 

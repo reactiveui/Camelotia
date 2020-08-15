@@ -111,12 +111,16 @@ namespace Camelotia.Tests.Presentation
         public void ShouldUpdateStateProperties()
         {
             const string name = "Secret Folder";
-            
             var model = BuildCreateFolderViewModel();
+            
             _state.Name.Should().BeNullOrWhiteSpace();
+            _state.IsVisible.Should().BeFalse();
             
             model.Name = name;
+            model.IsVisible = true;
+            
             _state.Name.Should().Be(name);
+            _state.IsVisible.Should().BeTrue();
         }
 
         private CreateFolderViewModel BuildCreateFolderViewModel()

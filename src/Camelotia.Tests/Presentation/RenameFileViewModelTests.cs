@@ -113,10 +113,15 @@ namespace Camelotia.Tests.Presentation
         {
             const string file = "File Name";
             var model = BuildRenameFileViewModel();
+            
             _state.NewName.Should().BeNullOrWhiteSpace();
+            _state.IsVisible.Should().BeFalse();
 
+            model.IsVisible = true;
             model.NewName = file;
+            
             _state.NewName.Should().Be(file);
+            _state.IsVisible.Should().BeTrue();
         }
 
         private RenameFileViewModel BuildRenameFileViewModel()
