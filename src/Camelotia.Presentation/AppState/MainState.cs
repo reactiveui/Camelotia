@@ -1,18 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using DynamicData;
+using Newtonsoft.Json;
 
 namespace Camelotia.Presentation.AppState
 {
-    [DataContract]
     public class MainState
     {
-        [IgnoreDataMember]
+        [JsonIgnore]
         public SourceCache<ProviderState, Guid> Providers { get; } = new SourceCache<ProviderState, Guid>(x => x.Id);
 
-        [DataMember]
         public IEnumerable<ProviderState> ProviderStates
         {
             get => Providers.Items.ToList();

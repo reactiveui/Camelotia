@@ -2,7 +2,6 @@ using System.Runtime.Serialization;
 
 namespace Camelotia.Presentation.AppState
 {
-    [DataContract]
     public class HostAuthState
     {
         public string Username { get; set; }

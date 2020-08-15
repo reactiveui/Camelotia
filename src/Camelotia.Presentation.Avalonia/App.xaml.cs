@@ -26,6 +26,8 @@ namespace Camelotia.Presentation.Avalonia
             var styles = new AvaloniaStyleManager(window);
             window.SwitchThemeButton.Click += (sender, args) => styles.UseNextTheme();
 
+            Akavache.BlobCache.ApplicationName = "Camelotia";
+            
             var context = new MainViewModel(
                 RxApp.SuspensionHost.GetAppState<MainState>(),
                 new ProviderFactory(new AvaloniaYandexAuthenticator(), Akavache.BlobCache.UserAccount),

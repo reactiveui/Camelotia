@@ -25,7 +25,7 @@ namespace Camelotia.Tests.Presentation
         {
             var model = BuildMainViewModel();
             model.IsLoading.Should().BeFalse();
-            model.IsReady.Should().BeFalse();
+            model.IsReady.Should().BeTrue();
                 
             model.Refresh.CanExecute(null).Should().BeTrue();
             model.Refresh.Execute(null);

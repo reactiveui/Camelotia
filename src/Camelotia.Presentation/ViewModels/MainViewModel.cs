@@ -32,7 +32,6 @@ namespace Camelotia.Presentation.ViewModels
             _refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
             
             _refresh.IsExecuting
-                .Skip(1)
                 .Select(executing => !executing)
                 .ToPropertyEx(this, x => x.IsReady);
             

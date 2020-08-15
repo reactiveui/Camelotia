@@ -55,12 +55,12 @@ namespace Camelotia.Presentation.ViewModels
                 () => provider.Get(CurrentPath),
                 canInteract);
             
-            _refresh.Select(files => files
+            _refresh.Select(items => items
                     .Select(file => createFile(file, this))
                     .OrderByDescending(file => file.IsFolder)
                     .ThenBy(file => file.Name)
                     .ToList())
-                .Where(files => Files == null || !files.SequenceEqual(Files))
+                .Where(items => Files == null || !items.SequenceEqual(Files))
                 .ToPropertyEx(this, x => x.Files);
 
             _refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);

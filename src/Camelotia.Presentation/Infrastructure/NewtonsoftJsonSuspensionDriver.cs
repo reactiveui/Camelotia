@@ -3,6 +3,7 @@ using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using ReactiveUI;
 
 namespace Camelotia.Presentation.Infrastructure
@@ -12,7 +13,9 @@ namespace Camelotia.Presentation.Infrastructure
         private readonly string _stateFilePath;
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
         {
-            TypeNameHandling = TypeNameHandling.All
+            TypeNameHandling = TypeNameHandling.All,
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
         };
 
         public NewtonsoftJsonSuspensionDriver(string stateFilePath) => _stateFilePath = stateFilePath;

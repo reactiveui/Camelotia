@@ -2,7 +2,6 @@ using System.Runtime.Serialization;
 
 namespace Camelotia.Presentation.AppState
 {
-    [DataContract]
     public class DirectAuthState
     {
         public string Username { get; set; }
