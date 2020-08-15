@@ -1,53 +1,44 @@
-﻿using Camelotia.Presentation.ViewModels;
+﻿using Camelotia.Presentation.AppState;
+using Camelotia.Presentation.Infrastructure;
+using Camelotia.Presentation.ViewModels;
 using Camelotia.Presentation.Wpf.Services;
-using Camelotia.Services.Interfaces;
-using Camelotia.Services.Models;
-using Camelotia.Services.Providers;
-using Camelotia.Services.Storages;
+using Camelotia.Services;
 using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Reactive.Concurrency;
 using System.Windows;
 
 namespace Camelotia.Presentation.Wpf
 {
     public partial class App : Application
     {
-        public App() => InitializeComponent();
+        private readonly AutoSuspendHelper _autoSuspendHelper;
 
-        private void OnApplicationStartup(object sender, StartupEventArgs e)
+        public App()
         {
-            Akavache.BlobCache.ApplicationName = "Camelotia";
-            var cache = Akavache.BlobCache.UserAccount;
-            var login = new WindowsPresentationYandexAuthenticator();
-            var files = new WindowsPresentationFileManager();
+            InitializeComponent();
+            _autoSuspendHelper = new AutoSuspendHelper(this);
+            RxApp.SuspensionHost.CreateNewAppState = () => new MainState();
+            RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver("appstate.json"));
+        }
 
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            Akavache.BlobCache.ApplicationName = "Camelotia";
             var mainViewModel = new MainViewModel(
-                (provider, auth) => new ProviderViewModel(
-                    model => new CreateFolderViewModel(model, provider),
-                    model => new RenameFileViewModel(model, provider),
-                    (file, model) => new FileViewModel(model, file),
-                    auth, files, provider
-                ),
-                provider => new AuthViewModel(
-                    new DirectAuthViewModel(provider),
-                    new HostAuthViewModel(provider),
-                    new OAuthViewModel(provider),
+                RxApp.SuspensionHost.GetAppState<MainState>(),
+                new ProviderFactory(new WindowsPresentationYandexAuthenticator(), Akavache.BlobCache.UserAccount),
+                (state, provider) => new ProviderViewModel(
+                    owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
+                    owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
+                    (file, owner) => new FileViewModel(owner, file),
+                    new AuthViewModel(
+                        new DirectAuthViewModel(state.AuthState.DirectAuthState, provider),
+                        new HostAuthViewModel(state.AuthState.HostAuthState, provider),
+                        new OAuthViewModel(provider),
+                        provider
+                    ),
+                    new WindowsPresentationFileManager(),
                     provider
-                ),
-                new AkavacheStorage(
-                    new Dictionary<string, Func<ProviderModel, IProvider>>
-                    {
-                        ["Local Storage"] = id => new LocalProvider(id),
-                        ["Yandex Disk"] = id => new YandexDiskProvider(id, login, cache),
-                        ["Vkontakte Docs"] = id => new VkDocsProvider(id, cache),
-                        ["Google Drive"] = id => new GoogleDriveProvider(id, cache),
-                        ["FTP"] = id => new FtpProvider(id),
-                        ["SFTP"] = id => new SftpProvider(id),
-                        ["GitHub"] = id => new GitHubProvider(id, cache)
-                    },
-                    cache
                 )
             );
 
