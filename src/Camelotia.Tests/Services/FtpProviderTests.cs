@@ -12,7 +12,7 @@ namespace Camelotia.Tests.Services
         {
             Id = Guid.NewGuid(),
             Created = DateTime.Now,
-            Type = "Ftp"
+            Type = ProviderType.Ftp
         };
 
         [Fact]

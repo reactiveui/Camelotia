@@ -14,7 +14,7 @@ namespace Camelotia.Tests.Services
         {
             Id = Guid.NewGuid(),
             Created = DateTime.Now,
-            Type = "GitHub"
+            Type = ProviderType.GitHub
         };
 
         [Fact]

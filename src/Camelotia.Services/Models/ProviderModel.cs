@@ -6,7 +6,7 @@ namespace Camelotia.Services.Models
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public DateTime Created { get; set; } = DateTime.Now;
-        public ProviderType Type { get; set; }
+        public ProviderType Type { get; set; } = ProviderType.Local;
         public string User { get; set; }
         public string Token { get; set; }
     }

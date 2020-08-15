@@ -16,7 +16,7 @@ namespace Camelotia.Tests.Services
         private readonly ProviderModel _model = new ProviderModel
         {
             Id = Guid.NewGuid(),
-            Type = "Yandex",
+            Type = ProviderType.Yandex,
             Created = DateTime.Now
         };
 

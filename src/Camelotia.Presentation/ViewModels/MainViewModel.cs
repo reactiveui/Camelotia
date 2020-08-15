@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using Camelotia.Presentation.AppState;
@@ -17,32 +16,17 @@ using DynamicData.Binding;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public sealed class ProviderFactories : Dictionary<ProviderType, Func<ProviderModel, IProvider>> { }
-    
-    public sealed class MainViewModel : ReactiveObject, IMainViewModel, IActivatableViewModel
+    public sealed class MainViewModel : ReactiveObject, IMainViewModel
     {
         private readonly ReadOnlyObservableCollection<IProviderViewModel> _providers;
         private readonly ReactiveCommand<Unit, ProviderState> _add;
         private readonly ReactiveCommand<Unit, Unit> _unselect;
         private readonly ReactiveCommand<Unit, Unit> _refresh;
         private readonly ReactiveCommand<Unit, Guid> _remove;
-        private readonly ProviderFactories _factory;
+        private readonly IProviderFactory _factory;
 
-        public MainViewModel(MainState state, ProviderFactories factory, ProviderViewModelFactory providerFactory)
+        public MainViewModel(MainState state, IProviderFactory factory, ProviderViewModelFactory createViewModel)
         {
-            var providers = state.Providers
-                .Connect()
-                .Publish()
-                .RefCount();
-            
-            providers
-                .Transform(parameters => providerFactory(factory[parameters.Type](parameters)))
-                .Sort(SortExpressionComparer<IProviderViewModel>.Descending(x => x.Created))
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .StartWithEmpty()
-                .Bind(out _providers)
-                .Subscribe();
-            
             _factory = factory;
             _refresh = ReactiveCommand.Create(state.Providers.Refresh);
             _refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
@@ -51,8 +35,16 @@ namespace Camelotia.Presentation.ViewModels
                 .Skip(1)
                 .Select(executing => !executing)
                 .ToPropertyEx(this, x => x.IsReady);
+            
+            state.Providers.Connect()
+                .Transform(ps => createViewModel(ps, factory.CreateProvider(ps)))
+                .Sort(SortExpressionComparer<IProviderViewModel>.Descending(x => x.Created))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .StartWithEmpty()
+                .Bind(out _providers)
+                .Subscribe();
 
-            providers
+            Providers.ToObservableChangeSet(x => x.Id)
                 .Where(changes => changes.Any())
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .OnItemAdded(x => SelectedProvider = Providers.FirstOrDefault())
@@ -91,11 +83,7 @@ namespace Camelotia.Presentation.ViewModels
             _unselect = ReactiveCommand.Create(() => Unit.Default, canUnselect);
             _unselect.Subscribe(unit => SelectedProvider = null);
             
-            this.WhenActivated((CompositeDisposable disposables) =>
-            {
-                SelectedSupportedType = SupportedTypes.FirstOrDefault();
-                _refresh.Execute().Subscribe(o => { }, e => { });
-            });
+            SelectedSupportedType = SupportedTypes.FirstOrDefault();
         }
         
         [Reactive] 
@@ -116,11 +104,9 @@ namespace Camelotia.Presentation.ViewModels
         [ObservableAsProperty]
         public bool IsReady { get; }
 
-        public ViewModelActivator Activator { get; } = new ViewModelActivator();
-        
         public ReadOnlyObservableCollection<IProviderViewModel> Providers => _providers;
 
-        public IEnumerable<ProviderType> SupportedTypes => _factory.Keys;
+        public IEnumerable<ProviderType> SupportedTypes => _factory.SupportedTypes;
 
         public ICommand Unselect => _unselect;
 

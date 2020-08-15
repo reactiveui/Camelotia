@@ -18,7 +18,7 @@ namespace Camelotia.Tests.Services
         {
             Id = LocalIdentifier,
             Created = DateTime.Now,
-            Type = "Local"
+            Type = ProviderType.Local
         });
 
         [Fact]

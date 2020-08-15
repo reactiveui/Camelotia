@@ -14,7 +14,7 @@ namespace Camelotia.Tests.Services
         private readonly ProviderModel _model = new ProviderModel
         {
             Id = Guid.NewGuid(),
-            Type = "Vkontakte",
+            Type = ProviderType.VkDocs,
             Created = DateTime.Now
         };
 
@@ -26,7 +26,7 @@ namespace Camelotia.Tests.Services
 
             provider.CanCreateFolder.Should().BeFalse();
             provider.Created.Should().Be(_model.Created);
-            provider.Name.Should().Be("Vkontakte");
+            provider.Name.Should().Be("VkDocs");
             provider.Id.Should().Be(_model.Id);
 
             provider.SupportsDirectAuth.Should().BeTrue();

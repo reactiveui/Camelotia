@@ -7,6 +7,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Threading.Tasks;
+using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Extensions;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
@@ -16,7 +17,7 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public delegate IProviderViewModel ProviderViewModelFactory(IProvider provider);
+    public delegate IProviderViewModel ProviderViewModelFactory(ProviderState state, IProvider provider);
 
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
     {
@@ -33,9 +34,9 @@ namespace Camelotia.Presentation.ViewModels
         public ProviderViewModel(
             CreateFolderViewModelFactory createFolder,
             RenameFileViewModelFactory createRename,
-            AuthViewModelFactory authFactory,
             FileViewModelFactory createFile,
-            IFileManager fileManager,
+            IAuthViewModel auth,
+            IFileManager files,
             IProvider provider)
         {
             _provider = provider;
@@ -123,7 +124,7 @@ namespace Camelotia.Presentation.ViewModels
                 
             _uploadToCurrentPath = ReactiveCommand.CreateFromObservable(
                 () => Observable
-                    .FromAsync(fileManager.OpenRead)
+                    .FromAsync(files.OpenRead)
                     .Where(response => response.Name != null && response.Stream != null)
                     .Select(x => _provider.UploadFile(CurrentPath, x.Stream, x.Name))
                     .SelectMany(task => task.ToObservable()), 
@@ -138,7 +139,7 @@ namespace Camelotia.Presentation.ViewModels
                 
             _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
                 () => Observable
-                    .FromAsync(() => fileManager.OpenWrite(SelectedFile.Name))
+                    .FromAsync(() => files.OpenWrite(SelectedFile.Name))
                     .Where(stream => stream != null)
                     .Select(stream => _provider.DownloadFile(SelectedFile.Path, stream))
                     .SelectMany(task => task.ToObservable()), 
@@ -187,7 +188,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Log(this, $"Exception occured in provider {provider.Name}")
                 .Subscribe();
 
-            Auth = authFactory(provider);
+            Auth = auth;
             Activator = new ViewModelActivator();
             this.WhenActivated(disposable =>
             {

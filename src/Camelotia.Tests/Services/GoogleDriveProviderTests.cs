@@ -15,7 +15,7 @@ namespace Camelotia.Tests.Services
         {
             Id = Guid.NewGuid(),
             Created = DateTime.Now,
-            Type = "Google Drive"
+            Type = ProviderType.GoogleDrive
         };
 
         [Fact]
@@ -26,7 +26,7 @@ namespace Camelotia.Tests.Services
 
             provider.CanCreateFolder.Should().BeFalse();
             provider.Created.Should().Be(_model.Created);
-            provider.Name.Should().Be("Google Drive");
+            provider.Name.Should().Be("GoogleDrive");
             provider.Id.Should().Be(_model.Id);
 
             provider.SupportsDirectAuth.Should().BeFalse();

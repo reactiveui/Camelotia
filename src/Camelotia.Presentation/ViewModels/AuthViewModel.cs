@@ -6,8 +6,6 @@ using ReactiveUI.Fody.Helpers;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public delegate IAuthViewModel AuthViewModelFactory(IProvider provider);
-
     public sealed class AuthViewModel : ReactiveObject, IAuthViewModel
     {
         private readonly IProvider _provider;
