@@ -40,7 +40,6 @@ namespace Camelotia.Presentation.ViewModels
                 .Transform(ps => createViewModel(ps, factory.CreateProvider(ps)))
                 .Sort(SortExpressionComparer<IProviderViewModel>.Descending(x => x.Created))
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .StartWithEmpty()
                 .Bind(out _providers)
                 .Subscribe();
 

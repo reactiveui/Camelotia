@@ -7,6 +7,7 @@ using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services;
 using Camelotia.Services.Interfaces;
+using Camelotia.Services.Models;
 using DynamicData;
 using FluentAssertions;
 using NSubstitute;
@@ -100,6 +101,20 @@ namespace Camelotia.Tests.Presentation
 
             model.SelectedProvider.Should().BeNull();
             model.Providers.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void ShouldAddNewProviders()
+        {
+            var model = BuildMainViewModel();
+            model.Providers.Should().BeEmpty();
+            model.SelectedProvider.Should().BeNull();
+            model.SelectedSupportedType = ProviderType.Local;
+            model.Add.Execute(null);
+
+            model.Providers.Should().NotBeEmpty();
+            model.Providers.Count.Should().Be(1);
+            model.SelectedProvider.Should().NotBeNull();
         }
 
         private MainViewModel BuildMainViewModel()
