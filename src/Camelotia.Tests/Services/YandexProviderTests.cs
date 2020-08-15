@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Akavache;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Camelotia.Services.Providers;

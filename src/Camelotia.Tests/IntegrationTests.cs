@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using Akavache;
 using Camelotia.Presentation.AppState;
@@ -8,7 +6,6 @@ using Camelotia.Presentation.ViewModels;
 using Camelotia.Services;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
-using Camelotia.Services.Providers;
 using DynamicData;
 using FluentAssertions;
 using NSubstitute;

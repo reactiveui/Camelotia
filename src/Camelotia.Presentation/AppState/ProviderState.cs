@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using Camelotia.Services.Models;
 
 namespace Camelotia.Presentation.AppState

@@ -1,9 +1,7 @@
 using System;
-using Akavache;
 using Camelotia.Services.Models;
 using Camelotia.Services.Providers;
 using FluentAssertions;
-using NSubstitute;
 using Xunit;
 
 namespace Camelotia.Tests.Services
