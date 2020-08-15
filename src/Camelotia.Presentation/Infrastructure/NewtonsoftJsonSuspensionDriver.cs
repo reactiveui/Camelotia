@@ -15,6 +15,7 @@ namespace Camelotia.Presentation.Infrastructure
         {
             TypeNameHandling = TypeNameHandling.All,
             NullValueHandling = NullValueHandling.Ignore,
+            ObjectCreationHandling = ObjectCreationHandling.Replace,
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
         };
 
