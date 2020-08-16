@@ -17,20 +17,23 @@ namespace Camelotia.Presentation.Avalonia
 
         public override void OnFrameworkInitializationCompleted()
         {
+            // Configure ReactiveUI suspension management.
             var suspension = new AutoSuspendHelper(ApplicationLifetime);
             RxApp.SuspensionHost.CreateNewAppState = () => new MainState();
-            RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver("appstate.json"));
+            RxApp.SuspensionHost.SetupDefaultSuspendResume(new AkavacheSuspensionDriver<MainState>());
             suspension.OnFrameworkInitializationCompleted();
             
+            // Configure app dependencies.
             var window = new MainView();
             var styles = new AvaloniaStyleManager(window);
-            window.SwitchThemeButton.Click += (sender, args) => styles.UseNextTheme();
-
-            Akavache.BlobCache.ApplicationName = "Camelotia";
             
-            var context = new MainViewModel(
+            window.SwitchThemeButton.Click += (sender, args) => styles.UseNextTheme();
+            window.DataContext = new MainViewModel(
                 RxApp.SuspensionHost.GetAppState<MainState>(),
-                new ProviderFactory(new AvaloniaYandexAuthenticator(), Akavache.BlobCache.UserAccount),
+                new ProviderFactory(
+                    new AvaloniaYandexAuthenticator(), 
+                    Akavache.BlobCache.UserAccount
+                ),
                 (state, provider) => new ProviderViewModel(state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
                     owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
@@ -45,8 +48,7 @@ namespace Camelotia.Presentation.Avalonia
                     provider
                 )
             );
-
-            window.DataContext = context;
+            
             window.Show();
             base.OnFrameworkInitializationCompleted();
         }
