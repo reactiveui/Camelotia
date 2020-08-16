@@ -1,13 +1,20 @@
 using System;
 using System.Reactive;
 using Akavache;
+using Newtonsoft.Json;
 using ReactiveUI;
+using Splat;
 
 namespace Camelotia.Presentation.Infrastructure
 {
     public class AkavacheSuspensionDriver<TAppState> : ISuspensionDriver where TAppState : class
     {
         private const string Key = "camelotia-state";
+
+        static AkavacheSuspensionDriver() => Locator.CurrentMutable.RegisterConstant(new JsonSerializerSettings
+        {
+            ObjectCreationHandling = ObjectCreationHandling.Replace
+        });
   
         public AkavacheSuspensionDriver() => BlobCache.ApplicationName = "Camelotia";
 
