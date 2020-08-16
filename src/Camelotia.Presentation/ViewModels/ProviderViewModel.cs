@@ -56,11 +56,12 @@ namespace Camelotia.Presentation.ViewModels
                 () => provider.Get(CurrentPath),
                 canInteract);
             
-            _refresh.Select(items => items
-                    .Select(file => createFile(file, this))
-                    .OrderByDescending(file => file.IsFolder)
-                    .ThenBy(file => file.Name)
-                    .ToList())
+            _refresh.Select(
+                    items => items
+                        .Select(file => createFile(file, this))
+                        .OrderByDescending(file => file.IsFolder)
+                        .ThenBy(file => file.Name)
+                        .ToList())
                 .Where(items => Files == null || !items.SequenceEqual(Files))
                 .ToPropertyEx(this, x => x.Files);
 
@@ -70,12 +71,11 @@ namespace Camelotia.Presentation.ViewModels
                 .Skip(1)
                 .Select(executing => !executing)
                 .ToPropertyEx(this, x => x.IsReady);
-            
+
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && file.IsFolder)
-                .CombineLatest(_refresh.IsExecuting, (folder, busy) => folder && !busy)
-                .CombineLatest(canInteract, (open, interact) => open && interact);
+                .CombineLatest(_refresh.IsExecuting, canInteract, (folder, busy, ci) => folder && ci && !busy);
             
             _open = ReactiveCommand.Create(
                 () => Path.Combine(CurrentPath, SelectedFile.Name),
@@ -85,8 +85,7 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.CurrentPath)
                 .Where(path => path != null)
                 .Select(path => path.Length > provider.InitialPath.Length)
-                .CombineLatest(_refresh.IsExecuting, (valid, busy) => valid && !busy)
-                .CombineLatest(canInteract, (back, interact) => back && interact);
+                .CombineLatest(_refresh.IsExecuting, canInteract, (valid, busy, ci) => valid && ci && !busy);
             
             _back = ReactiveCommand.Create(
                 () => Path.GetDirectoryName(CurrentPath), 
@@ -127,7 +126,7 @@ namespace Camelotia.Presentation.ViewModels
                 () => Observable
                     .FromAsync(files.OpenRead)
                     .Where(response => response.Name != null && response.Stream != null)
-                    .Select(x => _provider.UploadFile(CurrentPath, x.Stream, x.Name))
+                    .Select(args => _provider.UploadFile(CurrentPath, args.Stream, args.Name))
                     .SelectMany(task => task.ToObservable()), 
                 canUploadToCurrentPath);
 
@@ -162,8 +161,7 @@ namespace Camelotia.Presentation.ViewModels
             var canDeleteSelection = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && !file.IsFolder)
-                .CombineLatest(_refresh.IsExecuting, (del, loading) => del && !loading)
-                .CombineLatest(canInteract, (delete, interact) => delete && interact);
+                .CombineLatest(_refresh.IsExecuting, canInteract, (del, loading, ci) => del && !loading && ci);
 
             _deleteSelectedFile = ReactiveCommand.CreateFromTask(
                 () => provider.Delete(SelectedFile.Path, SelectedFile.IsFolder),
@@ -174,15 +172,13 @@ namespace Camelotia.Presentation.ViewModels
             var canUnselectFile = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(selection => selection != null)
-                .CombineLatest(_refresh.IsExecuting, (sel, loading) => sel && !loading)
-                .CombineLatest(canInteract, (unselect, interact) => unselect && interact);
+                .CombineLatest(_refresh.IsExecuting, canInteract, (sel, loading, ci) => sel && !loading && ci);
             
             _unselectFile = ReactiveCommand.Create(
                 () => { SelectedFile = null; },
                 canUnselectFile);
 
-            _uploadToCurrentPath
-                .ThrownExceptions
+            _uploadToCurrentPath.ThrownExceptions
                 .Merge(_deleteSelectedFile.ThrownExceptions)
                 .Merge(_downloadSelectedFile.ThrownExceptions)
                 .Merge(_refresh.ThrownExceptions)
