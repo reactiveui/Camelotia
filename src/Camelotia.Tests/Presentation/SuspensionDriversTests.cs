@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Infrastructure;
+using Camelotia.Services.Models;
 using DynamicData;
 using FluentAssertions;
 using ReactiveUI;
@@ -25,7 +26,11 @@ namespace Camelotia.Tests.Presentation
         
         private static async Task SuspensionDriverShouldSaveAndLoadState(ISuspensionDriver driver)
         {
-            var state = new MainState();
+            var state = new MainState
+            {
+                SelectedSupportedType = ProviderType.GitHub
+            };
+            
             state.Providers.AddOrUpdate(new ProviderState());
             state.Providers.AddOrUpdate(new ProviderState
             {
@@ -44,6 +49,7 @@ namespace Camelotia.Tests.Presentation
             loaded.Should().BeOfType<MainState>();
 
             var retyped = (MainState) loaded;
+            retyped.SelectedSupportedType.Should().Be(ProviderType.GitHub);
             retyped.Providers.Count.Should().Be(2);
             retyped.ProviderStates.Should().NotBeEmpty();
             retyped.ProviderStates.Should().Contain(provider =>
