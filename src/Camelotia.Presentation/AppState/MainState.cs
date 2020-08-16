@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Camelotia.Services.Models;
 using DynamicData;
-using Newtonsoft.Json;
 
 namespace Camelotia.Presentation.AppState
 {

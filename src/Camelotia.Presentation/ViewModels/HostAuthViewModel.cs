@@ -3,7 +3,6 @@ using System.Reactive.Linq;
 using System.Windows.Input;
 using System;
 using Camelotia.Presentation.AppState;
-using Camelotia.Presentation.Extensions;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI.Fody.Helpers;
@@ -59,10 +58,21 @@ namespace Camelotia.Presentation.ViewModels
                 Port = string.Empty;
             });
 
-            this.AutoUpdate(x => x.Username, state, x => x.Username);
-            this.AutoUpdate(x => x.Password, state, x => x.Password);
-            this.AutoUpdate(x => x.Address, state, x => x.Address);
-            this.AutoUpdate(x => x.Port, state, x => x.Port);
+            Username = state.Username;
+            this.WhenAnyValue(x => x.Username)
+                .Subscribe(name => state.Username = name);
+            
+            Password = state.Password;
+            this.WhenAnyValue(x => x.Password)
+                .Subscribe(name => state.Password = name);
+            
+            Address = state.Address;
+            this.WhenAnyValue(x => x.Address)
+                .Subscribe(name => state.Address = name);
+            
+            Port = state.Port;
+            this.WhenAnyValue(x => x.Port)
+                .Subscribe(name => state.Port = name);
         }
         
         [Reactive]

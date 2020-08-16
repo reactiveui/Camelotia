@@ -3,7 +3,6 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using Camelotia.Presentation.AppState;
-using Camelotia.Presentation.Extensions;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
@@ -49,8 +48,13 @@ namespace Camelotia.Presentation.ViewModels
                 Password = string.Empty;
             });
 
-            this.AutoUpdate(x => x.Username, state, x => x.Username);
-            this.AutoUpdate(x => x.Password, state, x => x.Password);
+            Username = state.Username;
+            this.WhenAnyValue(x => x.Username)
+                .Subscribe(name => state.Username = name);
+
+            Password = state.Password;
+            this.WhenAnyValue(x => x.Password)
+                .Subscribe(pass => state.Password = pass);
         }
         
         [Reactive]

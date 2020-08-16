@@ -3,7 +3,6 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using Camelotia.Presentation.AppState;
-using Camelotia.Presentation.Extensions;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI.Fody.Helpers;
@@ -75,7 +74,9 @@ namespace Camelotia.Presentation.ViewModels
                 .Merge(_close.Select(x => string.Empty))
                 .ToPropertyEx(this, x => x.ErrorMessage);
 
-            this.AutoUpdate(x => x.NewName, state, x => x.NewName);
+            NewName = state.NewName;
+            this.WhenAnyValue(x => x.NewName)
+                .Subscribe(name => state.NewName = name);
         }
         
         [Reactive] 
