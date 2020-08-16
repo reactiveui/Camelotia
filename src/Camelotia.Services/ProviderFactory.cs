@@ -33,7 +33,7 @@ namespace Camelotia.Services
         
         public IReadOnlyCollection<ProviderType> SupportedTypes { get; }
 
-        public IProvider CreateProvider(ProviderModel parameters) => parameters.Type switch
+        public IProvider CreateProvider(ProviderParameters parameters) => parameters.Type switch
         {
             ProviderType.Ftp => new FtpProvider(parameters),
             ProviderType.GitHub => new GitHubProvider(parameters),

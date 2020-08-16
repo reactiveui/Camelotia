@@ -27,9 +27,9 @@ namespace Camelotia.Services.Providers
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
         private readonly HttpClient _http = new HttpClient();
         private readonly IAuthenticator _authenticator;
-        private readonly ProviderModel _model;
+        private readonly ProviderParameters _model;
 
-        public YandexDiskProvider(ProviderModel model, IAuthenticator authenticator)
+        public YandexDiskProvider(ProviderParameters model, IAuthenticator authenticator)
         {
             _model = model;
             _authenticator = authenticator;

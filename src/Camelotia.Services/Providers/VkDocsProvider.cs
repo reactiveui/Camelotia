@@ -21,10 +21,10 @@ namespace Camelotia.Services.Providers
     public sealed class VkDocsProvider : IProvider
     {
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>();
-        private readonly ProviderModel _model;
+        private readonly ProviderParameters _model;
         private IVkApi _api = new VkApi();
         
-        public VkDocsProvider(ProviderModel model)
+        public VkDocsProvider(ProviderParameters model)
         {
             _model = model;
             _isAuthorized.OnNext(false);

@@ -11,9 +11,9 @@ namespace Camelotia.Services.Providers
 {
     public sealed class LocalProvider : IProvider
     {
-        private readonly ProviderModel _model;
+        private readonly ProviderParameters _model;
 
-        public LocalProvider(ProviderModel model) => _model = model;
+        public LocalProvider(ProviderParameters model) => _model = model;
 
         public Guid Id => _model.Id;
 

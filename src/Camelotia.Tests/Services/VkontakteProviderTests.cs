@@ -9,7 +9,7 @@ namespace Camelotia.Tests.Services
 {
     public sealed class VkontakteFileSystemProviderTests
     {
-        private readonly ProviderModel _model = new ProviderModel
+        private readonly ProviderParameters _model = new ProviderParameters
         {
             Id = Guid.NewGuid(),
             Type = ProviderType.VkDocs,

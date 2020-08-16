@@ -36,7 +36,7 @@ namespace Camelotia.Presentation.ViewModels
                 .ToPropertyEx(this, x => x.IsReady);
             
             state.Providers.Connect()
-                .Transform(ps => createViewModel(ps, factory.CreateProvider(ps)))
+                .Transform(ps => createViewModel(ps, factory.CreateProvider(ps.Parameters)))
                 .Sort(SortExpressionComparer<IProviderViewModel>.Descending(x => x.Created))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _providers)

@@ -13,10 +13,10 @@ namespace Camelotia.Services.Providers
     public sealed class SftpProvider : IProvider
     {
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
-        private readonly ProviderModel _model;
+        private readonly ProviderParameters _model;
         private Func<SftpClient> _factory;
 
-        public SftpProvider(ProviderModel model)
+        public SftpProvider(ProviderParameters model)
         {
             _model = model;
             _isAuthorized.OnNext(false);

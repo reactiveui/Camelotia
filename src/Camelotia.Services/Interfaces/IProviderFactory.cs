@@ -5,7 +5,7 @@ namespace Camelotia.Services.Interfaces
 {
     public interface IProviderFactory
     {
-        IProvider CreateProvider(ProviderModel parameters);
+        IProvider CreateProvider(ProviderParameters parameters);
         
         IReadOnlyCollection<ProviderType> SupportedTypes { get; }
     }

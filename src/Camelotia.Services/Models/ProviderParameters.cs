@@ -2,7 +2,7 @@ using System;
 
 namespace Camelotia.Services.Models
 {
-    public class ProviderModel
+    public class ProviderParameters
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public DateTime Created { get; set; } = DateTime.Now;

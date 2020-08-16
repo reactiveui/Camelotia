@@ -26,7 +26,7 @@ namespace Camelotia.Tests.Services
         public void ShouldInstantiateSupportedProviders()
         {
             var factory = new ProviderFactory(_authenticator, _blobCache);
-            var provider = factory.CreateProvider(new ProviderModel {Type = ProviderType.Local});
+            var provider = factory.CreateProvider(new ProviderParameters {Type = ProviderType.Local});
             provider.Should().NotBeNull();
             provider.Name.Should().Be(ProviderType.Local.ToString());
         }

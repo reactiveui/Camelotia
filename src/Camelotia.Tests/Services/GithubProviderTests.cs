@@ -8,7 +8,7 @@ namespace Camelotia.Tests.Services
 {
     public sealed class GithubProviderTests
     {
-        private readonly ProviderModel _model = new ProviderModel
+        private readonly ProviderParameters _model = new ProviderParameters
         {
             Id = Guid.NewGuid(),
             Created = DateTime.Now,

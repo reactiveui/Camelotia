@@ -27,10 +27,10 @@ namespace Camelotia.Services.Providers
         
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
         private readonly IBlobCache _blobCache;
-        private readonly ProviderModel _model;
+        private readonly ProviderParameters _model;
         private DriveService _driveService;
         
-        public GoogleDriveProvider(ProviderModel model, IBlobCache blobCache)
+        public GoogleDriveProvider(ProviderParameters model, IBlobCache blobCache)
         {
             _model = model;
             _blobCache = blobCache;

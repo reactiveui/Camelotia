@@ -12,7 +12,7 @@ namespace Camelotia.Tests.Services
     public sealed class YandexFileSystemProviderTests
     {
         private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
-        private readonly ProviderModel _model = new ProviderModel
+        private readonly ProviderParameters _model = new ProviderParameters
         {
             Id = Guid.NewGuid(),
             Type = ProviderType.Yandex,

@@ -17,10 +17,10 @@ namespace Camelotia.Services.Providers
         private readonly GitHubClient _gitHub = new GitHubClient(new ProductHeaderValue(GithubApplicationId));
         private readonly ISubject<bool> _isAuthenticated = new ReplaySubject<bool>(1);
         private readonly HttpClient _httpClient = new HttpClient();
-        private readonly ProviderModel _model;
+        private readonly ProviderParameters _model;
         private string _currentUserName;
         
-        public GitHubProvider(ProviderModel model)
+        public GitHubProvider(ProviderParameters model)
         {
             _model = model;
             _isAuthenticated.OnNext(false);

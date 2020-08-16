@@ -11,7 +11,7 @@ namespace Camelotia.Tests.Services
     public sealed class GoogleDriveProviderTests
     {
         private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
-        private readonly ProviderModel _model = new ProviderModel
+        private readonly ProviderParameters _model = new ProviderParameters
         {
             Id = Guid.NewGuid(),
             Created = DateTime.Now,

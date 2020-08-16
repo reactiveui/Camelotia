@@ -14,7 +14,7 @@ namespace Camelotia.Tests.Services
     {
         private static readonly Guid LocalIdentifier = Guid.NewGuid();
         private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
-        private readonly IProvider _provider = new LocalProvider(new ProviderModel
+        private readonly IProvider _provider = new LocalProvider(new ProviderParameters
         {
             Id = LocalIdentifier,
             Created = DateTime.Now,
