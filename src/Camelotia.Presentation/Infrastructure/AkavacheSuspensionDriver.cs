@@ -16,7 +16,7 @@ namespace Camelotia.Presentation.Infrastructure
             ObjectCreationHandling = ObjectCreationHandling.Replace
         });
   
-        public AkavacheSuspensionDriver() => BlobCache.ApplicationName = "Camelotia";
+        public AkavacheSuspensionDriver(string appName) => BlobCache.ApplicationName = appName;
 
         public IObservable<Unit> InvalidateState() => BlobCache.UserAccount.InvalidateObject<TAppState>(Key);
   

@@ -22,7 +22,7 @@ namespace Camelotia.Tests.Presentation
         [Fact]
         public Task AkavacheSuspensionDriverShouldSaveAndLoadState() =>
             SuspensionDriverShouldSaveAndLoadState(
-                new AkavacheSuspensionDriver<MainState>());
+                new AkavacheSuspensionDriver<MainState>("Camelotia-Tests"));
         
         private static async Task SuspensionDriverShouldSaveAndLoadState(ISuspensionDriver driver)
         {

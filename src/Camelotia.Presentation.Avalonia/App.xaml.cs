@@ -20,7 +20,7 @@ namespace Camelotia.Presentation.Avalonia
             // Configure ReactiveUI suspension management.
             var suspension = new AutoSuspendHelper(ApplicationLifetime);
             RxApp.SuspensionHost.CreateNewAppState = () => new MainState();
-            RxApp.SuspensionHost.SetupDefaultSuspendResume(new AkavacheSuspensionDriver<MainState>());
+            RxApp.SuspensionHost.SetupDefaultSuspendResume(new AkavacheSuspensionDriver<MainState>("CamelotiaV2"));
             suspension.OnFrameworkInitializationCompleted();
             
             // Configure app dependencies.
