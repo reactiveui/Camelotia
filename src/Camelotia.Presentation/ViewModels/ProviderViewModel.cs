@@ -32,6 +32,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly IProvider _provider;
 
         public ProviderViewModel(
+            ProviderState state,
             CreateFolderViewModelFactory createFolder,
             RenameFileViewModelFactory createRename,
             FileViewModelFactory createFile,
@@ -95,7 +96,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(path => path ?? provider.InitialPath)
                 .DistinctUntilChanged()
                 .Log(this, $"Current path changed in {provider.Name}")
-                .ToPropertyEx(this, x => x.CurrentPath, provider.InitialPath);
+                .ToPropertyEx(this, x => x.CurrentPath, state.CurrentPath ?? provider.InitialPath);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Skip(1)
@@ -107,8 +108,8 @@ namespace Camelotia.Presentation.ViewModels
 
             this.WhenAnyValue(x => x.Files)
                 .Skip(1)
-                .Where(files => files != null)
-                .Select(files => !files.Any())
+                .Where(items => items != null)
+                .Select(items => !items.Any())
                 .ToPropertyEx(this, x => x.IsCurrentPathEmpty);
 
             _refresh.ThrownExceptions
@@ -187,6 +188,9 @@ namespace Camelotia.Presentation.ViewModels
                 .Merge(_refresh.ThrownExceptions)
                 .Log(this, $"Exception occured in provider {provider.Name}")
                 .Subscribe();
+
+            this.WhenAnyValue(x => x.CurrentPath)
+                .Subscribe(path => state.CurrentPath = path);
 
             Auth = auth;
             Activator = new ViewModelActivator();
