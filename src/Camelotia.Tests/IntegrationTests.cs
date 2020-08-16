@@ -29,11 +29,12 @@ namespace Camelotia.Tests
                 Type = ProviderType.Local,
                 CreateFolderState = new CreateFolderState
                 {
-                    Name = "Example"
+                    Name = "Example",
+                    IsVisible = true
                 }
             });
             
-            var main = ComposeMainViewModel();
+            var main = BuildMainViewModel();
             main.SupportedTypes.Should().Contain(ProviderType.Local);
             main.SelectedSupportedType.Should().Be(ProviderType.Local);
             main.Providers.Should().NotBeEmpty();
@@ -41,13 +42,13 @@ namespace Camelotia.Tests
             
             var provider = main.Providers[0];
             provider.Name.Should().Be("Local");
-            provider.CanInteract.Should().BeTrue();
+            provider.CanInteract.Should().BeFalse();
             provider.Rename.IsVisible.Should().BeFalse();
-            provider.Folder.IsVisible.Should().BeFalse();
+            provider.Folder.IsVisible.Should().BeTrue();
             provider.Folder.Name.Should().Be("Example");
         }
         
-        private IMainViewModel ComposeMainViewModel()
+        private IMainViewModel BuildMainViewModel()
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;

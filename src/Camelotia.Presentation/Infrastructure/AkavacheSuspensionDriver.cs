@@ -7,7 +7,7 @@ namespace Camelotia.Presentation.Infrastructure
 {
     public class AkavacheSuspensionDriver<TAppState> : ISuspensionDriver where TAppState : class
     {
-        private const string Key = "appState";
+        private const string Key = "camelotia-state";
   
         public AkavacheSuspensionDriver() => BlobCache.ApplicationName = "Camelotia";
 
