@@ -19,7 +19,7 @@ namespace Camelotia.Presentation.Uwp
                     Akavache.BlobCache.UserAccount, 
                     new[] { ProviderType.Yandex, ProviderType.VkDocs, ProviderType.Ftp, ProviderType.Sftp, ProviderType.GitHub }
                 ),
-                (state, provider) => new ProviderViewModel(
+                (state, provider) => new ProviderViewModel(state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
                     owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
                     (file, owner) => new FileViewModel(owner, file),

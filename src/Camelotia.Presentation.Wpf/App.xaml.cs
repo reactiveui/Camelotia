@@ -27,7 +27,7 @@ namespace Camelotia.Presentation.Wpf
             var mainViewModel = new MainViewModel(
                 RxApp.SuspensionHost.GetAppState<MainState>(),
                 new ProviderFactory(new WindowsPresentationYandexAuthenticator(), Akavache.BlobCache.UserAccount),
-                (state, provider) => new ProviderViewModel(
+                (state, provider) => new ProviderViewModel(state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
                     owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
                     (file, owner) => new FileViewModel(owner, file),

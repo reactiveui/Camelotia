@@ -49,7 +49,7 @@ namespace Camelotia.Presentation.Xamarin.Droid
             return new MainViewModel(
                 new MainState(),
                 new ProviderFactory(new AndroidYandexAuthenticator(this), Akavache.BlobCache.UserAccount),
-                (state, provider) => new ProviderViewModel(
+                (state, provider) => new ProviderViewModel(state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
                     owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
                     (file, owner) => new FileViewModel(owner, file),
