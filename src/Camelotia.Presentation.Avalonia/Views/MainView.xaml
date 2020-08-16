@@ -23,7 +23,7 @@
             <Setter Property="Padding" Value="0" />
         </Style>
     </Window.Styles>
-    <Grid>
+    <Grid Background="{DynamicResource ThemeBackgroundBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="2*" />
@@ -104,7 +104,7 @@
                       IsVisible="{Binding WelcomeScreenCollapsed, Mode=OneWay}"
                       SelectedItem="{Binding SelectedProvider, Mode=OneWay}">
                 <Carousel.PageTransition>
-                    <PageSlide Duration="00:00:00.300" Orientation="Vertical" />
+                    <CrossFade Duration="00:00:00.300" />
                 </Carousel.PageTransition>
                 <Carousel.DataTemplates>
                     <DataTemplate DataType="interfaces:IProviderViewModel">

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
+using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
+using Camelotia.Services.Models;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
 using DynamicData;
@@ -15,57 +16,48 @@ using DynamicData.Binding;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public sealed class MainViewModel : ReactiveObject, IMainViewModel, IActivatableViewModel
+    public sealed class MainViewModel : ReactiveObject, IMainViewModel
     {
         private readonly ReadOnlyObservableCollection<IProviderViewModel> _providers;
+        private readonly ReactiveCommand<Unit, ProviderState> _add;
         private readonly ReactiveCommand<Unit, Unit> _unselect;
         private readonly ReactiveCommand<Unit, Unit> _refresh;
-        private readonly ReactiveCommand<Unit, Unit> _remove;
-        private readonly ReactiveCommand<Unit, Unit> _add;
-        private readonly IStorage _storage;
+        private readonly ReactiveCommand<Unit, Guid> _remove;
+        private readonly IProviderFactory _factory;
 
-        public MainViewModel(
-            ProviderViewModelFactory providerFactory,
-            AuthViewModelFactory authFactory,
-            IStorage storage)
+        public MainViewModel(MainState state, IProviderFactory factory, ProviderViewModelFactory createViewModel)
         {
-            _storage = storage;
-            _refresh = ReactiveCommand.CreateFromTask(storage.Refresh);
-            
-            var providers = storage.Read().ObserveOn(RxApp.MainThreadScheduler);
-            providers.Transform(x => providerFactory(x, authFactory(x)))
-                .Sort(SortExpressionComparer<IProviderViewModel>.Descending(x => x.Created))
-                .StartWithEmpty()
-                .Bind(out _providers)
-                .Subscribe();
-            
+            _factory = factory;
+            _refresh = ReactiveCommand.Create(state.Providers.Refresh);
             _refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
             
             _refresh.IsExecuting
-                .Skip(1)
                 .Select(executing => !executing)
                 .ToPropertyEx(this, x => x.IsReady);
-
-            providers.Where(changes => changes.Any())
-                .OnItemAdded(x => SelectedProvider = Providers.FirstOrDefault())
-                .OnItemRemoved(x => SelectedProvider = null)
+            
+            state.Providers.Connect()
+                .Transform(ps => createViewModel(ps, factory.CreateProvider(ps.Parameters)))
+                .Sort(SortExpressionComparer<IProviderViewModel>.Descending(x => x.Created))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Bind(out _providers)
                 .Subscribe();
 
             var canRemove = this
                 .WhenAnyValue(x => x.SelectedProvider)
                 .Select(provider => provider != null);
             
-            _remove = ReactiveCommand.CreateFromTask(
-                () => storage.Remove(SelectedProvider.Id),
-                canRemove);
+            _remove = ReactiveCommand.Create(() => SelectedProvider.Id, canRemove);
+            _remove.Subscribe(state.Providers.RemoveKey);
 
             var canAddProvider = this
                 .WhenAnyValue(x => x.SelectedSupportedType)
-                .Select(type => !string.IsNullOrWhiteSpace(type));
+                .Select(type => Enum.IsDefined(typeof(ProviderType), type));
             
-            _add = ReactiveCommand.CreateFromTask(
-                () => storage.Add(SelectedSupportedType),
+            _add = ReactiveCommand.Create(
+                () => new ProviderState { Type = SelectedSupportedType },
                 canAddProvider);
+
+            _add.Subscribe(state.Providers.AddOrUpdate);
 
             this.WhenAnyValue(x => x.SelectedProvider)
                 .Select(provider => provider == null)
@@ -75,24 +67,39 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(visible => !visible)
                 .ToPropertyEx(this, x => x.WelcomeScreenCollapsed);
 
-            var canUnSelect = this
+            var canUnselect = this
                 .WhenAnyValue(x => x.SelectedProvider)
                 .Select(provider => provider != null);
 
-            _unselect = ReactiveCommand.Create(
-                () => { SelectedProvider = null; }, 
-                canUnSelect);
+            _unselect = ReactiveCommand.Create(() => Unit.Default, canUnselect);
+            _unselect.Subscribe(unit => SelectedProvider = null);
             
-            Activator = new ViewModelActivator();
-            this.WhenActivated(disposables =>
-            {
-                SelectedSupportedType = SupportedTypes.FirstOrDefault();
-                _refresh.Execute().Subscribe(o => { }, e => { }).DisposeWith(disposables);
-            });
+            var outputCollectionChanges = Providers
+                .ToObservableChangeSet(x => x.Id)
+                .Publish()
+                .RefCount();
+            
+            outputCollectionChanges
+                .Filter(provider => provider.Id == state.SelectedProviderId)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .OnItemAdded(provider => SelectedProvider = provider)
+                .Subscribe();
+            
+            outputCollectionChanges
+                .OnItemRemoved(provider => SelectedProvider = null)
+                .Subscribe();
+
+            this.WhenAnyValue(x => x.SelectedProvider)
+                .Select(provider => provider?.Id ?? Guid.Empty)
+                .Subscribe(id => state.SelectedProviderId = id);
+            
+            SelectedSupportedType = state.SelectedSupportedType ?? SupportedTypes.First();
+            this.WhenAnyValue(x => x.SelectedSupportedType)
+                .Subscribe(type => state.SelectedSupportedType = type);
         }
         
         [Reactive] 
-        public string SelectedSupportedType { get; set; }
+        public ProviderType SelectedSupportedType { get; set; }
 
         [Reactive] 
         public IProviderViewModel SelectedProvider { get; set; }
@@ -109,11 +116,9 @@ namespace Camelotia.Presentation.ViewModels
         [ObservableAsProperty]
         public bool IsReady { get; }
 
-        public ViewModelActivator Activator { get; }
-        
         public ReadOnlyObservableCollection<IProviderViewModel> Providers => _providers;
 
-        public IEnumerable<string> SupportedTypes => _storage.SupportedTypes;
+        public IEnumerable<ProviderType> SupportedTypes => _factory.SupportedTypes;
 
         public ICommand Unselect => _unselect;
 

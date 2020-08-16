@@ -5,13 +5,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Newtonsoft.Json;
-using Akavache;
 
 namespace Camelotia.Services.Providers
 {
@@ -29,13 +27,11 @@ namespace Camelotia.Services.Providers
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
         private readonly HttpClient _http = new HttpClient();
         private readonly IAuthenticator _authenticator;
-        private readonly IBlobCache _blobCache;
-        private readonly ProviderModel _model;
+        private readonly ProviderParameters _model;
 
-        public YandexDiskProvider(ProviderModel model, IAuthenticator authenticator, IBlobCache blobCache)
+        public YandexDiskProvider(ProviderParameters model, IAuthenticator authenticator)
         {
             _model = model;
-            _blobCache = blobCache;
             _authenticator = authenticator;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
@@ -45,7 +41,7 @@ namespace Camelotia.Services.Providers
 
         public Guid Id => _model.Id;
 
-        public string Name => _model.Type;
+        public string Name => _model.Type.ToString();
 
         public DateTime Created => _model.Created;
 
@@ -152,35 +148,25 @@ namespace Camelotia.Services.Providers
                 response.EnsureSuccessStatusCode();
         }
 
-        public async Task Logout()
+        public Task Logout()
         {
-            var persistentId = Id.ToString();
-            var model = await _blobCache.GetObject<ProviderModel>(persistentId);
-            model.Token = null;
-            
-            await _blobCache.InsertObject(persistentId, model);
+            _model.Token = null;
             _http.DefaultRequestHeaders.Clear();
             _isAuthorized.OnNext(false);
+            return Task.CompletedTask;
         }
 
         public async Task OAuth()
         {
-            var persistentId = Id.ToString();
             var token = await GetAuthenticationToken();
-            var model = await _blobCache.GetObject<ProviderModel>(persistentId);
-            model.Token = token;
-            
-            await _blobCache.InsertObject(persistentId, model);
+            _model.Token = token;
             ApplyTokenToHeaders(token);
             _isAuthorized.OnNext(true);
         }
         
-        private async void EnsureLoggedInIfTokenSaved()
+        private void EnsureLoggedInIfTokenSaved()
         {
-            var persistentId = Id.ToString();
-            var model = await _blobCache.GetOrFetchObject(persistentId, () => Task.FromResult(default(ProviderModel)));
-            var token = model?.Token;
-            
+            var token = _model.Token;
             if (string.IsNullOrWhiteSpace(token)) return;
             ApplyTokenToHeaders(token);
             _isAuthorized.OnNext(true);

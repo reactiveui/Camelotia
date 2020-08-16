@@ -2,6 +2,7 @@ using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
+using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
@@ -15,7 +16,7 @@ namespace Camelotia.Presentation.ViewModels
     {
         private readonly ReactiveCommand<Unit, Unit> _login;
         
-        public DirectAuthViewModel(IProvider provider)
+        public DirectAuthViewModel(DirectAuthState state, IProvider provider)
         {
             this.ValidationRule(x => x.Username,
                 name => !string.IsNullOrWhiteSpace(name),
@@ -46,6 +47,14 @@ namespace Camelotia.Presentation.ViewModels
                 Username = string.Empty;
                 Password = string.Empty;
             });
+
+            Username = state.Username;
+            this.WhenAnyValue(x => x.Username)
+                .Subscribe(name => state.Username = name);
+
+            Password = state.Password;
+            this.WhenAnyValue(x => x.Password)
+                .Subscribe(pass => state.Password = pass);
         }
         
         [Reactive]

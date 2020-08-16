@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
+using Camelotia.Services.Models;
 
 namespace Camelotia.Presentation.Interfaces
 {
@@ -11,9 +12,9 @@ namespace Camelotia.Presentation.Interfaces
         
         IProviderViewModel SelectedProvider { get; set; }
         
-        IEnumerable<string> SupportedTypes { get; }
+        IEnumerable<ProviderType> SupportedTypes { get; }
 
-        string SelectedSupportedType { get; set; }
+        ProviderType SelectedSupportedType { get; set; }
 
         bool WelcomeScreenCollapsed { get; }
 

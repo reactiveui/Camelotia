@@ -1,6 +1,7 @@
 using System;
 using System.Reactive.Concurrency;
 using System.Threading.Tasks;
+using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
@@ -13,6 +14,7 @@ namespace Camelotia.Tests.Presentation
     public sealed class HostAuthViewModelTests
     {
         private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly HostAuthState _state = new HostAuthState();
 
         [Fact]
         public void LoginCommandShouldStayDisabledUntilInputIsValid()
@@ -79,7 +81,6 @@ namespace Camelotia.Tests.Presentation
             model.Login.CanExecute(null).Should().BeTrue();
         }
         
-
         [Fact]
         public void ShouldUpdateValidationsForProperties()
         {
@@ -105,12 +106,37 @@ namespace Camelotia.Tests.Presentation
             model.GetErrors(nameof(model.Port)).Should().BeEmpty();
             model.HasErrors.Should().BeFalse();
         }
+        
+        [Fact]
+        public void ShouldUpdateStateProperties()
+        {
+            const string user = "Joseph";
+            const string pass = "qwerty";
+            const string address = "127.0.0.1";
+            const string port = "42";
+            
+            var model = BuildHostAuthViewModel();
+            _state.Username.Should().BeNullOrWhiteSpace();
+            _state.Password.Should().BeNullOrWhiteSpace();
+            _state.Address.Should().BeNullOrWhiteSpace();
+            _state.Port.Should().BeNullOrWhiteSpace();
+
+            model.Username = user;
+            model.Password = pass;
+            model.Address = address;
+            model.Port = port;
+
+            _state.Username.Should().Be(user);
+            _state.Password.Should().Be(pass);
+            _state.Address.Should().Be(address);
+            _state.Port.Should().Be(port);
+        }
 
         private HostAuthViewModel BuildHostAuthViewModel()
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
-            return new HostAuthViewModel(_provider);
+            return new HostAuthViewModel(_state, _provider);
         }
     }
 }

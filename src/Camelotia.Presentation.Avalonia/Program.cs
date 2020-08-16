@@ -1,6 +1,6 @@
 ﻿using Avalonia;
-using Avalonia.ReactiveUI;
 using Avalonia.Logging.Serilog;
+using Avalonia.ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia
 {

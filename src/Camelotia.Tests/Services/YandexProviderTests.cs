@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Akavache;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Camelotia.Services.Providers;
@@ -13,18 +12,17 @@ namespace Camelotia.Tests.Services
     public sealed class YandexFileSystemProviderTests
     {
         private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
-        private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
-        private readonly ProviderModel _model = new ProviderModel
+        private readonly ProviderParameters _model = new ProviderParameters
         {
             Id = Guid.NewGuid(),
-            Type = "Yandex",
+            Type = ProviderType.Yandex,
             Created = DateTime.Now
         };
 
         [Fact]
         public void VerifyDefaultPropertyValues()
         {
-            var provider = new YandexDiskProvider(_model, _authenticator, _blobCache);
+            var provider = new YandexDiskProvider(_model, _authenticator);
             provider.InitialPath.Should().Be(Path.DirectorySeparatorChar.ToString());
 
             provider.CanCreateFolder.Should().BeTrue();

@@ -1,11 +1,14 @@
 using System;
+using System.Linq;
 using System.Reactive.Concurrency;
-using System.Reactive.Linq;
+using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
+using Camelotia.Services;
 using Camelotia.Services.Interfaces;
+using Camelotia.Services.Models;
 using DynamicData;
-using DynamicData.Binding;
+using Akavache;
 using FluentAssertions;
 using NSubstitute;
 using ReactiveUI;
@@ -15,16 +18,14 @@ namespace Camelotia.Tests.Presentation
 {
     public sealed class MainViewModelTests
     {
-        private readonly IStorage _storage = Substitute.For<IStorage>();
-
+        private readonly MainState _state = new MainState();
+        
         [Fact]
         public void ShouldIndicateWhenLoadingAndReady() 
         {
-            _storage.Read().Returns(Observable.Return(new ChangeSet<IProvider, Guid>()));
-            
             var model = BuildMainViewModel();
             model.IsLoading.Should().BeFalse();
-            model.IsReady.Should().BeFalse();
+            model.IsReady.Should().BeTrue();
                 
             model.Refresh.CanExecute(null).Should().BeTrue();
             model.Refresh.Execute(null);
@@ -35,57 +36,34 @@ namespace Camelotia.Tests.Presentation
         }
 
         [Fact]
-        public void ShouldSelectFirstProviderWhenProvidersGetLoaded() 
+        public void ShouldSelectProviderFromStateWhenProvidersGetLoaded()
         {
-            var collection = new ObservableCollectionExtended<IProvider>();
-            var set = collection.ToObservableChangeSet(x => x.Id);
-            _storage.Read().Returns(set);
-            _storage
-                .When(storage => storage.Refresh())
-                .Do(args => collection.Add(Substitute.For<IProvider>()));
+            var provider = new ProviderState();
+            _state.Providers.AddOrUpdate(provider);
+            _state.SelectedProviderId = provider.Id;
                 
             var model = BuildMainViewModel();
-            model.Providers.Should().BeEmpty();
+            model.Providers.Should().NotBeEmpty();
+            model.SelectedProvider.Should().NotBeNull();
+            model.SelectedProvider.Id.Should().Be(provider.Id);
             model.Refresh.Execute(null);
                 
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
-        }
-
-        [Fact]
-        public void ActivationShouldTriggerLoad() 
-        {
-            var collection = new ObservableCollectionExtended<IProvider>();
-            var set = collection.ToObservableChangeSet(x => x.Id);
-            _storage.Read().Returns(set);
-            _storage
-                .When(storage => storage.Refresh())
-                .Do(args => collection.Add(Substitute.For<IProvider>()));
-                
-            var model = BuildMainViewModel();
-            model.Providers.Should().BeEmpty();
-            model.Activator.Activate();
-                
-            model.Providers.Should().NotBeEmpty();
-            model.SelectedProvider.Should().NotBeNull();
+            model.SelectedProvider.Id.Should().Be(provider.Id);
         }
 
         [Fact]
         public void ShouldUnselectSelectedProvider() 
         {
-            var collection = new ObservableCollectionExtended<IProvider>();
-            var changes = collection.ToObservableChangeSet(x => x.Id);
-            _storage.Read().Returns(changes);
-            _storage
-                .When(storage => storage.Refresh())
-                .Do(args => collection.Add(Substitute.For<IProvider>()));
+            var provider = new ProviderState();
+            _state.Providers.AddOrUpdate(provider);
+            _state.SelectedProviderId = provider.Id;
 
             var model = BuildMainViewModel();
-            model.Providers.Should().BeEmpty();
-            model.Refresh.Execute(null);
-
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
+            model.SelectedProvider.Id.Should().Be(provider.Id);
             model.Unselect.CanExecute(null).Should().BeTrue();
             model.Unselect.Execute(null);
 
@@ -94,27 +72,16 @@ namespace Camelotia.Tests.Presentation
         }
 
         [Fact]
-        public void ShouldOrderProvidersBasedOnDateAdded() 
+        public void ShouldOrderProvidersBasedOnDateAdded()
         {
-            var collection = new ObservableCollectionExtended<IProvider>
+            _state.Providers.AddOrUpdate(new[]
             {
-                BuildProviderCreatedAt(new DateTime(2000, 1, 1, 1, 1, 1)),
-                BuildProviderCreatedAt(new DateTime(2015, 1, 1, 1, 1, 1)),
-                BuildProviderCreatedAt(new DateTime(2010, 1, 1, 1, 1, 1))
-            };
-            var changes = collection.ToObservableChangeSet(x => x.Id);
-            _storage.Read().Returns(changes);
-
-            var model = BuildMainViewModel((provider, _) =>
-            {
-                var id = provider.Id;
-                var created = provider.Created;
-                var entry = Substitute.For<IProviderViewModel>();
-                entry.Created.Returns(created);
-                entry.Id.Returns(id);
-                return entry;
+                new ProviderState { Created = new DateTime(2000, 1, 1, 1, 1, 1) },
+                new ProviderState { Created = new DateTime(2015, 1, 1, 1, 1, 1) },
+                new ProviderState { Created = new DateTime(2010, 1, 1, 1, 1, 1) }
             });
 
+            var model = BuildMainViewModel();
             model.Providers.Should().NotBeEmpty();
             model.Providers.Count.Should().Be(3);
 
@@ -123,24 +90,80 @@ namespace Camelotia.Tests.Presentation
             model.Providers[2].Created.Should().Be(new DateTime(2000, 1, 1, 1, 1, 1));
         }
 
-        private static IProvider BuildProviderCreatedAt(DateTime date)
+        [Fact]
+        public void ShouldUnselectProviderOnceDeleted()
         {
-            var id = Guid.NewGuid();
-            var provider = Substitute.For<IProvider>();
-            provider.Created.Returns(date);
-            provider.Id.Returns(id);
-            return provider;
+            var provider = new ProviderState();
+            _state.Providers.AddOrUpdate(new ProviderState());
+            _state.Providers.AddOrUpdate(provider);
+            _state.SelectedProviderId = provider.Id;
+            
+            var model = BuildMainViewModel();
+            model.Providers.Count.Should().Be(2);
+            model.SelectedProvider.Should().NotBeNull();
+            model.SelectedProvider.Id.Should().Be(provider.Id);
+            model.Remove.Execute(null);
+
+            model.SelectedProvider.Should().BeNull();
+            model.Providers.Count.Should().Be(1);
         }
 
-        private MainViewModel BuildMainViewModel(ProviderViewModelFactory factory = null)
+        [Fact]
+        public void ShouldAddNewProviders()
+        {
+            var model = BuildMainViewModel();
+            model.Providers.Should().BeEmpty();
+            model.SelectedProvider.Should().BeNull();
+            model.SelectedSupportedType = ProviderType.Local;
+            model.Add.Execute(null);
+
+            model.Providers.Should().NotBeEmpty();
+            model.Providers.Count.Should().Be(1);
+        }
+        
+        [Fact]
+        public void ShouldSynchronizeSelectedTypeWithState()
+        {
+            _state.SelectedSupportedType = ProviderType.Local;
+            
+            var model = BuildMainViewModel();
+            model.SelectedSupportedType.Should().Be(ProviderType.Local);
+            model.SelectedSupportedType = ProviderType.Ftp;
+            _state.SelectedSupportedType.Should().Be(ProviderType.Ftp);
+
+            model.SelectedSupportedType = ProviderType.Local;
+            _state.SelectedSupportedType.Should().Be(ProviderType.Local);
+        }
+
+        [Fact]
+        public void ShouldSaveUserSelectionToStateObject()
+        {
+            _state.Providers.AddOrUpdate(new ProviderState());
+            _state.Providers.AddOrUpdate(new ProviderState());
+            
+            var model = BuildMainViewModel();
+            model.SelectedProvider.Should().BeNull();
+            _state.SelectedProviderId.Should().BeEmpty();
+
+            model.SelectedProvider = model.Providers.First();
+            _state.SelectedProviderId.Should().NotBeEmpty();
+            _state.SelectedProviderId.Should().Be(model.SelectedProvider.Id);
+        }
+
+        private MainViewModel BuildMainViewModel()
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
-            return new MainViewModel(
-                factory ?? ((provider, auth) => Substitute.For<IProviderViewModel>()),
-                provider => Substitute.For<IAuthViewModel>(),
-                _storage
-            );
+            return new MainViewModel(_state, new ProviderFactory(
+                Substitute.For<IAuthenticator>(), 
+                Substitute.For<IBlobCache>()), 
+                (state, provider) =>
+            {
+                var entry = Substitute.For<IProviderViewModel>();
+                entry.Created.Returns(provider.Created);
+                entry.Id.Returns(provider.Id);
+                return entry;
+            });
         }
     }
 }

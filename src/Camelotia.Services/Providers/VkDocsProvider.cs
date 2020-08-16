@@ -4,11 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
-using Akavache;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Newtonsoft.Json;
@@ -23,14 +21,12 @@ namespace Camelotia.Services.Providers
     public sealed class VkDocsProvider : IProvider
     {
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>();
-        private readonly ProviderModel _model;
-        private readonly IBlobCache _blobCache;
+        private readonly ProviderParameters _model;
         private IVkApi _api = new VkApi();
         
-        public VkDocsProvider(ProviderModel model, IBlobCache blobCache)
+        public VkDocsProvider(ProviderParameters model)
         {
             _model = model;
-            _blobCache = blobCache;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
@@ -39,7 +35,7 @@ namespace Camelotia.Services.Providers
 
         public Guid Id => _model.Id;
 
-        public string Name => _model.Type;
+        public string Name => _model.Type.ToString();
 
         public DateTime Created => _model.Created;
 
@@ -72,23 +68,16 @@ namespace Camelotia.Services.Providers
                 Settings = Settings.Documents
             });
 
-            var persistentId = Id.ToString();
-            var model = await _blobCache.GetObject<ProviderModel>(persistentId);
-            model.Token = _api.Token;
-
-            await _blobCache.InsertObject(persistentId, model);
+            _model.Token = _api.Token;
             _isAuthorized.OnNext(_api.IsAuthorized);
         }
         
-        public async Task Logout()
+        public Task Logout()
         {
             _api = new VkApi();
-            var persistentId = Id.ToString();
-            var model = await _blobCache.GetObject<ProviderModel>(persistentId);
-            model.Token = null;
-            
-            await _blobCache.InsertObject(persistentId, model);
+            _model.Token = null;
             _isAuthorized.OnNext(_api.IsAuthorized);
+            return Task.CompletedTask;
         }
 
         public async Task<IEnumerable<FileModel>> Get(string path)
@@ -162,10 +151,7 @@ namespace Camelotia.Services.Providers
 
         private async void EnsureLoggedInIfTokenSaved()
         {
-            var persistentId = Id.ToString();
-            var model = await _blobCache.GetOrFetchObject(persistentId, () => Observable.Return<ProviderModel>(null));
-            var token = model?.Token;
-            
+            var token = _model.Token;
             if (string.IsNullOrWhiteSpace(token) || _api.IsAuthorized) return;
             await _api.AuthorizeAsync(new ApiAuthParams {AccessToken = token});
             _isAuthorized.OnNext(true);

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
+using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
@@ -22,6 +23,7 @@ namespace Camelotia.Tests.Presentation
         private readonly IAuthViewModel _auth = Substitute.For<IAuthViewModel>();
         private readonly IFileManager _files = Substitute.For<IFileManager>();
         private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly ProviderState _state = new ProviderState();
 
         [Fact]
         public void ShouldDisplayLoadingReadyIndicatorsProperly() 
@@ -163,18 +165,32 @@ namespace Camelotia.Tests.Presentation
 
             model.CurrentPath.Should().Be(Separator);
         }
+
+        [Fact]
+        public void ShouldSaveAndRestoreCurrentPath()
+        {
+            var initial = Separator + "foo";
+            _state.CurrentPath = initial;
+
+            var model = BuildProviderViewModel();
+            model.CurrentPath.Should().Be(initial);
+            model.Refresh.Execute(null);
+
+            model.CurrentPath.Should().Be(initial);
+            model.Back.Execute(null);
+
+            model.CurrentPath.Should().Be(Separator);
+            _state.CurrentPath.Should().Be(Separator);
+        }
         
         private ProviderViewModel BuildProviderViewModel()
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
-            return new ProviderViewModel(
-                x => _folder,
-                x => _rename,
+            return new ProviderViewModel(_state,
+                x => _folder, x => _rename, 
                 (x, y) => new FileViewModel(y, x),
-                _auth,
-                _files,
-                _provider
+                _auth, _files, _provider
             );
         }
     }

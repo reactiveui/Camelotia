@@ -4,15 +4,28 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Camelotia.Presentation.Uwp.Views;
+using Camelotia.Presentation.AppState;
+using Camelotia.Presentation.Infrastructure;
+using ReactiveUI;
 
 namespace Camelotia.Presentation.Uwp
 {
     sealed partial class App : Application
     {
-        public App() => InitializeComponent();
+        private readonly AutoSuspendHelper _autoSuspendHelper;
+
+        public App()
+        {
+            _autoSuspendHelper = new AutoSuspendHelper(this);
+            RxApp.SuspensionHost.CreateNewAppState = () => new MainState();
+            RxApp.SuspensionHost.SetupDefaultSuspendResume(new AkavacheSuspensionDriver<MainState>());
+            InitializeComponent();
+        }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            _autoSuspendHelper.OnLaunched(e);
+
             if (!(Window.Current.Content is Frame rootFrame))
             {
                 rootFrame = new Frame();
