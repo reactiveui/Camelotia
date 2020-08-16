@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Reactive.Concurrency;
-using Akavache;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
@@ -9,6 +8,7 @@ using Camelotia.Services;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using DynamicData;
+using Akavache;
 using FluentAssertions;
 using NSubstitute;
 using ReactiveUI;
@@ -36,27 +36,34 @@ namespace Camelotia.Tests.Presentation
         }
 
         [Fact]
-        public void ShouldSelectFirstProviderWhenProvidersGetLoaded()
+        public void ShouldSelectProviderFromStateWhenProvidersGetLoaded()
         {
-            _state.Providers.AddOrUpdate(new ProviderState());
+            var provider = new ProviderState();
+            _state.Providers.AddOrUpdate(provider);
+            _state.SelectedProviderId = provider.Id;
                 
             var model = BuildMainViewModel();
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
+            model.SelectedProvider.Id.Should().Be(provider.Id);
             model.Refresh.Execute(null);
                 
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
+            model.SelectedProvider.Id.Should().Be(provider.Id);
         }
 
         [Fact]
         public void ShouldUnselectSelectedProvider() 
         {
-            _state.Providers.AddOrUpdate(new ProviderState());
+            var provider = new ProviderState();
+            _state.Providers.AddOrUpdate(provider);
+            _state.SelectedProviderId = provider.Id;
 
             var model = BuildMainViewModel();
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
+            model.SelectedProvider.Id.Should().Be(provider.Id);
             model.Unselect.CanExecute(null).Should().BeTrue();
             model.Unselect.Execute(null);
 
@@ -86,21 +93,19 @@ namespace Camelotia.Tests.Presentation
         [Fact]
         public void ShouldUnselectProviderOnceDeleted()
         {
+            var provider = new ProviderState();
             _state.Providers.AddOrUpdate(new ProviderState());
-            _state.Providers.AddOrUpdate(new ProviderState());
+            _state.Providers.AddOrUpdate(provider);
+            _state.SelectedProviderId = provider.Id;
             
             var model = BuildMainViewModel();
             model.Providers.Count.Should().Be(2);
             model.SelectedProvider.Should().NotBeNull();
+            model.SelectedProvider.Id.Should().Be(provider.Id);
             model.Remove.Execute(null);
 
             model.SelectedProvider.Should().BeNull();
             model.Providers.Count.Should().Be(1);
-            model.SelectedProvider = model.Providers.First();
-            model.Remove.Execute(null);
-
-            model.SelectedProvider.Should().BeNull();
-            model.Providers.Should().BeEmpty();
         }
 
         [Fact]
@@ -114,7 +119,35 @@ namespace Camelotia.Tests.Presentation
 
             model.Providers.Should().NotBeEmpty();
             model.Providers.Count.Should().Be(1);
-            model.SelectedProvider.Should().NotBeNull();
+        }
+        
+        [Fact]
+        public void ShouldSynchronizeSelectedTypeWithState()
+        {
+            _state.SelectedSupportedType = ProviderType.Local;
+            
+            var model = BuildMainViewModel();
+            model.SelectedSupportedType.Should().Be(ProviderType.Local);
+            model.SelectedSupportedType = ProviderType.Ftp;
+            _state.SelectedSupportedType.Should().Be(ProviderType.Ftp);
+
+            model.SelectedSupportedType = ProviderType.Local;
+            _state.SelectedSupportedType.Should().Be(ProviderType.Local);
+        }
+
+        [Fact]
+        public void ShouldSaveUserSelectionToStateObject()
+        {
+            _state.Providers.AddOrUpdate(new ProviderState());
+            _state.Providers.AddOrUpdate(new ProviderState());
+            
+            var model = BuildMainViewModel();
+            model.SelectedProvider.Should().BeNull();
+            _state.SelectedProviderId.Should().BeEmpty();
+
+            model.SelectedProvider = model.Providers.First();
+            _state.SelectedProviderId.Should().NotBeEmpty();
+            _state.SelectedProviderId.Should().Be(model.SelectedProvider.Id);
         }
 
         private MainViewModel BuildMainViewModel()

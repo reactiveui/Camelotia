@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Camelotia.Services.Models;
 using DynamicData;
 using Newtonsoft.Json;
 
@@ -16,5 +17,9 @@ namespace Camelotia.Presentation.AppState
             get => Providers.Items.ToList();
             set => Providers.AddOrUpdate(value);
         }
+        
+        public ProviderType? SelectedSupportedType { get; set; }
+        
+        public Guid SelectedProviderId { get; set; }
     }
 }

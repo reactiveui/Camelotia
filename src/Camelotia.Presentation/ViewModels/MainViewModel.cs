@@ -42,14 +42,6 @@ namespace Camelotia.Presentation.ViewModels
                 .Bind(out _providers)
                 .Subscribe();
 
-            Providers.ToObservableChangeSet(x => x.Id)
-                .Where(changes => changes.Any())
-                .Throttle(TimeSpan.FromSeconds(0.75), RxApp.TaskpoolScheduler)
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .OnItemAdded(x => SelectedProvider = Providers.FirstOrDefault())
-                .OnItemRemoved(x => SelectedProvider = null)
-                .Subscribe();
-
             var canRemove = this
                 .WhenAnyValue(x => x.SelectedProvider)
                 .Select(provider => provider != null);
@@ -82,7 +74,28 @@ namespace Camelotia.Presentation.ViewModels
             _unselect = ReactiveCommand.Create(() => Unit.Default, canUnselect);
             _unselect.Subscribe(unit => SelectedProvider = null);
             
-            SelectedSupportedType = SupportedTypes.FirstOrDefault();
+            var outputCollectionChanges = Providers
+                .ToObservableChangeSet(x => x.Id)
+                .Publish()
+                .RefCount();
+            
+            outputCollectionChanges
+                .Filter(provider => provider.Id == state.SelectedProviderId)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .OnItemAdded(provider => SelectedProvider = provider)
+                .Subscribe();
+            
+            outputCollectionChanges
+                .OnItemRemoved(provider => SelectedProvider = null)
+                .Subscribe();
+
+            this.WhenAnyValue(x => x.SelectedProvider)
+                .Select(provider => provider?.Id ?? Guid.Empty)
+                .Subscribe(id => state.SelectedProviderId = id);
+            
+            SelectedSupportedType = state.SelectedSupportedType ?? SupportedTypes.First();
+            this.WhenAnyValue(x => x.SelectedSupportedType)
+                .Subscribe(type => state.SelectedSupportedType = type);
         }
         
         [Reactive] 
