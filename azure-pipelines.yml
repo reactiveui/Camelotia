@@ -20,7 +20,7 @@ jobs:
   steps:
   - task: DotNetCoreInstaller@0
     inputs:
-      version: '2.2.203'
+      version: '3.1.302'
   - script: cd $(Build.SourcesDirectory) && powershell -ExecutionPolicy Unrestricted ./build.ps1 --full
     displayName: 'Windows Full Build and Tests'
   - task: PublishTestResults@2
