@@ -45,9 +45,8 @@ namespace Camelotia.Presentation.Xamarin.Views
                 this.BindCommand(ViewModel, x => x.Add, x => x.AddButton)
                     .DisposeWith(disposables);
 
-                Observable.FromEventPattern<EventHandler, EventArgs>(
-                    x => OpenButton.Clicked += x,
-                    x => OpenButton.Clicked -= x)
+                this.OpenButton
+                    .Events().Clicked
                     .Select(args => ViewModel.SelectedProvider)
                     .Where(provider => provider != null)
                     .Select(x => new ProviderExplorerView { ViewModel = x })

@@ -3,7 +3,11 @@ using System.ComponentModel;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Interfaces;
@@ -15,24 +19,23 @@ namespace Camelotia.Presentation.Avalonia.Views
     {
         public FileView()
         {
+            AvaloniaXamlLoader.Load(this);
             this.WhenActivated(disposables =>
             {
-                Observable.FromEventPattern<CancelEventHandler, CancelEventArgs>(
-                        handler => ContextMenu.ContextMenuOpening += handler,
-                        handler => ContextMenu.ContextMenuOpening -= handler)
-                    .Do(args => args.EventArgs.Cancel = false)
-                    .Subscribe(args => ViewModel.Provider.SelectedFile = ViewModel)
-                    .DisposeWith(disposables);
-
-                Observable.FromEventPattern<RoutedEventArgs>(
-                        handler => DoubleTapped += handler,
-                        handler => DoubleTapped -= handler)
+                this.Events()
+                    .DoubleTapped
                     .Do(args => ViewModel.Provider.SelectedFile = ViewModel)
                     .Select(args => Unit.Default)
                     .InvokeCommand(this, x => x.ViewModel.Provider.Open)
                     .DisposeWith(disposables);
+
+                this.ContextMenu
+                    .Events()
+                    .ContextMenuOpening
+                    .Do(args => args.Cancel = false)
+                    .Subscribe(args => ViewModel.Provider.SelectedFile = ViewModel)
+                    .DisposeWith(disposables);
             });
-            AvaloniaXamlLoader.Load(this);
         }
     }
 }

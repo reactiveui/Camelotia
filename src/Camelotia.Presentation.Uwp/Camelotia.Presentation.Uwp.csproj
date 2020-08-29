@@ -211,6 +211,9 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>
     </PackageReference>
+    <PackageReference Include="ReactiveUI.Events">
+      <Version>11.4.17</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Camelotia.Presentation\Camelotia.Presentation.csproj">

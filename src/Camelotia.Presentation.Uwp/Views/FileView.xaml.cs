@@ -21,17 +21,15 @@ namespace Camelotia.Presentation.Uwp.Views
             InitializeComponent();
             this.WhenActivated(disposables =>
             {
-                Observable.FromEventPattern<RightTappedEventHandler, RightTappedRoutedEventArgs>(
-                        handler => RightTapped += handler,
-                        handler => RightTapped -= handler)
-                    .Select(args => (FileView) args.Sender)
+                this.Events()
+                    .RightTapped
+                    .Select(args => this)
                     .Do(sender => sender.ViewModel.Provider.SelectedFile = sender.ViewModel)
                     .Subscribe(FlyoutBase.ShowAttachedFlyout)
                     .DisposeWith(disposables);
 
-                Observable.FromEventPattern<DoubleTappedEventHandler, DoubleTappedRoutedEventArgs>(
-                        handler => DoubleTapped += handler,
-                        handler => DoubleTapped -= handler)
+                this.Events()
+                    .DoubleTapped
                     .Select(args => Unit.Default)
                     .InvokeCommand(this, x => x.ViewModel.Provider.Open)
                     .DisposeWith(disposables);
