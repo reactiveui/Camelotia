@@ -23,7 +23,7 @@ namespace Camelotia.Presentation.Uwp.Views
             {
                 this.Events()
                     .RightTapped
-                    .Select(args => (FileView) args.Sender)
+                    .Select(args => this)
                     .Do(sender => sender.ViewModel.Provider.SelectedFile = sender.ViewModel)
                     .Subscribe(FlyoutBase.ShowAttachedFlyout)
                     .DisposeWith(disposables);
