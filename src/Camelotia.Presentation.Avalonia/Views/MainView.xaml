@@ -104,7 +104,7 @@
                       IsVisible="{Binding WelcomeScreenCollapsed, Mode=OneWay}"
                       SelectedItem="{Binding SelectedProvider, Mode=OneWay}">
                 <Carousel.PageTransition>
-                    <CrossFade Duration="00:00:00.300" />
+                    <CrossFade Duration="0.75" />
                 </Carousel.PageTransition>
                 <Carousel.DataTemplates>
                     <DataTemplate DataType="interfaces:IProviderViewModel">
