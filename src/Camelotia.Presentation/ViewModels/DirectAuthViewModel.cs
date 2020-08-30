@@ -42,12 +42,6 @@ namespace Camelotia.Presentation.ViewModels
                 .Merge(_login.Select(unit => false))
                 .ToPropertyEx(this, x => x.HasErrorMessage);
 
-            _login.Subscribe(x =>
-            {
-                Username = string.Empty;
-                Password = string.Empty;
-            });
-
             Username = state.Username;
             this.WhenAnyValue(x => x.Username)
                 .Subscribe(name => state.Username = name);
