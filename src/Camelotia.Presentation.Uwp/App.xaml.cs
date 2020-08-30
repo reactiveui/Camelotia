@@ -7,24 +7,24 @@ using Camelotia.Presentation.Uwp.Views;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Infrastructure;
 using ReactiveUI;
+using Windows.Storage;
 
 namespace Camelotia.Presentation.Uwp
 {
     sealed partial class App : Application
     {
-        private readonly AutoSuspendHelper _autoSuspendHelper;
+        public App() => InitializeComponent();
 
-        public App()
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            _autoSuspendHelper = new AutoSuspendHelper(this);
+            var stateFile = await ApplicationData
+                .Current.LocalFolder
+                .CreateFileAsync("state.json", CreationCollisionOption.OpenIfExists);
+
+            var autoSuspendHelper = new AutoSuspendHelper(this);
             RxApp.SuspensionHost.CreateNewAppState = () => new MainState();
-            RxApp.SuspensionHost.SetupDefaultSuspendResume(new AkavacheSuspensionDriver<MainState>());
-            InitializeComponent();
-        }
-
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
-        {
-            _autoSuspendHelper.OnLaunched(e);
+            RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver(stateFile.Path));
+            autoSuspendHelper.OnLaunched(e);
 
             if (!(Window.Current.Content is Frame rootFrame))
             {
