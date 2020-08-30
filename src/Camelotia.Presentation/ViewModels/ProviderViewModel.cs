@@ -43,6 +43,7 @@ namespace Camelotia.Presentation.ViewModels
             _provider = provider;
             Folder = createFolder(this);
             Rename = createRename(this);
+            Auth = auth;
 
             var canInteract = this
                 .WhenAnyValue(
@@ -188,8 +189,14 @@ namespace Camelotia.Presentation.ViewModels
             this.WhenAnyValue(x => x.CurrentPath)
                 .Subscribe(path => state.CurrentPath = path);
 
-            Auth = auth;
-            Activator = new ViewModelActivator();
+            this.WhenAnyValue(x => x.Auth.IsAuthenticated)
+                .Select(authenticated => authenticated ? _provider.Parameters.Token : null)
+                .Subscribe(token => state.Token = token);
+
+            this.WhenAnyValue(x => x.Auth.IsAuthenticated)
+                .Select(authenticated => authenticated ? _provider.Parameters.User : null)
+                .Subscribe(user => state.User = user);
+            
             this.WhenActivated(disposable =>
             {
                 this.WhenAnyValue(x => x.Auth.IsAuthenticated)
@@ -263,8 +270,8 @@ namespace Camelotia.Presentation.ViewModels
         
         public ICreateFolderViewModel Folder { get; }
 
-        public ViewModelActivator Activator { get; }
-        
+        public ViewModelActivator Activator { get; } = new ViewModelActivator();
+
         public Guid Id => _provider.Id;
         
         public string Name => _provider.Name;

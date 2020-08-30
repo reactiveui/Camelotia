@@ -22,6 +22,8 @@ namespace Camelotia.Services.Providers
             _isAuthorized.OnNext(false);
         }
 
+        public ProviderParameters Parameters => _model;
+
         public long? Size => null;
 
         public Guid Id => _model.Id;

@@ -15,6 +15,8 @@ namespace Camelotia.Services.Providers
 
         public LocalProvider(ProviderParameters model) => _model = model;
 
+        public ProviderParameters Parameters => _model;
+
         public Guid Id => _model.Id;
 
         public string Name => _model.Type.ToString();
