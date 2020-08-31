@@ -190,11 +190,11 @@ namespace Camelotia.Presentation.ViewModels
                 .Subscribe(path => state.CurrentPath = path);
 
             this.WhenAnyValue(x => x.Auth.IsAuthenticated)
-                .Select(authenticated => authenticated ? _provider.Parameters.Token : null)
+                .Select(authenticated => authenticated ? _provider.Parameters?.Token : null)
                 .Subscribe(token => state.Token = token);
 
             this.WhenAnyValue(x => x.Auth.IsAuthenticated)
-                .Select(authenticated => authenticated ? _provider.Parameters.User : null)
+                .Select(authenticated => authenticated ? _provider.Parameters?.User : null)
                 .Subscribe(user => state.User = user);
             
             this.WhenActivated(disposable =>
