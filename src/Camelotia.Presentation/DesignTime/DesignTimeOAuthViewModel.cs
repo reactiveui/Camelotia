@@ -4,7 +4,7 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.DesignTime
 {
-    public class MockOAuthViewModel : ReactiveObject, IOAuthViewModel
+    public class DesignTimeOAuthViewModel : ReactiveObject, IOAuthViewModel
     {
         public ICommand Login { get; }
         

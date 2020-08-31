@@ -5,9 +5,9 @@ using ReactiveUI.Validation.Helpers;
 
 namespace Camelotia.Presentation.DesignTime
 {
-    public class MockHostAuthViewModel : ReactiveValidationObject<MockHostAuthViewModel>, IHostAuthViewModel
+    public class DesignTimeHostAuthViewModel : ReactiveValidationObject<DesignTimeHostAuthViewModel>, IHostAuthViewModel
     {
-        public MockHostAuthViewModel() => this.ValidationRule(x => x.Username, name => false, "Validation error.");
+        public DesignTimeHostAuthViewModel() => this.ValidationRule(x => x.Username, name => false, "Validation error.");
         
         public string Username { get; set; } = "Jotaro";
 

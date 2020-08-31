@@ -5,7 +5,7 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.DesignTime
 {
-    public class MockFileViewModel : ReactiveObject, IFileViewModel
+    public class DesignTimeFileViewModel : ReactiveObject, IFileViewModel
     {
         public string Name { get; } = "Awesome file.";
 

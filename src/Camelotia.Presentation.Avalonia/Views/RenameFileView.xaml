@@ -5,7 +5,7 @@
              Background="{DynamicResource ThemeCardBrush}"
              Padding="20">
     <Design.DataContext>
-        <designTime:MockRenameFileViewModel />
+        <designTime:DesignTimeRenameFileViewModel />
     </Design.DataContext>
     <StackPanel VerticalAlignment="Center"
                 HorizontalAlignment="Center"

@@ -8,7 +8,7 @@
         Height="590" Width="850"
         FontFamily="Ubuntu">
     <Design.DataContext>
-        <designTime:MockMainViewModel />
+        <designTime:DesignTimeMainViewModel />
     </Design.DataContext>
     <Window.Styles>
         <!-- The first StyleInclude here will be replaced at runtime, 

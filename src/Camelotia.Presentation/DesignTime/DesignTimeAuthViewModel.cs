@@ -3,13 +3,13 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.DesignTime
 {
-    public class MockAuthViewModel : ReactiveObject, IAuthViewModel
+    public class DesignTimeAuthViewModel : ReactiveObject, IAuthViewModel
     {
-        public IDirectAuthViewModel DirectAuth { get; } = new MockDirectAuthViewModel();
+        public IDirectAuthViewModel DirectAuth { get; } = new DesignTimeDirectAuthViewModel();
         
-        public IHostAuthViewModel HostAuth { get; } = new MockHostAuthViewModel();
+        public IHostAuthViewModel HostAuth { get; } = new DesignTimeHostAuthViewModel();
         
-        public IOAuthViewModel OAuth { get; } = new MockOAuthViewModel();
+        public IOAuthViewModel OAuth { get; } = new DesignTimeOAuthViewModel();
         
         public bool SupportsDirectAuth { get; }
         

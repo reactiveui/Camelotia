@@ -4,7 +4,7 @@
              x:Class="Camelotia.Presentation.Avalonia.Views.OAuthView"
              Background="{DynamicResource ThemeCardBrush}">
     <Design.DataContext>
-        <designTime:MockOAuthViewModel />
+        <designTime:DesignTimeOAuthViewModel />
     </Design.DataContext>
     <StackPanel VerticalAlignment="Center"
                 HorizontalAlignment="Center"

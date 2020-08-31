@@ -6,19 +6,19 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.DesignTime
 {
-    public class MockProviderViewModel : ReactiveObject, IProviderViewModel
+    public class DesignTimeProviderViewModel : ReactiveObject, IProviderViewModel
     {
         public Guid Id { get; } = Guid.NewGuid();
         
-        public IAuthViewModel Auth { get; } = new MockAuthViewModel();
+        public IAuthViewModel Auth { get; } = new DesignTimeAuthViewModel();
         
-        public IRenameFileViewModel Rename { get; } = new MockRenameFileViewModel();
+        public IRenameFileViewModel Rename { get; } = new DesignTimeRenameFileViewModel();
         
-        public ICreateFolderViewModel Folder { get; } = new MockCreateFolderViewModel();
+        public ICreateFolderViewModel Folder { get; } = new DesignTimeCreateFolderViewModel();
         
-        public IFileViewModel SelectedFile { get; set; } = new MockFileViewModel();
+        public IFileViewModel SelectedFile { get; set; } = new DesignTimeFileViewModel();
 
-        public IEnumerable<IFileViewModel> Files { get; } = new[] {new MockFileViewModel(), new MockFileViewModel()};
+        public IEnumerable<IFileViewModel> Files { get; } = new[] {new DesignTimeFileViewModel(), new DesignTimeFileViewModel()};
         
         public ICommand DownloadSelectedFile { get; }
         

@@ -5,9 +5,9 @@ using ReactiveUI.Validation.Helpers;
 
 namespace Camelotia.Presentation.DesignTime
 {
-    public class MockRenameFileViewModel : ReactiveValidationObject<MockRenameFileViewModel>, IRenameFileViewModel
+    public class DesignTimeRenameFileViewModel : ReactiveValidationObject<DesignTimeRenameFileViewModel>, IRenameFileViewModel
     {
-        public MockRenameFileViewModel() => this.ValidationRule(x => x.NewName, name => false, "Validation error.");
+        public DesignTimeRenameFileViewModel() => this.ValidationRule(x => x.NewName, name => false, "Validation error.");
         
         public bool IsLoading { get; }
 

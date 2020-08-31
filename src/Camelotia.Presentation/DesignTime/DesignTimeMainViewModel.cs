@@ -7,18 +7,18 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.DesignTime
 {
-    public class MockMainViewModel : ReactiveObject, IMainViewModel
+    public class DesignTimeMainViewModel : ReactiveObject, IMainViewModel
     {
         public ReadOnlyObservableCollection<IProviderViewModel> Providers { get; } = 
             new ReadOnlyObservableCollection<IProviderViewModel>(
                 new ObservableCollection<IProviderViewModel>(
                     new List<IProviderViewModel>
                     {
-                        new MockProviderViewModel(),
-                        new MockProviderViewModel()
+                        new DesignTimeProviderViewModel(),
+                        new DesignTimeProviderViewModel()
                     }));
         
-        public IProviderViewModel SelectedProvider { get; set; } = new MockProviderViewModel();
+        public IProviderViewModel SelectedProvider { get; set; } = new DesignTimeProviderViewModel();
 
         public IEnumerable<ProviderType> SupportedTypes { get; } = new[] {ProviderType.Ftp, ProviderType.Sftp};
 

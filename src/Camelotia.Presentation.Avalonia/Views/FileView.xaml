@@ -4,7 +4,7 @@
              x:Class="Camelotia.Presentation.Avalonia.Views.FileView"
              Background="Transparent">
     <Design.DataContext>
-        <designTime:MockFileViewModel />
+        <designTime:DesignTimeFileViewModel />
     </Design.DataContext>
     <UserControl.ContextMenu>
         <ContextMenu>

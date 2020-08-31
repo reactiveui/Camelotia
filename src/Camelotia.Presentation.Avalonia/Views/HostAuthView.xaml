@@ -5,7 +5,7 @@
              Background="{DynamicResource ThemeCardBrush}"
              Padding="20">
     <Design.DataContext>
-        <designTime:MockHostAuthViewModel />
+        <designTime:DesignTimeHostAuthViewModel />
     </Design.DataContext>
     <StackPanel VerticalAlignment="Center"
                 HorizontalAlignment="Center"

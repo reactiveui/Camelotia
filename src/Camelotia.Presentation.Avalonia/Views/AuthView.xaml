@@ -4,7 +4,7 @@
              x:Class="Camelotia.Presentation.Avalonia.Views.AuthView"
              xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation">
     <Design.DataContext>
-        <designTime:MockAuthViewModel />
+        <designTime:DesignTimeAuthViewModel />
     </Design.DataContext>
     <Carousel Name="AuthTabs">
         <Carousel.PageTransition>
