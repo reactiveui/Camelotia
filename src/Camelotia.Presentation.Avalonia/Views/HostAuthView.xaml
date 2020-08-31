@@ -2,14 +2,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
              x:Class="Camelotia.Presentation.Avalonia.Views.HostAuthView"
-             Background="{DynamicResource ThemeCardBrush}">
+             Background="{DynamicResource ThemeCardBrush}"
+             Padding="20">
     <Design.DataContext>
         <designTime:MockHostAuthViewModel />
     </Design.DataContext>
     <StackPanel VerticalAlignment="Center"
                 HorizontalAlignment="Center"
                 Width="300">
-        <TextBlock Text="Password Auth"
+        <TextBlock Text="Remote Host Auth"
                    Classes="Heading"
                    Margin="0 10" />
         <ProgressBar HorizontalAlignment="Stretch"
@@ -18,12 +19,11 @@
                      Margin="0 5" />
         <StackPanel IsVisible="{Binding HasErrorMessage}"
                     Background="#ffeeee"
-                    Margin="0 5">
-            <StackPanel Margin="10">
-                <TextBlock Text="{Binding ErrorMessage}"
-                           Foreground="#990000"
-                           TextWrapping="Wrap" />
-            </StackPanel>
+                    Margin="0 0 0 5">
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="#990000"
+                       TextWrapping="Wrap"
+                       Margin="10" />
         </StackPanel>
         <TextBlock Text="Please, enter host address with port:" Margin="0 5" />
         <Grid>

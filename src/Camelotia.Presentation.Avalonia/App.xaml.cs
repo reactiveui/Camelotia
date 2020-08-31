@@ -20,13 +20,15 @@ namespace Camelotia.Presentation.Avalonia
             // Configure ReactiveUI suspension management.
             var suspension = new AutoSuspendHelper(ApplicationLifetime);
             RxApp.SuspensionHost.CreateNewAppState = () => new MainState();
-            RxApp.SuspensionHost.SetupDefaultSuspendResume(new AkavacheSuspensionDriver<MainState>("CamelotiaV2"));
+            RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver("appstate.json"));
             suspension.OnFrameworkInitializationCompleted();
+            base.OnFrameworkInitializationCompleted();
             
             // Configure app dependencies.
             var window = new MainView();
             var styles = new AvaloniaStyleManager(window);
-            
+
+            Akavache.BlobCache.ApplicationName = "CamelotiaV2";
             window.SwitchThemeButton.Click += (sender, args) => styles.UseNextTheme();
             window.DataContext = new MainViewModel(
                 RxApp.SuspensionHost.GetAppState<MainState>(),
@@ -50,7 +52,6 @@ namespace Camelotia.Presentation.Avalonia
             );
             
             window.Show();
-            base.OnFrameworkInitializationCompleted();
         }
     }
 }
