@@ -8,7 +8,9 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Content;
 using Camelotia.Presentation.AppState;
+using Camelotia.Presentation.Infrastructure;
 using Camelotia.Services;
+using ReactiveUI;
 
 namespace Camelotia.Presentation.Xamarin.Droid
 {
@@ -26,6 +28,13 @@ namespace Camelotia.Presentation.Xamarin.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var file = System.IO.Path.Combine(path, "state.json");
+
+            var autoSuspendHelper = new AutoSuspendHelper(Application);
+            RxApp.SuspensionHost.CreateNewAppState = () => new MainState();
+            RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver(file));
+
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
             base.OnCreate(savedInstanceState);
@@ -45,9 +54,8 @@ namespace Camelotia.Presentation.Xamarin.Droid
 
         private IMainViewModel BuildMainViewModel()
         {
-            Akavache.BlobCache.ApplicationName = "Camelotia";
             return new MainViewModel(
-                new MainState(),
+                RxApp.SuspensionHost.GetAppState<MainState>(),
                 new ProviderFactory(new AndroidYandexAuthenticator(this), Akavache.BlobCache.UserAccount),
                 (state, provider) => new ProviderViewModel(state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
