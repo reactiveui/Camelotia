@@ -1,14 +1,15 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        d:DataContext="{d:DesignInstance interfaces:IMainViewModel, IsDesignTimeCreatable=True}"
         xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
         xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        x:Class="Camelotia.Presentation.Avalonia.Views.MainView"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        mc:Ignorable="d" FontFamily="Ubuntu" 
-        MinHeight="590" MinWidth="850"
-        Height="590" Width="850">
+        xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+        x:Class="Camelotia.Presentation.Avalonia.Views.MainView"
+        MinHeight="590" MinWidth="850" 
+        Height="590" Width="850"
+        FontFamily="Ubuntu">
+    <Design.DataContext>
+        <designTime:MockMainViewModel />
+    </Design.DataContext>
     <Window.Styles>
         <!-- The first StyleInclude here will be replaced at runtime, 
              see Services/AvaloniaStyleManager.cs for more info. Other

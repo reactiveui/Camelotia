@@ -1,14 +1,11 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             d:DataContext="{d:DesignInstance interfaces:IFileViewModel, IsDesignTimeCreatable=True}"
-             xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
-             xmlns:models="clr-namespace:Camelotia.Services.Models;assembly=Camelotia.Services"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
-             x:Class="Camelotia.Presentation.Avalonia.Views.FileView"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Background="Transparent"
-             mc:Ignorable="d">
+             xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+             x:Class="Camelotia.Presentation.Avalonia.Views.FileView"
+             Background="Transparent">
+    <Design.DataContext>
+        <designTime:MockFileViewModel />
+    </Design.DataContext>
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem Header="Open" Command="{Binding Provider.Open}" />

@@ -1,13 +1,12 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             d:DataContext="{d:DesignInstance interfaces:IProviderViewModel, IsDesignTimeCreatable=True}"
-             xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
-             xmlns:models="clr-namespace:Camelotia.Services.Models;assembly=Camelotia.Services"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
-             x:Class="Camelotia.Presentation.Avalonia.Views.ProviderView"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             mc:Ignorable="d">
+             xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
+             xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
+             xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+             x:Class="Camelotia.Presentation.Avalonia.Views.ProviderView">
+    <Design.DataContext>
+        <designTime:MockProviderViewModel />
+    </Design.DataContext>
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
