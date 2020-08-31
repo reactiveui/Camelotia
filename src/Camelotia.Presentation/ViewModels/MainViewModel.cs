@@ -90,6 +90,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Subscribe();
 
             this.WhenAnyValue(x => x.SelectedProvider)
+                .Skip(1)
                 .Select(provider => provider?.Id ?? Guid.Empty)
                 .Subscribe(id => state.SelectedProviderId = id);
             

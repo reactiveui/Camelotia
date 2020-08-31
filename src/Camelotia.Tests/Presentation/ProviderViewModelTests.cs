@@ -182,6 +182,27 @@ namespace Camelotia.Tests.Presentation
             model.CurrentPath.Should().Be(Separator);
             _state.CurrentPath.Should().Be(Separator);
         }
+
+        [Fact]
+        public void ShouldUpdateProviderStateWhenAuthorized()
+        {
+            var model = BuildProviderViewModel();
+            _state.Token.Should().BeNullOrEmpty();
+            _state.User.Should().BeNullOrEmpty();
+
+            _provider.Parameters.ReturnsForAnyArgs(new ProviderParameters {Token = "foo", User = "bar"});
+            _auth.IsAuthenticated.ReturnsForAnyArgs(true);
+            model.RaisePropertyChanged(nameof(model.Auth));
+
+            _state.Token.Should().Be("foo");
+            _state.User.Should().Be("bar");
+
+            _auth.IsAuthenticated.ReturnsForAnyArgs(false);
+            model.RaisePropertyChanged(nameof(model.Auth));
+
+            _state.Token.Should().BeNullOrEmpty();
+            _state.User.Should().BeNullOrEmpty();
+        }
         
         private ProviderViewModel BuildProviderViewModel()
         {

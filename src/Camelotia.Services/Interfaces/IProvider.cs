@@ -33,6 +33,8 @@ namespace Camelotia.Services.Interfaces
         Task Delete(string path, bool isFolder);
         
         IObservable<bool> IsAuthorized { get; }
+
+        ProviderParameters Parameters { get; }
         
         bool SupportsDirectAuth { get; }
 

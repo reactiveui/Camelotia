@@ -27,6 +27,8 @@ namespace Camelotia.Services.Providers
             EnsureLoggedInIfTokenSaved();
         }
 
+        public ProviderParameters Parameters => _model;
+
         public long? Size => null;
 
         public Guid Id => _model.Id;
