@@ -69,3 +69,4 @@ To compile the <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/"
 - <a href="https://reactiveui.net/docs/handbook/events/">ReactiveUI.Events</a> turning regular events into observables
 - <a href="https://github.com/Fody/Costura">Costura.Fody</a> which embeds references as resources
 - <a href="https://www.jetbrains.com/rider/">JetBrains Rider</a> and <a href="https://visualstudio.microsoft.com/">Microsoft Visual Studio</a> IDEs
+- <a href="https://github.com/fornever/avaloniarider">AvaloniaRider</a> plugin for visual designer support
