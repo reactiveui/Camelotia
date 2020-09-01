@@ -7,8 +7,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     d:DataContext="{d:DesignInstance Type=designTime:DesignTimeHostAuthViewModel, IsDesignTimeCreatable=True}"
-    d:DesignWidth="300"
-    mc:Ignorable="d" >
+    mc:Ignorable="d">
     <materialDesign:Card Width="300" VerticalAlignment="Center">
         <StackPanel VerticalAlignment="Center"
                     HorizontalAlignment="Stretch"
