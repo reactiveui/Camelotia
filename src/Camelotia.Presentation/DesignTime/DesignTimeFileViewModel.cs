@@ -7,9 +7,13 @@ namespace Camelotia.Presentation.DesignTime
 {
     public class DesignTimeFileViewModel : ReactiveObject, IFileViewModel
     {
+        public DesignTimeFileViewModel() : this(null) { }
+
+        public DesignTimeFileViewModel(DesignTimeProviderViewModel provider) => Provider = provider;
+
         public string Name { get; } = "Awesome file.";
 
-        public IProviderViewModel Provider { get; } = null;
+        public IProviderViewModel Provider { get; }
 
         public string Modified { get; } = DateTime.Now.ToString(CultureInfo.InvariantCulture);
 

@@ -5,8 +5,10 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+    d:DataContext="{d:DesignInstance Type=designTime:DesignTimeCreateFolderViewModel, IsDesignTimeCreatable=True}"
+    d:Background="White"
+    d:DesignWidth="300"
     mc:Ignorable="d">
     <StackPanel VerticalAlignment="Center"
                 HorizontalAlignment="Center"

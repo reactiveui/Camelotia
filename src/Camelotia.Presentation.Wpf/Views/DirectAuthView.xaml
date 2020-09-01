@@ -5,7 +5,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    d:DesignHeight="300" 
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+    d:DataContext="{d:DesignInstance Type=designTime:DesignTimeDirectAuthViewModel, IsDesignTimeCreatable=True}"
     d:DesignWidth="300"
     mc:Ignorable="d">
     <materialDesign:Card Width="300" VerticalAlignment="Center">

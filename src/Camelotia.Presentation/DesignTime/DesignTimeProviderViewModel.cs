@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
@@ -8,6 +9,16 @@ namespace Camelotia.Presentation.DesignTime
 {
     public class DesignTimeProviderViewModel : ReactiveObject, IProviderViewModel
     {
+        public DesignTimeProviderViewModel()
+        {
+            Files = new[] 
+            { 
+                new DesignTimeFileViewModel(this),
+                new DesignTimeFileViewModel(this)
+            };
+            SelectedFile = Files.FirstOrDefault();
+        }
+
         public Guid Id { get; } = Guid.NewGuid();
         
         public IAuthViewModel Auth { get; } = new DesignTimeAuthViewModel();
@@ -16,9 +27,9 @@ namespace Camelotia.Presentation.DesignTime
         
         public ICreateFolderViewModel Folder { get; } = new DesignTimeCreateFolderViewModel();
         
-        public IFileViewModel SelectedFile { get; set; } = new DesignTimeFileViewModel();
+        public IFileViewModel SelectedFile { get; set; }
 
-        public IEnumerable<IFileViewModel> Files { get; } = new[] {new DesignTimeFileViewModel(), new DesignTimeFileViewModel()};
+        public IEnumerable<IFileViewModel> Files { get; } 
         
         public ICommand DownloadSelectedFile { get; }
         

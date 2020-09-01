@@ -11,7 +11,7 @@ namespace Camelotia.Presentation.DesignTime
         
         public bool IsLoading { get; }
 
-        public bool IsVisible { get; set; } = true;
+        public bool IsVisible { get; set; } = false;
 
         public string Name { get; set; }
 

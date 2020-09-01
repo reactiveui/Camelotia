@@ -16,8 +16,8 @@ namespace Camelotia.Presentation.DesignTime
         public bool SupportsHostAuth { get; }
         
         public bool SupportsOAuth { get; }
-        
-        public bool IsAuthenticated { get; }
+
+        public bool IsAuthenticated { get; } = true;
         
         public bool IsAnonymous { get; }
     }
