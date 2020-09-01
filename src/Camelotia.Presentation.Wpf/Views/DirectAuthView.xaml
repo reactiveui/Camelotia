@@ -26,10 +26,10 @@
                                TextWrapping="Wrap" />
                 </StackPanel>
             </StackPanel>
-            <TextBox Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                      materialDesign:HintAssist.Hint="User name"
                      Margin="0 15 0 10" />
-            <TextBox Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                      materialDesign:HintAssist.Hint="Password"
                      Margin="0 5 0 15" />
             <Button Content="Login"

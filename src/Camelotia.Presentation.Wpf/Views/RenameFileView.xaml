@@ -34,7 +34,7 @@
                 <TextBlock Text="{Binding OldName}" Foreground="#002171" />
             </StackPanel>
             <TextBlock Text="Please, enter new file name:" Margin="0 5" />
-            <TextBox Text="{Binding NewName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding NewName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                      materialDesign:HintAssist.Hint="Folder name" />
             <Grid>
                 <Grid.ColumnDefinitions>
