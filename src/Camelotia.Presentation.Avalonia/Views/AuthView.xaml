@@ -1,12 +1,11 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             d:DataContext="{d:DesignInstance interfaces:IAuthViewModel, IsDesignTimeCreatable=True}"
-             xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
              x:Class="Camelotia.Presentation.Avalonia.Views.AuthView"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             mc:Ignorable="d">
+             xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation">
+    <Design.DataContext>
+        <designTime:DesignTimeAuthViewModel />
+    </Design.DataContext>
     <Carousel Name="AuthTabs">
         <Carousel.PageTransition>
             <PageSlide Duration="0.25" Orientation="Vertical" />

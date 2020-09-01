@@ -1,11 +1,12 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             d:DataContext="{d:DesignInstance interfaces:IDirectAuthViewModel, IsDesignTimeCreatable=True}"
-             xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             x:Class="Camelotia.Presentation.Avalonia.Views.DirectAuthView"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             mc:Ignorable="d" Background="{DynamicResource ThemeCardBrush}">
+             x:Class="Camelotia.Presentation.Avalonia.Views.DirectAuthView"
+             xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+             Background="{DynamicResource ThemeCardBrush}"
+             Padding="20">
+    <Design.DataContext>
+        <designTime:DesignTimeDirectAuthViewModel />
+    </Design.DataContext>
     <StackPanel VerticalAlignment="Center"
                 HorizontalAlignment="Center"
                 Width="300">
@@ -18,12 +19,11 @@
                      Margin="0 5" />
         <StackPanel IsVisible="{Binding HasErrorMessage}"
                     Background="#ffeeee"
-                    Margin="0 5">
-            <StackPanel Margin="10">
-                <TextBlock Text="{Binding ErrorMessage}"
-                           Foreground="#990000"
-                           TextWrapping="Wrap" />
-            </StackPanel>
+                    Margin="0 0 0 5">
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="#990000"
+                       TextWrapping="Wrap"
+                       Margin="10" />
         </StackPanel>
         <TextBlock Text="Please, enter your user name:" Margin="0 5" />
         <TextBox Watermark="User name..." Text="{Binding Username, Mode=TwoWay}" />

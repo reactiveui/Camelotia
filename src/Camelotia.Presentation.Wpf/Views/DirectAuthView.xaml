@@ -5,7 +5,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    d:DesignHeight="300" 
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+    d:DataContext="{d:DesignInstance Type=designTime:DesignTimeDirectAuthViewModel, IsDesignTimeCreatable=True}"
     d:DesignWidth="300"
     mc:Ignorable="d">
     <materialDesign:Card Width="300" VerticalAlignment="Center">
@@ -25,10 +26,10 @@
                                TextWrapping="Wrap" />
                 </StackPanel>
             </StackPanel>
-            <TextBox Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                      materialDesign:HintAssist.Hint="User name"
                      Margin="0 15 0 10" />
-            <TextBox Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                      materialDesign:HintAssist.Hint="Password"
                      Margin="0 5 0 15" />
             <Button Content="Login"

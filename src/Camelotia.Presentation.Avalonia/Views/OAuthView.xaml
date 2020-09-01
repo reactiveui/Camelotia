@@ -1,11 +1,11 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             d:DataContext="{d:DesignInstance interfaces:IOAuthViewModel, IsDesignTimeCreatable=True}"
-             xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             x:Class="Camelotia.Presentation.Avalonia.Views.OAuthView"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             mc:Ignorable="d" Background="{DynamicResource ThemeCardBrush}">
+             xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+             x:Class="Camelotia.Presentation.Avalonia.Views.OAuthView"
+             Background="{DynamicResource ThemeCardBrush}">
+    <Design.DataContext>
+        <designTime:DesignTimeOAuthViewModel />
+    </Design.DataContext>
     <StackPanel VerticalAlignment="Center"
                 HorizontalAlignment="Center"
                 Width="300">

@@ -5,51 +5,53 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+    d:DataContext="{d:DesignInstance Type=designTime:DesignTimeRenameFileViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
-    <StackPanel VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                Width="300">
-        <TextBlock Text="Rename File"
-                   Foreground="#002171"
-                   FontSize="16"
-                   Margin="0 10" />
-        <ProgressBar HorizontalAlignment="Stretch"
-                     IsIndeterminate="{Binding IsLoading}"
-                     Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibility}}"
-                     Margin="0 5" />
-        <StackPanel Visibility="{Binding HasErrorMessage, Converter={StaticResource BooleanToVisibility}}"
-                    Background="#ffeeee"
-                    Margin="0 5">
-            <StackPanel Margin="10">
-                <TextBlock Text="{Binding ErrorMessage}"
-                           Foreground="#990000"
-                           TextWrapping="Wrap" />
+    <materialDesign:Card Width="300" VerticalAlignment="Center">
+        <StackPanel VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Margin="20">
+            <TextBlock Text="Rename File"
+                       Foreground="#002171"
+                       FontSize="16"
+                       Margin="0 10" />
+            <ProgressBar HorizontalAlignment="Stretch"
+                         IsIndeterminate="{Binding IsLoading}"
+                         Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibility}}"
+                         Margin="0 5" />
+            <StackPanel Visibility="{Binding HasErrorMessage, Converter={StaticResource BooleanToVisibility}}"
+                        Background="#ffeeee"
+                        Margin="0 5">
+                <StackPanel Margin="10">
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="#990000"
+                               TextWrapping="Wrap" />
+                </StackPanel>
             </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0 5">
+                <TextBlock Text="Renaming file with name:" Margin="0 0 5 0" />
+                <TextBlock Text="{Binding OldName}" Foreground="#002171" />
+            </StackPanel>
+            <TextBlock Text="Please, enter new file name:" Margin="0 5" />
+            <TextBox Text="{Binding NewName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                     materialDesign:HintAssist.Hint="Folder name" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        Content="Rename file"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding Rename}"
+                        Margin="0 10 10 10" />
+                <Button Grid.Column="1"
+                        Content="Close"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding Close}"
+                        Margin="0 10" />
+            </Grid>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="0 5">
-            <TextBlock Text="Renaming file with name:" Margin="0 0 5 0" />
-            <TextBlock Text="{Binding OldName}" Foreground="#002171" />
-        </StackPanel>
-        <TextBlock Text="Please, enter new file name:" Margin="0 5" />
-        <TextBox Text="{Binding NewName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 materialDesign:HintAssist.Hint="Folder name" />
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
-            <Button Grid.Column="0"
-                    Content="Rename file"
-                    HorizontalAlignment="Stretch"
-                    Command="{Binding Rename}"
-                    Margin="0 10 10 10" />
-            <Button Grid.Column="1"
-                    Content="Close"
-                    HorizontalAlignment="Stretch"
-                    Command="{Binding Close}"
-                    Margin="0 10" />
-        </Grid>
-    </StackPanel>
+    </materialDesign:Card>
 </UserControl>
