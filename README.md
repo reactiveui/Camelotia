@@ -2,7 +2,7 @@
 
 [![Build Status](https://worldbeater.visualstudio.com/Camelotia/_apis/build/status/Camelotia-CI)](https://worldbeater.visualstudio.com/Camelotia/_build/latest?definitionId=1) [![Pull Requests](https://img.shields.io/github/issues-pr/worldbeater/camelotia.svg)](https://github.com/worldbeater/Camelotia/pulls) [![Issues](https://img.shields.io/github/issues/worldbeater/camelotia.svg)](https://github.com/worldbeater/Camelotia/issues) ![License](https://img.shields.io/github/license/worldbeater/camelotia.svg) ![Size](https://img.shields.io/github/repo-size/worldbeater/camelotia.svg) [![Code Coverage](https://img.shields.io/azure-devops/coverage/worldbeater/Camelotia/1.svg)](https://worldbeater.visualstudio.com/Camelotia/_build/latest?definitionId=1)
 
-File manager for cloud storages. Supports Yandex Disk, Google Drive, VK Documents, GitHub, FTP, SFTP. The app runs on Windows, Linux, MacOS, XBox, Surface Hub and HoloLens. Built with [ReactiveUI](https://github.com/reactiveui/ReactiveUI).
+Camelotia is a sample cross-platform application built with reactive extensions, [ReactiveUI](https://github.com/reactiveui/ReactiveUI), and modern .NET UI frameworks. Camelotia is a file manager for cloud storages, it currently supports Yandex Disk, Google Drive, VK Documents, GitHub, FTP, SFTP, and local file systems. The app runs on Windows, Linux, MacOS, XBox, Surface Hub and HoloLens.
 
 ### Compiling Avalonia app
 
