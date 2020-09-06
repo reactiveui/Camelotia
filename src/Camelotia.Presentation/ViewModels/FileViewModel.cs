@@ -20,9 +20,9 @@ namespace Camelotia.Presentation.ViewModels
 
         public IProviderViewModel Provider { get; }
 
-        public string Modified => _file.Modified?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+        public string Modified => _file.Modified?.ToString(CultureInfo.InvariantCulture) ?? "A long time ago";
 
-        public string Size => _file.Size == 0 ? string.Empty : _file.Size.ByteSizeToString();
+        public string Size => _file.Size == 0 ? "Unknown" : _file.Size.ByteSizeToString();
 
         public bool IsFolder => _file.IsFolder;
 

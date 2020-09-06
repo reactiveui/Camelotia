@@ -6,21 +6,27 @@
     x:Class="Camelotia.Presentation.Xamarin.Views.DirectAuthView"
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
-    xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.Views"
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
     Title="Password Authorization">
+    <ContentPage.BindingContext>
+        <designTime:DesignTimeDirectAuthViewModel />
+    </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout VerticalOptions="Start">
             <Frame VerticalOptions="StartAndExpand" 
                    HorizontalOptions="FillAndExpand"
                    Margin="15">
                 <StackLayout>
-                    <Label x:Name="ErrorLabel" Margin="0, 15" TextColor="Red" />
+                    <Label Text="{Binding ErrorMessage}"
+                           IsVisible="{Binding HasErrorMessage}"
+                           TextColor="Red"
+                           Margin="0, 15" />
                     <Label Text="Please, enter user name:" Margin="0, 5, 0, 0" />
-                    <Entry x:Name="LoginEntry" Placeholder="Login" />
+                    <Entry Text="{Binding Username}" Placeholder="Login" />
                     <Label Text="Please, enter password:" Margin="0, 5, 0, 0" />
-                    <Entry x:Name="PasswordEntry" IsPassword="True" Placeholder="Password" />
-                    <controls:AccentButton x:Name="LoginButton" Text="Login" />
+                    <Entry Text="{Binding Password}" IsPassword="True" Placeholder="Password" />
+                    <controls:AccentButton Text="Login" Command="{Binding Login}" />
                 </StackLayout>
             </Frame>
         </StackLayout>

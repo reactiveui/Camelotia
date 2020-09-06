@@ -5,30 +5,37 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
     x:Class="Camelotia.Presentation.Xamarin.Views.HostAuthView"
     Title="Authentication On Remote Host">
+    <ContentPage.BindingContext>
+        <designTime:DesignTimeHostAuthViewModel />
+    </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout VerticalOptions="Start">
             <Frame VerticalOptions="StartAndExpand" 
                    HorizontalOptions="FillAndExpand"
                    Margin="15">
                 <StackLayout>
-                    <Label x:Name="ErrorLabel" Margin="0, 15" TextColor="Red" />
+                    <Label IsVisible="{Binding HasErrorMessage}"
+                           Text="{Binding ErrorMessage}"
+                           TextColor="Red"
+                           Margin="0, 15" />
                     <Label Text="Please, enter host address with port:" Margin="0, 5, 0, 0" />
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="3*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <Entry Grid.Column="0" x:Name="AddressEntry" Placeholder="Address" />
-                        <Entry Grid.Column="1" x:Name="PortEntry" Placeholder="Port" />
+                        <Entry Grid.Column="0" Text="{Binding Address}" Placeholder="Address" />
+                        <Entry Grid.Column="1" Text="{Binding Port}" Placeholder="Port" />
                     </Grid>
                     <Label Text="Please, enter user name:" Margin="0, 5, 0, 0" />
-                    <Entry x:Name="LoginEntry" Placeholder="Login" />
+                    <Entry Text="{Binding Username}" Placeholder="Login" />
                     <Label Text="Please, enter password:" Margin="0, 5, 0, 0" />
-                    <Entry x:Name="PasswordEntry" IsPassword="True" Placeholder="Password" />
-                    <controls:AccentButton x:Name="LoginButton" Text="Login" />
+                    <Entry Text="{Binding Password}" IsPassword="True" Placeholder="Password" />
+                    <controls:AccentButton Command="{Binding Login}" Text="Login" />
                 </StackLayout>
             </Frame>
         </StackLayout>
