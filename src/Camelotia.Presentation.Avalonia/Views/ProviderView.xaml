@@ -116,7 +116,7 @@
                 <StackPanel Grid.Column="2" Orientation="Horizontal" 
                             Margin="5" VerticalAlignment="Center">
                     <TextBlock Text="{Binding SelectedFile.Name}"
-                               Foreground="#888888" />
+                               Opacity="0.5" />
                 </StackPanel>
                 <Button Grid.Column="3"
                         Content="Upload"

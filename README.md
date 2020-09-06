@@ -6,7 +6,7 @@ Camelotia is a sample cross-platform application built with reactive extensions,
 
 ### Compiling Avalonia app
 
-<img src="images/UiAvalonia.png" width="450">
+<img src="images/UiAvalonia.png" width="550">
 
 In order to compile .NET Standard libraries, run tests and run the <a href="http://github.com/avaloniaui">Avalonia</a> application on Windows, Linux or MacOS operating system make sure to have latest [.NET Core SDK](https://dot.net/) installed. Launch the `Camelotia.Avalonia.sln` file to browse or to edit source files. Camelotia uses [Nuke Build](https://github.com/nuke-build/nuke) to build and test the solution. Execute the following commands to run the build scripts on Linux or MacOS:
 
@@ -28,19 +28,19 @@ cd ./Camelotia && powershell -ExecutionPolicy Unrestricted ./build.ps1 --interac
 
 ### Compiling Universal Windows Platform app
 
-<img src="images/UiWindows.png" width="450"> 
+<img src="images/UiWindows.png" width="550"> 
 
 <a href="https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide">Universal Windows Platform</a> Camelotia app is compatible with Windows 10-based devices, such as PCs, Xbox One and HoloLens. The app can be compiled only on latest Windows 10. Make sure to have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Launch the `Camelotia.Uwp.sln` solution file.
 
 ### Compiling Windows Presentation Foundation app
 
-<img src="images/UiPresentation.png" width="450">
+<img src="images/UiPresentation.png" width="550">
 
 The app was ported to WPF to make the cloud file manager controls reusable across most popular .NET implementations, so one could easily embed parts of Camelotia into their own applications by simply copying and pasting the source files. The app is also compatible with Windows versions lower than 10, such as Windows 7 or 8. To compile the WPF app, ensure the "Desktop Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Then, open the `Camelotia.Wpf.sln` file in Visual Studio 2019.
 
 ### Compiling Xamarin Forms app
 
-<img src="images/UiAndroid.png" width="450"> 
+<img src="images/UiAndroid.png" width="550"> 
 
 To compile the <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/">Xamarin.Forms</a> Android application, install the appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there. Launch the `Camelotia.Xamarin.sln` solution file.
 

@@ -37,7 +37,7 @@ namespace Camelotia.Presentation.DesignTime
         public ICommand Add { get; }
         
         public bool IsLoading { get; }
-        
-        public bool IsReady { get; }
+
+        public bool IsReady { get; } = true;
     }
 }
