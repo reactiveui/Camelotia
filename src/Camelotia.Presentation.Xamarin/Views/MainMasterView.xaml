@@ -15,14 +15,14 @@
     </ContentPage.BindingContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="65" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="70" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" BackgroundColor="#311b92">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
             <Picker Grid.Column="0"
                     TextColor="#ffffff"
