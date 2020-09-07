@@ -29,7 +29,11 @@ namespace Camelotia.Presentation.Infrastructure
         }
 
         public IObservable<object> LoadState()
-        {
+        {            
+            if (!File.Exists(_stateFilePath))
+            {
+                return Observable.Throw<object>(new FileNotFoundException(_stateFilePath));
+            }
             var lines = File.ReadAllText(_stateFilePath);
             var state = JsonConvert.DeserializeObject<object>(lines, _settings);
             return Observable.Return(state);
