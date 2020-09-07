@@ -6,5 +6,13 @@
     x:Class="Camelotia.Presentation.Xamarin.Views.MainView"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"   
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
-    Title="Loading...">
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    x:DataType="{x:Type vm:IMainViewModel}"
+    Title="Loading..."
+    mc:Ignorable="d">
+    <d:ContentPage.BindingContext>
+        <designTime:DesignTimeMainViewModel />
+    </d:ContentPage.BindingContext>
 </rxui:ReactiveNavigationPage>

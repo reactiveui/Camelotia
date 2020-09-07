@@ -6,16 +6,23 @@
     x:Class="Camelotia.Presentation.Xamarin.Views.OAuthView"
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
-    xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.Views"
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
-    Title="OAuth Authorization">
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    x:DataType="{x:Type vm:IOAuthViewModel}"
+    Title="OAuth Authorization"
+    mc:Ignorable="d">
+    <d:ContentPage.BindingContext>
+        <designTime:DesignTimeOAuthViewModel />
+    </d:ContentPage.BindingContext>
     <ContentPage.Content>
-        <Frame VerticalOptions="StartAndExpand" 
+        <Frame VerticalOptions="Start" 
                HorizontalOptions="FillAndExpand"
                Margin="15">
             <StackLayout>
-                <Label Text="OAuth Authorization" />
-                <controls:AccentButton x:Name="LoginButton" Text="Authorize" />
+                <Label Text="OAuth Authorization" LineBreakMode="NoWrap" />
+                <controls:AccentButton Command="{Binding Login}" Text="Authorize" />
             </StackLayout>
         </Frame>
     </ContentPage.Content>

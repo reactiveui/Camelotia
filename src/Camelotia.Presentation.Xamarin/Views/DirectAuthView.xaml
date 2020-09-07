@@ -6,23 +6,29 @@
     x:Class="Camelotia.Presentation.Xamarin.Views.DirectAuthView"
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
-    xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.Views"
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
-    Title="Password Authorization">
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    x:DataType="{x:Type vm:IDirectAuthViewModel}"
+    Title="Password Authorization"
+    mc:Ignorable="d">
+    <d:ContentPage.BindingContext>
+        <designTime:DesignTimeDirectAuthViewModel />
+    </d:ContentPage.BindingContext>
     <ContentPage.Content>
-        <StackLayout VerticalOptions="Start">
-            <Frame VerticalOptions="StartAndExpand" 
-                   HorizontalOptions="FillAndExpand"
-                   Margin="15">
-                <StackLayout>
-                    <Label x:Name="ErrorLabel" Margin="0, 15" TextColor="Red" />
-                    <Label Text="Please, enter user name:" Margin="0, 5, 0, 0" />
-                    <Entry x:Name="LoginEntry" Placeholder="Login" />
-                    <Label Text="Please, enter password:" Margin="0, 5, 0, 0" />
-                    <Entry x:Name="PasswordEntry" IsPassword="True" Placeholder="Password" />
-                    <controls:AccentButton x:Name="LoginButton" Text="Login" />
-                </StackLayout>
-            </Frame>
-        </StackLayout>
+        <Frame VerticalOptions="Start" 
+               HorizontalOptions="FillAndExpand"
+               Margin="15">
+            <StackLayout>
+                <Label Text="{Binding ErrorMessage}"
+                       IsVisible="{Binding HasErrorMessage}"
+                       TextColor="Red"
+                       Margin="0, 15" />
+                <Entry Text="{Binding Username}" Placeholder="Please, enter your login" />
+                <Entry Text="{Binding Password}" IsPassword="True" Placeholder="Please, enter your password" />
+                <controls:AccentButton Text="Login" Command="{Binding Login}" />
+            </StackLayout>
+        </Frame>
     </ContentPage.Content>
 </rxui:ReactiveContentPage>

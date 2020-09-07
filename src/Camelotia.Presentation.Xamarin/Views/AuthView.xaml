@@ -5,7 +5,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"   
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
-    xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.Views"
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
     x:Class="Camelotia.Presentation.Xamarin.Views.AuthView"
-    Title="Authentication Required">
+    x:DataType="{x:Type vm:IAuthViewModel}"
+    Title="Authentication Required"
+    mc:Ignorable="d">
+    <d:ContentPage.BindingContext>
+        <designTime:DesignTimeAuthViewModel />
+    </d:ContentPage.BindingContext>
 </rxui:ReactiveTabbedPage>
