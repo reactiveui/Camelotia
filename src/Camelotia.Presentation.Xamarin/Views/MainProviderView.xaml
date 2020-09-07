@@ -7,7 +7,8 @@
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
-    xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize">
+    xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize"
+    x:DataType="{x:Type vm:IProviderViewModel}">
     <ViewCell.BindingContext>
         <designTime:DesignTimeProviderViewModel />
     </ViewCell.BindingContext>

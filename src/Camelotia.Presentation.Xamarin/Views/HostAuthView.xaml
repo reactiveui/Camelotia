@@ -8,6 +8,7 @@
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
     x:Class="Camelotia.Presentation.Xamarin.Views.HostAuthView"
+    x:DataType="{x:Type vm:IHostAuthViewModel}"
     Title="Authentication On Remote Host">
     <ContentPage.BindingContext>
         <designTime:DesignTimeHostAuthViewModel />

@@ -8,6 +8,7 @@
     xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
+    x:DataType="{x:Type vm:IFileViewModel}"
     Height="90">
     <ViewCell.BindingContext>
         <designTime:DesignTimeFileViewModel />

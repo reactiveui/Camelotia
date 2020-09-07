@@ -8,6 +8,7 @@
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
+    x:DataType="{x:Type vm:IDirectAuthViewModel}"
     Title="Password Authorization">
     <ContentPage.BindingContext>
         <designTime:DesignTimeDirectAuthViewModel />

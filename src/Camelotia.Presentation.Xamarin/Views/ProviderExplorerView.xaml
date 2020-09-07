@@ -10,6 +10,7 @@
     xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.Views"
     xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize"
     xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
+    x:DataType="{x:Type vm:IProviderViewModel}"
     Title="{Binding Name}">
     <ContentPage.BindingContext>
         <designTime:DesignTimeProviderViewModel />

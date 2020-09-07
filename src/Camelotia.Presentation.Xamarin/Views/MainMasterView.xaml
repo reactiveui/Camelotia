@@ -9,6 +9,7 @@
     xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.Views"
     xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
     x:Class="Camelotia.Presentation.Xamarin.Views.MainMasterView"
+    x:DataType="{x:Type vm:IMainViewModel}"
     Title="Camelotia">
     <ContentPage.BindingContext>
         <designTime:DesignTimeMainViewModel />
