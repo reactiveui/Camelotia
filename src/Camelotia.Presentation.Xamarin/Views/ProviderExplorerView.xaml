@@ -10,11 +10,14 @@
     xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.Views"
     xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize"
     xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
     x:DataType="{x:Type vm:IProviderViewModel}"
-    Title="{Binding Name}">
-    <ContentPage.BindingContext>
+    Title="{Binding Name}"
+    mc:Ignorable="d">
+    <d:ContentPage.BindingContext>
         <designTime:DesignTimeProviderViewModel />
-    </ContentPage.BindingContext>
+    </d:ContentPage.BindingContext>
     <ContentPage.ToolbarItems>
         <iconize:IconToolbarItem Command="{Binding Refresh}" Icon="fas-sync-alt" />
     </ContentPage.ToolbarItems>
@@ -65,7 +68,7 @@
                 </ListView.ItemTemplate>
             </ListView>
             <Grid Grid.Row="2" 
-                  Margin="0" Padding="3" 
+                  Padding="3" 
                   BackgroundColor="#dddddd">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

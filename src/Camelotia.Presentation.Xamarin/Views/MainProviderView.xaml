@@ -8,10 +8,13 @@
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize"
-    x:DataType="{x:Type vm:IProviderViewModel}">
-    <ViewCell.BindingContext>
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    x:DataType="{x:Type vm:IProviderViewModel}"
+    mc:Ignorable="d">
+    <d:ViewCell.BindingContext>
         <designTime:DesignTimeProviderViewModel />
-    </ViewCell.BindingContext>
+    </d:ViewCell.BindingContext>
     <ViewCell.View>
         <Grid>
             <Grid.ColumnDefinitions>

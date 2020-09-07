@@ -8,11 +8,14 @@
     xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
     x:DataType="{x:Type vm:IFileViewModel}"
+    mc:Ignorable="d"
     Height="90">
-    <ViewCell.BindingContext>
+    <d:ViewCell.BindingContext>
         <designTime:DesignTimeFileViewModel />
-    </ViewCell.BindingContext>
+    </d:ViewCell.BindingContext>
     <ViewCell.View>
         <Grid>
             <Grid.ColumnDefinitions>

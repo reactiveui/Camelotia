@@ -8,11 +8,14 @@
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
     x:DataType="{x:Type vm:IDirectAuthViewModel}"
-    Title="Password Authorization">
-    <ContentPage.BindingContext>
+    Title="Password Authorization"
+    mc:Ignorable="d">
+    <d:ContentPage.BindingContext>
         <designTime:DesignTimeDirectAuthViewModel />
-    </ContentPage.BindingContext>
+    </d:ContentPage.BindingContext>
     <ContentPage.Content>
         <Frame VerticalOptions="Start" 
                HorizontalOptions="FillAndExpand"

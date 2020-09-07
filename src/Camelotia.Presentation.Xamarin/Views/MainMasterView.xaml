@@ -8,12 +8,15 @@
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.Views"
     xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
     x:Class="Camelotia.Presentation.Xamarin.Views.MainMasterView"
     x:DataType="{x:Type vm:IMainViewModel}"
-    Title="Camelotia">
-    <ContentPage.BindingContext>
+    Title="Camelotia"
+    mc:Ignorable="d">
+    <d:ContentPage.BindingContext>
         <designTime:DesignTimeMainViewModel />
-    </ContentPage.BindingContext>
+    </d:ContentPage.BindingContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="65" />
