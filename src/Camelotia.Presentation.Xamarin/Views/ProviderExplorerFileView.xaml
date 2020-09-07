@@ -27,9 +27,9 @@
                 HeightRequest="35"
                 WidthRequest="35" />
             <StackLayout Margin="0, 7, 7, 5" Grid.Column="1">
-                <Label Text="{Binding Name}" FontSize="16" />
-                <Label Text="{Binding Modified}" />
-                <Label Text="{Binding Size}" FontAttributes="Bold"/>
+                <Label Text="{Binding Name}" FontSize="16" LineBreakMode="NoWrap" />
+                <Label Text="{Binding Modified}" LineBreakMode="NoWrap" />
+                <Label Text="{Binding Size}" FontAttributes="Bold" LineBreakMode="NoWrap" />
             </StackLayout>
         </Grid>
     </ViewCell.View>

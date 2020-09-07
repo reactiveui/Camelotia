@@ -14,11 +14,11 @@
         <designTime:DesignTimeOAuthViewModel />
     </ContentPage.BindingContext>
     <ContentPage.Content>
-        <Frame VerticalOptions="StartAndExpand" 
+        <Frame VerticalOptions="Start" 
                HorizontalOptions="FillAndExpand"
                Margin="15">
             <StackLayout>
-                <Label Text="OAuth Authorization" />
+                <Label Text="OAuth Authorization" LineBreakMode="NoWrap" />
                 <controls:AccentButton Command="{Binding Login}" Text="Authorize" />
             </StackLayout>
         </Frame>
