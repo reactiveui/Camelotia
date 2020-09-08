@@ -74,6 +74,23 @@ namespace Camelotia.Services.Providers
                    };
         });
 
+        public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => Task.Run(() =>
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return Enumerable.Empty<FolderModel>();
+            }
+            var folderModels = new List<FolderModel>();
+            var directoryInfo = new DirectoryInfo(path);
+            while (directoryInfo != null)
+            {
+                folderModels.Add(new FolderModel { FullPath = directoryInfo.FullName, Name = directoryInfo.Name, Children = directoryInfo.GetDirectories().Select(di => di.Name) });
+                directoryInfo = directoryInfo.Parent;
+            };
+            folderModels.Reverse();
+            return folderModels;
+        });
+
         public async Task DownloadFile(string from, Stream to)
         {
             if (IsDirectory(from)) throw new InvalidOperationException("Can't download directory.");

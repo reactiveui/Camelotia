@@ -76,6 +76,8 @@ namespace Camelotia.Services.Providers
             });
         }
 
+        public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => throw new NotImplementedException();
+
         public async Task UploadFile(string to, Stream from, string name)
         {
             var create = _driveService.Files.Create(new File {Name = name}, from, "application/vnd.google-apps.file");

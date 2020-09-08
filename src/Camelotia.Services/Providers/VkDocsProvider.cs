@@ -95,6 +95,8 @@ namespace Camelotia.Services.Providers
             });
         }
 
+        public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => throw new NotImplementedException();
+
         public async Task DownloadFile(string from, Stream to)
         {
             var id = long.Parse(from);

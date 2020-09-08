@@ -93,6 +93,8 @@ namespace Camelotia.Services.Providers
             }
         });
 
+        public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => throw new NotImplementedException();
+
         public Task CreateFolder(string path, string name) => Task.Run(() =>
         {
             using (var connection = _factory())

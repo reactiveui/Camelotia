@@ -29,8 +29,8 @@ namespace Camelotia.Presentation.DesignTime
         
         public IFileViewModel SelectedFile { get; set; }
 
-        public IEnumerable<IFileViewModel> Files { get; } 
-        
+        public IEnumerable<IFileViewModel> Files { get; }
+
         public ICommand DownloadSelectedFile { get; }
         
         public ICommand UploadToCurrentPath { get; }
@@ -62,6 +62,12 @@ namespace Camelotia.Presentation.DesignTime
         public int RefreshingIn { get; } = 30;
 
         public string CurrentPath { get; } = "/home/files";
+
+        public IEnumerable<IFolderViewModel> BreadCrumbs { get; } = new List<IFolderViewModel>
+        {
+            new DesignTimeFolderViewModel {Name = "home", Children = new[] { "home", "home1", "home2" }},
+            new DesignTimeFolderViewModel {Name = "files", Children = new[] { "files", "files1", "files2" }}
+        };
 
         public string Description { get; } = "Mock file system.";
         

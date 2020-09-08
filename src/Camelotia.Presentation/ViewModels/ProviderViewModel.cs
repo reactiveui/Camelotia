@@ -22,6 +22,7 @@ namespace Camelotia.Presentation.ViewModels
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
     {
         private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
+        private readonly ReactiveCommand<Unit, IEnumerable<FolderModel>> _getBreadCrumbs;
         private readonly ReactiveCommand<Unit, Unit> _downloadSelectedFile;
         private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
         private readonly ReactiveCommand<Unit, Unit> _deleteSelectedFile;
@@ -97,6 +98,18 @@ namespace Camelotia.Presentation.ViewModels
                 .DistinctUntilChanged()
                 .Log(this, $"Current path changed in {provider.Name}")
                 .ToPropertyEx(this, x => x.CurrentPath, state.CurrentPath ?? provider.InitialPath);
+
+            _getBreadCrumbs = ReactiveCommand.CreateFromTask(
+                () => provider.GetBreadCrumbs(CurrentPath)
+                );
+
+            _getBreadCrumbs
+                .Select(items => items.Select(folder => new FolderViewModel { Name = folder.Name, Children = folder.Children }))
+                .ToPropertyEx(this, x => x.BreadCrumbs);
+
+            this.WhenAnyValue(x => x.CurrentPath)
+                .Select(_ => Unit.Default)
+                .InvokeCommand(_getBreadCrumbs);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Skip(1)
@@ -245,7 +258,10 @@ namespace Camelotia.Presentation.ViewModels
         
         [ObservableAsProperty]
         public IEnumerable<IFileViewModel> Files { get; }
-        
+
+        [ObservableAsProperty]
+        public IEnumerable<FolderViewModel> BreadCrumbs { get; }
+
         [ObservableAsProperty]
         public string CurrentPath { get; }
 
