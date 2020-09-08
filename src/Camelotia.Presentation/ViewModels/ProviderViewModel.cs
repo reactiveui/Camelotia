@@ -107,6 +107,12 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(items => items.Select(folder => new FolderViewModel { Name = folder.Name, Children = folder.Children }))
                 .ToPropertyEx(this, x => x.BreadCrumbs);
 
+            _getBreadCrumbs.ThrownExceptions                
+                .Select(exception => false)
+                .Merge(_getBreadCrumbs.Select(_ => true))
+                .ObserveOn(RxApp.MainThreadScheduler)                
+                .ToPropertyEx(this, x => x.ShowBreadCrumbs);
+
             this.WhenAnyValue(x => x.CurrentPath)
                 .Select(_ => Unit.Default)
                 .InvokeCommand(_getBreadCrumbs);
@@ -196,6 +202,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Merge(_deleteSelectedFile.ThrownExceptions)
                 .Merge(_downloadSelectedFile.ThrownExceptions)
                 .Merge(_refresh.ThrownExceptions)
+                .Merge(_getBreadCrumbs.ThrownExceptions)
                 .Log(this, $"Exception occured in provider {provider.Name}")
                 .Subscribe();
 
@@ -261,6 +268,9 @@ namespace Camelotia.Presentation.ViewModels
 
         [ObservableAsProperty]
         public IEnumerable<FolderViewModel> BreadCrumbs { get; }
+
+        [ObservableAsProperty]
+        public bool ShowBreadCrumbs { get; }
 
         [ObservableAsProperty]
         public string CurrentPath { get; }

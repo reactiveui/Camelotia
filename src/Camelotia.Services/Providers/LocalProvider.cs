@@ -76,19 +76,14 @@ namespace Camelotia.Services.Providers
 
         public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => Task.Run(() =>
         {
-            if (string.IsNullOrWhiteSpace(path))
+            if (!Directory.Exists(path))
             {
-                return Enumerable.Empty<FolderModel>();
+                throw new ArgumentException("Directory doesn't exist.");
             }
             var folderModels = new List<FolderModel>();
-            var directoryInfo = new DirectoryInfo(path);
-            while (directoryInfo != null)
-            {
-                folderModels.Add(new FolderModel { FullPath = directoryInfo.FullName, Name = directoryInfo.Name, Children = directoryInfo.GetDirectories().Select(di => di.Name) });
-                directoryInfo = directoryInfo.Parent;
-            };
-            folderModels.Reverse();
-            return folderModels;
+            return SplitPath(path)
+                   .Select(di => new FolderModel(di.FullName, di.Name, di.GetDirectories().Select(di => di.Name)))
+                   .Reverse();
         });
 
         public async Task DownloadFile(string from, Stream to)
@@ -157,6 +152,16 @@ namespace Camelotia.Services.Providers
         {
             var attributes = File.GetAttributes(path);
             return attributes.HasFlag(FileAttributes.Directory);
+        }
+
+        private static IEnumerable<DirectoryInfo> SplitPath(string path)
+        {
+            var directoryInfo = new DirectoryInfo(path);
+            while (directoryInfo != null)
+            {
+                yield return directoryInfo;
+                directoryInfo = directoryInfo.Parent;
+            };
         }
     }
 }

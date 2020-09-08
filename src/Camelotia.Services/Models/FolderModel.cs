@@ -4,8 +4,15 @@ namespace Camelotia.Services.Models
 {
     public class FolderModel
     {
-        public string FullPath { get; set; }
-        public string Name { get; set; }
-        public IEnumerable<string> Children { get; set; }
+        public FolderModel(string fullPath, string name, IEnumerable<string> children)
+        {
+            FullPath = fullPath;
+            Name = name;
+            Children = children;
+        }
+        
+        public string FullPath { get; }
+        public string Name { get; }
+        public IEnumerable<string> Children { get; }
     }
 }
