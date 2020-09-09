@@ -3,6 +3,8 @@
              xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
              xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
              xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              x:Class="Camelotia.Presentation.Avalonia.Views.ProviderView">
     <Design.DataContext>
         <designTime:DesignTimeProviderViewModel />
@@ -89,13 +91,30 @@
                         <StackPanel Orientation="Horizontal">
                           <TextBlock Text="{Binding Name}"/>
                           <Menu>
-                            <MenuItem Items="{Binding Children}">
+                            <MenuItem Name="topLevelMenu" Items="{Binding Children}">
                               <MenuItem.Header>
-                                <DrawingPresenter Height="16" Width="8">
+                                <DrawingPresenter Name="arrowDrawing" MaxHeight="16" MaxWidth="16">
                                   <DrawingPresenter.Drawing>
-                                    <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="F1M257.569366455078,-475.600006103516C264.498016357422,-474.88818359375,270.815612792969,-471.318115234375,275,-465.75L395.75,-315.75C403.332916259766,-306.524963378906,403.332916259766,-293.225036621094,395.75,-284L270.75,-134C265.663421630859,-127.863845825195 257.955871582031,-124.520812988281 250,-125 244.15869140625,-124.988586425781 238.497802734375,-127.022972106934 234,-130.75C228.887329101563,-134.988708496094,225.671310424805,-141.087524414063,225.061584472656,-147.700714111328C224.451843261719,-154.313903808594,226.49853515625,-160.897933959961,230.75,-166L342.75,-300 234.75,-434.25C230.555740356445,-439.414855957031,228.593276977539,-446.038543701172,229.297103881836,-452.654571533203C230.000946044922,-459.270599365234,233.313003540039,-465.333190917969,238.5,-469.5C243.72917175293,-474.100952148438,250.640686035156,-476.311859130859,257.569366455078,-475.600006103516z"   />
+                                    <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M13.25,10L6.109,2.58c-0.268-0.27-0.268-0.707,0-0.979c0.268-0.27,0.701-0.27,0.969,0l7.83,7.908  c0.268,0.271,0.268,0.709,0,0.979l-7.83,7.908c-0.268,0.271-0.701,0.27-0.969,0c-0.268-0.269-0.268-0.707,0-0.979L13.25,10z"/>
                                   </DrawingPresenter.Drawing>
+                                  <i:Interaction.Behaviors>
+                                    <ia:DataTriggerBehavior Binding="{Binding #topLevelMenu.IsSubMenuOpen}" ComparisonCondition="Equal" Value="True">
+                                      <ia:ChangePropertyAction TargetObject="{Binding #arrowDrawing}" PropertyName="Drawing">
+                                        <ia:ChangePropertyAction.Value>
+                                          <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M4.71967,8.96967 C5.01256,8.67678 5.48744,8.67678 5.78033,8.96967 L12.0000025,15.1893 L18.2197,8.96967 C18.5126,8.67678 18.9874,8.67678 19.2803,8.96967 C19.5732,9.26256 19.5732,9.73744 19.2803,10.0303 L12.5303,16.7803 C12.2374,17.0732 11.7626,17.0732 11.4697,16.7803 L4.71967,10.0303 C4.42678,9.73744 4.42678,9.26256 4.71967,8.96967 Z"/>
+                                        </ia:ChangePropertyAction.Value>
+                                      </ia:ChangePropertyAction>
+                                    </ia:DataTriggerBehavior>
+                                    <ia:DataTriggerBehavior Binding="{Binding #topLevelMenu.IsSubMenuOpen}" ComparisonCondition="Equal" Value="False">
+                                    <ia:ChangePropertyAction TargetObject="{Binding #arrowDrawing}" PropertyName="Drawing">
+                                      <ia:ChangePropertyAction.Value>
+                                        <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M13.25,10L6.109,2.58c-0.268-0.27-0.268-0.707,0-0.979c0.268-0.27,0.701-0.27,0.969,0l7.83,7.908  c0.268,0.271,0.268,0.709,0,0.979l-7.83,7.908c-0.268,0.271-0.701,0.27-0.969,0c-0.268-0.269-0.268-0.707,0-0.979L13.25,10z"/>
+                                      </ia:ChangePropertyAction.Value>
+                                    </ia:ChangePropertyAction>
+                                    </ia:DataTriggerBehavior>
+                                  </i:Interaction.Behaviors>
                                 </DrawingPresenter>
+
                               </MenuItem.Header>
                               <MenuItem.Styles>
                                 <Style Selector="MenuItem">
