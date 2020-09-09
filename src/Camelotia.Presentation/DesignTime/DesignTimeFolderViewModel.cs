@@ -7,6 +7,8 @@ namespace Camelotia.Presentation.DesignTime
     {
         public string Name { get; set; }
 
-        public IEnumerable<string> Children { get; set; }
+        public string FullPath { get; set; }
+
+        public IEnumerable<IFolderViewModel> Children { get; set; }
     }
 }

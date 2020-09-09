@@ -4,8 +4,10 @@ namespace Camelotia.Presentation.Interfaces
 {
     public interface IFolderViewModel
     {
-        public string Name { get; }
+        string Name { get; }
 
-        public IEnumerable<string> Children { get; }
+        string FullPath { get; }
+
+        IEnumerable<IFolderViewModel> Children { get; }
     }
 }

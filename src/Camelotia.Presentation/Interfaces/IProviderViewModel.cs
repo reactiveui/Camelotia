@@ -34,7 +34,9 @@ namespace Camelotia.Presentation.Interfaces
         ICommand Back { get; }
         
         ICommand Open { get; }
-        
+
+        ICommand SetPath { get; }
+
         bool IsCurrentPathEmpty { get; }
         
         bool IsLoading { get; }

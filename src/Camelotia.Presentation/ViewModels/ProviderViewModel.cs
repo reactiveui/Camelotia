@@ -29,6 +29,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ReactiveCommand<Unit, Unit> _unselectFile;
         private readonly ReactiveCommand<Unit, string> _back;
         private readonly ReactiveCommand<Unit, string> _open;
+        private readonly ReactiveCommand<string, string> _setPath;
         private readonly ReactiveCommand<Unit, Unit> _logout;
         private readonly IProvider _provider;
 
@@ -93,7 +94,9 @@ namespace Camelotia.Presentation.ViewModels
                 () => Path.GetDirectoryName(CurrentPath), 
                 canCurrentPathGoBack);
 
-            _open.Merge(_back)
+            _setPath = ReactiveCommand.Create<string, string>(path => path);
+
+            _open.Merge(_back).Merge(_setPath)
                 .Select(path => path ?? provider.InitialPath)
                 .DistinctUntilChanged()
                 .Log(this, $"Current path changed in {provider.Name}")
@@ -104,7 +107,7 @@ namespace Camelotia.Presentation.ViewModels
                 );
 
             _getBreadCrumbs
-                .Select(items => items.Select(folder => new FolderViewModel { Name = folder.Name, Children = folder.Children }))
+                .Select(items => items.Select(folder => new FolderViewModel (this, folder)))
                 .ToPropertyEx(this, x => x.BreadCrumbs);
 
             _getBreadCrumbs.ThrownExceptions                
@@ -323,5 +326,7 @@ namespace Camelotia.Presentation.ViewModels
         public ICommand Back => _back;
 
         public ICommand Open => _open;
+
+        public ICommand SetPath => _setPath;
     }
 }

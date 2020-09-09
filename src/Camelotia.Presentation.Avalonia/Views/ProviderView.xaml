@@ -80,11 +80,19 @@
                   </ListBox.ItemsPanel>
                   <ListBox.ItemTemplate>
                     <DataTemplate>
-                      <Button>
+                      <Button Command="{Binding Provider.SetPath}" CommandParameter="{Binding FullPath}">
                         <StackPanel Orientation="Horizontal">
                           <TextBlock Text="{Binding Name}"/>
-                          <Menu>                            
-                            <MenuItem Header=">" Items="{Binding Children}"/>
+                          <Menu>
+                            <MenuItem Header=">" Items="{Binding Children}">
+                              <MenuItem.Styles>
+                                <Style Selector="MenuItem">
+                                  <Setter Property="Header" Value="{Binding Name}"/>
+                                  <Setter Property="Command" Value="{Binding Provider.SetPath}"/>
+                                  <Setter Property="CommandParameter" Value="{Binding FullPath}"/>
+                                </Style>
+                              </MenuItem.Styles>
+                            </MenuItem>
                           </Menu>
                         </StackPanel>
                       </Button>

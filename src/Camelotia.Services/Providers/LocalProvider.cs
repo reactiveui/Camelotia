@@ -82,7 +82,7 @@ namespace Camelotia.Services.Providers
             }
             var folderModels = new List<FolderModel>();
             return SplitPath(path)
-                   .Select(di => new FolderModel(di.FullName, di.Name, di.GetDirectories().Select(di => di.Name)))
+                   .Select(di => new FolderModel(di.FullName, di.Name, di.GetDirectories().Select(di => new FolderModel(di.FullName, di.Name))))
                    .Reverse();
         });
 
