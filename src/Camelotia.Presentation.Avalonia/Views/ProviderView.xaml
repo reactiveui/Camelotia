@@ -17,15 +17,20 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="5">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="4*" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0"
-                        Command="{Binding Back}"
-                        HorizontalAlignment="Stretch"
-                        Classes="Primary"
-                        Content="Back" />
+              <Button Grid.Column="0"
+                      Command="{Binding Back}"
+                      ToolTip.Tip="Back"
+                      Classes="Primary">
+                <DrawingPresenter Height="16">
+                  <DrawingPresenter.Drawing>
+                    <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M 34,57L 42,57L 42,32.25L 52,42.25L 52,31.75L 38,17.75L 24,31.75L 24,42.25L 34,32.25L 34,57 Z "   />
+                  </DrawingPresenter.Drawing>
+                </DrawingPresenter>
+              </Button>
                 <TextBlock Grid.Column="1"
                          IsVisible="{Binding !ShowBreadCrumbs}"
                          Text="{Binding CurrentPath}"
@@ -109,8 +114,14 @@
                 <Button Grid.Column="2"
                         Command="{Binding Open}"
                         HorizontalAlignment="Stretch"
-                        Classes="Primary"
-                        Content="Open" />
+                        ToolTip.Tip="Open"
+                        Classes="Primary">
+                  <DrawingPresenter Height="16">
+                    <DrawingPresenter.Drawing>
+                      <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M 19.0002,34L 19.0002,42L 43.7502,42L 33.7502,52L 44.2502,52L 58.2502,38L 44.2502,24L 33.7502,24L 43.7502,34L 19.0002,34 Z "/>
+                    </DrawingPresenter.Drawing>
+                  </DrawingPresenter>
+                </Button>
             </Grid>
             <Border Grid.Row="1" 
                     BorderThickness="0 2 0 2"
