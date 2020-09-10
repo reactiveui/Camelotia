@@ -118,8 +118,9 @@ namespace Camelotia.Presentation.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler)                
                 .ToPropertyEx(this, x => x.ShowBreadCrumbs);
 
-            this.WhenAnyValue(x => x.CurrentPath)
-                .Select(_ => Unit.Default)
+            this.WhenAnyValue(x => x.CurrentPath, x => x.IsReady)
+                .Where(x => x.Item1 != null && x.Item2)
+                .Select(_ => Unit.Default)                
                 .InvokeCommand(_getBreadCrumbs);
 
             this.WhenAnyValue(x => x.CurrentPath)
