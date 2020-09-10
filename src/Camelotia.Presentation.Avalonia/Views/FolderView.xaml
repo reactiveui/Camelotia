@@ -1,9 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
-             x:Class="Camelotia.Presentation.Avalonia.Views.FolderView"
-             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             x:Class="Camelotia.Presentation.Avalonia.Views.FolderView"             
              Background="Transparent">
     <Design.DataContext>
         <designTime:DesignTimeFolderViewModel />
@@ -39,18 +37,9 @@
         <StackPanel Orientation="Horizontal">
           <TextBlock Text="{Binding Name}"/>
           <Menu>
-            <MenuItem Name="topLevelMenu" Items="{Binding Children}">
+            <MenuItem Name="TopLevelMenu" Items="{Binding Children}">
               <MenuItem.Header>
-                <DrawingPresenter Name="arrowDrawing" MaxHeight="16" MaxWidth="16" Drawing="{DynamicResource ChevronRight}">
-                  <i:Interaction.Behaviors>
-                    <ia:DataTriggerBehavior Binding="{Binding #topLevelMenu.IsSubMenuOpen}" ComparisonCondition="Equal" Value="True">
-                      <ia:ChangePropertyAction TargetObject="{Binding #arrowDrawing}" PropertyName="Drawing" Value="{DynamicResource ChevronDown}"/>
-                    </ia:DataTriggerBehavior>
-                    <ia:DataTriggerBehavior Binding="{Binding #topLevelMenu.IsSubMenuOpen}" ComparisonCondition="Equal" Value="False">
-                      <ia:ChangePropertyAction TargetObject="{Binding #arrowDrawing}" PropertyName="Drawing" Value="{DynamicResource ChevronRight}"/>
-                    </ia:DataTriggerBehavior>
-                  </i:Interaction.Behaviors>
-                </DrawingPresenter>
+                <DrawingPresenter Name="ArrowDrawing" MaxHeight="16" MaxWidth="16"/>
               </MenuItem.Header>
               <MenuItem.Styles>
                 <Style Selector="MenuItem">
