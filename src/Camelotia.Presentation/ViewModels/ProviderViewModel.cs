@@ -96,7 +96,8 @@ namespace Camelotia.Presentation.ViewModels
 
             _setPath = ReactiveCommand.Create<string, string>(path => path);
 
-            _open.Merge(_back).Merge(_setPath)
+            _open.Merge(_back)
+                .Merge(_setPath)
                 .Select(path => path ?? provider.InitialPath)
                 .DistinctUntilChanged()
                 .Log(this, $"Current path changed in {provider.Name}")

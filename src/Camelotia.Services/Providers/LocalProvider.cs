@@ -58,8 +58,7 @@ namespace Camelotia.Services.Providers
                 });
             }
 
-            if (!Directory.Exists(path))
-                throw new ArgumentException("Directory doesn't exist.");
+            if (!Directory.Exists(path)) throw new ArgumentException("Directory doesn't exist.");
 
             return from file in Directory.GetFileSystemEntries(path)
                    let isDirectory = IsDirectory(file)
@@ -76,10 +75,8 @@ namespace Camelotia.Services.Providers
 
         public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => Task.Run(() =>
         {
-            if (!Directory.Exists(path))
-            {
-                throw new ArgumentException("Directory doesn't exist.");
-            }
+            if (!Directory.Exists(path)) throw new ArgumentException("Directory doesn't exist.");
+            
             var folderModels = new List<FolderModel>();
             return SplitPath(path)
                    .Select(di => new FolderModel(di.FullName, di.Name, di.GetDirectories().Select(di => new FolderModel(di.FullName, di.Name))))
