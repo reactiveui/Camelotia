@@ -56,11 +56,7 @@
                       Command="{Binding Back}"
                       ToolTip.Tip="Back"
                       Classes="Primary">
-                <DrawingPresenter Height="16">
-                  <DrawingPresenter.Drawing>
-                    <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M 34,57L 42,57L 42,32.25L 52,42.25L 52,31.75L 38,17.75L 24,31.75L 24,42.25L 34,32.25L 34,57 Z "   />
-                  </DrawingPresenter.Drawing>
-                </DrawingPresenter>
+                <DrawingPresenter Height="16" Drawing="{DynamicResource ArrowUp}"/>
               </Button>
                 <TextBlock Grid.Column="1"
                            IsVisible="{Binding !ShowBreadCrumbs}"
@@ -77,11 +73,7 @@
                         HorizontalAlignment="Stretch"
                         ToolTip.Tip="Open"
                         Classes="Primary">
-                  <DrawingPresenter Height="16">
-                    <DrawingPresenter.Drawing>
-                      <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M 19.0002,34L 19.0002,42L 43.7502,42L 33.7502,52L 44.2502,52L 58.2502,38L 44.2502,24L 33.7502,24L 43.7502,34L 19.0002,34 Z "/>
-                    </DrawingPresenter.Drawing>
-                  </DrawingPresenter>
+                  <DrawingPresenter Height="16" Drawing="{DynamicResource ArrowDown}"/>
                 </Button>
             </Grid>
             <Border Grid.Row="1" 

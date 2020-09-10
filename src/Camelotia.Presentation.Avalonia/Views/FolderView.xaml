@@ -41,24 +41,13 @@
           <Menu>
             <MenuItem Name="topLevelMenu" Items="{Binding Children}">
               <MenuItem.Header>
-                <DrawingPresenter Name="arrowDrawing" MaxHeight="16" MaxWidth="16">
-                  <DrawingPresenter.Drawing>
-                    <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M13.25,10L6.109,2.58c-0.268-0.27-0.268-0.707,0-0.979c0.268-0.27,0.701-0.27,0.969,0l7.83,7.908  c0.268,0.271,0.268,0.709,0,0.979l-7.83,7.908c-0.268,0.271-0.701,0.27-0.969,0c-0.268-0.269-0.268-0.707,0-0.979L13.25,10z"/>
-                  </DrawingPresenter.Drawing>
+                <DrawingPresenter Name="arrowDrawing" MaxHeight="16" MaxWidth="16" Drawing="{DynamicResource ChevronRight}">
                   <i:Interaction.Behaviors>
                     <ia:DataTriggerBehavior Binding="{Binding #topLevelMenu.IsSubMenuOpen}" ComparisonCondition="Equal" Value="True">
-                      <ia:ChangePropertyAction TargetObject="{Binding #arrowDrawing}" PropertyName="Drawing">
-                        <ia:ChangePropertyAction.Value>
-                          <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M4.71967,8.96967 C5.01256,8.67678 5.48744,8.67678 5.78033,8.96967 L12.0000025,15.1893 L18.2197,8.96967 C18.5126,8.67678 18.9874,8.67678 19.2803,8.96967 C19.5732,9.26256 19.5732,9.73744 19.2803,10.0303 L12.5303,16.7803 C12.2374,17.0732 11.7626,17.0732 11.4697,16.7803 L4.71967,10.0303 C4.42678,9.73744 4.42678,9.26256 4.71967,8.96967 Z"/>
-                        </ia:ChangePropertyAction.Value>
-                      </ia:ChangePropertyAction>
+                      <ia:ChangePropertyAction TargetObject="{Binding #arrowDrawing}" PropertyName="Drawing" Value="{DynamicResource ChevronDown}"/>
                     </ia:DataTriggerBehavior>
                     <ia:DataTriggerBehavior Binding="{Binding #topLevelMenu.IsSubMenuOpen}" ComparisonCondition="Equal" Value="False">
-                      <ia:ChangePropertyAction TargetObject="{Binding #arrowDrawing}" PropertyName="Drawing">
-                        <ia:ChangePropertyAction.Value>
-                          <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M13.25,10L6.109,2.58c-0.268-0.27-0.268-0.707,0-0.979c0.268-0.27,0.701-0.27,0.969,0l7.83,7.908  c0.268,0.271,0.268,0.709,0,0.979l-7.83,7.908c-0.268,0.271-0.701,0.27-0.969,0c-0.268-0.269-0.268-0.707,0-0.979L13.25,10z"/>
-                        </ia:ChangePropertyAction.Value>
-                      </ia:ChangePropertyAction>
+                      <ia:ChangePropertyAction TargetObject="{Binding #arrowDrawing}" PropertyName="Drawing" Value="{DynamicResource ChevronRight}"/>
                     </ia:DataTriggerBehavior>
                   </i:Interaction.Behaviors>
                 </DrawingPresenter>

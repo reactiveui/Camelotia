@@ -3,5 +3,13 @@
              x:Class="Camelotia.Presentation.Avalonia.App">
     <Application.Styles>
         <StyleInclude Source="avares://Citrus.Avalonia/Citrus.xaml"/>
+        <Style>
+          <Style.Resources>
+            <GeometryDrawing x:Key="ChevronRight" Brush="{DynamicResource ThemeForegroundBrush}" Geometry="F1M6.3901,12.2803L5.3291,11.2193 8.5491,8.0003 5.3291,4.7803 6.3901,3.7193 10.6701,8.0003z" />
+            <GeometryDrawing x:Key="ChevronDown" Brush="{DynamicResource ThemeForegroundBrush}" Geometry="F1M8,12L2.331,6.897 3.669,5.411 8,9.309 12.331,5.411 13.669,6.897z" />
+            <GeometryDrawing x:Key="ArrowUp" Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M 34,57L 42,57L 42,32.25L 52,42.25L 52,31.75L 38,17.75L 24,31.75L 24,42.25L 34,32.25L 34,57 Z "/>
+            <GeometryDrawing x:Key="ArrowDown" Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M 19.0002,34L 19.0002,42L 43.7502,42L 33.7502,52L 44.2502,52L 58.2502,38L 44.2502,24L 33.7502,24L 43.7502,34L 19.0002,34 Z "/>
+          </Style.Resources>
+        </Style>
     </Application.Styles>
 </Application>
