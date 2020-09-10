@@ -35,16 +35,17 @@ namespace Camelotia.Presentation.ViewModels
 
         public ProviderViewModel(
             ProviderState state,
-            CreateFolderViewModelFactory createFolder,
-            RenameFileViewModelFactory createRename,
-            FileViewModelFactory createFile,
+            CreateFolderViewModelFactory createFolderFactory,
+            RenameFileViewModelFactory renameFactory,
+            FileViewModelFactory fileFactory,
+            FolderViewModelFactory folderFactory,
             IAuthViewModel auth,
             IFileManager files,
             IProvider provider)
         {
             _provider = provider;
-            Folder = createFolder(this);
-            Rename = createRename(this);
+            Folder = createFolderFactory(this);
+            Rename = renameFactory(this);
             Auth = auth;
 
             var canInteract = this
@@ -61,7 +62,7 @@ namespace Camelotia.Presentation.ViewModels
             
             _refresh.Select(
                     items => items
-                        .Select(file => createFile(file, this))
+                        .Select(file => fileFactory(file, this))
                         .OrderByDescending(file => file.IsFolder)
                         .ThenBy(file => file.Name)
                         .ToList())
@@ -108,7 +109,7 @@ namespace Camelotia.Presentation.ViewModels
                 );
 
             _getBreadCrumbs
-                .Select(items => items.Select(folder => new FolderViewModel (this, folder)))
+                .Select(items => items.Select(folder => folderFactory(folder, this)))
                 .ToPropertyEx(this, x => x.BreadCrumbs);
 
             _getBreadCrumbs.ThrownExceptions                
@@ -271,7 +272,7 @@ namespace Camelotia.Presentation.ViewModels
         public IEnumerable<IFileViewModel> Files { get; }
 
         [ObservableAsProperty]
-        public IEnumerable<FolderViewModel> BreadCrumbs { get; }
+        public IEnumerable<IFolderViewModel> BreadCrumbs { get; }
 
         [ObservableAsProperty]
         public bool ShowBreadCrumbs { get; }

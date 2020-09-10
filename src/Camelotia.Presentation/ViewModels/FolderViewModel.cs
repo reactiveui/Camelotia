@@ -6,7 +6,9 @@ using System.Linq;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public class FolderViewModel : ReactiveObject, IFolderViewModel
+    public delegate IFolderViewModel FolderViewModelFactory(FolderModel folder, IProviderViewModel provider);
+
+    public sealed class FolderViewModel : ReactiveObject, IFolderViewModel
     {
         private readonly FolderModel _folder;
 

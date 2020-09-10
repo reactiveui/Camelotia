@@ -211,6 +211,7 @@ namespace Camelotia.Tests.Presentation
             return new ProviderViewModel(_state,
                 x => _folder, x => _rename, 
                 (x, y) => new FileViewModel(y, x),
+                (x, y) => new FolderViewModel(y, x),
                 _auth, _files, _provider
             );
         }

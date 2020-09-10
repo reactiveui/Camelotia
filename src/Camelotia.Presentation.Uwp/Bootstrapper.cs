@@ -23,6 +23,7 @@ namespace Camelotia.Presentation.Uwp
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
                     owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
                     (file, owner) => new FileViewModel(owner, file),
+                    (folder, owner) => new FolderViewModel(owner, folder),
                     new AuthViewModel(
                         new DirectAuthViewModel(state.AuthState.DirectAuthState, provider),
                         new HostAuthViewModel(state.AuthState.HostAuthState, provider),
