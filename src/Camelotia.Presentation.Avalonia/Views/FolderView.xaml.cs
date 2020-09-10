@@ -16,16 +16,21 @@ namespace Camelotia.Presentation.Avalonia.Views
     {
         public MenuItem TopLevelMenu => this.FindControl<MenuItem>("TopLevelMenu");
 
-        public DrawingPresenter ArrowDrawing => this.FindControl<DrawingPresenter>("ArrowDrawing");
+        public DrawingPresenter ArrowDrawingRight => this.FindControl<DrawingPresenter>("ArrowDrawingRight");
+        public DrawingPresenter ArrowDrawingDown => this.FindControl<DrawingPresenter>("ArrowDrawingDown");
+
 
         public FolderView()
         {
             AvaloniaXamlLoader.Load(this);
             this.WhenActivated(disposables =>
-            {
-                this.WhenAnyValue(x => x.TopLevelMenu.IsSubMenuOpen)                    
-                    .Select(open => open ? (GeometryDrawing)this.FindResource("ChevronDown") : (GeometryDrawing)this.FindResource("ChevronRight"))
-                    .Do(d => ArrowDrawing.Drawing = d)
+            {   
+                this.WhenAnyValue(x => x.TopLevelMenu.IsSubMenuOpen)
+                    .Do(isOpen =>
+                    {
+                        ArrowDrawingRight.IsVisible = !isOpen;
+                        ArrowDrawingDown.IsVisible = isOpen;
+                    })
                     .Subscribe()
                     .DisposeWith(disposables);                
             });

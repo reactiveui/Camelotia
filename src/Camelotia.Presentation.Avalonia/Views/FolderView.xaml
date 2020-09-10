@@ -39,7 +39,10 @@
           <Menu>
             <MenuItem Name="TopLevelMenu" Items="{Binding Children}">
               <MenuItem.Header>
-                <DrawingPresenter Name="ArrowDrawing" MaxHeight="16" MaxWidth="16"/>
+                <Panel>
+                  <DrawingPresenter Name="ArrowDrawingRight" MaxHeight="16" MaxWidth="16" Drawing="{DynamicResource ChevronRight}"/>
+                  <DrawingPresenter Name="ArrowDrawingDown" MaxHeight="16" MaxWidth="16" Drawing="{DynamicResource ChevronDown}"/>
+                </Panel>
               </MenuItem.Header>
               <MenuItem.Styles>
                 <Style Selector="MenuItem">
