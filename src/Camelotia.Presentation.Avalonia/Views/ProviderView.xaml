@@ -8,6 +8,36 @@
     <Design.DataContext>
         <designTime:DesignTimeProviderViewModel />
     </Design.DataContext>
+    <UserControl.Styles>
+      <Style Selector="ListBox.BreadCrumb">
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="ItemsPanel">
+          <Setter.Value>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Horizontal"/>
+            </ItemsPanelTemplate>
+          </Setter.Value>
+        </Setter>
+        <Setter Property="ItemTemplate">
+          <Setter.Value>
+            <DataTemplate DataType="interfaces:IFolderViewModel">
+              <views:FolderView DataContext="{Binding}" />
+            </DataTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+      <Style Selector="ListBox.BreadCrumb > Border">
+        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeCardBrush}"/>
+      </Style>
+      <Style Selector="ListBox.BreadCrumb > ListBoxItem">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+      </Style>
+    </UserControl.Styles>
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
@@ -39,36 +69,9 @@
                            FontSize="14"
                            Margin="15 0" />
                 <ListBox Grid.Column="1"
-                           IsVisible="{Binding ShowBreadCrumbs}"
-                           Items="{Binding BreadCrumbs}">
-                  <ListBox.Styles>
-                    <Style Selector="ListBox">
-                      <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
-                      <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
-                      <Setter Property="ItemsPanel">
-                        <Setter.Value>
-                          <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"/>
-                          </ItemsPanelTemplate>
-                        </Setter.Value>
-                      </Setter>
-                    </Style>
-                    <Style Selector="ListBox > Border">
-                      <Setter Property="CornerRadius" Value="5"/>
-                      <Setter Property="Background" Value="{DynamicResource ThemeCardBrush}"/>
-                    </Style>
-                    <Style Selector="ListBoxItem">
-                      <Setter Property="Padding" Value="0"/>
-                      <Setter Property="Margin" Value="0"/>
-                      <Setter Property="BorderThickness" Value="0"/>
-                    </Style>
-                  </ListBox.Styles>
-                  <ListBox.ItemTemplate>
-                    <DataTemplate DataType="interfaces:IFolderViewModel">
-                      <views:FolderView DataContext="{Binding}" />
-                    </DataTemplate>
-                  </ListBox.ItemTemplate>
-                </ListBox>                
+                         IsVisible="{Binding ShowBreadCrumbs}"
+                         Items="{Binding BreadCrumbs}"
+                         Classes="BreadCrumb"/>          
                 <Button Grid.Column="2"
                         Command="{Binding Open}"
                         HorizontalAlignment="Stretch"
