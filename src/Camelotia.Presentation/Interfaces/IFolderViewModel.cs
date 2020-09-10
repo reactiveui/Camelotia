@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Camelotia.Presentation.Interfaces
 {
-    public interface IFolderViewModel
+    public interface IFolderViewModel : INotifyPropertyChanged
     {
         string Name { get; }
 

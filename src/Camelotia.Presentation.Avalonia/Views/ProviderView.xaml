@@ -3,8 +3,7 @@
              xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
              xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
              xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
-             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             xmlns:reactiveui="http://reactiveui.net"
              x:Class="Camelotia.Presentation.Avalonia.Views.ProviderView">
     <Design.DataContext>
         <designTime:DesignTimeProviderViewModel />
@@ -34,102 +33,42 @@
                 </DrawingPresenter>
               </Button>
                 <TextBlock Grid.Column="1"
-                         IsVisible="{Binding !ShowBreadCrumbs}"
-                         Text="{Binding CurrentPath}"
-                         VerticalAlignment="Center"
-                         FontSize="14"
-                         Margin="15 0" />
+                           IsVisible="{Binding !ShowBreadCrumbs}"
+                           Text="{Binding CurrentPath}"
+                           VerticalAlignment="Center"
+                           FontSize="14"
+                           Margin="15 0" />
                 <ListBox Grid.Column="1"
-                         IsVisible="{Binding ShowBreadCrumbs}"
-                         Items="{Binding BreadCrumbs}"
-                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                         ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                         Margin="5">
+                           IsVisible="{Binding ShowBreadCrumbs}"
+                           Items="{Binding BreadCrumbs}">
                   <ListBox.Styles>
+                    <Style Selector="ListBox">
+                      <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
+                      <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+                      <Setter Property="ItemsPanel">
+                        <Setter.Value>
+                          <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                          </ItemsPanelTemplate>
+                        </Setter.Value>
+                      </Setter>
+                    </Style>
                     <Style Selector="ListBox > Border">
                       <Setter Property="CornerRadius" Value="5"/>
                       <Setter Property="Background" Value="{DynamicResource ThemeCardBrush}"/>
-                    </Style>
-                    <Style Selector="Button">
-                      <Setter Property="Margin" Value="0"/>
-                      <Setter Property="Padding" Value="5,0,0,0"/>
-                      <Setter Property="VerticalContentAlignment" Value="Center"/>
-                      <Setter Property="Background" Value="Transparent"/>
-                    </Style>
-                    <Style Selector="Menu">
-                      <Setter Property="Padding" Value="0"/>                      
-                      <Setter Property="Background" Value="Transparent"/>                      
-                      <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}"/>
-                    </Style>
-                    <Style Selector="MenuItem">
-                      <Setter Property="Padding" Value="0"/>
-                      <Setter Property="Margin" Value="2,0"/>                      
-                    </Style>
-                    <Style Selector="MenuItem:pointerover /template/ Border#root">
-                      <Setter Property="Background" Value="{DynamicResource HighlightBrush}" />
-                    </Style>
-                    <Style Selector="MenuItem /template/ Border#root">
-                      <Setter Property="CornerRadius" Value="5" />
                     </Style>
                     <Style Selector="ListBoxItem">
                       <Setter Property="Padding" Value="0"/>
                       <Setter Property="Margin" Value="0"/>
                       <Setter Property="BorderThickness" Value="0"/>
-                    </Style>                
-                    <Style Selector="TextBlock">                      
-                      <Setter Property="VerticalAlignment" Value="Center"/>                      
                     </Style>
                   </ListBox.Styles>
-                  <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                      <StackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                  </ListBox.ItemsPanel>
                   <ListBox.ItemTemplate>
-                    <DataTemplate>
-                      <Button Command="{Binding Provider.SetPath}" CommandParameter="{Binding FullPath}">
-                        <StackPanel Orientation="Horizontal">
-                          <TextBlock Text="{Binding Name}"/>
-                          <Menu>
-                            <MenuItem Name="topLevelMenu" Items="{Binding Children}">
-                              <MenuItem.Header>
-                                <DrawingPresenter Name="arrowDrawing" MaxHeight="16" MaxWidth="16">
-                                  <DrawingPresenter.Drawing>
-                                    <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M13.25,10L6.109,2.58c-0.268-0.27-0.268-0.707,0-0.979c0.268-0.27,0.701-0.27,0.969,0l7.83,7.908  c0.268,0.271,0.268,0.709,0,0.979l-7.83,7.908c-0.268,0.271-0.701,0.27-0.969,0c-0.268-0.269-0.268-0.707,0-0.979L13.25,10z"/>
-                                  </DrawingPresenter.Drawing>
-                                  <i:Interaction.Behaviors>
-                                    <ia:DataTriggerBehavior Binding="{Binding #topLevelMenu.IsSubMenuOpen}" ComparisonCondition="Equal" Value="True">
-                                      <ia:ChangePropertyAction TargetObject="{Binding #arrowDrawing}" PropertyName="Drawing">
-                                        <ia:ChangePropertyAction.Value>
-                                          <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M4.71967,8.96967 C5.01256,8.67678 5.48744,8.67678 5.78033,8.96967 L12.0000025,15.1893 L18.2197,8.96967 C18.5126,8.67678 18.9874,8.67678 19.2803,8.96967 C19.5732,9.26256 19.5732,9.73744 19.2803,10.0303 L12.5303,16.7803 C12.2374,17.0732 11.7626,17.0732 11.4697,16.7803 L4.71967,10.0303 C4.42678,9.73744 4.42678,9.26256 4.71967,8.96967 Z"/>
-                                        </ia:ChangePropertyAction.Value>
-                                      </ia:ChangePropertyAction>
-                                    </ia:DataTriggerBehavior>
-                                    <ia:DataTriggerBehavior Binding="{Binding #topLevelMenu.IsSubMenuOpen}" ComparisonCondition="Equal" Value="False">
-                                    <ia:ChangePropertyAction TargetObject="{Binding #arrowDrawing}" PropertyName="Drawing">
-                                      <ia:ChangePropertyAction.Value>
-                                        <GeometryDrawing Brush="{DynamicResource ThemeForegroundBrush}" Geometry="M13.25,10L6.109,2.58c-0.268-0.27-0.268-0.707,0-0.979c0.268-0.27,0.701-0.27,0.969,0l7.83,7.908  c0.268,0.271,0.268,0.709,0,0.979l-7.83,7.908c-0.268,0.271-0.701,0.27-0.969,0c-0.268-0.269-0.268-0.707,0-0.979L13.25,10z"/>
-                                      </ia:ChangePropertyAction.Value>
-                                    </ia:ChangePropertyAction>
-                                    </ia:DataTriggerBehavior>
-                                  </i:Interaction.Behaviors>
-                                </DrawingPresenter>
-
-                              </MenuItem.Header>
-                              <MenuItem.Styles>
-                                <Style Selector="MenuItem">
-                                  <Setter Property="Header" Value="{Binding Name}"/>
-                                  <Setter Property="Command" Value="{Binding Provider.SetPath}"/>
-                                  <Setter Property="CommandParameter" Value="{Binding FullPath}"/>
-                                </Style>
-                              </MenuItem.Styles>
-                            </MenuItem>
-                          </Menu>
-                        </StackPanel>
-                      </Button>
+                    <DataTemplate DataType="interfaces:IFolderViewModel">
+                      <views:FolderView DataContext="{Binding}" />
                     </DataTemplate>
-                  </ListBox.ItemTemplate>                
-                </ListBox>              
+                  </ListBox.ItemTemplate>
+                </ListBox>                
                 <Button Grid.Column="2"
                         Command="{Binding Open}"
                         HorizontalAlignment="Stretch"

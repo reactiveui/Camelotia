@@ -68,25 +68,25 @@ namespace Camelotia.Presentation.DesignTime
         public IEnumerable<IFolderViewModel> BreadCrumbs { get; } = new List<IFolderViewModel>
         {
             new DesignTimeFolderViewModel 
-            {
-                Name = "home", 
-                Children = new[] 
+            (
+                name: "home", 
+                children: new[] 
                 { 
-                    new DesignTimeFolderViewModel { Name = "home" }, 
-                    new DesignTimeFolderViewModel { Name = "home1" }, 
-                    new DesignTimeFolderViewModel { Name = "home2" } 
+                    new DesignTimeFolderViewModel(name: "home"),
+                    new DesignTimeFolderViewModel(name: "home1"), 
+                    new DesignTimeFolderViewModel(name: "home2") 
                 }
-            },
-            new DesignTimeFolderViewModel 
-            {
-                Name = "files", 
-                Children = new[] 
-                { 
-                    new DesignTimeFolderViewModel { Name = "files" }, 
-                    new DesignTimeFolderViewModel { Name = "files1" }, 
-                    new DesignTimeFolderViewModel { Name = "files2" } 
+            ),
+            new DesignTimeFolderViewModel
+            (
+                name: "files",
+                children: new[]
+                {
+                    new DesignTimeFolderViewModel(name: "files"),
+                    new DesignTimeFolderViewModel(name: "files1"),
+                    new DesignTimeFolderViewModel(name: "files2")
                 }
-            }
+            )
         };
 
         public string Description { get; } = "Mock file system.";

@@ -33,4 +33,20 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Views\FolderView.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\FolderView.xaml.cs">
+      <DependentUpon>FolderView.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Views\FolderView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>
