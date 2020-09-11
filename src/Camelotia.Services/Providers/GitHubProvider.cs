@@ -74,13 +74,8 @@ namespace Camelotia.Services.Providers
         public async Task<IEnumerable<FileModel>> Get(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
-            {
-                var request = new RepositoryRequest
-                {
-                    Type = RepositoryType.Owner,
-                    Sort = RepositorySort.Updated
-                };
-                var repositories = await _gitHub.Repository.GetAllForCurrent(request).ConfigureAwait(false);
+            {                
+                var repositories = await GetRepositories().ConfigureAwait(false);
                 return repositories.Select(repo => new FileModel
                 {
                     IsFolder = true,
@@ -92,9 +87,7 @@ namespace Camelotia.Services.Providers
             }
 
             var details = GetRepositoryNameAndFilePath(path);
-            var contents = await _gitHub.Repository.Content
-                .GetAllContents(_currentUserName, details.Repository, details.Path)
-                .ConfigureAwait(false);
+            var contents = await GetRepositoryContents(details.Repository, details.Path).ConfigureAwait(false);
 
             return contents.Select(file => new FileModel
             {
@@ -105,7 +98,34 @@ namespace Camelotia.Services.Providers
             });
         }
 
-        public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => throw new NotImplementedException();
+        public async Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path)
+        {            
+            var folderModels = new List<FolderModel>();
+            var repositories = await GetRepositories().ConfigureAwait(false);
+            var rootModel = new FolderModel("", "\\", repositories.Select(repo => new FolderModel(repo.Name, repo.Name)));
+            folderModels.Add(rootModel);
+
+            var details = GetRepositoryNameAndFilePath(path);
+            if (!string.IsNullOrEmpty(details.Repository))
+            {                
+                var pathParts = details.Path.Split(new string[] { details.Separator }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                pathParts.Insert(0, details.Separator);
+                for (int i = 0; i < pathParts.Count; i++)
+                {
+                    var subPath = pathParts[i];
+                    var relativePath = Path.Combine(pathParts.Take(i+1).ToArray());
+                    var contents = await GetRepositoryContents(details.Repository, relativePath).ConfigureAwait(false);
+                    var folderModel = new FolderModel(
+                        details.Repository + relativePath,
+                        subPath == details.Separator ? details.Repository : subPath,
+                        contents
+                            .Where(content => content.Type == "dir")
+                            .Select(content => new FolderModel(details.Repository + relativePath + details.Separator + content.Name, content.Name)));
+                    folderModels.Add(folderModel);
+                }
+            }
+            return folderModels;
+        }
 
         public async Task DownloadFile(string from, Stream to)
         {
@@ -130,6 +150,21 @@ namespace Camelotia.Services.Providers
         public Task UploadFile(string to, Stream from, string name) => throw new NotImplementedException();
 
         public Task Delete(string path, bool isFolder) => throw new NotImplementedException();
+
+        private Task<IReadOnlyList<Repository>> GetRepositories()
+        {
+            var request = new RepositoryRequest
+            {
+                Type = RepositoryType.Owner,
+                Sort = RepositorySort.Updated
+            };
+            return _gitHub.Repository.GetAllForCurrent(request);
+        }
+
+        private Task<IReadOnlyList<RepositoryContent>> GetRepositoryContents(string repositoryName, string path)
+        {
+            return _gitHub.Repository.Content.GetAllContents(_currentUserName, repositoryName, path);
+        }
 
         private void EnsureLoggedInIfTokenSaved()
         {
