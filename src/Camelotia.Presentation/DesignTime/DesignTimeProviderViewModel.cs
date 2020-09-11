@@ -61,6 +61,8 @@ namespace Camelotia.Presentation.DesignTime
         
         public bool CanInteract { get; }
 
+        public bool ShowBreadCrumbs { get; } = true;
+
         public int RefreshingIn { get; } = 30;
 
         public string CurrentPath { get; } = "/home/files";
