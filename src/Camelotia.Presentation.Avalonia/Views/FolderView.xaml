@@ -49,6 +49,7 @@
                   <Setter Property="Header" Value="{Binding Name}"/>
                   <Setter Property="Command" Value="{Binding Provider.SetPath}"/>
                   <Setter Property="CommandParameter" Value="{Binding FullPath}"/>
+                  <Setter Property="ToolTip.Tip" Value="{Binding FullPath}"/>
                 </Style>
               </MenuItem.Styles>
             </MenuItem>
