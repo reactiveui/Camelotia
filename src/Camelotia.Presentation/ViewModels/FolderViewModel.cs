@@ -12,13 +12,11 @@ namespace Camelotia.Presentation.ViewModels
     {
         private readonly FolderModel _folder;
 
-        private readonly IEnumerable<IFolderViewModel> _children;
-
         public FolderViewModel(IProviderViewModel provider, FolderModel folder)
         {
             Provider = provider;
             _folder = folder;
-            _children = (folder.Children != null && folder.Children.Any())
+            Children = (folder.Children != null && folder.Children.Any())
                 ? folder.Children.Select(f => new FolderViewModel(provider, f))
                 : Enumerable.Empty<IFolderViewModel>();
         }
@@ -28,7 +26,8 @@ namespace Camelotia.Presentation.ViewModels
         public string Name => _folder.Name;
 
         public string FullPath => _folder.FullPath;
-        public IEnumerable<IFolderViewModel> Children => _children;
+
+        public IEnumerable<IFolderViewModel> Children { get; }
 
         public override bool Equals(object obj)
         {
