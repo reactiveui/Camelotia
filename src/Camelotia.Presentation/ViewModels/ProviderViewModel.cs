@@ -109,12 +109,13 @@ namespace Camelotia.Presentation.ViewModels
                 );
 
             _getBreadCrumbs
+                .Where(items => items != null && items.Any())
                 .Select(items => items.Select(folder => folderFactory(folder, this)))
                 .ToPropertyEx(this, x => x.BreadCrumbs);
 
             _getBreadCrumbs.ThrownExceptions                
                 .Select(exception => false)
-                .Merge(_getBreadCrumbs.Select(_ => true))
+                .Merge(_getBreadCrumbs.Select(items => items != null && items.Any()))
                 .ObserveOn(RxApp.MainThreadScheduler)                
                 .ToPropertyEx(this, x => x.ShowBreadCrumbs);
 
