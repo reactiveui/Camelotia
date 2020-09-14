@@ -6,25 +6,44 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
-    d:DataContext="{d:DesignInstance Type=designTime:DesignTimeFolderViewModel, IsDesignTimeCreatable=True}"
-    d:Background="#FF9FA8DA"
+    d:DataContext="{d:DesignInstance Type=designTime:DesignTimeFolderViewModel, IsDesignTimeCreatable=True}"    
     d:Height="40"
     mc:Ignorable="d" >
     <Grid>
-        <Button BorderThickness="0" Background="Transparent" Command="{Binding Provider.SetPath}" CommandParameter="{Binding FullPath}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0">
-            <DockPanel Background="Transparent" Margin="0">
-                <Menu DockPanel.Dock="Right" Background="Transparent">
-                    <MenuItem x:Name="TopLevelMenu" ItemsSource="{Binding Children}" Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type Menu}}}" Padding="0">
+        <Button BorderThickness="0" 
+                Background="Transparent" 
+                Command="{Binding Provider.SetPath}" 
+                CommandParameter="{Binding FullPath}" 
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch" 
+                Padding="0">
+            <DockPanel Background="Transparent" 
+                       Margin="0">
+                <Menu DockPanel.Dock="Right" 
+                      Background="Transparent">
+                    <MenuItem x:Name="TopLevelMenu" 
+                              ItemsSource="{Binding Children}" 
+                              Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type Menu}}}" 
+                              Padding="0" 
+                              Background="Transparent">
                         <MenuItem.Header>
                             <Grid>
-                                <materialDesign:PackIcon x:Name="ChevronRightIcon" Kind="ChevronRight" Foreground="{StaticResource IdealForegroundColorBrush}" VerticalAlignment="Stretch"/>
-                                <materialDesign:PackIcon x:Name="ChevronDownIcon" Kind="ChevronDown" Foreground="{StaticResource IdealForegroundColorBrush}" VerticalAlignment="Stretch"  Visibility="Collapsed"/>
+                                <materialDesign:PackIcon x:Name="ChevronRightIcon" 
+                                                         Kind="ChevronRight" 
+                                                         Foreground="{StaticResource IdealForegroundColorBrush}" 
+                                                         VerticalAlignment="Stretch"/>
+                                <materialDesign:PackIcon x:Name="ChevronDownIcon" 
+                                                         Kind="ChevronDown" 
+                                                         Foreground="{StaticResource IdealForegroundColorBrush}" 
+                                                         VerticalAlignment="Stretch" 
+                                                         Visibility="Collapsed"/>
                             </Grid>
                         </MenuItem.Header>
                         <MenuItem.Resources>
                             <Style TargetType="MenuItem">
                                 <Setter Property="Header" Value="{Binding Name}"/>
-                                <Setter Property="Background" Value="{StaticResource PrimaryHueLightBrush}"/>
+                                <Setter Property="Padding" Value="3"/>
+                                <Setter Property="Background" Value="{StaticResource PrimaryHueDarkBrush}"/>
                                 <Setter Property="Foreground" Value="{StaticResource IdealForegroundColorBrush}"/>
                                 <Setter Property="Command" Value="{Binding Provider.SetPath}"/>
                                 <Setter Property="CommandParameter" Value="{Binding FullPath}"/>
@@ -33,7 +52,12 @@
                         </MenuItem.Resources>
                     </MenuItem>
                 </Menu>
-                <TextBlock Background="Transparent" Foreground="{StaticResource IdealForegroundColorBrush}" Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3,0"/>
+                <TextBlock Background="Transparent" 
+                           Foreground="{StaticResource IdealForegroundColorBrush}" 
+                           Text="{Binding Name}" 
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center" 
+                           Margin="3,0"/>
             </DockPanel>
         </Button>
     </Grid>

@@ -41,7 +41,7 @@
                     </DataTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="Background" Value="{StaticResource PrimaryHueLightBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
         </Style>        
     </UserControl.Resources>
     <Grid>
