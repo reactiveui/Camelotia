@@ -5,12 +5,45 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
     xmlns:views="clr-namespace:Camelotia.Presentation.Wpf.Views"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     d:DataContext="{d:DesignInstance Type=designTime:DesignTimeProviderViewModel, IsDesignTimeCreatable=True}"
     d:Background="White"
     d:DesignWidth="500"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="BreadCrumbStyle" TargetType="ListBox">
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="Margin" Value="3"/>            
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                        
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="BorderThickness" Value="0"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate DataType="{x:Type interfaces:IFolderViewModel}">
+                        <views:FolderView DataContext="{Binding}" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>        
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
@@ -31,11 +64,16 @@
                     Style="{StaticResource MaterialDesignToolButton}"
                     Foreground="White"
                     Margin="10 0" />
-            <TextBlock Grid.Column="1"
-                       Text="{Binding CurrentPath}"
+            <TextBlock x:Name="PathTextBlock"
+                       Grid.Column="1"
+                       Text="{Binding CurrentPath}"                       
                        VerticalAlignment="Center"
                        Foreground="White"
                        Margin="10 0" />
+            <ListBox x:Name="BreadCrumbsListBox"
+                     Grid.Column="1"
+                     ItemsSource="{Binding BreadCrumbs}"
+                     Style="{StaticResource BreadCrumbStyle}"/>
             <Button Grid.Column="2"
                     Command="{Binding Open}"
                     HorizontalAlignment="Stretch"

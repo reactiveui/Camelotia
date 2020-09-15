@@ -29,8 +29,8 @@ namespace Camelotia.Presentation.DesignTime
         
         public IFileViewModel SelectedFile { get; set; }
 
-        public IEnumerable<IFileViewModel> Files { get; } 
-        
+        public IEnumerable<IFileViewModel> Files { get; }
+
         public ICommand DownloadSelectedFile { get; }
         
         public ICommand UploadToCurrentPath { get; }
@@ -46,7 +46,9 @@ namespace Camelotia.Presentation.DesignTime
         public ICommand Back { get; }
         
         public ICommand Open { get; }
-        
+
+        public ICommand SetPath { get; }
+
         public bool IsCurrentPathEmpty { get; }
         
         public bool IsLoading { get; }
@@ -59,9 +61,35 @@ namespace Camelotia.Presentation.DesignTime
         
         public bool CanInteract { get; }
 
+        public bool ShowBreadCrumbs { get; } = true;
+
         public int RefreshingIn { get; } = 30;
 
         public string CurrentPath { get; } = "/home/files";
+
+        public IEnumerable<IFolderViewModel> BreadCrumbs { get; } = new List<IFolderViewModel>
+        {
+            new DesignTimeFolderViewModel 
+            (
+                name: "home", 
+                children: new[] 
+                { 
+                    new DesignTimeFolderViewModel(name: "home"),
+                    new DesignTimeFolderViewModel(name: "home1"), 
+                    new DesignTimeFolderViewModel(name: "home2") 
+                }
+            ),
+            new DesignTimeFolderViewModel
+            (
+                name: "files",
+                children: new[]
+                {
+                    new DesignTimeFolderViewModel(name: "files"),
+                    new DesignTimeFolderViewModel(name: "files1"),
+                    new DesignTimeFolderViewModel(name: "files2")
+                }
+            )
+        };
 
         public string Description { get; } = "Mock file system.";
         

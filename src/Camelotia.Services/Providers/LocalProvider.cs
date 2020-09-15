@@ -58,8 +58,7 @@ namespace Camelotia.Services.Providers
                 });
             }
 
-            if (!Directory.Exists(path))
-                throw new ArgumentException("Directory doesn't exist.");
+            if (!Directory.Exists(path)) throw new ArgumentException("Directory doesn't exist.");
 
             return from file in Directory.GetFileSystemEntries(path)
                    let isDirectory = IsDirectory(file)
@@ -72,6 +71,16 @@ namespace Camelotia.Services.Providers
                        Modified = fileInfo.LastWriteTime,
                        Size = isDirectory ? 0 : fileInfo.Length
                    };
+        });
+
+        public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => Task.Run(() =>
+        {
+            if (!Directory.Exists(path)) throw new ArgumentException("Directory doesn't exist.");
+            
+            var folderModels = new List<FolderModel>();
+            return SplitPath(path)
+                   .Select(di => new FolderModel(di.FullName, di.Name, di.GetDirectories().Select(di => new FolderModel(di.FullName, di.Name))))
+                   .Reverse();
         });
 
         public async Task DownloadFile(string from, Stream to)
@@ -140,6 +149,16 @@ namespace Camelotia.Services.Providers
         {
             var attributes = File.GetAttributes(path);
             return attributes.HasFlag(FileAttributes.Directory);
+        }
+
+        private static IEnumerable<DirectoryInfo> SplitPath(string path)
+        {
+            var directoryInfo = new DirectoryInfo(path);
+            while (directoryInfo != null)
+            {
+                yield return directoryInfo;
+                directoryInfo = directoryInfo.Parent;
+            };
         }
     }
 }

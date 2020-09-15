@@ -22,27 +22,30 @@ namespace Camelotia.Presentation.ViewModels
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
     {
         private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
+        private readonly ReactiveCommand<Unit, IEnumerable<FolderModel>> _getBreadCrumbs;
         private readonly ReactiveCommand<Unit, Unit> _downloadSelectedFile;
         private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
         private readonly ReactiveCommand<Unit, Unit> _deleteSelectedFile;
         private readonly ReactiveCommand<Unit, Unit> _unselectFile;
         private readonly ReactiveCommand<Unit, string> _back;
         private readonly ReactiveCommand<Unit, string> _open;
+        private readonly ReactiveCommand<string, string> _setPath;
         private readonly ReactiveCommand<Unit, Unit> _logout;
         private readonly IProvider _provider;
 
         public ProviderViewModel(
             ProviderState state,
-            CreateFolderViewModelFactory createFolder,
-            RenameFileViewModelFactory createRename,
-            FileViewModelFactory createFile,
+            CreateFolderViewModelFactory createFolderFactory,
+            RenameFileViewModelFactory renameFactory,
+            FileViewModelFactory fileFactory,
+            FolderViewModelFactory folderFactory,
             IAuthViewModel auth,
             IFileManager files,
             IProvider provider)
         {
             _provider = provider;
-            Folder = createFolder(this);
-            Rename = createRename(this);
+            Folder = createFolderFactory(this);
+            Rename = renameFactory(this);
             Auth = auth;
 
             var canInteract = this
@@ -59,7 +62,7 @@ namespace Camelotia.Presentation.ViewModels
             
             _refresh.Select(
                     items => items
-                        .Select(file => createFile(file, this))
+                        .Select(file => fileFactory(file, this))
                         .OrderByDescending(file => file.IsFolder)
                         .ThenBy(file => file.Name)
                         .ToList())
@@ -92,11 +95,34 @@ namespace Camelotia.Presentation.ViewModels
                 () => Path.GetDirectoryName(CurrentPath), 
                 canCurrentPathGoBack);
 
+            _setPath = ReactiveCommand.Create<string, string>(path => path);
+
             _open.Merge(_back)
+                .Merge(_setPath)
                 .Select(path => path ?? provider.InitialPath)
                 .DistinctUntilChanged()
                 .Log(this, $"Current path changed in {provider.Name}")
                 .ToPropertyEx(this, x => x.CurrentPath, state.CurrentPath ?? provider.InitialPath);
+
+            _getBreadCrumbs = ReactiveCommand.CreateFromTask(
+                () => provider.GetBreadCrumbs(CurrentPath)
+                );
+
+            _getBreadCrumbs
+                .Where(items => items != null && items.Any())
+                .Select(items => items.Select(folder => folderFactory(folder, this)))
+                .ToPropertyEx(this, x => x.BreadCrumbs);
+
+            _getBreadCrumbs.ThrownExceptions                
+                .Select(exception => false)
+                .Merge(_getBreadCrumbs.Select(items => items != null && items.Any()))
+                .ObserveOn(RxApp.MainThreadScheduler)                
+                .ToPropertyEx(this, x => x.ShowBreadCrumbs);
+
+            this.WhenAnyValue(x => x.CurrentPath, x => x.IsReady)
+                .Where(x => x.Item1 != null && x.Item2)
+                .Select(_ => Unit.Default)                
+                .InvokeCommand(_getBreadCrumbs);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Skip(1)
@@ -183,6 +209,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Merge(_deleteSelectedFile.ThrownExceptions)
                 .Merge(_downloadSelectedFile.ThrownExceptions)
                 .Merge(_refresh.ThrownExceptions)
+                .Merge(_getBreadCrumbs.ThrownExceptions)
                 .Log(this, $"Exception occured in provider {provider.Name}")
                 .Subscribe();
 
@@ -245,7 +272,13 @@ namespace Camelotia.Presentation.ViewModels
         
         [ObservableAsProperty]
         public IEnumerable<IFileViewModel> Files { get; }
-        
+
+        [ObservableAsProperty]
+        public IEnumerable<IFolderViewModel> BreadCrumbs { get; }
+
+        [ObservableAsProperty]
+        public bool ShowBreadCrumbs { get; }
+
         [ObservableAsProperty]
         public string CurrentPath { get; }
 
@@ -297,5 +330,7 @@ namespace Camelotia.Presentation.ViewModels
         public ICommand Back => _back;
 
         public ICommand Open => _open;
+
+        public ICommand SetPath => _setPath;
     }
 }

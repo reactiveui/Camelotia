@@ -203,7 +203,35 @@ namespace Camelotia.Tests.Presentation
             _state.Token.Should().BeNullOrEmpty();
             _state.User.Should().BeNullOrEmpty();
         }
-        
+
+        [Fact]
+        public void BreadCrumbsShouldBeHiddenWhenEmpty()
+        {   
+            _provider.GetBreadCrumbs(Separator).ReturnsForAnyArgs(Enumerable.Empty<FolderModel>());
+
+            var model = BuildProviderViewModel();
+            model.ShowBreadCrumbs.Should().BeFalse();
+            model.BreadCrumbs.Should().BeNullOrEmpty();            
+        }
+
+        [Fact]
+        public void BreadCrumbsShouldBeShownWhenValid()
+        {         
+            var folder = new FolderModel (Separator + "foo", "foo", null);
+            _provider.GetBreadCrumbs(Separator).Returns(Enumerable.Repeat(folder, 1));            
+            _provider.InitialPath.Returns(Separator);
+
+            var model = BuildProviderViewModel();
+
+            model.ShowBreadCrumbs.Should().BeFalse();
+            model.BreadCrumbs.Should().BeNullOrEmpty();            
+            model.Refresh.Execute(null);
+            
+            model.ShowBreadCrumbs.Should().BeTrue();
+            model.BreadCrumbs.Should().NotBeNullOrEmpty();
+            model.BreadCrumbs.Should().HaveCount(1);
+        }
+
         private ProviderViewModel BuildProviderViewModel()
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
@@ -211,6 +239,7 @@ namespace Camelotia.Tests.Presentation
             return new ProviderViewModel(_state,
                 x => _folder, x => _rename, 
                 (x, y) => new FileViewModel(y, x),
+                (x, y) => new FolderViewModel(y, x),
                 _auth, _files, _provider
             );
         }

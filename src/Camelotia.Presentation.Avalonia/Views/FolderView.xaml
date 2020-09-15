@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+             x:Class="Camelotia.Presentation.Avalonia.Views.FolderView"             
+             Background="Transparent">
+    <Design.DataContext>
+        <designTime:DesignTimeFolderViewModel />
+    </Design.DataContext>
+    <UserControl.Styles>      
+      <Style Selector="Button">
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Padding" Value="5,0,0,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Background" Value="Transparent"/>
+      </Style>
+      <Style Selector="Menu">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}"/>
+      </Style>
+      <Style Selector="MenuItem">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="2,0"/>
+      </Style>
+      <Style Selector="MenuItem:pointerover /template/ Border#root">
+        <Setter Property="Background" Value="{DynamicResource HighlightBrush}" />
+      </Style>
+      <Style Selector="MenuItem /template/ Border#root">
+        <Setter Property="CornerRadius" Value="5" />
+      </Style>
+      <Style Selector="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+      </Style>
+    </UserControl.Styles>
+    <Grid>
+      <Button Command="{Binding Provider.SetPath}" CommandParameter="{Binding FullPath}">
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="{Binding Name}"/>
+          <Menu>
+            <MenuItem Name="TopLevelMenu" Items="{Binding Children}">
+              <MenuItem.Header>
+                <Panel>
+                  <DrawingPresenter Name="ArrowRight" MaxHeight="16" MaxWidth="16" Drawing="{DynamicResource ChevronRight}"/>
+                  <DrawingPresenter Name="ArrowDown" MaxHeight="16" MaxWidth="16" Drawing="{DynamicResource ChevronDown}"/>
+                </Panel>
+              </MenuItem.Header>
+              <MenuItem.Styles>
+                <Style Selector="MenuItem">
+                  <Setter Property="Header" Value="{Binding Name}"/>
+                  <Setter Property="Command" Value="{Binding Provider.SetPath}"/>
+                  <Setter Property="CommandParameter" Value="{Binding FullPath}"/>
+                  <Setter Property="ToolTip.Tip" Value="{Binding FullPath}"/>
+                </Style>
+              </MenuItem.Styles>
+            </MenuItem>
+          </Menu>
+        </StackPanel>
+      </Button>
+    </Grid>
+    
+</UserControl>

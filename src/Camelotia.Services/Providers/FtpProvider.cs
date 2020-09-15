@@ -12,6 +12,8 @@ namespace Camelotia.Services.Providers
 {
     public sealed class FtpProvider : IProvider
     {
+        private static readonly string[] pathSeparators = new string[] { "\\", "/" };
+        
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private readonly ProviderParameters _model;
         private Func<FtpClient> _factory;
@@ -71,6 +73,32 @@ namespace Camelotia.Services.Providers
                     Size = file.Size
                 });
             }
+        }
+
+        public async Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path)
+        {
+            var pathParts = new List<string> { "/" }; //Add root path first
+            pathParts.AddRange(path.Split(pathSeparators, StringSplitOptions.RemoveEmptyEntries));
+            var foldermodels = new List<FolderModel>();
+            using (var connection = _factory())
+            {   
+                await connection.ConnectAsync();
+                for (int i = 0; i < pathParts.Count; i++)
+                {
+                    string fullPath = string.Join(pathSeparators[0], pathParts.Take(i+1));                    
+                    string name = pathParts[i];
+                    var listing = await connection.GetListingAsync(fullPath);
+                    var folder = new FolderModel(
+                        fullPath,
+                        name,
+                        listing
+                            .Where(f => f.Type == FtpFileSystemObjectType.Directory)
+                            .Select(f => new FolderModel(f.FullName, f.Name)));
+                    foldermodels.Add(folder);
+                }
+                await connection.DisconnectAsync();
+            }
+            return foldermodels;
         }
 
         public async Task CreateFolder(string path, string name)

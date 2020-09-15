@@ -12,6 +12,8 @@ namespace Camelotia.Services.Providers
 {
     public sealed class SftpProvider : IProvider
     {
+        private static readonly string[] pathSeparators = new string[] { "\\", "/" };
+
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private readonly ProviderParameters _model;
         private Func<SftpClient> _factory;
@@ -91,6 +93,32 @@ namespace Camelotia.Services.Providers
                         Size = file.Length
                     });
             }
+        });
+
+        public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => Task.Run(() =>
+        {
+            var pathParts = new List<string> { "/" }; //Add root path first
+            pathParts.AddRange(path.Split(pathSeparators, StringSplitOptions.RemoveEmptyEntries));
+            var foldermodels = new List<FolderModel>();
+            using (var connection = _factory())
+            {
+                connection.Connect();
+                for (int i = 0; i < pathParts.Count; i++)
+                {
+                    string fullPath = string.Join(pathSeparators[0], pathParts.Take(i + 1));
+                    string name = pathParts[i];
+                    var listing = connection.ListDirectory(fullPath);
+                    var folder = new FolderModel(
+                        fullPath,
+                        name,
+                        listing
+                            .Where(f => f.IsDirectory && f.Name != "." && f.Name != "..")
+                            .Select(f => new FolderModel(f.FullName, f.Name)));
+                    foldermodels.Add(folder);
+                }
+                connection.Disconnect();
+            }
+            return foldermodels.AsEnumerable();
         });
 
         public Task CreateFolder(string path, string name) => Task.Run(() =>

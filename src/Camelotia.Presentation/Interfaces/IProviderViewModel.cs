@@ -18,7 +18,9 @@ namespace Camelotia.Presentation.Interfaces
         IFileViewModel SelectedFile { get; set; }
         
         IEnumerable<IFileViewModel> Files { get; }
-        
+
+        IEnumerable<IFolderViewModel> BreadCrumbs { get; }
+
         ICommand DownloadSelectedFile { get; }
         
         ICommand UploadToCurrentPath { get; }
@@ -34,7 +36,9 @@ namespace Camelotia.Presentation.Interfaces
         ICommand Back { get; }
         
         ICommand Open { get; }
-        
+
+        ICommand SetPath { get; }
+
         bool IsCurrentPathEmpty { get; }
         
         bool IsLoading { get; }
@@ -46,7 +50,9 @@ namespace Camelotia.Presentation.Interfaces
         bool CanLogout { get; }
         
         bool CanInteract { get; }
-        
+
+        bool ShowBreadCrumbs { get; }
+
         int RefreshingIn { get; }
         
         string CurrentPath { get; }
