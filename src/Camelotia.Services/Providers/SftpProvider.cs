@@ -12,27 +12,26 @@ namespace Camelotia.Services.Providers
 {
     public sealed class SftpProvider : IProvider
     {
-        private static readonly string[] pathSeparators = new string[] { "\\", "/" };
+        private static readonly string[] pathSeparators = { "\\", "/" };
 
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
-        private readonly ProviderParameters _model;
         private Func<SftpClient> _factory;
 
         public SftpProvider(ProviderParameters model)
         {
-            _model = model;
+            Parameters = model;
             _isAuthorized.OnNext(false);
         }
 
-        public ProviderParameters Parameters => _model;
+        public ProviderParameters Parameters { get; }
 
         public long? Size => null;
 
-        public Guid Id => _model.Id;
+        public Guid Id => Parameters.Id;
 
-        public string Name => _model.Type.ToString();
+        public string Name => Parameters.Type.ToString();
 
-        public DateTime Created => _model.Created;
+        public DateTime Created => Parameters.Created;
         
         public string InitialPath => Path.DirectorySeparatorChar.ToString();
 
@@ -77,22 +76,22 @@ namespace Camelotia.Services.Providers
         public Task<IEnumerable<FileModel>> Get(string path) => Task.Run(() =>
         {
             path = path.Replace("\\", "/");
-            using (var connection = _factory())
-            {
-                connection.Connect();
-                var contents = connection.ListDirectory(path);
-                connection.Disconnect();
-                return contents
-                    .Where(file => file.Name != "." && file.Name != "..")
-                    .Select(file => new FileModel
-                    {
-                        Name = file.Name,
-                        Path = file.FullName,
-                        IsFolder = file.IsDirectory,
-                        Modified = file.LastWriteTime,
-                        Size = file.Length
-                    });
-            }
+            using var connection = _factory();
+            connection.Connect();
+            var contents = connection.ListDirectory(path);
+            connection.Disconnect();
+            return contents
+                .Where(file => file.Name != "." && file.Name != "..")
+                .Select(file => new FileModel
+                {
+                    Name = file.Name,
+                    Path = file.FullName,
+                    IsFolder = file.IsDirectory,
+                    Modified = file.LastWriteTime,
+                    Size = file.Length
+                })
+                .ToList()
+                .AsEnumerable();
         });
 
         public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => Task.Run(() =>
@@ -100,79 +99,67 @@ namespace Camelotia.Services.Providers
             var pathParts = new List<string> { "/" }; //Add root path first
             pathParts.AddRange(path.Split(pathSeparators, StringSplitOptions.RemoveEmptyEntries));
             var foldermodels = new List<FolderModel>();
-            using (var connection = _factory())
+            using var connection = _factory();
+            connection.Connect();
+            for (var i = 0; i < pathParts.Count; i++)
             {
-                connection.Connect();
-                for (int i = 0; i < pathParts.Count; i++)
-                {
-                    string fullPath = string.Join(pathSeparators[0], pathParts.Take(i + 1));
-                    string name = pathParts[i];
-                    var listing = connection.ListDirectory(fullPath);
-                    var folder = new FolderModel(
-                        fullPath,
-                        name,
-                        listing
-                            .Where(f => f.IsDirectory && f.Name != "." && f.Name != "..")
-                            .Select(f => new FolderModel(f.FullName, f.Name)));
-                    foldermodels.Add(folder);
-                }
-                connection.Disconnect();
+                var fullPath = string.Join(pathSeparators[0], pathParts.Take(i + 1));
+                var name = pathParts[i];
+                var listing = connection.ListDirectory(fullPath);
+                var folder = new FolderModel(
+                    fullPath,
+                    name,
+                    listing
+                        .Where(f => f.IsDirectory && f.Name != "." && f.Name != "..")
+                        .Select(f => new FolderModel(f.FullName, f.Name)));
+                foldermodels.Add(folder);
             }
+            connection.Disconnect();
             return foldermodels.AsEnumerable();
         });
 
         public Task CreateFolder(string path, string name) => Task.Run(() =>
         {
-            using (var connection = _factory())
-            {
-                connection.Connect();
-                var directory = Path.Combine(path, name);
-                connection.CreateDirectory(directory);
-                connection.Disconnect();
-            }
+            using var connection = _factory();
+            connection.Connect();
+            var directory = Path.Combine(path, name);
+            connection.CreateDirectory(directory);
+            connection.Disconnect();
         });
 
         public Task RenameFile(string path, string name) => Task.Run(() =>
         {
-            using (var connection = _factory())
-            {
-                connection.Connect();
-                var directoryName = Path.GetDirectoryName(path);
-                var newName = Path.Combine(directoryName, name);
-                connection.RenameFile(path, newName);
-                connection.Disconnect();
-            }
+            using var connection = _factory();
+            connection.Connect();
+            var directoryName = Path.GetDirectoryName(path);
+            var newName = Path.Combine(directoryName, name);
+            connection.RenameFile(path, newName);
+            connection.Disconnect();
         });
 
         public Task Delete(string path, bool isFolder) => Task.Run(() =>
         {
-            using (var connection = _factory())
-            {
-                connection.Connect();
-                connection.DeleteFile(path);
-                connection.Disconnect();
-            }
+            using var connection = _factory();
+            connection.Connect();
+            connection.DeleteFile(path);
+            connection.Disconnect();
         });
 
         public Task UploadFile(string to, Stream from, string name) => Task.Run(() =>
         {
-            using (var connection = _factory())
-            {
-                connection.Connect();
-                var path = Path.Combine(to, name);
-                connection.UploadFile(from, path);
-                connection.Disconnect();
-            }
+            using var connection = _factory();
+            connection.Connect();
+            var path = Path.Combine(to, name);
+            connection.UploadFile(@from, path);
+            connection.Disconnect();
         });
 
         public Task DownloadFile(string from, Stream to) => Task.Run(() =>
         {
-            using (var connection = _factory())
-            {
-                connection.Connect();
-                connection.DownloadFile(from, to);
-                connection.Disconnect();
-            }
+            using var connection = _factory();
+            connection.Connect();
+            connection.DownloadFile(@from, to);
+            connection.Disconnect();
         });
     }
 }

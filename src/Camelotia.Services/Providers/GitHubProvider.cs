@@ -17,25 +17,24 @@ namespace Camelotia.Services.Providers
         private readonly GitHubClient _gitHub = new GitHubClient(new ProductHeaderValue(GithubApplicationId));
         private readonly ISubject<bool> _isAuthenticated = new ReplaySubject<bool>(1);
         private readonly HttpClient _httpClient = new HttpClient();
-        private readonly ProviderParameters _model;
         private string _currentUserName;
         
         public GitHubProvider(ProviderParameters model)
         {
-            _model = model;
+            Parameters = model;
             _isAuthenticated.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
 
-        public ProviderParameters Parameters => _model;
+        public ProviderParameters Parameters { get; }
 
         public long? Size => null;
 
-        public Guid Id => _model.Id;
+        public Guid Id => Parameters.Id;
 
-        public string Name => _model.Type.ToString();
+        public string Name => Parameters.Type.ToString();
 
-        public DateTime Created => _model.Created;
+        public DateTime Created => Parameters.Created;
 
         public string InitialPath => string.Empty;
 
@@ -58,8 +57,8 @@ namespace Camelotia.Services.Providers
             _currentUserName = login;
             _gitHub.Credentials = new Credentials(login, password);
             await _gitHub.User.Current();
-            _model.Token = password;
-            _model.User = login;
+            Parameters.Token = password;
+            Parameters.User = login;
             _isAuthenticated.OnNext(true);
         }
 
@@ -110,7 +109,7 @@ namespace Camelotia.Services.Providers
             {                
                 var pathParts = details.Path.Split(new string[] { details.Separator }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 pathParts.Insert(0, details.Separator);
-                for (int i = 0; i < pathParts.Count; i++)
+                for (var i = 0; i < pathParts.Count; i++)
                 {
                     var subPath = pathParts[i];
                     var relativePath = Path.Combine(pathParts.Take(i+1).ToArray());
@@ -120,7 +119,9 @@ namespace Camelotia.Services.Providers
                         subPath == details.Separator ? details.Repository : subPath,
                         contents
                             .Where(content => content.Type == "dir")
-                            .Select(content => new FolderModel(details.Repository + relativePath + details.Separator + content.Name, content.Name)));
+                            .Select(content => new FolderModel(
+                                details.Repository + relativePath + details.Separator + content.Name, 
+                                content.Name)));
                     folderModels.Add(folderModel);
                 }
             }
@@ -168,9 +169,9 @@ namespace Camelotia.Services.Providers
 
         private void EnsureLoggedInIfTokenSaved()
         {
-            if (_model?.User == null || _model?.Token == null) return;   
-            _gitHub.Credentials = new Credentials(_model.User, _model.Token);
-            _currentUserName = _model.User;
+            if (Parameters?.User == null || Parameters?.Token == null) return;   
+            _gitHub.Credentials = new Credentials(Parameters.User, Parameters.Token);
+            _currentUserName = Parameters.User;
             _isAuthenticated.OnNext(true);
         }
 
