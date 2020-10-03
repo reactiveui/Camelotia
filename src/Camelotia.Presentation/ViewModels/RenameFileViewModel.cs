@@ -15,10 +15,16 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class RenameFileViewModel : ReactiveValidationObject<RenameFileViewModel>, IRenameFileViewModel
     {
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
+        private readonly ObservableAsPropertyHelper<string> _errorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _isLoading;
+        private readonly ObservableAsPropertyHelper<string> _oldName;
+        
         public RenameFileViewModel(RenameFileState state, IProviderViewModel owner, IProvider provider)
         {
-            owner.WhenAnyValue(x => x.SelectedFile.Name)
-                 .ToPropertyEx(this, x => x.OldName);
+            _oldName = owner
+                .WhenAnyValue(x => x.SelectedFile.Name)
+                .ToProperty(this, x => x.OldName);
             
             this.ValidationRule(x => x.NewName,
                 name => !string.IsNullOrWhiteSpace(name),
@@ -32,7 +38,9 @@ namespace Camelotia.Presentation.ViewModels
                 () => provider.RenameFile(owner.SelectedFile.Path, NewName),
                 this.IsValid());
             
-            Rename.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            _isLoading = Rename
+                .IsExecuting
+                .ToProperty(this, x => x.IsLoading);
 
             var canInteract = owner
                 .WhenAnyValue(x => x.CanInteract)
@@ -61,16 +69,18 @@ namespace Camelotia.Presentation.ViewModels
             Close.Subscribe(x => NewName = string.Empty);
             Rename.InvokeCommand(Close);
             
-            Rename.ThrownExceptions
+            _hasErrorMessage = Rename
+                .ThrownExceptions
                 .Select(exception => true)
                 .Merge(Close.Select(x => false))
-                .ToPropertyEx(this, x => x.HasErrorMessage);
+                .ToProperty(this, x => x.HasErrorMessage);
 
-            Rename.ThrownExceptions
+            _errorMessage = Rename
+                .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Rename file error occured in {provider.Name} for {OldName}")
                 .Merge(Close.Select(x => string.Empty))
-                .ToPropertyEx(this, x => x.ErrorMessage);
+                .ToProperty(this, x => x.ErrorMessage);
 
             NewName = state.NewName;
             this.WhenAnyValue(x => x.NewName)
@@ -83,17 +93,13 @@ namespace Camelotia.Presentation.ViewModels
         [Reactive] 
         public string NewName { get; set; }
 
-        [ObservableAsProperty]
-        public bool HasErrorMessage { get; }
+        public bool HasErrorMessage => _hasErrorMessage.Value;
 
-        [ObservableAsProperty]
-        public string ErrorMessage { get; }
+        public string ErrorMessage => _errorMessage.Value;
 
-        [ObservableAsProperty]
-        public bool IsLoading { get; }
+        public bool IsLoading => _isLoading.Value;
 
-        [ObservableAsProperty]
-        public string OldName { get; }
+        public string OldName => _oldName.Value;
 
         public ReactiveCommand<Unit, Unit> Rename { get; }
 

@@ -15,10 +15,16 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class CreateFolderViewModel : ReactiveValidationObject<CreateFolderViewModel>, ICreateFolderViewModel
     {
+        private readonly ObservableAsPropertyHelper<string> _errorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _isLoading;
+        private readonly ObservableAsPropertyHelper<string> _path;
+        
         public CreateFolderViewModel(CreateFolderState state, IProviderViewModel owner, IProvider provider)
         {
-            owner.WhenAnyValue(x => x.CurrentPath)
-                 .ToPropertyEx(this, x => x.Path);
+            _path = owner
+                .WhenAnyValue(x => x.CurrentPath)
+                .ToProperty(this, x => x.Path);
             
             this.ValidationRule(x => x.Name,
                 name => !string.IsNullOrWhiteSpace(name),
@@ -32,7 +38,8 @@ namespace Camelotia.Presentation.ViewModels
                 () => provider.CreateFolder(Path, Name),
                 this.IsValid());
             
-            Create.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            _isLoading = Create.IsExecuting
+                .ToProperty(this, x => x.IsLoading);
 
             var canInteract = owner
                 .WhenAnyValue(x => x.CanInteract)
@@ -61,16 +68,18 @@ namespace Camelotia.Presentation.ViewModels
             Close.Subscribe(x => Name = string.Empty);
             Create.InvokeCommand(Close);
 
-            Create.ThrownExceptions
+            _hasErrorMessage = Create
+                .ThrownExceptions
                 .Select(exception => true)
                 .Merge(Close.Select(unit => false))
-                .ToPropertyEx(this, x => x.HasErrorMessage);
+                .ToProperty(this, x => x.HasErrorMessage);
 
-            Create.ThrownExceptions
+            _errorMessage = Create
+                .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Create folder error occured in {provider.Name}")
                 .Merge(Close.Select(unit => string.Empty))
-                .ToPropertyEx(this, x => x.ErrorMessage);
+                .ToProperty(this, x => x.ErrorMessage);
 
             Name = state.Name;
             IsVisible = state.IsVisible;
@@ -87,17 +96,13 @@ namespace Camelotia.Presentation.ViewModels
         [Reactive]
         public bool IsVisible { get; set; }
 
-        [ObservableAsProperty]
-        public string ErrorMessage { get; }
+        public string ErrorMessage => _errorMessage.Value;
 
-        [ObservableAsProperty]
-        public bool HasErrorMessage { get; }
+        public bool HasErrorMessage => _hasErrorMessage.Value;
 
-        [ObservableAsProperty]
-        public bool IsLoading { get; }
+        public bool IsLoading => _isLoading.Value;
 
-        [ObservableAsProperty]
-        public string Path { get; }
+        public string Path => _path.Value;
         
         public ReactiveCommand<Unit, Unit> Create { get; }
 

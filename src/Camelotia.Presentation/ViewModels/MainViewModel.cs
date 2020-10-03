@@ -18,17 +18,25 @@ namespace Camelotia.Presentation.ViewModels
     public sealed class MainViewModel : ReactiveObject, IMainViewModel
     {
         private readonly ReadOnlyObservableCollection<IProviderViewModel> _providers;
+        private readonly ObservableAsPropertyHelper<bool> _welcomeScreenCollapsed;
+        private readonly ObservableAsPropertyHelper<bool> _welcomeScreenVisible;
+        private readonly ObservableAsPropertyHelper<bool> _isLoading;
+        private readonly ObservableAsPropertyHelper<bool> _isReady;
         private readonly IProviderFactory _factory;
 
         public MainViewModel(MainState state, IProviderFactory factory, ProviderViewModelFactory createViewModel)
         {
             _factory = factory;
             Refresh = ReactiveCommand.Create(state.Providers.Refresh);
-            Refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
             
-            Refresh.IsExecuting
+            _isLoading = Refresh
+                .IsExecuting
+                .ToProperty(this, x => x.IsLoading);
+            
+            _isReady = Refresh
+                .IsExecuting
                 .Select(executing => !executing)
-                .ToPropertyEx(this, x => x.IsReady);
+                .ToProperty(this, x => x.IsReady);
             
             state.Providers.Connect()
                 .Transform(ps => createViewModel(ps, factory.CreateProvider(ps.Parameters)))
@@ -53,13 +61,15 @@ namespace Camelotia.Presentation.ViewModels
                 () => state.Providers.AddOrUpdate(new ProviderState { Type = SelectedSupportedType }),
                 canAddProvider);
 
-            this.WhenAnyValue(x => x.SelectedProvider)
+            _welcomeScreenVisible = this
+                .WhenAnyValue(x => x.SelectedProvider)
                 .Select(provider => provider == null)
-                .ToPropertyEx(this, x => x.WelcomeScreenVisible);
+                .ToProperty(this, x => x.WelcomeScreenVisible);
 
-            this.WhenAnyValue(x => x.WelcomeScreenVisible)
+            _welcomeScreenCollapsed = this
+                .WhenAnyValue(x => x.WelcomeScreenVisible)
                 .Select(visible => !visible)
-                .ToPropertyEx(this, x => x.WelcomeScreenCollapsed);
+                .ToProperty(this, x => x.WelcomeScreenCollapsed);
 
             var canUnselect = this
                 .WhenAnyValue(x => x.SelectedProvider)
@@ -99,22 +109,6 @@ namespace Camelotia.Presentation.ViewModels
         [Reactive] 
         public IProviderViewModel SelectedProvider { get; set; }
 
-        [ObservableAsProperty]
-        public bool WelcomeScreenCollapsed { get; }
-
-        [ObservableAsProperty]
-        public bool WelcomeScreenVisible { get; }
-
-        [ObservableAsProperty]
-        public bool IsLoading { get; }
-        
-        [ObservableAsProperty]
-        public bool IsReady { get; }
-
-        public ReadOnlyObservableCollection<IProviderViewModel> Providers => _providers;
-
-        public IEnumerable<ProviderType> SupportedTypes => _factory.SupportedTypes;
-
         public ReactiveCommand<Unit, Unit> Unselect { get; }
 
         public ReactiveCommand<Unit, Unit> Refresh { get; }
@@ -122,5 +116,17 @@ namespace Camelotia.Presentation.ViewModels
         public ReactiveCommand<Unit, Unit> Remove { get; }
 
         public ReactiveCommand<Unit, Unit> Add { get; }
+
+        public ReadOnlyObservableCollection<IProviderViewModel> Providers => _providers;
+
+        public IEnumerable<ProviderType> SupportedTypes => _factory.SupportedTypes;
+
+        public bool WelcomeScreenCollapsed => _welcomeScreenCollapsed.Value;
+
+        public bool WelcomeScreenVisible => _welcomeScreenVisible.Value;
+        
+        public bool IsLoading => _isLoading.Value;
+
+        public bool IsReady => _isReady.Value;
     }
 }

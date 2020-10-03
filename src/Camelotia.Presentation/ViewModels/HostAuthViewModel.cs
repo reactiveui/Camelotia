@@ -8,11 +8,16 @@ using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
+using VkNet.Enums;
 
 namespace Camelotia.Presentation.ViewModels
 {
     public sealed class HostAuthViewModel : ReactiveValidationObject<HostAuthViewModel>, IHostAuthViewModel
     {
+        private readonly ObservableAsPropertyHelper<string> _errorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _isBusy;
+        
         public HostAuthViewModel(HostAuthState state, IProvider provider)
         {
             this.ValidationRule(x => x.Username,
@@ -35,17 +40,21 @@ namespace Camelotia.Presentation.ViewModels
                 () => provider.HostAuth(Address, int.Parse(Port), Username, Password),
                 this.IsValid());
 
-            Login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
+            _isBusy = Login
+                .IsExecuting
+                .ToProperty(this, x => x.IsBusy);
             
-            Login.ThrownExceptions
+            _errorMessage = Login
+                .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Host auth error occured in {provider.Name}")
-                .ToPropertyEx(this, x => x.ErrorMessage);
+                .ToProperty(this, x => x.ErrorMessage);
 
-            Login.ThrownExceptions
+            _hasErrorMessage = Login
+                .ThrownExceptions
                 .Select(exception => true)
                 .Merge(Login.Select(unit => false))
-                .ToPropertyEx(this, x => x.HasErrorMessage);
+                .ToProperty(this, x => x.HasErrorMessage);
 
             Username = state.Username;
             Password = state.Password;
@@ -73,15 +82,12 @@ namespace Camelotia.Presentation.ViewModels
         
         [Reactive] 
         public string Password { get; set; }
-        
-        [ObservableAsProperty]
-        public string ErrorMessage { get; }
-        
-        [ObservableAsProperty]
-        public bool HasErrorMessage { get; }
 
-        [ObservableAsProperty]
-        public bool IsBusy { get; }
+        public string ErrorMessage => _errorMessage.Value;
+
+        public bool HasErrorMessage => _hasErrorMessage.Value;
+
+        public bool IsBusy => _isBusy.Value;
         
         public ReactiveCommand<Unit, Unit> Login { get; }
     }

@@ -20,6 +20,17 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
     {
+        private readonly ObservableAsPropertyHelper<IEnumerable<IFolderViewModel>> _breadCrumbs;
+        private readonly ObservableAsPropertyHelper<IEnumerable<IFileViewModel>> _files;
+        private readonly ObservableAsPropertyHelper<bool> _isCurrentPathEmpty;
+        private readonly ObservableAsPropertyHelper<bool> _showBreadCrumbs;
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _hideBreadCrumbs;
+        private readonly ObservableAsPropertyHelper<string> _currentPath;
+        private readonly ObservableAsPropertyHelper<bool> _canInteract;
+        private readonly ObservableAsPropertyHelper<bool> _isLoading;
+        private readonly ObservableAsPropertyHelper<bool> _canLogout;
+        private readonly ObservableAsPropertyHelper<bool> _isReady;
         private readonly IProvider _provider;
 
         public ProviderViewModel(
@@ -43,27 +54,32 @@ namespace Camelotia.Presentation.ViewModels
                     x => x.Rename.IsVisible,
                     (folder, rename) => !folder && !rename);
 
-            canInteract.ToPropertyEx(this, x => x.CanInteract);
+            _canInteract = canInteract
+                .ToProperty(this, x => x.CanInteract);
             
             Refresh = ReactiveCommand.CreateFromTask(
                 () => provider.Get(CurrentPath),
                 canInteract);
             
-            Refresh.Select(
+            _files = Refresh
+                .Select(
                     items => items
                         .Select(file => fileFactory(file, this))
                         .OrderByDescending(file => file.IsFolder)
                         .ThenBy(file => file.Name)
                         .ToList())
                 .Where(items => Files == null || !items.SequenceEqual(Files))
-                .ToPropertyEx(this, x => x.Files);
+                .ToProperty(this, x => x.Files);
 
-            Refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            _isLoading = Refresh
+                .IsExecuting
+                .ToProperty(this, x => x.IsLoading);
             
-            Refresh.IsExecuting
+            _isReady = Refresh
+                .IsExecuting
                 .Skip(1)
                 .Select(executing => !executing)
-                .ToPropertyEx(this, x => x.IsReady);
+                .ToProperty(this, x => x.IsReady);
 
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
@@ -86,30 +102,33 @@ namespace Camelotia.Presentation.ViewModels
 
             SetPath = ReactiveCommand.Create<string, string>(path => path);
 
-            Open.Merge(Back)
+            _currentPath = Open
+                .Merge(Back)
                 .Merge(SetPath)
                 .Select(path => path ?? provider.InitialPath)
                 .DistinctUntilChanged()
                 .Log(this, $"Current path changed in {provider.Name}")
-                .ToPropertyEx(this, x => x.CurrentPath, state.CurrentPath ?? provider.InitialPath);
+                .ToProperty(this, x => x.CurrentPath, state.CurrentPath ?? provider.InitialPath);
 
             var getBreadCrumbs = ReactiveCommand.CreateFromTask(
                 () => provider.GetBreadCrumbs(CurrentPath));
 
-            getBreadCrumbs
+            _breadCrumbs = getBreadCrumbs
                 .Where(items => items != null && items.Any())
                 .Select(items => items.Select(folder => folderFactory(folder, this)))
-                .ToPropertyEx(this, x => x.BreadCrumbs);
+                .ToProperty(this, x => x.BreadCrumbs);
 
-            getBreadCrumbs.ThrownExceptions
+            _showBreadCrumbs = getBreadCrumbs
+                .ThrownExceptions
                 .Select(exception => false)
                 .Merge(getBreadCrumbs.Select(items => items != null && items.Any()))
                 .ObserveOn(RxApp.MainThreadScheduler)                
-                .ToPropertyEx(this, x => x.ShowBreadCrumbs);
+                .ToProperty(this, x => x.ShowBreadCrumbs);
 
-            this.WhenAnyValue(x => x.ShowBreadCrumbs)
+            _hideBreadCrumbs = this
+                .WhenAnyValue(x => x.ShowBreadCrumbs)
                 .Select(show => !show)
-                .ToPropertyEx(this, x => x.HideBreadCrumbs);
+                .ToProperty(this, x => x.HideBreadCrumbs);
 
             this.WhenAnyValue(x => x.CurrentPath, x => x.IsReady)
                 .Where(x => x.Item1 != null && x.Item2)
@@ -124,17 +143,19 @@ namespace Camelotia.Presentation.ViewModels
             this.WhenAnyValue(x => x.CurrentPath)
                 .Subscribe(path => SelectedFile = null);
 
-            this.WhenAnyValue(x => x.Files)
+            _isCurrentPathEmpty = this
+                .WhenAnyValue(x => x.Files)
                 .Skip(1)
                 .Where(items => items != null)
                 .Select(items => !items.Any())
-                .ToPropertyEx(this, x => x.IsCurrentPathEmpty);
+                .ToProperty(this, x => x.IsCurrentPathEmpty);
 
-            Refresh.ThrownExceptions
+            _hasErrorMessage = Refresh
+                .ThrownExceptions
                 .Select(exception => true)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Merge(Refresh.Select(x => false))
-                .ToPropertyEx(this, x => x.HasErrorMessage);
+                .ToProperty(this, x => x.HasErrorMessage);
 
             var canUploadToCurrentPath = this
                 .WhenAnyValue(x => x.CurrentPath)
@@ -175,7 +196,9 @@ namespace Camelotia.Presentation.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler);
 
             Logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
-            canLogout.ToPropertyEx(this, x => x.CanLogout);
+            
+            _canLogout = canLogout
+                .ToProperty(this, x => x.CanLogout);
 
             var canDeleteSelection = this
                 .WhenAnyValue(x => x.SelectedFile)
@@ -259,38 +282,27 @@ namespace Camelotia.Presentation.ViewModels
         [Reactive]
         public IFileViewModel SelectedFile { get; set; }
 
-        [ObservableAsProperty]
-        public bool IsCurrentPathEmpty { get; }
-        
-        [ObservableAsProperty]
-        public IEnumerable<IFileViewModel> Files { get; }
+        public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
 
-        [ObservableAsProperty]
-        public IEnumerable<IFolderViewModel> BreadCrumbs { get; }
+        public IEnumerable<IFileViewModel> Files => _files.Value;
 
-        [ObservableAsProperty]
-        public bool ShowBreadCrumbs { get; }
-        
-        [ObservableAsProperty]
-        public bool HideBreadCrumbs { get; }
+        public IEnumerable<IFolderViewModel> BreadCrumbs => _breadCrumbs.Value;
 
-        [ObservableAsProperty]
-        public string CurrentPath { get; }
+        public bool ShowBreadCrumbs => _showBreadCrumbs.Value;
 
-        [ObservableAsProperty]
-        public bool CanLogout { get; }
-        
-        [ObservableAsProperty]
-        public bool IsLoading { get; }
+        public bool HideBreadCrumbs => _hideBreadCrumbs.Value;
 
-        [ObservableAsProperty]
-        public bool HasErrorMessage { get; }
+        public string CurrentPath => _currentPath?.Value;
 
-        [ObservableAsProperty]
-        public bool IsReady { get; }
-        
-        [ObservableAsProperty]
-        public bool CanInteract { get; }
+        public bool CanLogout => _canLogout.Value;
+
+        public bool IsLoading => _isLoading.Value;
+
+        public bool HasErrorMessage => _hasErrorMessage.Value;
+
+        public bool IsReady => _isReady.Value;
+
+        public bool CanInteract => _canInteract?.Value ?? false;
 
         public IAuthViewModel Auth { get; }
         
