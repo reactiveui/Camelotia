@@ -64,6 +64,8 @@ namespace Camelotia.Presentation.DesignTime
 
         public bool ShowBreadCrumbs { get; } = true;
 
+        public bool HideBreadCrumbs { get; } = false;
+
         public int RefreshingIn { get; } = 30;
 
         public string CurrentPath { get; } = "/home/files";
@@ -72,22 +74,22 @@ namespace Camelotia.Presentation.DesignTime
         {
             new DesignTimeFolderViewModel 
             (
-                name: "home", 
-                children: new[] 
+                "home", 
+                new[] 
                 { 
-                    new DesignTimeFolderViewModel(name: "home"),
-                    new DesignTimeFolderViewModel(name: "home1"), 
-                    new DesignTimeFolderViewModel(name: "home2") 
+                    new DesignTimeFolderViewModel("home"),
+                    new DesignTimeFolderViewModel("home1"), 
+                    new DesignTimeFolderViewModel("home2") 
                 }
             ),
             new DesignTimeFolderViewModel
             (
-                name: "files",
-                children: new[]
+                "files",
+                new[]
                 {
-                    new DesignTimeFolderViewModel(name: "files"),
-                    new DesignTimeFolderViewModel(name: "files1"),
-                    new DesignTimeFolderViewModel(name: "files2")
+                    new DesignTimeFolderViewModel("files"),
+                    new DesignTimeFolderViewModel("files1"),
+                    new DesignTimeFolderViewModel("files2")
                 }
             )
         };

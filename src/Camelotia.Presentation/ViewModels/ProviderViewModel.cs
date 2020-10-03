@@ -107,6 +107,10 @@ namespace Camelotia.Presentation.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler)                
                 .ToPropertyEx(this, x => x.ShowBreadCrumbs);
 
+            this.WhenAnyValue(x => x.ShowBreadCrumbs)
+                .Select(show => !show)
+                .ToPropertyEx(this, x => x.HideBreadCrumbs);
+
             this.WhenAnyValue(x => x.CurrentPath, x => x.IsReady)
                 .Where(x => x.Item1 != null && x.Item2)
                 .Select(_ => Unit.Default)                
@@ -266,6 +270,9 @@ namespace Camelotia.Presentation.ViewModels
 
         [ObservableAsProperty]
         public bool ShowBreadCrumbs { get; }
+        
+        [ObservableAsProperty]
+        public bool HideBreadCrumbs { get; }
 
         [ObservableAsProperty]
         public string CurrentPath { get; }

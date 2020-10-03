@@ -54,6 +54,8 @@ namespace Camelotia.Presentation.Interfaces
         bool CanInteract { get; }
 
         bool ShowBreadCrumbs { get; }
+        
+        bool HideBreadCrumbs { get; }
 
         int RefreshingIn { get; }
         

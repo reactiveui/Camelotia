@@ -58,7 +58,7 @@
                 <DrawingPresenter Height="16" Drawing="{DynamicResource ArrowUp}"/>
               </Button>
                 <TextBlock Grid.Column="1"
-                           IsVisible="{Binding !ShowBreadCrumbs}"
+                           IsVisible="{Binding HideBreadCrumbs}"
                            Text="{Binding CurrentPath}"
                            VerticalAlignment="Center"
                            FontSize="14"

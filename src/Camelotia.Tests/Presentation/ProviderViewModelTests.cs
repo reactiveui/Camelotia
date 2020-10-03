@@ -211,6 +211,7 @@ namespace Camelotia.Tests.Presentation
 
             var model = BuildProviderViewModel();
             model.ShowBreadCrumbs.Should().BeFalse();
+            model.HideBreadCrumbs.Should().BeTrue();
             model.BreadCrumbs.Should().BeNullOrEmpty();            
         }
 
@@ -224,10 +225,12 @@ namespace Camelotia.Tests.Presentation
             var model = BuildProviderViewModel();
 
             model.ShowBreadCrumbs.Should().BeFalse();
+            model.HideBreadCrumbs.Should().BeTrue();
             model.BreadCrumbs.Should().BeNullOrEmpty();            
             model.Refresh.Execute().Subscribe();
             
             model.ShowBreadCrumbs.Should().BeTrue();
+            model.HideBreadCrumbs.Should().BeFalse();
             model.BreadCrumbs.Should().NotBeNullOrEmpty();
             model.BreadCrumbs.Should().HaveCount(1);
         }
