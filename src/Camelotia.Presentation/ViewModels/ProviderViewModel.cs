@@ -239,41 +239,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(authenticated => authenticated ? _provider.Parameters?.User : null)
                 .Subscribe(user => state.User = user);
             
-            this.WhenActivated(disposable =>
-            {
-                this.WhenAnyValue(x => x.Auth.IsAuthenticated)
-                    .Where(authenticated => authenticated)
-                    .Select(ignore => Unit.Default)
-                    .InvokeCommand(Refresh)
-                    .DisposeWith(disposable);
-
-                Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
-                    .Select(unit => RefreshingIn - 1)
-                    .Where(value => value >= 0)
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(x => RefreshingIn = x)
-                    .DisposeWith(disposable);
-
-                this.WhenAnyValue(x => x.RefreshingIn)
-                    .Skip(1)
-                    .Where(refreshing => refreshing == 0)
-                    .Log(this, $"Refreshing provider {provider.Name} path {CurrentPath}")
-                    .Select(value => Unit.Default)
-                    .InvokeCommand(Refresh)
-                    .DisposeWith(disposable);
-
-                Refresh.Select(results => 30)
-                    .StartWith(30)
-                    .Subscribe(x => RefreshingIn = x)
-                    .DisposeWith(disposable);
-
-                this.WhenAnyValue(x => x.CanInteract)
-                    .Skip(1)
-                    .Where(interact => interact)
-                    .Select(x => Unit.Default)
-                    .InvokeCommand(Refresh)
-                    .DisposeWith(disposable);
-            });
+            this.WhenActivated(ActivateAutoRefresh);
         }
 
         [Reactive]
@@ -339,5 +305,41 @@ namespace Camelotia.Presentation.ViewModels
         public ReactiveCommand<Unit, string> Open { get; }
 
         public ReactiveCommand<string, string> SetPath { get; }
+
+        private void ActivateAutoRefresh(CompositeDisposable disposable)
+        {
+            this.WhenAnyValue(x => x.Auth.IsAuthenticated)
+                .Where(authenticated => authenticated)
+                .Select(ignore => Unit.Default)
+                .InvokeCommand(Refresh)
+                .DisposeWith(disposable);
+
+            Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
+                .Select(unit => RefreshingIn - 1)
+                .Where(value => value >= 0)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => RefreshingIn = x)
+                .DisposeWith(disposable);
+
+            this.WhenAnyValue(x => x.RefreshingIn)
+                .Skip(1)
+                .Where(refreshing => refreshing == 0)
+                .Log(this, $"Refreshing provider {_provider.Name} path {CurrentPath}")
+                .Select(value => Unit.Default)
+                .InvokeCommand(Refresh)
+                .DisposeWith(disposable);
+
+            Refresh.Select(results => 30)
+                .StartWith(30)
+                .Subscribe(x => RefreshingIn = x)
+                .DisposeWith(disposable);
+
+            this.WhenAnyValue(x => x.CanInteract)
+                .Skip(1)
+                .Where(interact => interact)
+                .Select(x => Unit.Default)
+                .InvokeCommand(Refresh)
+                .DisposeWith(disposable);
+        }
     }
 }
