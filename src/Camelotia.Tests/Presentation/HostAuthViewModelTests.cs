@@ -6,6 +6,7 @@ using Camelotia.Presentation.ViewModels;
 using Camelotia.Services.Interfaces;
 using FluentAssertions;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using ReactiveUI;
 using Xunit;
 
@@ -20,12 +21,12 @@ namespace Camelotia.Tests.Presentation
         public void LoginCommandShouldStayDisabledUntilInputIsValid()
         {
             var model = BuildHostAuthViewModel();
-            model.Login.CanExecute(null).Should().BeFalse();
+            model.Login.CanExecute().Should().BeFalse();
             model.Address = "10.10.10.10";
             model.Username = "hello";
             model.Password = "world";
             model.Port = "5000";
-            model.Login.CanExecute(null).Should().BeTrue();
+            model.Login.CanExecute().Should().BeTrue();
         }
 
         [Fact]
@@ -40,7 +41,7 @@ namespace Camelotia.Tests.Presentation
             model.Username = "hello";
             model.Password = "world";
             model.Address = "10.10.10.10";
-            model.Login.Execute(null);
+            model.Login.Execute().Subscribe(ok => { }, error => { });
             
             model.HasErrorMessage.Should().BeTrue();
             model.ErrorMessage.Should().Be("example");
@@ -58,7 +59,7 @@ namespace Camelotia.Tests.Presentation
             model.Username = "hello";
             model.Password = "world";
             model.Address = "10.10.10.10";
-            model.Login.Execute(null);
+            model.Login.Execute().Subscribe();
             model.IsBusy.Should().BeTrue();
         }
 
@@ -66,26 +67,26 @@ namespace Camelotia.Tests.Presentation
         public void ShouldTreatNonIntegersAsInvalid()
         {
             var model = BuildHostAuthViewModel();
-            model.Login.CanExecute(null).Should().BeFalse();
+            model.Login.CanExecute().Should().BeFalse();
             
             model.Port = "5000";
             model.Username = "hello";
             model.Password = "world";
             model.Address = "10.10.10.10";
-            model.Login.CanExecute(null).Should().BeTrue();
+            model.Login.CanExecute().Should().BeTrue();
 
             model.Port = "abc";
-            model.Login.CanExecute(null).Should().BeFalse();
+            model.Login.CanExecute().Should().BeFalse();
             
             model.Port = "42";
-            model.Login.CanExecute(null).Should().BeTrue();
+            model.Login.CanExecute().Should().BeTrue();
         }
         
         [Fact]
         public void ShouldUpdateValidationsForProperties()
         {
             var model = BuildHostAuthViewModel();
-            model.Login.CanExecute(null).Should().BeFalse();
+            model.Login.CanExecute().Should().BeFalse();
             model.GetErrors(string.Empty).Should().HaveCount(4);
             model.GetErrors(nameof(model.Username)).Should().NotBeEmpty();
             model.GetErrors(nameof(model.Password)).Should().NotBeEmpty();
@@ -98,7 +99,7 @@ namespace Camelotia.Tests.Presentation
             model.Address = "127.0.0.1";
             model.Port = "5000";
             
-            model.Login.CanExecute(null).Should().BeTrue();
+            model.Login.CanExecute().Should().BeTrue();
             model.GetErrors(string.Empty).Should().BeEmpty();
             model.GetErrors(nameof(model.Username)).Should().BeEmpty();
             model.GetErrors(nameof(model.Password)).Should().BeEmpty();

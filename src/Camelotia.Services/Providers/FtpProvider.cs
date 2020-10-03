@@ -12,29 +12,28 @@ namespace Camelotia.Services.Providers
 {
     public sealed class FtpProvider : IProvider
     {
-        private static readonly string[] pathSeparators = new string[] { "\\", "/" };
+        private static readonly string[] PathSeparators = { "\\", "/" };
         
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
-        private readonly ProviderParameters _model;
         private Func<FtpClient> _factory;
 
         public FtpProvider(ProviderParameters model)
         {
-            _model = model;
+            Parameters = model;
             _isAuthorized.OnNext(false);
         }
 
-        public ProviderParameters Parameters => _model;
+        public ProviderParameters Parameters { get; }
 
         public long? Size => null;
 
-        public Guid Id => _model.Id;
+        public Guid Id => Parameters.Id;
 
         public string InitialPath => "/";
 
-        public string Name => _model.Type.ToString();
+        public string Name => Parameters.Type.ToString();
 
-        public DateTime Created => _model.Created;
+        public DateTime Created => Parameters.Created;
 
         public IObservable<bool> IsAuthorized => _isAuthorized;
 
@@ -59,80 +58,70 @@ namespace Camelotia.Services.Providers
         
         public async Task<IEnumerable<FileModel>> Get(string path)
         {
-            using (var connection = _factory())
+            using var connection = _factory();
+            await connection.ConnectAsync();
+            var files = await connection.GetListingAsync(path);
+            await connection.DisconnectAsync();
+            return files.Select(file => new FileModel
             {
-                await connection.ConnectAsync();
-                var files = await connection.GetListingAsync(path);
-                await connection.DisconnectAsync();
-                return files.Select(file => new FileModel
-                {
-                    IsFolder = file.Type == FtpFileSystemObjectType.Directory,
-                    Modified = file.Modified,
-                    Name = file.Name,
-                    Path = file.FullName,
-                    Size = file.Size
-                });
-            }
+                IsFolder = file.Type == FtpFileSystemObjectType.Directory,
+                Modified = file.Modified,
+                Name = file.Name,
+                Path = file.FullName,
+                Size = file.Size
+            });
         }
 
         public async Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path)
         {
             var pathParts = new List<string> { "/" }; //Add root path first
-            pathParts.AddRange(path.Split(pathSeparators, StringSplitOptions.RemoveEmptyEntries));
+            pathParts.AddRange(path.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries));
             var foldermodels = new List<FolderModel>();
-            using (var connection = _factory())
-            {   
-                await connection.ConnectAsync();
-                for (int i = 0; i < pathParts.Count; i++)
-                {
-                    string fullPath = string.Join(pathSeparators[0], pathParts.Take(i+1));                    
-                    string name = pathParts[i];
-                    var listing = await connection.GetListingAsync(fullPath);
-                    var folder = new FolderModel(
-                        fullPath,
-                        name,
-                        listing
-                            .Where(f => f.Type == FtpFileSystemObjectType.Directory)
-                            .Select(f => new FolderModel(f.FullName, f.Name)));
-                    foldermodels.Add(folder);
-                }
-                await connection.DisconnectAsync();
+            using var connection = _factory();
+            await connection.ConnectAsync();
+            for (var i = 0; i < pathParts.Count; i++)
+            {
+                var fullPath = string.Join(PathSeparators[0], pathParts.Take(i+1));                    
+                var name = pathParts[i];
+                var listing = await connection.GetListingAsync(fullPath);
+                var folder = new FolderModel(
+                    fullPath,
+                    name,
+                    listing
+                        .Where(f => f.Type == FtpFileSystemObjectType.Directory)
+                        .Select(f => new FolderModel(f.FullName, f.Name)));
+                foldermodels.Add(folder);
             }
+            await connection.DisconnectAsync();
             return foldermodels;
         }
 
         public async Task CreateFolder(string path, string name)
         {
-            using (var connection = _factory())
-            {
-                await connection.ConnectAsync();
-                var directory = Path.Combine(path, name);
-                await connection.CreateDirectoryAsync(directory);
-                await connection.DisconnectAsync();
-            }
+            using var connection = _factory();
+            await connection.ConnectAsync();
+            var directory = Path.Combine(path, name);
+            await connection.CreateDirectoryAsync(directory);
+            await connection.DisconnectAsync();
         }
 
         public async Task RenameFile(string path, string name)
         {
-            using (var connection = _factory())
-            {
-                await connection.ConnectAsync();
-                var directoryName = Path.GetDirectoryName(path);
-                var newName = Path.Combine(directoryName, name);
-                await connection.RenameAsync(path, newName);
-                await connection.DisconnectAsync();
-            }
+            using var connection = _factory();
+            await connection.ConnectAsync();
+            var directoryName = Path.GetDirectoryName(path);
+            var newName = Path.Combine(directoryName, name);
+            await connection.RenameAsync(path, newName);
+            await connection.DisconnectAsync();
         }
 
         public async Task Delete(string path, bool isFolder)
         {
-            using (var connection = _factory())
-            {
-                await connection.ConnectAsync();
-                if (isFolder) await connection.DeleteDirectoryAsync(path);
-                else await connection.DeleteFileAsync(path);
-                await connection.DisconnectAsync();
-            }
+            using var connection = _factory();
+            await connection.ConnectAsync();
+            if (isFolder) await connection.DeleteDirectoryAsync(path);
+            else await connection.DeleteFileAsync(path);
+            await connection.DisconnectAsync();
         }
 
         public Task Logout()
@@ -144,23 +133,19 @@ namespace Camelotia.Services.Providers
 
         public async Task UploadFile(string to, Stream from, string name)
         {
-            using (var connection = _factory())
-            {
-                await connection.ConnectAsync();
-                var path = Path.Combine(to, name);
-                await connection.UploadAsync(from, path);
-                await connection.DisconnectAsync();
-            }
+            using var connection = _factory();
+            await connection.ConnectAsync();
+            var path = Path.Combine(to, name);
+            await connection.UploadAsync(@from, path);
+            await connection.DisconnectAsync();
         }
 
         public async Task DownloadFile(string from, Stream to)
         {
-            using (var connection = _factory())
-            {
-                await connection.ConnectAsync();
-                await connection.DownloadAsync(to, from);
-                await connection.DisconnectAsync();
-            }
+            using var connection = _factory();
+            await connection.ConnectAsync();
+            await connection.DownloadAsync(to, @from);
+            await connection.DisconnectAsync();
         }
     }
 }

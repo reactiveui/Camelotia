@@ -16,7 +16,7 @@ namespace Camelotia.Presentation.ViewModels
         {
             Provider = provider;
             _folder = folder;
-            Children = (folder.Children != null && folder.Children.Any())
+            Children = folder.Children != null && folder.Children.Any()
                 ? folder.Children.Select(f => new FolderViewModel(provider, f))
                 : Enumerable.Empty<IFolderViewModel>();
         }
@@ -31,7 +31,7 @@ namespace Camelotia.Presentation.ViewModels
 
         public override bool Equals(object obj)
         {
-            return (obj is FolderViewModel other) &&
+            return obj is FolderViewModel other &&
                 Equals(_folder.Name, other._folder.Name) &&
                 Equals(_folder.FullPath, other._folder.FullPath) &&
                 Equals(Provider, other.Provider);
@@ -41,7 +41,7 @@ namespace Camelotia.Presentation.ViewModels
         {
             unchecked
             {
-                int hashCode = _folder.Name.GetHashCode();
+                var hashCode = _folder.Name.GetHashCode();
                 hashCode = (hashCode * 397) ^ _folder.FullPath.GetHashCode();
                 hashCode = (hashCode * 397) ^ Provider.GetHashCode();
                 return hashCode;

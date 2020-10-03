@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Input;
+using System.Reactive;
 using Camelotia.Presentation.Interfaces;
+using Camelotia.Services.Models;
 using ReactiveUI;
 
 namespace Camelotia.Presentation.DesignTime
@@ -31,23 +32,23 @@ namespace Camelotia.Presentation.DesignTime
 
         public IEnumerable<IFileViewModel> Files { get; }
 
-        public ICommand DownloadSelectedFile { get; }
+        public ReactiveCommand<Unit, Unit> DownloadSelectedFile { get; }
         
-        public ICommand UploadToCurrentPath { get; }
+        public ReactiveCommand<Unit, Unit> UploadToCurrentPath { get; }
         
-        public ICommand DeleteSelectedFile { get; }
+        public ReactiveCommand<Unit, Unit> DeleteSelectedFile { get; }
         
-        public ICommand UnselectFile { get; }
+        public ReactiveCommand<Unit, Unit> UnselectFile { get; }
         
-        public ICommand Refresh { get; }
+        public ReactiveCommand<Unit, IEnumerable<FileModel>> Refresh { get; }
         
-        public ICommand Logout { get; }
+        public ReactiveCommand<Unit, Unit> Logout { get; }
         
-        public ICommand Back { get; }
+        public ReactiveCommand<Unit, string> Back { get; }
         
-        public ICommand Open { get; }
+        public ReactiveCommand<Unit, string> Open { get; }
 
-        public ICommand SetPath { get; }
+        public ReactiveCommand<string, string> SetPath { get; }
 
         public bool IsCurrentPathEmpty { get; }
         
@@ -63,6 +64,8 @@ namespace Camelotia.Presentation.DesignTime
 
         public bool ShowBreadCrumbs { get; } = true;
 
+        public bool HideBreadCrumbs { get; } = false;
+
         public int RefreshingIn { get; } = 30;
 
         public string CurrentPath { get; } = "/home/files";
@@ -71,22 +74,22 @@ namespace Camelotia.Presentation.DesignTime
         {
             new DesignTimeFolderViewModel 
             (
-                name: "home", 
-                children: new[] 
+                "home", 
+                new[] 
                 { 
-                    new DesignTimeFolderViewModel(name: "home"),
-                    new DesignTimeFolderViewModel(name: "home1"), 
-                    new DesignTimeFolderViewModel(name: "home2") 
+                    new DesignTimeFolderViewModel("home"),
+                    new DesignTimeFolderViewModel("home1"), 
+                    new DesignTimeFolderViewModel("home2") 
                 }
             ),
             new DesignTimeFolderViewModel
             (
-                name: "files",
-                children: new[]
+                "files",
+                new[]
                 {
-                    new DesignTimeFolderViewModel(name: "files"),
-                    new DesignTimeFolderViewModel(name: "files1"),
-                    new DesignTimeFolderViewModel(name: "files2")
+                    new DesignTimeFolderViewModel("files"),
+                    new DesignTimeFolderViewModel("files1"),
+                    new DesignTimeFolderViewModel("files2")
                 }
             )
         };

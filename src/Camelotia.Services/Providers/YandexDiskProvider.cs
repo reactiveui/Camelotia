@@ -27,25 +27,24 @@ namespace Camelotia.Services.Providers
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
         private readonly HttpClient _http = new HttpClient();
         private readonly IAuthenticator _authenticator;
-        private readonly ProviderParameters _model;
 
         public YandexDiskProvider(ProviderParameters model, IAuthenticator authenticator)
         {
-            _model = model;
+            Parameters = model;
             _authenticator = authenticator;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
 
-        public ProviderParameters Parameters => _model;
+        public ProviderParameters Parameters { get; }
 
         public long? Size => null;
 
-        public Guid Id => _model.Id;
+        public Guid Id => Parameters.Id;
 
-        public string Name => _model.Type.ToString();
+        public string Name => Parameters.Type.ToString();
 
-        public DateTime Created => _model.Created;
+        public DateTime Created => Parameters.Created;
 
         public IObservable<bool> IsAuthorized => _isAuthorized;
 
@@ -68,21 +67,19 @@ namespace Camelotia.Services.Providers
             var yaPath = path.Replace("\\", "/");
             var encodedPath = WebUtility.UrlEncode(yaPath);
             var pathUrl = ApiGetPathBase + encodedPath;
-            using (var response = await _http.GetAsync(pathUrl).ConfigureAwait(false))
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                response.EnsureSuccessStatusCode();
+            using var response = await _http.GetAsync(pathUrl).ConfigureAwait(false);
+            var json = await response.Content.ReadAsStringAsync();
+            response.EnsureSuccessStatusCode();
 
-                var content = JsonConvert.DeserializeObject<YandexContentResponse>(json);
-                return content.Embedded.Items.Select(file => new FileModel
-                {
-                    Name = file.Name,
-                    IsFolder = file.Type == "dir",
-                    Path = file.Path.Replace("disk:", ""),
-                    Modified = file.Created,
-                    Size = file.Size
-                });
-            }
+            var content = JsonConvert.DeserializeObject<YandexContentResponse>(json);
+            return content.Embedded.Items.Select(file => new FileModel
+            {
+                Name = file.Name,
+                IsFolder = file.Type == "dir",
+                Path = file.Path.Replace("disk:", ""),
+                Modified = file.Created,
+                Size = file.Size
+            });
         }
 
         public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => throw new NotImplementedException();
@@ -92,19 +89,17 @@ namespace Camelotia.Services.Providers
             var yaPath = from.Replace("\\", "/");
             var encodedPath = WebUtility.UrlEncode(yaPath);
             var pathUrl = ApiDownloadFileUrl + encodedPath;
-            using (var response = await _http.GetAsync(pathUrl).ConfigureAwait(false))
-            {
-                response.EnsureSuccessStatusCode();
-                var json = await response.Content.ReadAsStringAsync();
-                var content = JsonConvert.DeserializeObject<YandexFileLoadResponse>(json);
+            using var response = await _http.GetAsync(pathUrl).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync();
+            var content = JsonConvert.DeserializeObject<YandexFileLoadResponse>(json);
                 
-                using (var file = await _http.GetAsync(content.Href).ConfigureAwait(false))
-                using (var stream = await file.Content.ReadAsStreamAsync().ConfigureAwait(false))
-                    await stream.CopyToAsync(to).ConfigureAwait(false);
+            using (var file = await _http.GetAsync(content.Href).ConfigureAwait(false))
+            using (var stream = await file.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                await stream.CopyToAsync(to).ConfigureAwait(false);
 
-                await to.FlushAsync();
-                to.Close();
-            }
+            await to.FlushAsync();
+            to.Close();
         }
 
         public async Task CreateFolder(string path, string name)
@@ -112,8 +107,8 @@ namespace Camelotia.Services.Providers
             var directory = Path.Combine(path, name).Replace("\\", "/");
             var encoded = WebUtility.UrlEncode(directory);
             var pathUrl = ApiGetPathBase + encoded;
-            using (var response = await _http.PutAsync(pathUrl, null).ConfigureAwait(false))
-                response.EnsureSuccessStatusCode();
+            using var response = await _http.PutAsync(pathUrl, null).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
         }
 
         public async Task RenameFile(string path, string name)
@@ -123,8 +118,8 @@ namespace Camelotia.Services.Providers
             var toPath = Path.Combine(directoryName, name);
             
             var pathUrl = $"{ApiMoveFileUrl}?from={fromPath}&path={toPath}";
-            using (var response = await _http.PostAsync(pathUrl, null).ConfigureAwait(false))
-                response.EnsureSuccessStatusCode();
+            using var response = await _http.PostAsync(pathUrl, null).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
         }
 
         public async Task UploadFile(string to, Stream from, string name)
@@ -132,29 +127,27 @@ namespace Camelotia.Services.Providers
             var yaPath = Path.Combine(to, name).Replace("\\", "/");
             var encodedPath = WebUtility.UrlEncode(yaPath);
             var pathUrl = ApiUploadFileUrl + encodedPath;
-            using (var response = await _http.GetAsync(pathUrl).ConfigureAwait(false))
-            {
-                response.EnsureSuccessStatusCode();
-                var json = await response.Content.ReadAsStringAsync();
-                var content = JsonConvert.DeserializeObject<YandexFileLoadResponse>(json);
+            using var response = await _http.GetAsync(pathUrl).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync();
+            var content = JsonConvert.DeserializeObject<YandexFileLoadResponse>(json);
 
-                var httpContent = new StreamContent(from);
-                using (var file = await _http.PutAsync(content.Href, httpContent).ConfigureAwait(false))
-                    file.EnsureSuccessStatusCode();
-            }
+            var httpContent = new StreamContent(@from);
+            using var file = await _http.PutAsync(content.Href, httpContent).ConfigureAwait(false);
+            file.EnsureSuccessStatusCode();
         }
 
         public async Task Delete(string path, bool isFolder)
         {
             var encodedPath = WebUtility.UrlEncode(path);
             var pathUrl = ApiGetPathBase + encodedPath;
-            using (var response = await _http.DeleteAsync(pathUrl).ConfigureAwait(false))
-                response.EnsureSuccessStatusCode();
+            using var response = await _http.DeleteAsync(pathUrl).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
         }
 
         public Task Logout()
         {
-            _model.Token = null;
+            Parameters.Token = null;
             _http.DefaultRequestHeaders.Clear();
             _isAuthorized.OnNext(false);
             return Task.CompletedTask;
@@ -163,14 +156,14 @@ namespace Camelotia.Services.Providers
         public async Task OAuth()
         {
             var token = await GetAuthenticationToken();
-            _model.Token = token;
+            Parameters.Token = token;
             ApplyTokenToHeaders(token);
             _isAuthorized.OnNext(true);
         }
         
         private void EnsureLoggedInIfTokenSaved()
         {
-            var token = _model.Token;
+            var token = Parameters.Token;
             if (string.IsNullOrWhiteSpace(token)) return;
             ApplyTokenToHeaders(token);
             _isAuthorized.OnNext(true);
@@ -201,21 +194,19 @@ namespace Camelotia.Services.Providers
 
         private static async Task<string> GetAuthenticationTokenFromCode(string code)
         {
-            using (var http = new HttpClient())
-            using (var content = new FormUrlEncodedContent(new Dictionary<string, string>
+            using var http = new HttpClient();
+            using var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 ["code"] = code,
                 ["client_id"] = CodeAuthClientId,
                 ["client_secret"] = CodeAuthClientSecret,
                 ["grant_type"] = "authorization_code"
-            }))
-            using (var response = await http.PostAsync(YandexAuthTokenUrl, content).ConfigureAwait(false))
-            {
-                var token = await response.Content.ReadAsStringAsync();
-                var model = JsonConvert.DeserializeObject<YandexTokenAuthResponse>(token);
-                response.EnsureSuccessStatusCode();
-                return model.AccessToken;
-            }
+            });
+            using var response = await http.PostAsync(YandexAuthTokenUrl, content).ConfigureAwait(false);
+            var token = await response.Content.ReadAsStringAsync();
+            var model = JsonConvert.DeserializeObject<YandexTokenAuthResponse>(token);
+            response.EnsureSuccessStatusCode();
+            return model.AccessToken;
         }
 
         private static Uri GetYandexAuthTokenUrl()

@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Input;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
@@ -19,21 +18,25 @@ namespace Camelotia.Presentation.ViewModels
     public sealed class MainViewModel : ReactiveObject, IMainViewModel
     {
         private readonly ReadOnlyObservableCollection<IProviderViewModel> _providers;
-        private readonly ReactiveCommand<Unit, ProviderState> _add;
-        private readonly ReactiveCommand<Unit, Unit> _unselect;
-        private readonly ReactiveCommand<Unit, Unit> _refresh;
-        private readonly ReactiveCommand<Unit, Guid> _remove;
+        private readonly ObservableAsPropertyHelper<bool> _welcomeScreenCollapsed;
+        private readonly ObservableAsPropertyHelper<bool> _welcomeScreenVisible;
+        private readonly ObservableAsPropertyHelper<bool> _isLoading;
+        private readonly ObservableAsPropertyHelper<bool> _isReady;
         private readonly IProviderFactory _factory;
 
         public MainViewModel(MainState state, IProviderFactory factory, ProviderViewModelFactory createViewModel)
         {
             _factory = factory;
-            _refresh = ReactiveCommand.Create(state.Providers.Refresh);
-            _refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            Refresh = ReactiveCommand.Create(state.Providers.Refresh);
             
-            _refresh.IsExecuting
+            _isLoading = Refresh
+                .IsExecuting
+                .ToProperty(this, x => x.IsLoading);
+            
+            _isReady = Refresh
+                .IsExecuting
                 .Select(executing => !executing)
-                .ToPropertyEx(this, x => x.IsReady);
+                .ToProperty(this, x => x.IsReady);
             
             state.Providers.Connect()
                 .Transform(ps => createViewModel(ps, factory.CreateProvider(ps.Parameters)))
@@ -46,33 +49,34 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.SelectedProvider)
                 .Select(provider => provider != null);
             
-            _remove = ReactiveCommand.Create(() => SelectedProvider.Id, canRemove);
-            _remove.Subscribe(state.Providers.RemoveKey);
+            Remove = ReactiveCommand.Create(
+                () => state.Providers.RemoveKey(SelectedProvider.Id), 
+                canRemove);
 
             var canAddProvider = this
                 .WhenAnyValue(x => x.SelectedSupportedType)
                 .Select(type => Enum.IsDefined(typeof(ProviderType), type));
             
-            _add = ReactiveCommand.Create(
-                () => new ProviderState { Type = SelectedSupportedType },
+            Add = ReactiveCommand.Create(
+                () => state.Providers.AddOrUpdate(new ProviderState { Type = SelectedSupportedType }),
                 canAddProvider);
 
-            _add.Subscribe(state.Providers.AddOrUpdate);
-
-            this.WhenAnyValue(x => x.SelectedProvider)
+            _welcomeScreenVisible = this
+                .WhenAnyValue(x => x.SelectedProvider)
                 .Select(provider => provider == null)
-                .ToPropertyEx(this, x => x.WelcomeScreenVisible);
+                .ToProperty(this, x => x.WelcomeScreenVisible);
 
-            this.WhenAnyValue(x => x.WelcomeScreenVisible)
+            _welcomeScreenCollapsed = this
+                .WhenAnyValue(x => x.WelcomeScreenVisible)
                 .Select(visible => !visible)
-                .ToPropertyEx(this, x => x.WelcomeScreenCollapsed);
+                .ToProperty(this, x => x.WelcomeScreenCollapsed);
 
             var canUnselect = this
                 .WhenAnyValue(x => x.SelectedProvider)
                 .Select(provider => provider != null);
 
-            _unselect = ReactiveCommand.Create(() => Unit.Default, canUnselect);
-            _unselect.Subscribe(unit => SelectedProvider = null);
+            Unselect = ReactiveCommand.Create(() => Unit.Default, canUnselect);
+            Unselect.Subscribe(unit => SelectedProvider = null);
             
             var outputCollectionChanges = Providers
                 .ToObservableChangeSet(x => x.Id)
@@ -105,28 +109,24 @@ namespace Camelotia.Presentation.ViewModels
         [Reactive] 
         public IProviderViewModel SelectedProvider { get; set; }
 
-        [ObservableAsProperty]
-        public bool WelcomeScreenCollapsed { get; }
+        public ReactiveCommand<Unit, Unit> Unselect { get; }
 
-        [ObservableAsProperty]
-        public bool WelcomeScreenVisible { get; }
+        public ReactiveCommand<Unit, Unit> Refresh { get; }
 
-        [ObservableAsProperty]
-        public bool IsLoading { get; }
-        
-        [ObservableAsProperty]
-        public bool IsReady { get; }
+        public ReactiveCommand<Unit, Unit> Remove { get; }
+
+        public ReactiveCommand<Unit, Unit> Add { get; }
 
         public ReadOnlyObservableCollection<IProviderViewModel> Providers => _providers;
 
         public IEnumerable<ProviderType> SupportedTypes => _factory.SupportedTypes;
 
-        public ICommand Unselect => _unselect;
+        public bool WelcomeScreenCollapsed => _welcomeScreenCollapsed.Value;
 
-        public ICommand Refresh => _refresh;
+        public bool WelcomeScreenVisible => _welcomeScreenVisible.Value;
+        
+        public bool IsLoading => _isLoading.Value;
 
-        public ICommand Remove => _remove;
-
-        public ICommand Add => _add;
+        public bool IsReady => _isReady.Value;
     }
 }

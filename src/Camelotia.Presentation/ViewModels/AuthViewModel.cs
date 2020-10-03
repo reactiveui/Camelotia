@@ -8,6 +8,8 @@ namespace Camelotia.Presentation.ViewModels
 {
     public sealed class AuthViewModel : ReactiveObject, IAuthViewModel
     {
+        private readonly ObservableAsPropertyHelper<bool> _isAuthenticated;
+        private readonly ObservableAsPropertyHelper<bool> _isAnonymous;
         private readonly IProvider _provider;
         
         public AuthViewModel(
@@ -21,22 +23,22 @@ namespace Camelotia.Presentation.ViewModels
             DirectAuth = direct;
             _provider = provider;
             
-            _provider.IsAuthorized
+            _isAuthenticated = _provider
+                .IsAuthorized
                 .DistinctUntilChanged()
                 .Log(this, $"Authentication state changed for {provider.Name}")
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .ToPropertyEx(this, x => x.IsAuthenticated);
+                .ToProperty(this, x => x.IsAuthenticated);
 
-            this.WhenAnyValue(x => x.IsAuthenticated)
+            _isAnonymous = this
+                .WhenAnyValue(x => x.IsAuthenticated)
                 .Select(authenticated => !authenticated)
-                .ToPropertyEx(this, x => x.IsAnonymous);
+                .ToProperty(this, x => x.IsAnonymous);
         }
 
-        [ObservableAsProperty]
-        public bool IsAuthenticated { get; }
+        public bool IsAnonymous => _isAnonymous.Value;
 
-        [ObservableAsProperty]
-        public bool IsAnonymous { get; }
+        public bool IsAuthenticated => _isAuthenticated.Value;
 
         public bool SupportsDirectAuth => _provider.SupportsDirectAuth;
 

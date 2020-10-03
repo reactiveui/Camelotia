@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Windows.Input;
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -21,16 +20,17 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
     {
-        private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
-        private readonly ReactiveCommand<Unit, IEnumerable<FolderModel>> _getBreadCrumbs;
-        private readonly ReactiveCommand<Unit, Unit> _downloadSelectedFile;
-        private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
-        private readonly ReactiveCommand<Unit, Unit> _deleteSelectedFile;
-        private readonly ReactiveCommand<Unit, Unit> _unselectFile;
-        private readonly ReactiveCommand<Unit, string> _back;
-        private readonly ReactiveCommand<Unit, string> _open;
-        private readonly ReactiveCommand<string, string> _setPath;
-        private readonly ReactiveCommand<Unit, Unit> _logout;
+        private readonly ObservableAsPropertyHelper<IEnumerable<IFolderViewModel>> _breadCrumbs;
+        private readonly ObservableAsPropertyHelper<IEnumerable<IFileViewModel>> _files;
+        private readonly ObservableAsPropertyHelper<bool> _isCurrentPathEmpty;
+        private readonly ObservableAsPropertyHelper<bool> _showBreadCrumbs;
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _hideBreadCrumbs;
+        private readonly ObservableAsPropertyHelper<string> _currentPath;
+        private readonly ObservableAsPropertyHelper<bool> _canInteract;
+        private readonly ObservableAsPropertyHelper<bool> _isLoading;
+        private readonly ObservableAsPropertyHelper<bool> _canLogout;
+        private readonly ObservableAsPropertyHelper<bool> _isReady;
         private readonly IProvider _provider;
 
         public ProviderViewModel(
@@ -54,34 +54,39 @@ namespace Camelotia.Presentation.ViewModels
                     x => x.Rename.IsVisible,
                     (folder, rename) => !folder && !rename);
 
-            canInteract.ToPropertyEx(this, x => x.CanInteract);
+            _canInteract = canInteract
+                .ToProperty(this, x => x.CanInteract);
             
-            _refresh = ReactiveCommand.CreateFromTask(
+            Refresh = ReactiveCommand.CreateFromTask(
                 () => provider.Get(CurrentPath),
                 canInteract);
             
-            _refresh.Select(
+            _files = Refresh
+                .Select(
                     items => items
                         .Select(file => fileFactory(file, this))
                         .OrderByDescending(file => file.IsFolder)
                         .ThenBy(file => file.Name)
                         .ToList())
                 .Where(items => Files == null || !items.SequenceEqual(Files))
-                .ToPropertyEx(this, x => x.Files);
+                .ToProperty(this, x => x.Files);
 
-            _refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            _isLoading = Refresh
+                .IsExecuting
+                .ToProperty(this, x => x.IsLoading);
             
-            _refresh.IsExecuting
+            _isReady = Refresh
+                .IsExecuting
                 .Skip(1)
                 .Select(executing => !executing)
-                .ToPropertyEx(this, x => x.IsReady);
+                .ToProperty(this, x => x.IsReady);
 
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && file.IsFolder)
-                .CombineLatest(_refresh.IsExecuting, canInteract, (folder, busy, ci) => folder && ci && !busy);
+                .CombineLatest(Refresh.IsExecuting, canInteract, (folder, busy, ci) => folder && ci && !busy);
             
-            _open = ReactiveCommand.Create(
+            Open = ReactiveCommand.Create(
                 () => Path.Combine(CurrentPath, SelectedFile.Name),
                 canOpenCurrentPath);
 
@@ -89,67 +94,75 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.CurrentPath)
                 .Where(path => path != null)
                 .Select(path => path.Length > provider.InitialPath.Length)
-                .CombineLatest(_refresh.IsExecuting, canInteract, (valid, busy, ci) => valid && ci && !busy);
+                .CombineLatest(Refresh.IsExecuting, canInteract, (valid, busy, ci) => valid && ci && !busy);
             
-            _back = ReactiveCommand.Create(
+            Back = ReactiveCommand.Create(
                 () => Path.GetDirectoryName(CurrentPath), 
                 canCurrentPathGoBack);
 
-            _setPath = ReactiveCommand.Create<string, string>(path => path);
+            SetPath = ReactiveCommand.Create<string, string>(path => path);
 
-            _open.Merge(_back)
-                .Merge(_setPath)
+            _currentPath = Open
+                .Merge(Back)
+                .Merge(SetPath)
                 .Select(path => path ?? provider.InitialPath)
                 .DistinctUntilChanged()
                 .Log(this, $"Current path changed in {provider.Name}")
-                .ToPropertyEx(this, x => x.CurrentPath, state.CurrentPath ?? provider.InitialPath);
+                .ToProperty(this, x => x.CurrentPath, state.CurrentPath ?? provider.InitialPath);
 
-            _getBreadCrumbs = ReactiveCommand.CreateFromTask(
-                () => provider.GetBreadCrumbs(CurrentPath)
-                );
+            var getBreadCrumbs = ReactiveCommand.CreateFromTask(
+                () => provider.GetBreadCrumbs(CurrentPath));
 
-            _getBreadCrumbs
+            _breadCrumbs = getBreadCrumbs
                 .Where(items => items != null && items.Any())
                 .Select(items => items.Select(folder => folderFactory(folder, this)))
-                .ToPropertyEx(this, x => x.BreadCrumbs);
+                .ToProperty(this, x => x.BreadCrumbs);
 
-            _getBreadCrumbs.ThrownExceptions                
+            _showBreadCrumbs = getBreadCrumbs
+                .ThrownExceptions
                 .Select(exception => false)
-                .Merge(_getBreadCrumbs.Select(items => items != null && items.Any()))
+                .Merge(getBreadCrumbs.Select(items => items != null && items.Any()))
                 .ObserveOn(RxApp.MainThreadScheduler)                
-                .ToPropertyEx(this, x => x.ShowBreadCrumbs);
+                .ToProperty(this, x => x.ShowBreadCrumbs);
+
+            _hideBreadCrumbs = this
+                .WhenAnyValue(x => x.ShowBreadCrumbs)
+                .Select(show => !show)
+                .ToProperty(this, x => x.HideBreadCrumbs);
 
             this.WhenAnyValue(x => x.CurrentPath, x => x.IsReady)
                 .Where(x => x.Item1 != null && x.Item2)
                 .Select(_ => Unit.Default)                
-                .InvokeCommand(_getBreadCrumbs);
+                .InvokeCommand(getBreadCrumbs);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Skip(1)
                 .Select(path => Unit.Default)
-                .InvokeCommand(_refresh);
+                .InvokeCommand(Refresh);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Subscribe(path => SelectedFile = null);
 
-            this.WhenAnyValue(x => x.Files)
+            _isCurrentPathEmpty = this
+                .WhenAnyValue(x => x.Files)
                 .Skip(1)
                 .Where(items => items != null)
                 .Select(items => !items.Any())
-                .ToPropertyEx(this, x => x.IsCurrentPathEmpty);
+                .ToProperty(this, x => x.IsCurrentPathEmpty);
 
-            _refresh.ThrownExceptions
+            _hasErrorMessage = Refresh
+                .ThrownExceptions
                 .Select(exception => true)
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Merge(_refresh.Select(x => false))
-                .ToPropertyEx(this, x => x.HasErrorMessage);
+                .Merge(Refresh.Select(x => false))
+                .ToProperty(this, x => x.HasErrorMessage);
 
             var canUploadToCurrentPath = this
                 .WhenAnyValue(x => x.CurrentPath)
                 .Select(path => path != null)
-                .CombineLatest(_refresh.IsExecuting, canInteract, (up, loading, can) => up && can && !loading);
+                .CombineLatest(Refresh.IsExecuting, canInteract, (up, loading, can) => up && can && !loading);
                 
-            _uploadToCurrentPath = ReactiveCommand.CreateFromObservable(
+            UploadToCurrentPath = ReactiveCommand.CreateFromObservable(
                 () => Observable
                     .FromAsync(files.OpenRead)
                     .Where(response => response.Name != null && response.Stream != null)
@@ -157,14 +170,14 @@ namespace Camelotia.Presentation.ViewModels
                     .SelectMany(task => task.ToObservable()), 
                 canUploadToCurrentPath);
 
-            _uploadToCurrentPath.InvokeCommand(_refresh);
+            UploadToCurrentPath.InvokeCommand(Refresh);
 
             var canDownloadSelectedFile = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && !file.IsFolder)
-                .CombineLatest(_refresh.IsExecuting, canInteract, (down, loading, can) => down && !loading && can);
+                .CombineLatest(Refresh.IsExecuting, canInteract, (down, loading, can) => down && !loading && can);
                 
-            _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
+            DownloadSelectedFile = ReactiveCommand.CreateFromObservable(
                 () => Observable
                     .FromAsync(() => files.OpenWrite(SelectedFile.Name))
                     .Where(stream => stream != null)
@@ -182,34 +195,36 @@ namespace Camelotia.Presentation.ViewModels
                 .CombineLatest(canInteract, (logout, interact) => logout && interact)
                 .ObserveOn(RxApp.MainThreadScheduler);
 
-            _logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
-            canLogout.ToPropertyEx(this, x => x.CanLogout);
+            Logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
+            
+            _canLogout = canLogout
+                .ToProperty(this, x => x.CanLogout);
 
             var canDeleteSelection = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && !file.IsFolder)
-                .CombineLatest(_refresh.IsExecuting, canInteract, (del, loading, ci) => del && !loading && ci);
+                .CombineLatest(Refresh.IsExecuting, canInteract, (del, loading, ci) => del && !loading && ci);
 
-            _deleteSelectedFile = ReactiveCommand.CreateFromTask(
+            DeleteSelectedFile = ReactiveCommand.CreateFromTask(
                 () => provider.Delete(SelectedFile.Path, SelectedFile.IsFolder),
                 canDeleteSelection);
 
-            _deleteSelectedFile.InvokeCommand(Refresh);
+            DeleteSelectedFile.InvokeCommand(Refresh);
 
             var canUnselectFile = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(selection => selection != null)
-                .CombineLatest(_refresh.IsExecuting, canInteract, (sel, loading, ci) => sel && !loading && ci);
+                .CombineLatest(Refresh.IsExecuting, canInteract, (sel, loading, ci) => sel && !loading && ci);
             
-            _unselectFile = ReactiveCommand.Create(
+            UnselectFile = ReactiveCommand.Create(
                 () => { SelectedFile = null; },
                 canUnselectFile);
 
-            _uploadToCurrentPath.ThrownExceptions
-                .Merge(_deleteSelectedFile.ThrownExceptions)
-                .Merge(_downloadSelectedFile.ThrownExceptions)
-                .Merge(_refresh.ThrownExceptions)
-                .Merge(_getBreadCrumbs.ThrownExceptions)
+            UploadToCurrentPath.ThrownExceptions
+                .Merge(DeleteSelectedFile.ThrownExceptions)
+                .Merge(DownloadSelectedFile.ThrownExceptions)
+                .Merge(Refresh.ThrownExceptions)
+                .Merge(getBreadCrumbs.ThrownExceptions)
                 .Log(this, $"Exception occured in provider {provider.Name}")
                 .Subscribe();
 
@@ -224,41 +239,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(authenticated => authenticated ? _provider.Parameters?.User : null)
                 .Subscribe(user => state.User = user);
             
-            this.WhenActivated(disposable =>
-            {
-                this.WhenAnyValue(x => x.Auth.IsAuthenticated)
-                    .Where(authenticated => authenticated)
-                    .Select(ignore => Unit.Default)
-                    .InvokeCommand(_refresh)
-                    .DisposeWith(disposable);
-
-                Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
-                    .Select(unit => RefreshingIn - 1)
-                    .Where(value => value >= 0)
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(x => RefreshingIn = x)
-                    .DisposeWith(disposable);
-
-                this.WhenAnyValue(x => x.RefreshingIn)
-                    .Skip(1)
-                    .Where(refreshing => refreshing == 0)
-                    .Log(this, $"Refreshing provider {provider.Name} path {CurrentPath}")
-                    .Select(value => Unit.Default)
-                    .InvokeCommand(_refresh)
-                    .DisposeWith(disposable);
-
-                _refresh.Select(results => 30)
-                    .StartWith(30)
-                    .Subscribe(x => RefreshingIn = x)
-                    .DisposeWith(disposable);
-
-                this.WhenAnyValue(x => x.CanInteract)
-                    .Skip(1)
-                    .Where(interact => interact)
-                    .Select(x => Unit.Default)
-                    .InvokeCommand(_refresh)
-                    .DisposeWith(disposable);
-            });
+            this.WhenActivated(ActivateAutoRefresh);
         }
 
         [Reactive]
@@ -267,35 +248,27 @@ namespace Camelotia.Presentation.ViewModels
         [Reactive]
         public IFileViewModel SelectedFile { get; set; }
 
-        [ObservableAsProperty]
-        public bool IsCurrentPathEmpty { get; }
-        
-        [ObservableAsProperty]
-        public IEnumerable<IFileViewModel> Files { get; }
+        public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
 
-        [ObservableAsProperty]
-        public IEnumerable<IFolderViewModel> BreadCrumbs { get; }
+        public IEnumerable<IFileViewModel> Files => _files.Value;
 
-        [ObservableAsProperty]
-        public bool ShowBreadCrumbs { get; }
+        public IEnumerable<IFolderViewModel> BreadCrumbs => _breadCrumbs.Value;
 
-        [ObservableAsProperty]
-        public string CurrentPath { get; }
+        public bool ShowBreadCrumbs => _showBreadCrumbs.Value;
 
-        [ObservableAsProperty]
-        public bool CanLogout { get; }
-        
-        [ObservableAsProperty]
-        public bool IsLoading { get; }
+        public bool HideBreadCrumbs => _hideBreadCrumbs.Value;
 
-        [ObservableAsProperty]
-        public bool HasErrorMessage { get; }
+        public string CurrentPath => _currentPath?.Value;
 
-        [ObservableAsProperty]
-        public bool IsReady { get; }
-        
-        [ObservableAsProperty]
-        public bool CanInteract { get; }
+        public bool CanLogout => _canLogout.Value;
+
+        public bool IsLoading => _isLoading.Value;
+
+        public bool HasErrorMessage => _hasErrorMessage.Value;
+
+        public bool IsReady => _isReady.Value;
+
+        public bool CanInteract => _canInteract?.Value ?? false;
 
         public IAuthViewModel Auth { get; }
         
@@ -315,22 +288,58 @@ namespace Camelotia.Presentation.ViewModels
 
         public string Description => $"{_provider.Name} file system.";
 
-        public ICommand DownloadSelectedFile => _downloadSelectedFile;
+        public ReactiveCommand<Unit, Unit> DownloadSelectedFile { get; }
 
-        public ICommand UploadToCurrentPath => _uploadToCurrentPath;
+        public ReactiveCommand<Unit, Unit> UploadToCurrentPath { get; }
 
-        public ICommand DeleteSelectedFile => _deleteSelectedFile;
+        public ReactiveCommand<Unit, Unit> DeleteSelectedFile { get; }
 
-        public ICommand UnselectFile => _unselectFile;
+        public ReactiveCommand<Unit, Unit> UnselectFile { get; }
 
-        public ICommand Refresh => _refresh;
-        
-        public ICommand Logout => _logout;
+        public ReactiveCommand<Unit, IEnumerable<FileModel>> Refresh { get; }
 
-        public ICommand Back => _back;
+        public ReactiveCommand<Unit, Unit> Logout { get; }
 
-        public ICommand Open => _open;
+        public ReactiveCommand<Unit, string> Back { get; }
 
-        public ICommand SetPath => _setPath;
+        public ReactiveCommand<Unit, string> Open { get; }
+
+        public ReactiveCommand<string, string> SetPath { get; }
+
+        private void ActivateAutoRefresh(CompositeDisposable disposable)
+        {
+            this.WhenAnyValue(x => x.Auth.IsAuthenticated)
+                .Where(authenticated => authenticated)
+                .Select(ignore => Unit.Default)
+                .InvokeCommand(Refresh)
+                .DisposeWith(disposable);
+
+            Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
+                .Select(unit => RefreshingIn - 1)
+                .Where(value => value >= 0)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => RefreshingIn = x)
+                .DisposeWith(disposable);
+
+            this.WhenAnyValue(x => x.RefreshingIn)
+                .Skip(1)
+                .Where(refreshing => refreshing == 0)
+                .Log(this, $"Refreshing provider {_provider.Name} path {CurrentPath}")
+                .Select(value => Unit.Default)
+                .InvokeCommand(Refresh)
+                .DisposeWith(disposable);
+
+            Refresh.Select(results => 30)
+                .StartWith(30)
+                .Subscribe(x => RefreshingIn = x)
+                .DisposeWith(disposable);
+
+            this.WhenAnyValue(x => x.CanInteract)
+                .Skip(1)
+                .Where(interact => interact)
+                .Select(x => Unit.Default)
+                .InvokeCommand(Refresh)
+                .DisposeWith(disposable);
+        }
     }
 }

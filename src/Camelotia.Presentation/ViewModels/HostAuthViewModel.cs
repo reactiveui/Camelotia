@@ -1,6 +1,5 @@
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Input;
 using System;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
@@ -9,12 +8,15 @@ using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
+using VkNet.Enums;
 
 namespace Camelotia.Presentation.ViewModels
 {
     public sealed class HostAuthViewModel : ReactiveValidationObject<HostAuthViewModel>, IHostAuthViewModel
     {
-        private readonly ReactiveCommand<Unit, Unit> _login;
+        private readonly ObservableAsPropertyHelper<string> _errorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _isBusy;
         
         public HostAuthViewModel(HostAuthState state, IProvider provider)
         {
@@ -34,35 +36,37 @@ namespace Camelotia.Presentation.ViewModels
                 port => int.TryParse(port, out _),
                 "Port should be a valid integer.");
             
-            _login = ReactiveCommand.CreateFromTask(
+            Login = ReactiveCommand.CreateFromTask(
                 () => provider.HostAuth(Address, int.Parse(Port), Username, Password),
                 this.IsValid());
 
-            _login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
+            _isBusy = Login
+                .IsExecuting
+                .ToProperty(this, x => x.IsBusy);
             
-            _login.ThrownExceptions
+            _errorMessage = Login
+                .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Host auth error occured in {provider.Name}")
-                .ToPropertyEx(this, x => x.ErrorMessage);
+                .ToProperty(this, x => x.ErrorMessage);
 
-            _login.ThrownExceptions
+            _hasErrorMessage = Login
+                .ThrownExceptions
                 .Select(exception => true)
-                .Merge(_login.Select(unit => false))
-                .ToPropertyEx(this, x => x.HasErrorMessage);
+                .Merge(Login.Select(unit => false))
+                .ToProperty(this, x => x.HasErrorMessage);
 
             Username = state.Username;
+            Password = state.Password;
+            Address = state.Address;
+            Port = state.Port;
+
             this.WhenAnyValue(x => x.Username)
                 .Subscribe(name => state.Username = name);
-            
-            Password = state.Password;
             this.WhenAnyValue(x => x.Password)
                 .Subscribe(name => state.Password = name);
-            
-            Address = state.Address;
             this.WhenAnyValue(x => x.Address)
                 .Subscribe(name => state.Address = name);
-            
-            Port = state.Port;
             this.WhenAnyValue(x => x.Port)
                 .Subscribe(name => state.Port = name);
         }
@@ -78,16 +82,13 @@ namespace Camelotia.Presentation.ViewModels
         
         [Reactive] 
         public string Password { get; set; }
-        
-        [ObservableAsProperty]
-        public string ErrorMessage { get; }
-        
-        [ObservableAsProperty]
-        public bool HasErrorMessage { get; }
 
-        [ObservableAsProperty]
-        public bool IsBusy { get; }
+        public string ErrorMessage => _errorMessage.Value;
+
+        public bool HasErrorMessage => _hasErrorMessage.Value;
+
+        public bool IsBusy => _isBusy.Value;
         
-        public ICommand Login => _login;
+        public ReactiveCommand<Unit, Unit> Login { get; }
     }
 }

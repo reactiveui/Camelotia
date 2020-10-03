@@ -1,6 +1,5 @@
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Input;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
@@ -10,33 +9,37 @@ namespace Camelotia.Presentation.ViewModels
 {
     public sealed class OAuthViewModel : ReactiveObject, IOAuthViewModel
     {
-        private readonly ReactiveCommand<Unit, Unit> _login;
+        private readonly ObservableAsPropertyHelper<string> _errorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _isBusy;
         
         public OAuthViewModel(IProvider provider)
         {
-            _login = ReactiveCommand.CreateFromTask(provider.OAuth);
-            _login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
+            Login = ReactiveCommand.CreateFromTask(provider.OAuth);
+            
+            _isBusy = Login
+                .IsExecuting
+                .ToProperty(this, x => x.IsBusy);
 
-            _login.ThrownExceptions
+            _errorMessage = Login
+                .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"OAuth error occured in {provider.Name}")
-                .ToPropertyEx(this, x => x.ErrorMessage);
+                .ToProperty(this, x => x.ErrorMessage);
 
-            _login.ThrownExceptions
+            _hasErrorMessage = Login
+                .ThrownExceptions
                 .Select(exception => true)
-                .Merge(_login.Select(unit => false))
-                .ToPropertyEx(this, x => x.HasErrorMessage);
+                .Merge(Login.Select(unit => false))
+                .ToProperty(this, x => x.HasErrorMessage);
         }
         
-        [ObservableAsProperty]
-        public string ErrorMessage { get; }
+        public ReactiveCommand<Unit, Unit> Login { get; }
 
-        [ObservableAsProperty]
-        public bool HasErrorMessage { get; }
-        
-        [ObservableAsProperty]
-        public bool IsBusy { get; }
-        
-        public ICommand Login => _login;
+        public string ErrorMessage => _errorMessage.Value;
+
+        public bool HasErrorMessage => _hasErrorMessage.Value;
+
+        public bool IsBusy => _isBusy.Value;
     }
 }

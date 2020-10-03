@@ -21,25 +21,24 @@ namespace Camelotia.Services.Providers
     public sealed class VkDocsProvider : IProvider
     {
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>();
-        private readonly ProviderParameters _model;
         private IVkApi _api = new VkApi();
         
         public VkDocsProvider(ProviderParameters model)
         {
-            _model = model;
+            Parameters = model;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
 
-        public ProviderParameters Parameters => _model;
+        public ProviderParameters Parameters { get; }
 
         public long? Size => null;
 
-        public Guid Id => _model.Id;
+        public Guid Id => Parameters.Id;
 
-        public string Name => _model.Type.ToString();
+        public string Name => Parameters.Type.ToString();
 
-        public DateTime Created => _model.Created;
+        public DateTime Created => Parameters.Created;
 
         public IObservable<bool> IsAuthorized => _isAuthorized;
 
@@ -70,14 +69,14 @@ namespace Camelotia.Services.Providers
                 Settings = Settings.Documents
             });
 
-            _model.Token = _api.Token;
+            Parameters.Token = _api.Token;
             _isAuthorized.OnNext(_api.IsAuthorized);
         }
         
         public Task Logout()
         {
             _api = new VkApi();
-            _model.Token = null;
+            Parameters.Token = null;
             _isAuthorized.OnNext(_api.IsAuthorized);
             return Task.CompletedTask;
         }
@@ -132,17 +131,15 @@ namespace Camelotia.Services.Providers
             var bytes = await StreamToArray(from).ConfigureAwait(false);
             var ext = Path.GetFileNameWithoutExtension(name);
             if (ext == null) throw new ArgumentNullException(nameof(name));
-            
-            using (var response = await PostSingleFileAsync(uri, bytes, ext.Trim('.'), name))
-            using (var reader = new StreamReader(response, Encoding.UTF8))
-            {
-                var message = await reader.ReadToEndAsync().ConfigureAwait(false);
-                var json = JsonConvert.DeserializeObject<DocUploadResponse>(message);
-                if (!string.IsNullOrWhiteSpace(json.File)) return;
 
-                var error = $"Unable to upload {name}{ext} \n{message}";
-                throw new Exception(error);
-            }
+            using var response = await PostSingleFileAsync(uri, bytes, ext.Trim('.'), name);
+            using var reader = new StreamReader(response, Encoding.UTF8);
+            var message = await reader.ReadToEndAsync().ConfigureAwait(false);
+            var json = JsonConvert.DeserializeObject<DocUploadResponse>(message);
+            if (!string.IsNullOrWhiteSpace(json.File)) return;
+
+            var error = $"Unable to upload {name}{ext} \n{message}";
+            throw new Exception(error);
         }
 
         public async Task Delete(string path, bool isFolder)
@@ -155,7 +152,7 @@ namespace Camelotia.Services.Providers
 
         private async void EnsureLoggedInIfTokenSaved()
         {
-            var token = _model.Token;
+            var token = Parameters.Token;
             if (string.IsNullOrWhiteSpace(token) || _api.IsAuthorized) return;
             await _api.AuthorizeAsync(new ApiAuthParams {AccessToken = token});
             _isAuthorized.OnNext(true);
@@ -163,29 +160,25 @@ namespace Camelotia.Services.Providers
         
         private static async Task<byte[]> StreamToArray(Stream stream)
         {
-            using (var memory = new MemoryStream())
-            {
-                await stream.CopyToAsync(memory);
-                return memory.ToArray();
-            }
+            using var memory = new MemoryStream();
+            await stream.CopyToAsync(memory);
+            return memory.ToArray();
         }
         
         private static async Task<Stream> PostSingleFileAsync(Uri uri, byte[] bytes, string type, string name)
         {
-            using (var http = new HttpClient())
-            using (var multipartFormDataContent = new MultipartFormDataContent())
-            using (var byteArrayContent = new ByteArrayContent(bytes))
+            using var http = new HttpClient();
+            using var multipartFormDataContent = new MultipartFormDataContent();
+            using var byteArrayContent = new ByteArrayContent(bytes);
+            byteArrayContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
             {
-                byteArrayContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
-                {
-                    FileName = name, 
-                    Name = type
-                };
+                FileName = name, 
+                Name = type
+            };
                 
-                multipartFormDataContent.Add(byteArrayContent);
-                var response = await http.PostAsync(uri, multipartFormDataContent).ConfigureAwait(false);
-                return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            }
+            multipartFormDataContent.Add(byteArrayContent);
+            var response = await http.PostAsync(uri, multipartFormDataContent).ConfigureAwait(false);
+            return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }
 
         private class DocUploadResponse

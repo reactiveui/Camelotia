@@ -1,7 +1,6 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Input;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
@@ -16,13 +15,16 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class RenameFileViewModel : ReactiveValidationObject<RenameFileViewModel>, IRenameFileViewModel
     {
-        private readonly ReactiveCommand<Unit, Unit> _rename;
-        private readonly ReactiveCommand<Unit, bool> _close;
-        private readonly ReactiveCommand<Unit, bool> _open;
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
+        private readonly ObservableAsPropertyHelper<string> _errorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _isLoading;
+        private readonly ObservableAsPropertyHelper<string> _oldName;
         
         public RenameFileViewModel(RenameFileState state, IProviderViewModel owner, IProvider provider)
         {
-            owner.WhenAnyValue(x => x.SelectedFile.Name).ToPropertyEx(this, x => x.OldName);
+            _oldName = owner
+                .WhenAnyValue(x => x.SelectedFile.Name)
+                .ToProperty(this, x => x.OldName);
             
             this.ValidationRule(x => x.NewName,
                 name => !string.IsNullOrWhiteSpace(name),
@@ -32,11 +34,13 @@ namespace Camelotia.Presentation.ViewModels
                 name => !string.IsNullOrWhiteSpace(name),
                 "Old name shouldn't be empty.");
             
-            _rename = ReactiveCommand.CreateFromTask(
+            Rename = ReactiveCommand.CreateFromTask(
                 () => provider.RenameFile(owner.SelectedFile.Path, NewName),
                 this.IsValid());
             
-            _rename.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            _isLoading = Rename
+                .IsExecuting
+                .ToProperty(this, x => x.IsLoading);
 
             var canInteract = owner
                 .WhenAnyValue(x => x.CanInteract)
@@ -55,24 +59,28 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => visible);
             
-            _open = ReactiveCommand.Create(() => true, canOpen);
-            _close = ReactiveCommand.Create(() => false, canClose);
+            Open = ReactiveCommand.Create(() => {}, canOpen);
+            Close = ReactiveCommand.Create(() => {}, canClose);
             
-            _close.Merge(_open).Subscribe(visible => IsVisible = visible);
-            _close.Subscribe(x => NewName = string.Empty);
-
-            _rename.InvokeCommand(_close);
+            Open.Select(unit => true)
+                .Merge(Close.Select(unit => false))
+                .Subscribe(visible => IsVisible = visible);
             
-            _rename.ThrownExceptions
+            Close.Subscribe(x => NewName = string.Empty);
+            Rename.InvokeCommand(Close);
+            
+            _hasErrorMessage = Rename
+                .ThrownExceptions
                 .Select(exception => true)
-                .Merge(_close.Select(x => false))
-                .ToPropertyEx(this, x => x.HasErrorMessage);
+                .Merge(Close.Select(x => false))
+                .ToProperty(this, x => x.HasErrorMessage);
 
-            _rename.ThrownExceptions
+            _errorMessage = Rename
+                .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Rename file error occured in {provider.Name} for {OldName}")
-                .Merge(_close.Select(x => string.Empty))
-                .ToPropertyEx(this, x => x.ErrorMessage);
+                .Merge(Close.Select(x => string.Empty))
+                .ToProperty(this, x => x.ErrorMessage);
 
             NewName = state.NewName;
             this.WhenAnyValue(x => x.NewName)
@@ -85,22 +93,18 @@ namespace Camelotia.Presentation.ViewModels
         [Reactive] 
         public string NewName { get; set; }
 
-        [ObservableAsProperty]
-        public bool HasErrorMessage { get; }
+        public bool HasErrorMessage => _hasErrorMessage.Value;
 
-        [ObservableAsProperty]
-        public string ErrorMessage { get; }
+        public string ErrorMessage => _errorMessage.Value;
 
-        [ObservableAsProperty]
-        public bool IsLoading { get; }
+        public bool IsLoading => _isLoading.Value;
 
-        [ObservableAsProperty]
-        public string OldName { get; }
+        public string OldName => _oldName.Value;
 
-        public ICommand Rename => _rename;
+        public ReactiveCommand<Unit, Unit> Rename { get; }
 
-        public ICommand Close => _close;
+        public ReactiveCommand<Unit, Unit> Close { get; }
 
-        public ICommand Open => _open;
+        public ReactiveCommand<Unit, Unit> Open { get; }
     }
 }

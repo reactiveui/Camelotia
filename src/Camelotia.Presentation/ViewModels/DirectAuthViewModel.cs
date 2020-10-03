@@ -1,7 +1,6 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Input;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
@@ -14,7 +13,9 @@ namespace Camelotia.Presentation.ViewModels
 {
     public sealed class DirectAuthViewModel : ReactiveValidationObject<DirectAuthViewModel>, IDirectAuthViewModel
     {
-        private readonly ReactiveCommand<Unit, Unit> _login;
+        private readonly ObservableAsPropertyHelper<string> _errorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _isBusy;
         
         public DirectAuthViewModel(DirectAuthState state, IProvider provider)
         {
@@ -26,27 +27,31 @@ namespace Camelotia.Presentation.ViewModels
                 pass => !string.IsNullOrWhiteSpace(pass),
                 "Password shouldn't be null or white space.");
             
-            _login = ReactiveCommand.CreateFromTask(
+            Login = ReactiveCommand.CreateFromTask(
                 () => provider.DirectAuth(Username, Password),
                 this.IsValid());
             
-            _login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
+            _isBusy = Login
+                .IsExecuting
+                .ToProperty(this, x => x.IsBusy);
             
-            _login.ThrownExceptions
+            _errorMessage = Login
+                .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Direct auth error occured in {provider.Name}")
-                .ToPropertyEx(this, x => x.ErrorMessage);
+                .ToProperty(this, x => x.ErrorMessage);
 
-            _login.ThrownExceptions
+            _hasErrorMessage = Login
+                .ThrownExceptions
                 .Select(exception => true)
-                .Merge(_login.Select(unit => false))
-                .ToPropertyEx(this, x => x.HasErrorMessage);
+                .Merge(Login.Select(unit => false))
+                .ToProperty(this, x => x.HasErrorMessage);
 
             Username = state.Username;
+            Password = state.Password;
+
             this.WhenAnyValue(x => x.Username)
                 .Subscribe(name => state.Username = name);
-
-            Password = state.Password;
             this.WhenAnyValue(x => x.Password)
                 .Subscribe(pass => state.Password = pass);
         }
@@ -57,15 +62,12 @@ namespace Camelotia.Presentation.ViewModels
         [Reactive]
         public string Password { get; set; }
         
-        [ObservableAsProperty]
-        public string ErrorMessage { get; }
+        public bool IsBusy => _isBusy.Value;
 
-        [ObservableAsProperty]
-        public bool HasErrorMessage { get; }
+        public string ErrorMessage => _errorMessage.Value;
 
-        [ObservableAsProperty]
-        public bool IsBusy { get; }
-        
-        public ICommand Login => _login;
+        public bool HasErrorMessage => _hasErrorMessage.Value;
+
+        public ReactiveCommand<Unit, Unit> Login { get; }
     }
 }

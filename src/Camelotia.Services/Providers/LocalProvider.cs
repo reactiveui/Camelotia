@@ -11,17 +11,15 @@ namespace Camelotia.Services.Providers
 {
     public sealed class LocalProvider : IProvider
     {
-        private readonly ProviderParameters _model;
+        public LocalProvider(ProviderParameters model) => Parameters = model;
 
-        public LocalProvider(ProviderParameters model) => _model = model;
+        public ProviderParameters Parameters { get; }
 
-        public ProviderParameters Parameters => _model;
+        public Guid Id => Parameters.Id;
 
-        public Guid Id => _model.Id;
+        public string Name => Parameters.Type.ToString();
 
-        public string Name => _model.Type.ToString();
-
-        public DateTime Created => _model.Created;
+        public DateTime Created => Parameters.Created;
 
         public long? Size => GetSizeOnAllDisks();
 
@@ -49,49 +47,53 @@ namespace Camelotia.Services.Providers
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                return GetAllDrives().Select(file => new FileModel
-                {
-                    Name = file.Name,
-                    IsFolder = true,
-                    Size = file.AvailableFreeSpace,
-                    Path = file.Name
-                });
+                var drives = GetAllDrives()
+                    .Select(file => new FileModel
+                    {
+                        Name = file.Name,
+                        IsFolder = true,
+                        Size = file.AvailableFreeSpace,
+                        Path = file.Name
+                    })
+                    .ToList();
+                return drives;
             }
 
             if (!Directory.Exists(path)) throw new ArgumentException("Directory doesn't exist.");
 
-            return from file in Directory.GetFileSystemEntries(path)
-                   let isDirectory = IsDirectory(file)
-                   let fileInfo = new FileInfo(file)
-                   select new FileModel
-                   {
-                       Path = file,
-                       Name = Path.GetFileName(file),
-                       IsFolder = IsDirectory(file),
-                       Modified = fileInfo.LastWriteTime,
-                       Size = isDirectory ? 0 : fileInfo.Length
-                   };
+            var query =
+                from file in Directory.GetFileSystemEntries(path)
+               let isDirectory = IsDirectory(file)
+               let fileInfo = new FileInfo(file)
+               select new FileModel
+               {
+                   Path = file,
+                   Name = Path.GetFileName(file),
+                   IsFolder = IsDirectory(file),
+                   Modified = fileInfo.LastWriteTime,
+                   Size = isDirectory ? 0 : fileInfo.Length
+               };
+            return query.ToList().AsEnumerable();
         });
 
         public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => Task.Run(() =>
         {
             if (!Directory.Exists(path)) throw new ArgumentException("Directory doesn't exist.");
             
-            var folderModels = new List<FolderModel>();
             return SplitPath(path)
                    .Select(di => new FolderModel(di.FullName, di.Name, di.GetDirectories().Select(di => new FolderModel(di.FullName, di.Name))))
-                   .Reverse();
+                   .Reverse()
+                   .ToList()
+                   .AsEnumerable();
         });
 
         public async Task DownloadFile(string from, Stream to)
         {
             if (IsDirectory(from)) throw new InvalidOperationException("Can't download directory.");
 
-            using (var fileStream = File.OpenRead(from))
-            {
-                fileStream.Seek(0, SeekOrigin.Begin);
-                await fileStream.CopyToAsync(to);
-            }
+            using var fileStream = File.OpenRead(@from);
+            fileStream.Seek(0, SeekOrigin.Begin);
+            await fileStream.CopyToAsync(to);
         }
 
         public Task CreateFolder(string at, string name) => Task.Run(() =>
@@ -115,11 +117,9 @@ namespace Camelotia.Services.Providers
             if (!IsDirectory(to)) throw new InvalidOperationException("Can't upload to a non-directory.");
 
             var path = Path.Combine(to, name);
-            using (var fileStream = File.Create(path))
-            {
-                from.Seek(0, SeekOrigin.Begin);
-                await from.CopyToAsync(fileStream);
-            }
+            using var fileStream = File.Create(path);
+            from.Seek(0, SeekOrigin.Begin);
+            await from.CopyToAsync(fileStream);
         }
 
         public Task Delete(string path, bool isFolder) => Task.Run(() =>

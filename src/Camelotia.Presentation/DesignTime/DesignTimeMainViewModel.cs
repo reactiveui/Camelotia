@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
+using System.Reactive;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Models;
 using ReactiveUI;
@@ -28,13 +28,13 @@ namespace Camelotia.Presentation.DesignTime
         
         public bool WelcomeScreenVisible { get; }
         
-        public ICommand Unselect { get; }
+        public ReactiveCommand<Unit, Unit> Unselect { get; }
         
-        public ICommand Refresh { get; }
+        public ReactiveCommand<Unit, Unit> Refresh { get; }
         
-        public ICommand Remove { get; }
+        public ReactiveCommand<Unit, Unit> Remove { get; }
         
-        public ICommand Add { get; }
+        public ReactiveCommand<Unit, Unit> Add { get; }
         
         public bool IsLoading { get; }
 

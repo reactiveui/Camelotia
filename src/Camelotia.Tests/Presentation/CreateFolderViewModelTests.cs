@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Reactive.Concurrency;
 using Camelotia.Presentation.AppState;
@@ -38,18 +39,19 @@ namespace Camelotia.Tests.Presentation
             _provider.CanCreateFolder.Returns(true);
             
             var model = BuildCreateFolderViewModel();
-            model.Open.CanExecute(null).Should().BeTrue();
-            model.Close.CanExecute(null).Should().BeFalse();
+            model.Open.CanExecute().Should().BeTrue();
+            model.Open.CanExecute().Should().BeTrue();
+            model.Close.CanExecute().Should().BeFalse();
             model.IsVisible.Should().BeFalse();
-            model.Open.Execute(null);
+            model.Open.Execute().Subscribe();
             
-            model.Open.CanExecute(null).Should().BeFalse();
-            model.Close.CanExecute(null).Should().BeTrue();
+            model.Open.CanExecute().Should().BeFalse();
+            model.Close.CanExecute().Should().BeTrue();
             model.IsVisible.Should().BeTrue();
-            model.Close.Execute(null);
+            model.Close.Execute().Subscribe();
             
-            model.Open.CanExecute(null).Should().BeTrue();
-            model.Close.CanExecute(null).Should().BeFalse();
+            model.Open.CanExecute().Should().BeTrue();
+            model.Close.CanExecute().Should().BeFalse();
             model.IsVisible.Should().BeFalse();
         }
 
@@ -62,31 +64,31 @@ namespace Camelotia.Tests.Presentation
 
             var model = BuildCreateFolderViewModel();
             model.IsVisible.Should().BeFalse();
-            model.Close.CanExecute(null).Should().BeFalse();
-            model.Open.CanExecute(null).Should().BeTrue();
-            model.Open.Execute(null);
+            model.Close.CanExecute().Should().BeFalse();
+            model.Open.CanExecute().Should().BeTrue();
+            model.Open.Execute().Subscribe();
 
             model.IsVisible.Should().BeTrue();
-            model.Create.CanExecute(null).Should().BeFalse();
+            model.Create.CanExecute().Should().BeFalse();
             model.ErrorMessage.Should().BeNullOrEmpty();
             model.HasErrorMessage.Should().BeFalse();
             model.IsLoading.Should().BeFalse();
 
-            model.Close.CanExecute(null).Should().BeTrue();
-            model.Open.CanExecute(null).Should().BeFalse();
+            model.Close.CanExecute().Should().BeTrue();
+            model.Open.CanExecute().Should().BeFalse();
             
             model.Name = "Foo";
-            model.Create.CanExecute(null).Should().BeTrue();
-            model.Create.Execute(null);
+            model.Create.CanExecute().Should().BeTrue();
+            model.Create.Execute().Subscribe();
             
             model.IsLoading.Should().BeFalse();
-            model.Create.CanExecute(null).Should().BeFalse();
+            model.Create.CanExecute().Should().BeFalse();
             model.Name.Should().BeNullOrEmpty();
             model.Path.Should().Be(Separator);
             model.IsVisible.Should().BeFalse();
             
-            model.Close.CanExecute(null).Should().BeFalse();
-            model.Open.CanExecute(null).Should().BeTrue();
+            model.Close.CanExecute().Should().BeFalse();
+            model.Open.CanExecute().Should().BeTrue();
         }
         
         [Fact]
@@ -95,13 +97,13 @@ namespace Camelotia.Tests.Presentation
             _model.CurrentPath.Returns(Separator);
             
             var model = BuildCreateFolderViewModel();
-            model.Create.CanExecute(null).Should().BeFalse();
+            model.Create.CanExecute().Should().BeFalse();
             model.GetErrors(string.Empty).Should().HaveCount(1);
             model.GetErrors(nameof(model.Name)).Should().HaveCount(1);
             model.HasErrors.Should().BeTrue();
 
             model.Name = "Example";
-            model.Create.CanExecute(null).Should().BeTrue();
+            model.Create.CanExecute().Should().BeTrue();
             model.GetErrors(string.Empty).Should().BeEmpty();
             model.GetErrors(nameof(model.Name)).Should().BeEmpty();
             model.HasErrors.Should().BeFalse();

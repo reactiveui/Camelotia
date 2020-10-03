@@ -1,7 +1,6 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Input;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
@@ -16,13 +15,16 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class CreateFolderViewModel : ReactiveValidationObject<CreateFolderViewModel>, ICreateFolderViewModel
     {
-        private readonly ReactiveCommand<Unit, Unit> _create;
-        private readonly ReactiveCommand<Unit, bool> _close;
-        private readonly ReactiveCommand<Unit, bool> _open;
+        private readonly ObservableAsPropertyHelper<string> _errorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
+        private readonly ObservableAsPropertyHelper<bool> _isLoading;
+        private readonly ObservableAsPropertyHelper<string> _path;
         
         public CreateFolderViewModel(CreateFolderState state, IProviderViewModel owner, IProvider provider)
         {
-            owner.WhenAnyValue(x => x.CurrentPath).ToPropertyEx(this, x => x.Path);
+            _path = owner
+                .WhenAnyValue(x => x.CurrentPath)
+                .ToProperty(this, x => x.Path);
             
             this.ValidationRule(x => x.Name,
                 name => !string.IsNullOrWhiteSpace(name),
@@ -32,11 +34,12 @@ namespace Camelotia.Presentation.ViewModels
                 path => !string.IsNullOrWhiteSpace(path),
                 "Path shouldn't be empty");
             
-            _create = ReactiveCommand.CreateFromTask(
+            Create = ReactiveCommand.CreateFromTask(
                 () => provider.CreateFolder(Path, Name),
                 this.IsValid());
             
-            _create.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            _isLoading = Create.IsExecuting
+                .ToProperty(this, x => x.IsLoading);
 
             var canInteract = owner
                 .WhenAnyValue(x => x.CanInteract)
@@ -55,30 +58,34 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => visible);
             
-            _open = ReactiveCommand.Create(() => true, canOpen);
-            _close = ReactiveCommand.Create(() => false, canClose);
+            Open = ReactiveCommand.Create(() => {}, canOpen);
+            Close = ReactiveCommand.Create(() => {}, canClose);
             
-            _close.Merge(_open).Subscribe(visible => IsVisible = visible);
-            _close.Subscribe(x => Name = string.Empty);
+            Open.Select(unit => true)
+                .Merge(Close.Select(unit => false))
+                .Subscribe(visible => IsVisible = visible);
             
-            _create.InvokeCommand(_close);
+            Close.Subscribe(x => Name = string.Empty);
+            Create.InvokeCommand(Close);
 
-            _create.ThrownExceptions
+            _hasErrorMessage = Create
+                .ThrownExceptions
                 .Select(exception => true)
-                .Merge(_close.Select(unit => false))
-                .ToPropertyEx(this, x => x.HasErrorMessage);
+                .Merge(Close.Select(unit => false))
+                .ToProperty(this, x => x.HasErrorMessage);
 
-            _create.ThrownExceptions
+            _errorMessage = Create
+                .ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Create folder error occured in {provider.Name}")
-                .Merge(_close.Select(unit => string.Empty))
-                .ToPropertyEx(this, x => x.ErrorMessage);
+                .Merge(Close.Select(unit => string.Empty))
+                .ToProperty(this, x => x.ErrorMessage);
 
             Name = state.Name;
+            IsVisible = state.IsVisible;
+
             this.WhenAnyValue(x => x.Name)
                 .Subscribe(name => state.Name = name);
-
-            IsVisible = state.IsVisible;
             this.WhenAnyValue(x => x.IsVisible)
                 .Subscribe(visible => state.IsVisible = visible);
         }
@@ -89,22 +96,18 @@ namespace Camelotia.Presentation.ViewModels
         [Reactive]
         public bool IsVisible { get; set; }
 
-        [ObservableAsProperty]
-        public string ErrorMessage { get; }
+        public string ErrorMessage => _errorMessage.Value;
 
-        [ObservableAsProperty]
-        public bool HasErrorMessage { get; }
+        public bool HasErrorMessage => _hasErrorMessage.Value;
 
-        [ObservableAsProperty]
-        public bool IsLoading { get; }
+        public bool IsLoading => _isLoading.Value;
 
-        [ObservableAsProperty]
-        public string Path { get; }
+        public string Path => _path.Value;
         
-        public ICommand Create => _create;
-        
-        public ICommand Close => _close;
+        public ReactiveCommand<Unit, Unit> Create { get; }
 
-        public ICommand Open => _open;
+        public ReactiveCommand<Unit, Unit> Close { get; }
+
+        public ReactiveCommand<Unit, Unit> Open { get; }
     }
 }
