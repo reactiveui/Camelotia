@@ -32,7 +32,7 @@ namespace Camelotia.Tests.Presentation
             model.IsLoading.Should().BeFalse();
             model.IsReady.Should().BeFalse();
                 
-            model.Refresh.Execute(null);
+            model.Refresh.Execute().Subscribe();
             model.IsReady.Should().BeTrue();
         }
 
@@ -47,7 +47,7 @@ namespace Camelotia.Tests.Presentation
             model.CurrentPath.Should().Be(Separator);
             model.Files.Should().BeNullOrEmpty();
 
-            model.Refresh.Execute(null);
+            model.Refresh.Execute().Subscribe();
             model.IsCurrentPathEmpty.Should().BeTrue();
             model.CurrentPath.Should().Be(Separator);
             model.Files.Should().BeEmpty();
@@ -76,12 +76,12 @@ namespace Camelotia.Tests.Presentation
             _provider.SupportsDirectAuth.Returns(true);
 
             var model = BuildProviderViewModel();
-            model.Logout.CanExecute(null).Should().BeTrue();
-            model.Logout.Execute(null);
+            model.Logout.CanExecute().Should().BeTrue();
+            model.Logout.Execute().Subscribe();
             
             authorized.OnNext(false);
             _provider.Received(1).Logout();
-            model.Logout.CanExecute(null).Should().BeFalse();            
+            model.Logout.CanExecute().Should().BeFalse();            
         }
 
         [Fact]
@@ -99,12 +99,12 @@ namespace Camelotia.Tests.Presentation
                 model.CurrentPath.Should().Be(Separator);
                 
                 model.SelectedFile = model.Files.First();
-                model.Open.CanExecute(null).Should().BeTrue();
-                model.Open.Execute(null);
+                model.Open.CanExecute().Should().BeTrue();
+                model.Open.Execute().Subscribe();
                 
                 model.CurrentPath.Should().Be(Separator + "foo");
-                model.Back.CanExecute(null).Should().BeTrue();
-                model.Back.Execute(null);
+                model.Back.CanExecute().Should().BeTrue();
+                model.Back.Execute().Subscribe();
                 
                 model.CurrentPath.Should().Be(Separator);
             }
@@ -119,8 +119,8 @@ namespace Camelotia.Tests.Presentation
 
             var model = BuildProviderViewModel();
             model.CurrentPath.Should().Be(Separator);
-            model.UploadToCurrentPath.CanExecute(null).Should().BeTrue();
-            model.UploadToCurrentPath.Execute(null);
+            model.UploadToCurrentPath.CanExecute().Should().BeTrue();
+            model.UploadToCurrentPath.Execute().Subscribe();
             _provider.Received(1).Get(Separator);
         }
 
@@ -133,19 +133,19 @@ namespace Camelotia.Tests.Presentation
             _provider.InitialPath.Returns(Separator);
 
             var model = BuildProviderViewModel();
-            model.Refresh.Execute(null);
+            model.Refresh.Execute().Subscribe();
 
             model.Files.Should().NotBeEmpty();
             model.CurrentPath.Should().Be(Separator);
 
             model.SelectedFile = model.Files.First();
             model.SelectedFile.Should().NotBeNull();
-            model.Open.CanExecute(null).Should().BeTrue();
-            model.Open.Execute(null);
+            model.Open.CanExecute().Should().BeTrue();
+            model.Open.Execute().Subscribe();
 
             model.CurrentPath.Should().Be(Separator + "foo");
             model.SelectedFile.Should().BeNull();
-            model.Open.CanExecute(null).Should().BeFalse();
+            model.Open.CanExecute().Should().BeFalse();
         }
 
         [Fact]
@@ -157,11 +157,11 @@ namespace Camelotia.Tests.Presentation
             _provider.InitialPath.Returns(Separator);
 
             var model = BuildProviderViewModel();
-            model.Refresh.Execute(null);
+            model.Refresh.Execute().Subscribe();
             
             model.Files.Should().NotBeEmpty();
             model.CurrentPath.Should().Be(Separator);
-            model.Back.Execute(null);
+            model.Back.Execute().Subscribe();
 
             model.CurrentPath.Should().Be(Separator);
         }
@@ -174,10 +174,10 @@ namespace Camelotia.Tests.Presentation
 
             var model = BuildProviderViewModel();
             model.CurrentPath.Should().Be(initial);
-            model.Refresh.Execute(null);
+            model.Refresh.Execute().Subscribe();
 
             model.CurrentPath.Should().Be(initial);
-            model.Back.Execute(null);
+            model.Back.Execute().Subscribe();
 
             model.CurrentPath.Should().Be(Separator);
             _state.CurrentPath.Should().Be(Separator);
@@ -225,7 +225,7 @@ namespace Camelotia.Tests.Presentation
 
             model.ShowBreadCrumbs.Should().BeFalse();
             model.BreadCrumbs.Should().BeNullOrEmpty();            
-            model.Refresh.Execute(null);
+            model.Refresh.Execute().Subscribe();
             
             model.ShowBreadCrumbs.Should().BeTrue();
             model.BreadCrumbs.Should().NotBeNullOrEmpty();

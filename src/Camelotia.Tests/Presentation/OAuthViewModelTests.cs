@@ -21,8 +21,8 @@ namespace Camelotia.Tests.Presentation
             
             var model = BuildOAuthViewModel();
             model.IsBusy.Should().BeFalse();
-            model.Login.CanExecute(null).Should().BeTrue();
-            model.Login.Execute(null);
+            model.Login.CanExecute().Should().BeTrue();
+            model.Login.Execute().Subscribe();
             
             model.IsBusy.Should().BeTrue();
         }
@@ -36,8 +36,8 @@ namespace Camelotia.Tests.Presentation
             model.ErrorMessage.Should().BeNullOrEmpty();
             model.HasErrorMessage.Should().BeFalse();
             
-            model.Login.CanExecute(null).Should().BeTrue();
-            model.Login.Execute(null);
+            model.Login.CanExecute().Should().BeTrue();
+            model.Login.Execute().Subscribe(ok => { }, err => { });
 
             model.HasErrorMessage.Should().BeTrue();
             model.ErrorMessage.Should().NotBeNullOrEmpty();

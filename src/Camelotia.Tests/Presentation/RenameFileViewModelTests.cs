@@ -1,3 +1,4 @@
+using System;
 using System.Reactive.Concurrency;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
@@ -37,18 +38,18 @@ namespace Camelotia.Tests.Presentation
             _file.Name.Returns("foo");
 
             var model = BuildRenameFileViewModel();
-            model.Open.CanExecute(null).Should().BeTrue();
-            model.Close.CanExecute(null).Should().BeFalse();
+            model.Open.CanExecute().Should().BeTrue();
+            model.Close.CanExecute().Should().BeFalse();
             model.IsVisible.Should().BeFalse();
             
-            model.Open.Execute(null);
-            model.Open.CanExecute(null).Should().BeFalse();
-            model.Close.CanExecute(null).Should().BeTrue();
+            model.Open.Execute().Subscribe();
+            model.Open.CanExecute().Should().BeFalse();
+            model.Close.CanExecute().Should().BeTrue();
             model.IsVisible.Should().BeTrue();
 
-            model.Close.Execute(null);
-            model.Open.CanExecute(null).Should().BeTrue();
-            model.Close.CanExecute(null).Should().BeFalse();
+            model.Close.Execute().Subscribe();
+            model.Open.CanExecute().Should().BeTrue();
+            model.Close.CanExecute().Should().BeFalse();
             model.IsVisible.Should().BeFalse();
         }
 
@@ -62,31 +63,31 @@ namespace Camelotia.Tests.Presentation
             var model = BuildRenameFileViewModel();
             model.OldName.Should().Be("foo");
             model.IsVisible.Should().BeFalse();
-            model.Close.CanExecute(null).Should().BeFalse();
-            model.Open.CanExecute(null).Should().BeTrue();
+            model.Close.CanExecute().Should().BeFalse();
+            model.Open.CanExecute().Should().BeTrue();
 
-            model.Open.Execute(null);
+            model.Open.Execute().Subscribe();
             model.IsVisible.Should().BeTrue();
-            model.Rename.CanExecute(null).Should().BeFalse();
+            model.Rename.CanExecute().Should().BeFalse();
             model.ErrorMessage.Should().BeNullOrEmpty();
             model.HasErrorMessage.Should().BeFalse();
             model.IsLoading.Should().BeFalse();
 
-            model.Close.CanExecute(null).Should().BeTrue();
-            model.Open.CanExecute(null).Should().BeFalse();
+            model.Close.CanExecute().Should().BeTrue();
+            model.Open.CanExecute().Should().BeFalse();
             
             model.NewName = "Foo";
-            model.Rename.CanExecute(null).Should().BeTrue();
-            model.Rename.Execute(null);
+            model.Rename.CanExecute().Should().BeTrue();
+            model.Rename.Execute().Subscribe();
             
             model.IsLoading.Should().BeFalse();
-            model.Rename.CanExecute(null).Should().BeFalse();
+            model.Rename.CanExecute().Should().BeFalse();
             model.NewName.Should().BeNullOrEmpty();
             model.OldName.Should().Be("foo");
             model.IsVisible.Should().BeFalse();
             
-            model.Close.CanExecute(null).Should().BeFalse();
-            model.Open.CanExecute(null).Should().BeTrue();
+            model.Close.CanExecute().Should().BeFalse();
+            model.Open.CanExecute().Should().BeTrue();
         }
         
         [Fact]
@@ -96,13 +97,13 @@ namespace Camelotia.Tests.Presentation
             _file.Name.Returns("foo");
             
             var model = BuildRenameFileViewModel();
-            model.Rename.CanExecute(null).Should().BeFalse();
+            model.Rename.CanExecute().Should().BeFalse();
             model.GetErrors(string.Empty).Should().HaveCount(1);
             model.GetErrors(nameof(model.NewName)).Should().HaveCount(1);
             model.HasErrors.Should().BeTrue();
 
             model.NewName = "bar";
-            model.Rename.CanExecute(null).Should().BeTrue();
+            model.Rename.CanExecute().Should().BeTrue();
             model.GetErrors(string.Empty).Should().BeEmpty();
             model.GetErrors(nameof(model.NewName)).Should().BeEmpty();
             model.HasErrors.Should().BeFalse();

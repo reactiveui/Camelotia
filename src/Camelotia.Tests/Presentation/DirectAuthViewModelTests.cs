@@ -20,10 +20,10 @@ namespace Camelotia.Tests.Presentation
         public void LoginCommandShouldStayDisabledUntilInputIsValid()
         {
             var model = BuildDirectAuthViewModel();
-            model.Login.CanExecute(null).Should().BeFalse();
+            model.Login.CanExecute().Should().BeFalse();
             model.Username = "hello";
             model.Password = "world";
-            model.Login.CanExecute(null).Should().BeTrue();
+            model.Login.CanExecute().Should().BeTrue();
         }
 
         [Fact]
@@ -36,7 +36,8 @@ namespace Camelotia.Tests.Presentation
                 
             model.Username = "hello";
             model.Password = "world";
-            model.Login.Execute(null);
+            model.Login.Execute().Subscribe(ok => { }, error => { });
+            
             model.HasErrorMessage.Should().BeTrue();
             model.ErrorMessage.Should().Be("example");
         }
@@ -51,7 +52,7 @@ namespace Camelotia.Tests.Presentation
             
             model.Username = "hello";
             model.Password = "world";
-            model.Login.Execute(null);
+            model.Login.Execute().Subscribe();
             model.IsBusy.Should().BeTrue();
         }
 
@@ -59,21 +60,21 @@ namespace Camelotia.Tests.Presentation
         public void ShouldUpdateValidationsForProperties()
         {
             var model = BuildDirectAuthViewModel();
-            model.Login.CanExecute(null).Should().BeFalse();
+            model.Login.CanExecute().Should().BeFalse();
             model.GetErrors(string.Empty).Should().HaveCount(2);
             model.GetErrors(nameof(model.Username)).Should().NotBeEmpty();
             model.GetErrors(nameof(model.Password)).Should().NotBeEmpty();
             model.HasErrors.Should().BeTrue();
 
             model.Username = "Jotaro";
-            model.Login.CanExecute(null).Should().BeFalse();
+            model.Login.CanExecute().Should().BeFalse();
             model.GetErrors(string.Empty).Should().HaveCount(1);
             model.GetErrors(nameof(model.Username)).Should().BeEmpty();
             model.GetErrors(nameof(model.Password)).Should().NotBeEmpty();
             model.HasErrors.Should().BeTrue();
 
             model.Password = "qwerty";
-            model.Login.CanExecute(null).Should().BeTrue();
+            model.Login.CanExecute().Should().BeTrue();
             model.GetErrors(string.Empty).Should().BeEmpty();
             model.GetErrors(nameof(model.Username)).Should().BeEmpty();
             model.GetErrors(nameof(model.Password)).Should().BeEmpty();

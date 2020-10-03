@@ -27,8 +27,8 @@ namespace Camelotia.Tests.Presentation
             model.IsLoading.Should().BeFalse();
             model.IsReady.Should().BeTrue();
                 
-            model.Refresh.CanExecute(null).Should().BeTrue();
-            model.Refresh.Execute(null);
+            model.Refresh.CanExecute().Should().BeTrue();
+            model.Refresh.Execute().Subscribe();
                 
             model.Providers.Should().BeEmpty();
             model.IsLoading.Should().BeFalse();
@@ -46,7 +46,7 @@ namespace Camelotia.Tests.Presentation
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
             model.SelectedProvider.Id.Should().Be(provider.Id);
-            model.Refresh.Execute(null);
+            model.Refresh.Execute().Subscribe();
                 
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
@@ -64,8 +64,8 @@ namespace Camelotia.Tests.Presentation
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
             model.SelectedProvider.Id.Should().Be(provider.Id);
-            model.Unselect.CanExecute(null).Should().BeTrue();
-            model.Unselect.Execute(null);
+            model.Unselect.CanExecute().Should().BeTrue();
+            model.Unselect.Execute().Subscribe();
 
             model.Providers.Should().NotBeEmpty();
             model.SelectedProvider.Should().BeNull();
@@ -102,7 +102,7 @@ namespace Camelotia.Tests.Presentation
             model.Providers.Count.Should().Be(2);
             model.SelectedProvider.Should().NotBeNull();
             model.SelectedProvider.Id.Should().Be(provider.Id);
-            model.Remove.Execute(null);
+            model.Remove.Execute().Subscribe();
 
             model.SelectedProvider.Should().BeNull();
             model.Providers.Count.Should().Be(1);
@@ -115,7 +115,7 @@ namespace Camelotia.Tests.Presentation
             model.Providers.Should().BeEmpty();
             model.SelectedProvider.Should().BeNull();
             model.SelectedSupportedType = ProviderType.Local;
-            model.Add.Execute(null);
+            model.Add.Execute().Subscribe();
 
             model.Providers.Should().NotBeEmpty();
             model.Providers.Count.Should().Be(1);
