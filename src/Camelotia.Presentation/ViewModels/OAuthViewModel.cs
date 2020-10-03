@@ -1,6 +1,5 @@
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Input;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
@@ -10,21 +9,19 @@ namespace Camelotia.Presentation.ViewModels
 {
     public sealed class OAuthViewModel : ReactiveObject, IOAuthViewModel
     {
-        private readonly ReactiveCommand<Unit, Unit> _login;
-        
         public OAuthViewModel(IProvider provider)
         {
-            _login = ReactiveCommand.CreateFromTask(provider.OAuth);
-            _login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
+            Login = ReactiveCommand.CreateFromTask(provider.OAuth);
+            Login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
 
-            _login.ThrownExceptions
+            Login.ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"OAuth error occured in {provider.Name}")
                 .ToPropertyEx(this, x => x.ErrorMessage);
 
-            _login.ThrownExceptions
+            Login.ThrownExceptions
                 .Select(exception => true)
-                .Merge(_login.Select(unit => false))
+                .Merge(Login.Select(unit => false))
                 .ToPropertyEx(this, x => x.HasErrorMessage);
         }
         
@@ -37,6 +34,6 @@ namespace Camelotia.Presentation.ViewModels
         [ObservableAsProperty]
         public bool IsBusy { get; }
         
-        public ICommand Login => _login;
+        public ReactiveCommand<Unit, Unit> Login { get; }
     }
 }

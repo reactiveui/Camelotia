@@ -1,7 +1,6 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Input;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
@@ -16,10 +15,6 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class CreateFolderViewModel : ReactiveValidationObject<CreateFolderViewModel>, ICreateFolderViewModel
     {
-        private readonly ReactiveCommand<Unit, Unit> _create;
-        private readonly ReactiveCommand<Unit, bool> _close;
-        private readonly ReactiveCommand<Unit, bool> _open;
-        
         public CreateFolderViewModel(CreateFolderState state, IProviderViewModel owner, IProvider provider)
         {
             owner.WhenAnyValue(x => x.CurrentPath).ToPropertyEx(this, x => x.Path);
@@ -32,11 +27,11 @@ namespace Camelotia.Presentation.ViewModels
                 path => !string.IsNullOrWhiteSpace(path),
                 "Path shouldn't be empty");
             
-            _create = ReactiveCommand.CreateFromTask(
+            Create = ReactiveCommand.CreateFromTask(
                 () => provider.CreateFolder(Path, Name),
                 this.IsValid());
             
-            _create.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            Create.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
 
             var canInteract = owner
                 .WhenAnyValue(x => x.CanInteract)
@@ -55,23 +50,25 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => visible);
             
-            _open = ReactiveCommand.Create(() => true, canOpen);
-            _close = ReactiveCommand.Create(() => false, canClose);
+            Open = ReactiveCommand.Create(() => {}, canOpen);
+            Close = ReactiveCommand.Create(() => {}, canClose);
             
-            _close.Merge(_open).Subscribe(visible => IsVisible = visible);
-            _close.Subscribe(x => Name = string.Empty);
+            Open.Select(unit => true)
+                .Merge(Close.Select(unit => false))
+                .Subscribe(visible => IsVisible = visible);
             
-            _create.InvokeCommand(_close);
+            Close.Subscribe(x => Name = string.Empty);
+            Create.InvokeCommand(Close);
 
-            _create.ThrownExceptions
+            Create.ThrownExceptions
                 .Select(exception => true)
-                .Merge(_close.Select(unit => false))
+                .Merge(Close.Select(unit => false))
                 .ToPropertyEx(this, x => x.HasErrorMessage);
 
-            _create.ThrownExceptions
+            Create.ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Create folder error occured in {provider.Name}")
-                .Merge(_close.Select(unit => string.Empty))
+                .Merge(Close.Select(unit => string.Empty))
                 .ToPropertyEx(this, x => x.ErrorMessage);
 
             Name = state.Name;
@@ -101,10 +98,10 @@ namespace Camelotia.Presentation.ViewModels
         [ObservableAsProperty]
         public string Path { get; }
         
-        public ICommand Create => _create;
-        
-        public ICommand Close => _close;
+        public ReactiveCommand<Unit, Unit> Create { get; }
 
-        public ICommand Open => _open;
+        public ReactiveCommand<Unit, Unit> Close { get; }
+
+        public ReactiveCommand<Unit, Unit> Open { get; }
     }
 }

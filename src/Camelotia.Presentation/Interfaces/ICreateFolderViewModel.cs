@@ -1,5 +1,6 @@
 using System.ComponentModel;
-using System.Windows.Input;
+using System.Reactive;
+using ReactiveUI;
 
 namespace Camelotia.Presentation.Interfaces
 {
@@ -17,10 +18,10 @@ namespace Camelotia.Presentation.Interfaces
         
         string ErrorMessage { get; }
         
-        ICommand Create { get; }
+        ReactiveCommand<Unit, Unit> Create { get; }
         
-        ICommand Close { get; }
+        ReactiveCommand<Unit, Unit> Close { get; }
         
-        ICommand Open { get; }
+        ReactiveCommand<Unit, Unit> Open { get; }
     }
 }

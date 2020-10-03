@@ -1,4 +1,4 @@
-using System.Windows.Input;
+using System.Reactive;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
 
@@ -6,7 +6,7 @@ namespace Camelotia.Presentation.DesignTime
 {
     public class DesignTimeOAuthViewModel : ReactiveObject, IOAuthViewModel
     {
-        public ICommand Login { get; }
+        public ReactiveCommand<Unit, Unit> Login { get; }
         
         public bool HasErrorMessage { get; } = true;
         

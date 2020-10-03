@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Input;
+using System.Reactive;
 using Camelotia.Services.Models;
+using ReactiveUI;
 
 namespace Camelotia.Presentation.Interfaces
 {
@@ -20,13 +21,13 @@ namespace Camelotia.Presentation.Interfaces
 
         bool WelcomeScreenVisible { get; }
 
-        ICommand Unselect { get; }
+        ReactiveCommand<Unit, Unit> Unselect { get; }
 
-        ICommand Refresh { get; }
+        ReactiveCommand<Unit, Unit> Refresh { get; }
 
-        ICommand Remove { get; }
+        ReactiveCommand<Unit, Unit> Remove { get; }
 
-        ICommand Add { get; }
+        ReactiveCommand<Unit, Unit> Add { get; }
         
         bool IsLoading { get; }
         

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Input;
+using System.Reactive;
 using Camelotia.Presentation.Interfaces;
+using Camelotia.Services.Models;
 using ReactiveUI;
 
 namespace Camelotia.Presentation.DesignTime
@@ -31,23 +32,23 @@ namespace Camelotia.Presentation.DesignTime
 
         public IEnumerable<IFileViewModel> Files { get; }
 
-        public ICommand DownloadSelectedFile { get; }
+        public ReactiveCommand<Unit, Unit> DownloadSelectedFile { get; }
         
-        public ICommand UploadToCurrentPath { get; }
+        public ReactiveCommand<Unit, Unit> UploadToCurrentPath { get; }
         
-        public ICommand DeleteSelectedFile { get; }
+        public ReactiveCommand<Unit, Unit> DeleteSelectedFile { get; }
         
-        public ICommand UnselectFile { get; }
+        public ReactiveCommand<Unit, Unit> UnselectFile { get; }
         
-        public ICommand Refresh { get; }
+        public ReactiveCommand<Unit, IEnumerable<FileModel>> Refresh { get; }
         
-        public ICommand Logout { get; }
+        public ReactiveCommand<Unit, Unit> Logout { get; }
         
-        public ICommand Back { get; }
+        public ReactiveCommand<Unit, string> Back { get; }
         
-        public ICommand Open { get; }
+        public ReactiveCommand<Unit, string> Open { get; }
 
-        public ICommand SetPath { get; }
+        public ReactiveCommand<string, string> SetPath { get; }
 
         public bool IsCurrentPathEmpty { get; }
         

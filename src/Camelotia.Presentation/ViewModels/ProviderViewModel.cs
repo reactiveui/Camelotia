@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Windows.Input;
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -21,15 +20,6 @@ namespace Camelotia.Presentation.ViewModels
 
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
     {
-        private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
-        private readonly ReactiveCommand<Unit, Unit> _downloadSelectedFile;
-        private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
-        private readonly ReactiveCommand<Unit, Unit> _deleteSelectedFile;
-        private readonly ReactiveCommand<Unit, Unit> _unselectFile;
-        private readonly ReactiveCommand<Unit, string> _back;
-        private readonly ReactiveCommand<Unit, string> _open;
-        private readonly ReactiveCommand<string, string> _setPath;
-        private readonly ReactiveCommand<Unit, Unit> _logout;
         private readonly IProvider _provider;
 
         public ProviderViewModel(
@@ -55,11 +45,11 @@ namespace Camelotia.Presentation.ViewModels
 
             canInteract.ToPropertyEx(this, x => x.CanInteract);
             
-            _refresh = ReactiveCommand.CreateFromTask(
+            Refresh = ReactiveCommand.CreateFromTask(
                 () => provider.Get(CurrentPath),
                 canInteract);
             
-            _refresh.Select(
+            Refresh.Select(
                     items => items
                         .Select(file => fileFactory(file, this))
                         .OrderByDescending(file => file.IsFolder)
@@ -68,9 +58,9 @@ namespace Camelotia.Presentation.ViewModels
                 .Where(items => Files == null || !items.SequenceEqual(Files))
                 .ToPropertyEx(this, x => x.Files);
 
-            _refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            Refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
             
-            _refresh.IsExecuting
+            Refresh.IsExecuting
                 .Skip(1)
                 .Select(executing => !executing)
                 .ToPropertyEx(this, x => x.IsReady);
@@ -78,9 +68,9 @@ namespace Camelotia.Presentation.ViewModels
             var canOpenCurrentPath = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && file.IsFolder)
-                .CombineLatest(_refresh.IsExecuting, canInteract, (folder, busy, ci) => folder && ci && !busy);
+                .CombineLatest(Refresh.IsExecuting, canInteract, (folder, busy, ci) => folder && ci && !busy);
             
-            _open = ReactiveCommand.Create(
+            Open = ReactiveCommand.Create(
                 () => Path.Combine(CurrentPath, SelectedFile.Name),
                 canOpenCurrentPath);
 
@@ -88,16 +78,16 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.CurrentPath)
                 .Where(path => path != null)
                 .Select(path => path.Length > provider.InitialPath.Length)
-                .CombineLatest(_refresh.IsExecuting, canInteract, (valid, busy, ci) => valid && ci && !busy);
+                .CombineLatest(Refresh.IsExecuting, canInteract, (valid, busy, ci) => valid && ci && !busy);
             
-            _back = ReactiveCommand.Create(
+            Back = ReactiveCommand.Create(
                 () => Path.GetDirectoryName(CurrentPath), 
                 canCurrentPathGoBack);
 
-            _setPath = ReactiveCommand.Create<string, string>(path => path);
+            SetPath = ReactiveCommand.Create<string, string>(path => path);
 
-            _open.Merge(_back)
-                .Merge(_setPath)
+            Open.Merge(Back)
+                .Merge(SetPath)
                 .Select(path => path ?? provider.InitialPath)
                 .DistinctUntilChanged()
                 .Log(this, $"Current path changed in {provider.Name}")
@@ -125,7 +115,7 @@ namespace Camelotia.Presentation.ViewModels
             this.WhenAnyValue(x => x.CurrentPath)
                 .Skip(1)
                 .Select(path => Unit.Default)
-                .InvokeCommand(_refresh);
+                .InvokeCommand(Refresh);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Subscribe(path => SelectedFile = null);
@@ -136,18 +126,18 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(items => !items.Any())
                 .ToPropertyEx(this, x => x.IsCurrentPathEmpty);
 
-            _refresh.ThrownExceptions
+            Refresh.ThrownExceptions
                 .Select(exception => true)
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Merge(_refresh.Select(x => false))
+                .Merge(Refresh.Select(x => false))
                 .ToPropertyEx(this, x => x.HasErrorMessage);
 
             var canUploadToCurrentPath = this
                 .WhenAnyValue(x => x.CurrentPath)
                 .Select(path => path != null)
-                .CombineLatest(_refresh.IsExecuting, canInteract, (up, loading, can) => up && can && !loading);
+                .CombineLatest(Refresh.IsExecuting, canInteract, (up, loading, can) => up && can && !loading);
                 
-            _uploadToCurrentPath = ReactiveCommand.CreateFromObservable(
+            UploadToCurrentPath = ReactiveCommand.CreateFromObservable(
                 () => Observable
                     .FromAsync(files.OpenRead)
                     .Where(response => response.Name != null && response.Stream != null)
@@ -155,14 +145,14 @@ namespace Camelotia.Presentation.ViewModels
                     .SelectMany(task => task.ToObservable()), 
                 canUploadToCurrentPath);
 
-            _uploadToCurrentPath.InvokeCommand(_refresh);
+            UploadToCurrentPath.InvokeCommand(Refresh);
 
             var canDownloadSelectedFile = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && !file.IsFolder)
-                .CombineLatest(_refresh.IsExecuting, canInteract, (down, loading, can) => down && !loading && can);
+                .CombineLatest(Refresh.IsExecuting, canInteract, (down, loading, can) => down && !loading && can);
                 
-            _downloadSelectedFile = ReactiveCommand.CreateFromObservable(
+            DownloadSelectedFile = ReactiveCommand.CreateFromObservable(
                 () => Observable
                     .FromAsync(() => files.OpenWrite(SelectedFile.Name))
                     .Where(stream => stream != null)
@@ -180,33 +170,33 @@ namespace Camelotia.Presentation.ViewModels
                 .CombineLatest(canInteract, (logout, interact) => logout && interact)
                 .ObserveOn(RxApp.MainThreadScheduler);
 
-            _logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
+            Logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
             canLogout.ToPropertyEx(this, x => x.CanLogout);
 
             var canDeleteSelection = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && !file.IsFolder)
-                .CombineLatest(_refresh.IsExecuting, canInteract, (del, loading, ci) => del && !loading && ci);
+                .CombineLatest(Refresh.IsExecuting, canInteract, (del, loading, ci) => del && !loading && ci);
 
-            _deleteSelectedFile = ReactiveCommand.CreateFromTask(
+            DeleteSelectedFile = ReactiveCommand.CreateFromTask(
                 () => provider.Delete(SelectedFile.Path, SelectedFile.IsFolder),
                 canDeleteSelection);
 
-            _deleteSelectedFile.InvokeCommand(Refresh);
+            DeleteSelectedFile.InvokeCommand(Refresh);
 
             var canUnselectFile = this
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(selection => selection != null)
-                .CombineLatest(_refresh.IsExecuting, canInteract, (sel, loading, ci) => sel && !loading && ci);
+                .CombineLatest(Refresh.IsExecuting, canInteract, (sel, loading, ci) => sel && !loading && ci);
             
-            _unselectFile = ReactiveCommand.Create(
+            UnselectFile = ReactiveCommand.Create(
                 () => { SelectedFile = null; },
                 canUnselectFile);
 
-            _uploadToCurrentPath.ThrownExceptions
-                .Merge(_deleteSelectedFile.ThrownExceptions)
-                .Merge(_downloadSelectedFile.ThrownExceptions)
-                .Merge(_refresh.ThrownExceptions)
+            UploadToCurrentPath.ThrownExceptions
+                .Merge(DeleteSelectedFile.ThrownExceptions)
+                .Merge(DownloadSelectedFile.ThrownExceptions)
+                .Merge(Refresh.ThrownExceptions)
                 .Merge(getBreadCrumbs.ThrownExceptions)
                 .Log(this, $"Exception occured in provider {provider.Name}")
                 .Subscribe();
@@ -227,7 +217,7 @@ namespace Camelotia.Presentation.ViewModels
                 this.WhenAnyValue(x => x.Auth.IsAuthenticated)
                     .Where(authenticated => authenticated)
                     .Select(ignore => Unit.Default)
-                    .InvokeCommand(_refresh)
+                    .InvokeCommand(Refresh)
                     .DisposeWith(disposable);
 
                 Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
@@ -242,10 +232,10 @@ namespace Camelotia.Presentation.ViewModels
                     .Where(refreshing => refreshing == 0)
                     .Log(this, $"Refreshing provider {provider.Name} path {CurrentPath}")
                     .Select(value => Unit.Default)
-                    .InvokeCommand(_refresh)
+                    .InvokeCommand(Refresh)
                     .DisposeWith(disposable);
 
-                _refresh.Select(results => 30)
+                Refresh.Select(results => 30)
                     .StartWith(30)
                     .Subscribe(x => RefreshingIn = x)
                     .DisposeWith(disposable);
@@ -254,7 +244,7 @@ namespace Camelotia.Presentation.ViewModels
                     .Skip(1)
                     .Where(interact => interact)
                     .Select(x => Unit.Default)
-                    .InvokeCommand(_refresh)
+                    .InvokeCommand(Refresh)
                     .DisposeWith(disposable);
             });
         }
@@ -313,22 +303,22 @@ namespace Camelotia.Presentation.ViewModels
 
         public string Description => $"{_provider.Name} file system.";
 
-        public ICommand DownloadSelectedFile => _downloadSelectedFile;
+        public ReactiveCommand<Unit, Unit> DownloadSelectedFile { get; }
 
-        public ICommand UploadToCurrentPath => _uploadToCurrentPath;
+        public ReactiveCommand<Unit, Unit> UploadToCurrentPath { get; }
 
-        public ICommand DeleteSelectedFile => _deleteSelectedFile;
+        public ReactiveCommand<Unit, Unit> DeleteSelectedFile { get; }
 
-        public ICommand UnselectFile => _unselectFile;
+        public ReactiveCommand<Unit, Unit> UnselectFile { get; }
 
-        public ICommand Refresh => _refresh;
-        
-        public ICommand Logout => _logout;
+        public ReactiveCommand<Unit, IEnumerable<FileModel>> Refresh { get; }
 
-        public ICommand Back => _back;
+        public ReactiveCommand<Unit, Unit> Logout { get; }
 
-        public ICommand Open => _open;
+        public ReactiveCommand<Unit, string> Back { get; }
 
-        public ICommand SetPath => _setPath;
+        public ReactiveCommand<Unit, string> Open { get; }
+
+        public ReactiveCommand<string, string> SetPath { get; }
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Input;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
@@ -14,8 +13,6 @@ namespace Camelotia.Presentation.ViewModels
 {
     public sealed class DirectAuthViewModel : ReactiveValidationObject<DirectAuthViewModel>, IDirectAuthViewModel
     {
-        private readonly ReactiveCommand<Unit, Unit> _login;
-        
         public DirectAuthViewModel(DirectAuthState state, IProvider provider)
         {
             this.ValidationRule(x => x.Username,
@@ -26,20 +23,20 @@ namespace Camelotia.Presentation.ViewModels
                 pass => !string.IsNullOrWhiteSpace(pass),
                 "Password shouldn't be null or white space.");
             
-            _login = ReactiveCommand.CreateFromTask(
+            Login = ReactiveCommand.CreateFromTask(
                 () => provider.DirectAuth(Username, Password),
                 this.IsValid());
             
-            _login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
+            Login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
             
-            _login.ThrownExceptions
+            Login.ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Direct auth error occured in {provider.Name}")
                 .ToPropertyEx(this, x => x.ErrorMessage);
 
-            _login.ThrownExceptions
+            Login.ThrownExceptions
                 .Select(exception => true)
-                .Merge(_login.Select(unit => false))
+                .Merge(Login.Select(unit => false))
                 .ToPropertyEx(this, x => x.HasErrorMessage);
 
             Username = state.Username;
@@ -66,6 +63,6 @@ namespace Camelotia.Presentation.ViewModels
         [ObservableAsProperty]
         public bool IsBusy { get; }
         
-        public ICommand Login => _login;
+        public ReactiveCommand<Unit, Unit> Login { get; }
     }
 }

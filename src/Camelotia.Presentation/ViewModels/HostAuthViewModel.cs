@@ -1,6 +1,5 @@
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Input;
 using System;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
@@ -14,8 +13,6 @@ namespace Camelotia.Presentation.ViewModels
 {
     public sealed class HostAuthViewModel : ReactiveValidationObject<HostAuthViewModel>, IHostAuthViewModel
     {
-        private readonly ReactiveCommand<Unit, Unit> _login;
-        
         public HostAuthViewModel(HostAuthState state, IProvider provider)
         {
             this.ValidationRule(x => x.Username,
@@ -34,20 +31,20 @@ namespace Camelotia.Presentation.ViewModels
                 port => int.TryParse(port, out _),
                 "Port should be a valid integer.");
             
-            _login = ReactiveCommand.CreateFromTask(
+            Login = ReactiveCommand.CreateFromTask(
                 () => provider.HostAuth(Address, int.Parse(Port), Username, Password),
                 this.IsValid());
 
-            _login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
+            Login.IsExecuting.ToPropertyEx(this, x => x.IsBusy);
             
-            _login.ThrownExceptions
+            Login.ThrownExceptions
                 .Select(exception => exception.Message)
                 .Log(this, $"Host auth error occured in {provider.Name}")
                 .ToPropertyEx(this, x => x.ErrorMessage);
 
-            _login.ThrownExceptions
+            Login.ThrownExceptions
                 .Select(exception => true)
-                .Merge(_login.Select(unit => false))
+                .Merge(Login.Select(unit => false))
                 .ToPropertyEx(this, x => x.HasErrorMessage);
 
             Username = state.Username;
@@ -88,6 +85,6 @@ namespace Camelotia.Presentation.ViewModels
         [ObservableAsProperty]
         public bool IsBusy { get; }
         
-        public ICommand Login => _login;
+        public ReactiveCommand<Unit, Unit> Login { get; }
     }
 }

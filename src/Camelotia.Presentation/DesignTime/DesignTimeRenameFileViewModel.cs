@@ -1,5 +1,6 @@
-using System.Windows.Input;
+using System.Reactive;
 using Camelotia.Presentation.Interfaces;
+using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 
@@ -21,10 +22,10 @@ namespace Camelotia.Presentation.DesignTime
 
         public string ErrorMessage { get; } = "Error message example.";
         
-        public ICommand Rename { get; }
+        public ReactiveCommand<Unit, Unit> Rename { get; }
         
-        public ICommand Close { get; }
+        public ReactiveCommand<Unit, Unit> Close { get; }
         
-        public ICommand Open { get; }
+        public ReactiveCommand<Unit, Unit> Open { get; }
     }
 }

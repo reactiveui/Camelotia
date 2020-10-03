@@ -1,5 +1,6 @@
-using System.Windows.Input;
+using System.Reactive;
 using Camelotia.Presentation.Interfaces;
+using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 
@@ -13,7 +14,7 @@ namespace Camelotia.Presentation.DesignTime
         
         public string Password { get; set; }
         
-        public ICommand Login { get; }
+        public ReactiveCommand<Unit, Unit> Login { get; }
 
         public bool HasErrorMessage { get; } = true;
 

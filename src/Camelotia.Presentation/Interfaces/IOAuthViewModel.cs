@@ -1,11 +1,12 @@
 using System.ComponentModel;
-using System.Windows.Input;
+using System.Reactive;
+using ReactiveUI;
 
 namespace Camelotia.Presentation.Interfaces
 {
     public interface IOAuthViewModel : INotifyPropertyChanged
     {
-        ICommand Login { get; }
+        ReactiveCommand<Unit, Unit> Login { get; }
         
         bool HasErrorMessage { get; }
         

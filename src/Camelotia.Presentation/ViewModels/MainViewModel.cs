@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Input;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
@@ -19,19 +18,15 @@ namespace Camelotia.Presentation.ViewModels
     public sealed class MainViewModel : ReactiveObject, IMainViewModel
     {
         private readonly ReadOnlyObservableCollection<IProviderViewModel> _providers;
-        private readonly ReactiveCommand<Unit, ProviderState> _add;
-        private readonly ReactiveCommand<Unit, Unit> _unselect;
-        private readonly ReactiveCommand<Unit, Unit> _refresh;
-        private readonly ReactiveCommand<Unit, Guid> _remove;
         private readonly IProviderFactory _factory;
 
         public MainViewModel(MainState state, IProviderFactory factory, ProviderViewModelFactory createViewModel)
         {
             _factory = factory;
-            _refresh = ReactiveCommand.Create(state.Providers.Refresh);
-            _refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
+            Refresh = ReactiveCommand.Create(state.Providers.Refresh);
+            Refresh.IsExecuting.ToPropertyEx(this, x => x.IsLoading);
             
-            _refresh.IsExecuting
+            Refresh.IsExecuting
                 .Select(executing => !executing)
                 .ToPropertyEx(this, x => x.IsReady);
             
@@ -46,18 +41,17 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.SelectedProvider)
                 .Select(provider => provider != null);
             
-            _remove = ReactiveCommand.Create(() => SelectedProvider.Id, canRemove);
-            _remove.Subscribe(state.Providers.RemoveKey);
+            Remove = ReactiveCommand.Create(
+                () => state.Providers.RemoveKey(SelectedProvider.Id), 
+                canRemove);
 
             var canAddProvider = this
                 .WhenAnyValue(x => x.SelectedSupportedType)
                 .Select(type => Enum.IsDefined(typeof(ProviderType), type));
             
-            _add = ReactiveCommand.Create(
-                () => new ProviderState { Type = SelectedSupportedType },
+            Add = ReactiveCommand.Create(
+                () => state.Providers.AddOrUpdate(new ProviderState { Type = SelectedSupportedType }),
                 canAddProvider);
-
-            _add.Subscribe(state.Providers.AddOrUpdate);
 
             this.WhenAnyValue(x => x.SelectedProvider)
                 .Select(provider => provider == null)
@@ -71,8 +65,8 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.SelectedProvider)
                 .Select(provider => provider != null);
 
-            _unselect = ReactiveCommand.Create(() => Unit.Default, canUnselect);
-            _unselect.Subscribe(unit => SelectedProvider = null);
+            Unselect = ReactiveCommand.Create(() => Unit.Default, canUnselect);
+            Unselect.Subscribe(unit => SelectedProvider = null);
             
             var outputCollectionChanges = Providers
                 .ToObservableChangeSet(x => x.Id)
@@ -121,12 +115,12 @@ namespace Camelotia.Presentation.ViewModels
 
         public IEnumerable<ProviderType> SupportedTypes => _factory.SupportedTypes;
 
-        public ICommand Unselect => _unselect;
+        public ReactiveCommand<Unit, Unit> Unselect { get; }
 
-        public ICommand Refresh => _refresh;
+        public ReactiveCommand<Unit, Unit> Refresh { get; }
 
-        public ICommand Remove => _remove;
+        public ReactiveCommand<Unit, Unit> Remove { get; }
 
-        public ICommand Add => _add;
+        public ReactiveCommand<Unit, Unit> Add { get; }
     }
 }

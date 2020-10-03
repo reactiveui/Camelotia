@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Input;
+using System.Reactive;
+using Camelotia.Services.Models;
+using ReactiveUI;
 
 namespace Camelotia.Presentation.Interfaces
 {
@@ -21,23 +23,23 @@ namespace Camelotia.Presentation.Interfaces
 
         IEnumerable<IFolderViewModel> BreadCrumbs { get; }
 
-        ICommand DownloadSelectedFile { get; }
+        ReactiveCommand<Unit, Unit> DownloadSelectedFile { get; }
         
-        ICommand UploadToCurrentPath { get; }
+        ReactiveCommand<Unit, Unit> UploadToCurrentPath { get; }
 
-        ICommand DeleteSelectedFile { get; }
+        ReactiveCommand<Unit, Unit> DeleteSelectedFile { get; }
         
-        ICommand UnselectFile { get; }
+        ReactiveCommand<Unit, Unit> UnselectFile { get; }
 
-        ICommand Refresh { get; }
+        ReactiveCommand<Unit, IEnumerable<FileModel>> Refresh { get; }
         
-        ICommand Logout { get; }
+        ReactiveCommand<Unit, Unit> Logout { get; }
         
-        ICommand Back { get; }
+        ReactiveCommand<Unit, string> Back { get; }
         
-        ICommand Open { get; }
+        ReactiveCommand<Unit, string> Open { get; }
 
-        ICommand SetPath { get; }
+        ReactiveCommand<string, string> SetPath { get; }
 
         bool IsCurrentPathEmpty { get; }
         
