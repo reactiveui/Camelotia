@@ -48,18 +48,16 @@ namespace Camelotia.Presentation.ViewModels
                 .ToPropertyEx(this, x => x.HasErrorMessage);
 
             Username = state.Username;
+            Password = state.Password;
+            Address = state.Address;
+            Port = state.Port;
+
             this.WhenAnyValue(x => x.Username)
                 .Subscribe(name => state.Username = name);
-            
-            Password = state.Password;
             this.WhenAnyValue(x => x.Password)
                 .Subscribe(name => state.Password = name);
-            
-            Address = state.Address;
             this.WhenAnyValue(x => x.Address)
                 .Subscribe(name => state.Address = name);
-            
-            Port = state.Port;
             this.WhenAnyValue(x => x.Port)
                 .Subscribe(name => state.Port = name);
         }

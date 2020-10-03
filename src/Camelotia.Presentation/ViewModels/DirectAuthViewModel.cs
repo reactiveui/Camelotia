@@ -40,10 +40,10 @@ namespace Camelotia.Presentation.ViewModels
                 .ToPropertyEx(this, x => x.HasErrorMessage);
 
             Username = state.Username;
+            Password = state.Password;
+
             this.WhenAnyValue(x => x.Username)
                 .Subscribe(name => state.Username = name);
-
-            Password = state.Password;
             this.WhenAnyValue(x => x.Password)
                 .Subscribe(pass => state.Password = pass);
         }

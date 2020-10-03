@@ -17,7 +17,8 @@ namespace Camelotia.Presentation.ViewModels
     {
         public CreateFolderViewModel(CreateFolderState state, IProviderViewModel owner, IProvider provider)
         {
-            owner.WhenAnyValue(x => x.CurrentPath).ToPropertyEx(this, x => x.Path);
+            owner.WhenAnyValue(x => x.CurrentPath)
+                 .ToPropertyEx(this, x => x.Path);
             
             this.ValidationRule(x => x.Name,
                 name => !string.IsNullOrWhiteSpace(name),
@@ -72,10 +73,10 @@ namespace Camelotia.Presentation.ViewModels
                 .ToPropertyEx(this, x => x.ErrorMessage);
 
             Name = state.Name;
+            IsVisible = state.IsVisible;
+
             this.WhenAnyValue(x => x.Name)
                 .Subscribe(name => state.Name = name);
-
-            IsVisible = state.IsVisible;
             this.WhenAnyValue(x => x.IsVisible)
                 .Subscribe(visible => state.IsVisible = visible);
         }

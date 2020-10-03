@@ -16,7 +16,7 @@ namespace Camelotia.Presentation.ViewModels
         {
             Provider = provider;
             _folder = folder;
-            Children = (folder.Children != null && folder.Children.Any())
+            Children = folder.Children != null && folder.Children.Any()
                 ? folder.Children.Select(f => new FolderViewModel(provider, f))
                 : Enumerable.Empty<IFolderViewModel>();
         }
