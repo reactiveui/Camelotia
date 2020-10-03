@@ -12,7 +12,7 @@ namespace Camelotia.Services.Providers
 {
     public sealed class SftpProvider : IProvider
     {
-        private static readonly string[] pathSeparators = { "\\", "/" };
+        private static readonly string[] PathSeparators = { "\\", "/" };
 
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private Func<SftpClient> _factory;
@@ -97,13 +97,13 @@ namespace Camelotia.Services.Providers
         public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => Task.Run(() =>
         {
             var pathParts = new List<string> { "/" }; //Add root path first
-            pathParts.AddRange(path.Split(pathSeparators, StringSplitOptions.RemoveEmptyEntries));
+            pathParts.AddRange(path.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries));
             var foldermodels = new List<FolderModel>();
             using var connection = _factory();
             connection.Connect();
             for (var i = 0; i < pathParts.Count; i++)
             {
-                var fullPath = string.Join(pathSeparators[0], pathParts.Take(i + 1));
+                var fullPath = string.Join(PathSeparators[0], pathParts.Take(i + 1));
                 var name = pathParts[i];
                 var listing = connection.ListDirectory(fullPath);
                 var folder = new FolderModel(
