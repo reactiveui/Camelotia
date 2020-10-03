@@ -22,7 +22,6 @@ namespace Camelotia.Presentation.ViewModels
     public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
     {
         private readonly ReactiveCommand<Unit, IEnumerable<FileModel>> _refresh;
-        private readonly ReactiveCommand<Unit, IEnumerable<FolderModel>> _getBreadCrumbs;
         private readonly ReactiveCommand<Unit, Unit> _downloadSelectedFile;
         private readonly ReactiveCommand<Unit, Unit> _uploadToCurrentPath;
         private readonly ReactiveCommand<Unit, Unit> _deleteSelectedFile;
@@ -104,25 +103,24 @@ namespace Camelotia.Presentation.ViewModels
                 .Log(this, $"Current path changed in {provider.Name}")
                 .ToPropertyEx(this, x => x.CurrentPath, state.CurrentPath ?? provider.InitialPath);
 
-            _getBreadCrumbs = ReactiveCommand.CreateFromTask(
-                () => provider.GetBreadCrumbs(CurrentPath)
-                );
+            var getBreadCrumbs = ReactiveCommand.CreateFromTask(
+                () => provider.GetBreadCrumbs(CurrentPath));
 
-            _getBreadCrumbs
+            getBreadCrumbs
                 .Where(items => items != null && items.Any())
                 .Select(items => items.Select(folder => folderFactory(folder, this)))
                 .ToPropertyEx(this, x => x.BreadCrumbs);
 
-            _getBreadCrumbs.ThrownExceptions                
+            getBreadCrumbs.ThrownExceptions
                 .Select(exception => false)
-                .Merge(_getBreadCrumbs.Select(items => items != null && items.Any()))
+                .Merge(getBreadCrumbs.Select(items => items != null && items.Any()))
                 .ObserveOn(RxApp.MainThreadScheduler)                
                 .ToPropertyEx(this, x => x.ShowBreadCrumbs);
 
             this.WhenAnyValue(x => x.CurrentPath, x => x.IsReady)
                 .Where(x => x.Item1 != null && x.Item2)
                 .Select(_ => Unit.Default)                
-                .InvokeCommand(_getBreadCrumbs);
+                .InvokeCommand(getBreadCrumbs);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Skip(1)
@@ -209,7 +207,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Merge(_deleteSelectedFile.ThrownExceptions)
                 .Merge(_downloadSelectedFile.ThrownExceptions)
                 .Merge(_refresh.ThrownExceptions)
-                .Merge(_getBreadCrumbs.ThrownExceptions)
+                .Merge(getBreadCrumbs.ThrownExceptions)
                 .Log(this, $"Exception occured in provider {provider.Name}")
                 .Subscribe();
 

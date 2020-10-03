@@ -49,38 +49,44 @@ namespace Camelotia.Services.Providers
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                return GetAllDrives().Select(file => new FileModel
-                {
-                    Name = file.Name,
-                    IsFolder = true,
-                    Size = file.AvailableFreeSpace,
-                    Path = file.Name
-                });
+                var drives = GetAllDrives()
+                    .Select(file => new FileModel
+                    {
+                        Name = file.Name,
+                        IsFolder = true,
+                        Size = file.AvailableFreeSpace,
+                        Path = file.Name
+                    })
+                    .ToList();
+                return drives;
             }
 
             if (!Directory.Exists(path)) throw new ArgumentException("Directory doesn't exist.");
 
-            return from file in Directory.GetFileSystemEntries(path)
-                   let isDirectory = IsDirectory(file)
-                   let fileInfo = new FileInfo(file)
-                   select new FileModel
-                   {
-                       Path = file,
-                       Name = Path.GetFileName(file),
-                       IsFolder = IsDirectory(file),
-                       Modified = fileInfo.LastWriteTime,
-                       Size = isDirectory ? 0 : fileInfo.Length
-                   };
+            var query =
+                from file in Directory.GetFileSystemEntries(path)
+               let isDirectory = IsDirectory(file)
+               let fileInfo = new FileInfo(file)
+               select new FileModel
+               {
+                   Path = file,
+                   Name = Path.GetFileName(file),
+                   IsFolder = IsDirectory(file),
+                   Modified = fileInfo.LastWriteTime,
+                   Size = isDirectory ? 0 : fileInfo.Length
+               };
+            return query.ToList().AsEnumerable();
         });
 
         public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => Task.Run(() =>
         {
             if (!Directory.Exists(path)) throw new ArgumentException("Directory doesn't exist.");
             
-            var folderModels = new List<FolderModel>();
             return SplitPath(path)
                    .Select(di => new FolderModel(di.FullName, di.Name, di.GetDirectories().Select(di => new FolderModel(di.FullName, di.Name))))
-                   .Reverse();
+                   .Reverse()
+                   .ToList()
+                   .AsEnumerable();
         });
 
         public async Task DownloadFile(string from, Stream to)
