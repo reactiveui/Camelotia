@@ -14,10 +14,9 @@ namespace Camelotia.Presentation.Avalonia.Views
 {
     public sealed class FolderView : ReactiveUserControl<IFolderViewModel>
     {
-        public MenuItem TopLevelMenu => this.FindControl<MenuItem>("TopLevelMenu");
-
-        public DrawingPresenter ArrowRight => this.FindControl<DrawingPresenter>("ArrowRight");
-        public DrawingPresenter ArrowDown => this.FindControl<DrawingPresenter>("ArrowDown");
+        private MenuItem TopLevelMenu => this.FindControl<MenuItem>("TopLevelMenu");
+        private DrawingPresenter ArrowRight => this.FindControl<DrawingPresenter>("ArrowRight");
+        private DrawingPresenter ArrowDown => this.FindControl<DrawingPresenter>("ArrowDown");
 
         public FolderView()
         {
@@ -25,12 +24,12 @@ namespace Camelotia.Presentation.Avalonia.Views
             this.WhenActivated(disposables =>
             {   
                 this.WhenAnyValue(x => x.TopLevelMenu.IsSubMenuOpen)
-                    .Do(isOpen =>
-                    {
-                        ArrowRight.IsVisible = !isOpen;
-                        ArrowDown.IsVisible = isOpen;
-                    })
-                    .Subscribe()
+                    .BindTo(this, x => x.ArrowDown.IsVisible)
+                    .DisposeWith(disposables);
+
+                this.WhenAnyValue(x => x.TopLevelMenu.IsSubMenuOpen)
+                    .Select(menuOpen => !menuOpen)
+                    .BindTo(this, x => x.ArrowRight.IsVisible)
                     .DisposeWith(disposables);                
             });
         }
