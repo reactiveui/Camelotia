@@ -36,7 +36,8 @@
             <TextBlock Text="{x:Bind ViewModel.Path, Mode=OneWay}" Foreground="#002171" />
         </StackPanel>
         <TextBlock Text="Please, enter new folder name:" Margin="0 5" />
-        <TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 PlaceholderText="Please, enter the new name of the folder..." />
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
