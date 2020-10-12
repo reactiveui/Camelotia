@@ -34,7 +34,7 @@
             Kind="File"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
-            Foreground="{StaticResource SecondaryAccentBrush}"
+            Foreground="{StaticResource SecondaryHueMidBrush}"
             Visibility="{Binding IsFile, Converter={StaticResource BooleanToVisibility}}"
             Margin="0 0 5 0"
             Height="16" 
