@@ -10,9 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReactiveUI" Version="11.4.17" />
-    <PackageReference Include="ReactiveUI.Fody" Version="11.4.17" />
-    <PackageReference Include="ReactiveUI.Validation" Version="1.5.5" />
+    <PackageReference Include="ReactiveUI" Version="11.5.35" />
+    <PackageReference Include="ReactiveUI.Fody" Version="11.5.35" />
+    <PackageReference Include="ReactiveUI.Validation" Version="1.6.4" />
   </ItemGroup>
 
 </Project>

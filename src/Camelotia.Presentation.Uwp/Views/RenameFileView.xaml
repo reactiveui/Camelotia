@@ -36,7 +36,8 @@
                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
         </StackPanel>
         <TextBlock Text="Please, enter new file name:" Margin="0 5" />
-        <TextBox Text="{x:Bind ViewModel.NewName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Text="{x:Bind ViewModel.NewName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  PlaceholderText="Please, enter the new name of the file..." />
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />

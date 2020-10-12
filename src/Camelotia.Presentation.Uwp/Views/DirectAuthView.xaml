@@ -32,9 +32,11 @@
             </StackPanel>
         </StackPanel>
         <TextBlock Text="Please, enter your user name:" Margin="0 5" />
-        <TextBox Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 PlaceholderText="Please, enter the user name..." />
         <TextBlock Text="Please, enter your password:" Margin="0 5" />
-        <PasswordBox Password="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <PasswordBox Password="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="Please, enter the password..." />
         <Button Content="Login"
                 HorizontalAlignment="Stretch"
                 Style="{StaticResource AccentButtonStyle}"

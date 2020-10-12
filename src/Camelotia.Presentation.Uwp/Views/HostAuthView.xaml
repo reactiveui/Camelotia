@@ -34,17 +34,21 @@
         <TextBlock Text="Please, enter host address with port:" Margin="0 5" />
         <Grid>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*" />
                 <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Text="{x:Bind ViewModel.Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Grid.Column="0" Text="{x:Bind ViewModel.Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="Please, enter the address..." />
             <TextBox Grid.Column="1" Margin="5 0 0 0" 
-                     Text="{x:Bind ViewModel.Port, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{x:Bind ViewModel.Port, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="The port..." />
         </Grid>
         <TextBlock Text="Please, enter your user name:" Margin="0 5" />
-        <TextBox Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 PlaceholderText="Please, enter the user name..." />
         <TextBlock Text="Please, enter your password:" Margin="0 5" />
-        <PasswordBox Password="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <PasswordBox Password="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="Please, enter the password..." />
         <Button Content="Login"
                 HorizontalAlignment="Stretch"
                 Style="{StaticResource AccentButtonStyle}"
