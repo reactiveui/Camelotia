@@ -6,7 +6,7 @@ using ReactiveUI.Validation.Helpers;
 
 namespace Camelotia.Presentation.DesignTime
 {
-    public class DesignTimeHostAuthViewModel : ReactiveValidationObject<DesignTimeHostAuthViewModel>, IHostAuthViewModel
+    public class DesignTimeHostAuthViewModel : ReactiveValidationObject, IHostAuthViewModel
     {
         public DesignTimeHostAuthViewModel() => this.ValidationRule(x => x.Username, name => false, "Validation error.");
         
