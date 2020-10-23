@@ -47,9 +47,11 @@ To compile the <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/"
 ### Technologies and Tools Used
 
 - <a href="https://reactiveui.net/">ReactiveUI</a> modern MVVM framework
+- <a href="https://github.com/reactiveui/reactiveui.validation">ReactiveUI.Validation</a> reactive validation library
+- <a href="https://reactiveui.net/docs/handbook/events/">ReactiveUI.Events</a> turning regular events into observables
 - <a href="https://github.com/reactiveui/DynamicData">DynamicData</a> reactive collections
 - <a href="http://github.com/avaloniaui">AvaloniaUI</a> cross-platform XAML-based GUI framework
-- <a href="http://github.com/worldbeater/citrus.avalonia">Citrus</a> bright and modern AvaloniaUI theme
+- <a href="http://github.com/worldbeater/citrus.avalonia">Citrus.Avalonia</a> bright and modern AvaloniaUI theme
 - <a href="https://github.com/reactiveui/Akavache">Akavache</a> persistent key-value store
 - <a href="https://github.com/nuke-build/nuke">Nuke</a> build automation system for C#/.NET
 - <a href="https://github.com/xunit/xunit">XUnit</a> unit testing tool for .NET
@@ -66,7 +68,6 @@ To compile the <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/"
 - <a href="https://github.com/googleapis/google-api-dotnet-client">Google Drive</a> client SDK for .NET
 - <a href="https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit">Material Design</a> XAML controls and styles
 - <a href="https://github.com/MahApps/MahApps.Metro">MahApps Metro</a> XAML controls and styled windows
-- <a href="https://reactiveui.net/docs/handbook/events/">ReactiveUI.Events</a> turning regular events into observables
 - <a href="https://github.com/Fody/Costura">Costura.Fody</a> which embeds references as resources
 - <a href="https://www.jetbrains.com/rider/">JetBrains Rider</a> and <a href="https://visualstudio.microsoft.com/">Microsoft Visual Studio</a> IDEs
 - <a href="https://github.com/fornever/avaloniarider">AvaloniaRider</a> plugin for visual designer support
