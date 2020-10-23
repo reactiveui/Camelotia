@@ -3,6 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Camelotia.Presentation.Xamarin.App">
     <Application.Resources>
-
+        <ResourceDictionary>
+            <Style x:Key="ErrorLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="Red" />
+                <Setter Property="Margin" Value="0, -10, 0, 0" />
+            </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

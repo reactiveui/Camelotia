@@ -26,6 +26,9 @@
                        TextColor="Red"
                        Margin="0, 15" />
                 <Entry Text="{Binding NewName}" Placeholder="New file name" />
+                <Label x:Name="FileNameErrorLabel"
+                       Style="{StaticResource ErrorLabelStyle}"
+                       VerticalOptions="Start" />
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="3*" />
@@ -40,6 +43,9 @@
                             Margin="0, 10"
                             Text="Close" />
                 </Grid>
+                <Label x:Name="FormErrorLabel"
+                       Style="{StaticResource ErrorLabelStyle}"
+                       VerticalOptions="Start" />
             </StackLayout>
         </Frame>
     </ContentPage.Content>
