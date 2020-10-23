@@ -6,7 +6,7 @@ using ReactiveUI.Validation.Helpers;
 
 namespace Camelotia.Presentation.DesignTime
 {
-    public class DesignTimeCreateFolderViewModel : ReactiveValidationObject<DesignTimeCreateFolderViewModel>, ICreateFolderViewModel
+    public class DesignTimeCreateFolderViewModel : ReactiveValidationObject, ICreateFolderViewModel
     {
         public DesignTimeCreateFolderViewModel() => this.ValidationRule(x => x.Name, name => false, "Validation error.");
         

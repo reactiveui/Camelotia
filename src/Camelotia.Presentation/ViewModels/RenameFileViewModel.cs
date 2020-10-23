@@ -13,7 +13,7 @@ namespace Camelotia.Presentation.ViewModels
 {
     public delegate IRenameFileViewModel RenameFileViewModelFactory(IProviderViewModel providerViewModel);
 
-    public sealed class RenameFileViewModel : ReactiveValidationObject<RenameFileViewModel>, IRenameFileViewModel
+    public sealed class RenameFileViewModel : ReactiveValidationObject, IRenameFileViewModel
     {
         private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ObservableAsPropertyHelper<string> _errorMessage;

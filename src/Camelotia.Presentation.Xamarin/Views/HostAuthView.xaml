@@ -33,9 +33,24 @@
                     <Entry Grid.Column="0" Text="{Binding Address}" Placeholder="Please, enter host address" />
                     <Entry Grid.Column="1" Text="{Binding Port}" Placeholder="Port" />
                 </Grid>
+                <Label x:Name="HostNameErrorLabel"
+                       Style="{StaticResource ErrorLabelStyle}"
+                       VerticalOptions="Start" />
+                <Label x:Name="PortErrorLabel"
+                       Style="{StaticResource ErrorLabelStyle}"
+                       VerticalOptions="Start" />
                 <Entry Text="{Binding Username}" Placeholder="Please, enter your login" />
+                <Label x:Name="UserNameErrorLabel"
+                       Style="{StaticResource ErrorLabelStyle}"
+                       VerticalOptions="Start" />
                 <Entry Text="{Binding Password}" IsPassword="True" Placeholder="Please, enter your password" />
+                <Label x:Name="PasswordErrorLabel"
+                       Style="{StaticResource ErrorLabelStyle}"
+                       VerticalOptions="Start" />
                 <controls:AccentButton Command="{Binding Login}" Text="Login" />
+                <Label x:Name="FormErrorLabel"
+                       Style="{StaticResource ErrorLabelStyle}"
+                       VerticalOptions="Start" />
             </StackLayout>
         </Frame>
     </ContentPage.Content>

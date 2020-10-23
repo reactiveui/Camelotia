@@ -11,7 +11,7 @@ using ReactiveUI.Validation.Helpers;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public sealed class DirectAuthViewModel : ReactiveValidationObject<DirectAuthViewModel>, IDirectAuthViewModel
+    public sealed class DirectAuthViewModel : ReactiveValidationObject, IDirectAuthViewModel
     {
         private readonly ObservableAsPropertyHelper<string> _errorMessage;
         private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;

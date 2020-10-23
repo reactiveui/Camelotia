@@ -12,7 +12,7 @@ using VkNet.Enums;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public sealed class HostAuthViewModel : ReactiveValidationObject<HostAuthViewModel>, IHostAuthViewModel
+    public sealed class HostAuthViewModel : ReactiveValidationObject, IHostAuthViewModel
     {
         private readonly ObservableAsPropertyHelper<string> _errorMessage;
         private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;

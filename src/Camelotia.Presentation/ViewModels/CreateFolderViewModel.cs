@@ -13,7 +13,7 @@ namespace Camelotia.Presentation.ViewModels
 {
     public delegate ICreateFolderViewModel CreateFolderViewModelFactory(IProviderViewModel providerViewModel);
 
-    public sealed class CreateFolderViewModel : ReactiveValidationObject<CreateFolderViewModel>, ICreateFolderViewModel
+    public sealed class CreateFolderViewModel : ReactiveValidationObject, ICreateFolderViewModel
     {
         private readonly ObservableAsPropertyHelper<string> _errorMessage;
         private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;

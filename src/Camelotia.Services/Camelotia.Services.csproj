@@ -7,13 +7,13 @@
 
   <ItemGroup>
     <PackageReference Include="DynamicData" Version="6.17.14" />
-    <PackageReference Include="akavache" Version="6.10.20" />
-    <PackageReference Include="FluentFTP" Version="32.4.7" />
-    <PackageReference Include="Google.Apis.Drive.v3" Version="1.49.0.2093" />
+    <PackageReference Include="akavache" Version="7.1.1" />
+    <PackageReference Include="FluentFTP" Version="33.0.2" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.49.0.2117" />
     <PackageReference Include="Octokit" Version="0.48.0" />
     <PackageReference Include="ssh.net" Version="2016.1.0" />
     <PackageReference Include="System.Reactive" Version="4.4.1" />
-    <PackageReference Include="VkNet" Version="1.56.0" />
+    <PackageReference Include="VkNet" Version="1.57.0" />
   </ItemGroup>
 
 </Project>

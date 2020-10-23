@@ -26,8 +26,17 @@
                        TextColor="Red"
                        Margin="0, 15" />
                 <Entry Text="{Binding Username}" Placeholder="Please, enter your login" />
+                <Label x:Name="UserNameErrorLabel"
+                       Style="{StaticResource ErrorLabelStyle}"
+                       VerticalOptions="Start" />
                 <Entry Text="{Binding Password}" IsPassword="True" Placeholder="Please, enter your password" />
+                <Label x:Name="PasswordErrorLabel"
+                       Style="{StaticResource ErrorLabelStyle}"
+                       VerticalOptions="Start" />
                 <controls:AccentButton Text="Login" Command="{Binding Login}" />
+                <Label x:Name="FormErrorLabel"
+                       Style="{StaticResource ErrorLabelStyle}"
+                       VerticalOptions="Start" />
             </StackLayout>
         </Frame>
     </ContentPage.Content>

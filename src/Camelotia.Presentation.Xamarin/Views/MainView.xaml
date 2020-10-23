@@ -13,6 +13,7 @@
     Title="Loading..."
     mc:Ignorable="d">
     <d:ContentPage.BindingContext>
+        <!-- ReSharper disable once Xaml.InvalidType -->
         <designTime:DesignTimeMainViewModel />
     </d:ContentPage.BindingContext>
 </rxui:ReactiveNavigationPage>
