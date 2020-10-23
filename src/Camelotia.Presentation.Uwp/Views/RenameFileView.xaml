@@ -37,7 +37,10 @@
         </StackPanel>
         <TextBlock Text="Please, enter new file name:" Margin="0 5" />
         <TextBox Text="{x:Bind ViewModel.NewName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  PlaceholderText="Please, enter the new name of the file..." />
+                 PlaceholderText="Please, enter the new name of the file..." />
+        <TextBlock x:Name="FileNameErrorLabel" 
+                   Text="File name error label"
+                   Foreground="Red" />
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
@@ -56,5 +59,8 @@
                     HorizontalAlignment="Stretch"
                     Margin="0 10" />
         </Grid>
+        <TextBlock x:Name="FormErrorLabel" 
+                   Text="Form error label"
+                   Foreground="Red" />
     </StackPanel>
 </UserControl>

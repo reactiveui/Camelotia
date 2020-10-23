@@ -1,10 +1,15 @@
 using System.ComponentModel;
 using System.Reactive;
 using ReactiveUI;
+using ReactiveUI.Validation.Abstractions;
 
 namespace Camelotia.Presentation.Interfaces
 {
-    public interface IDirectAuthViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
+    public interface IDirectAuthViewModel :
+        INotifyPropertyChanged,
+        INotifyDataErrorInfo,
+        IValidatableViewModel,
+        IReactiveObject
     {
         string Username { get; set; }
         

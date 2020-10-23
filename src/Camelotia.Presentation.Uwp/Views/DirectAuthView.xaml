@@ -34,13 +34,22 @@
         <TextBlock Text="Please, enter your user name:" Margin="0 5" />
         <TextBox Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  PlaceholderText="Please, enter the user name..." />
+        <TextBlock x:Name="UserNameErrorLabel" 
+                   Text="User name error label"
+                   Foreground="Red" />
         <TextBlock Text="Please, enter your password:" Margin="0 5" />
         <PasswordBox Password="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      PlaceholderText="Please, enter the password..." />
+        <TextBlock x:Name="PasswordErrorLabel" 
+                   Text="Password error label"
+                   Foreground="Red" />
         <Button Content="Login"
                 HorizontalAlignment="Stretch"
                 Style="{StaticResource AccentButtonStyle}"
                 Command="{x:Bind ViewModel.Login, Mode=OneWay}"
                 Margin="0 10" />
+        <TextBlock x:Name="FormErrorLabel" 
+                   Text="Form error label"
+                   Foreground="Red" />
     </StackPanel>
 </UserControl>

@@ -6,13 +6,13 @@
 		<UseWpf>true</UseWpf>
   	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="akavache" Version="6.10.20" />
-		<PackageReference Include="MahApps.Metro" Version="2.2.0" />
+		<PackageReference Include="akavache" Version="7.1.1" />
+		<PackageReference Include="MahApps.Metro" Version="2.3.0" />
 		<PackageReference Include="MaterialDesignColors" Version="1.2.7" />
 		<PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
 		<PackageReference Include="MaterialDesignThemes.MahApps" Version="0.1.5" />
-		<PackageReference Include="ReactiveUI.Events.WPF" Version="11.5.35" />
-		<PackageReference Include="ReactiveUI.WPF" Version="11.5.35" />
+		<PackageReference Include="ReactiveUI.Events.WPF" Version="12.1.1" />
+		<PackageReference Include="ReactiveUI.WPF" Version="12.1.1" />
 		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.0.4" />
 	</ItemGroup>
 	<ItemGroup>

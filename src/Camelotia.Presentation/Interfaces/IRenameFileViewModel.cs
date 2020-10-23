@@ -1,10 +1,15 @@
 using System.ComponentModel;
 using System.Reactive;
 using ReactiveUI;
+using ReactiveUI.Validation.Abstractions;
 
 namespace Camelotia.Presentation.Interfaces
 {
-    public interface IRenameFileViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
+    public interface IRenameFileViewModel : 
+        INotifyPropertyChanged,
+        INotifyDataErrorInfo,
+        IValidatableViewModel,
+        IReactiveObject
     {
         bool IsLoading { get; }
         
