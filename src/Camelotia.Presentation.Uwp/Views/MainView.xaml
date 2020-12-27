@@ -52,9 +52,9 @@
             </Grid>
             <ListBox Grid.Row="2" Background="Transparent"
                      SelectedItem="{x:Bind ViewModel.SelectedProvider, Mode=TwoWay}"
-                     ItemsSource="{x:Bind ViewModel.Providers, Mode=OneWay}">
+                     ItemsSource="{x:Bind ViewModel.Clouds, Mode=OneWay}">
                 <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="model:IProviderViewModel">
+                    <DataTemplate x:DataType="model:ICloudViewModel">
                         <StackPanel Margin="10">
                             <TextBlock Text="{x:Bind Name, Mode=OneTime}"
                                        Foreground="White"
@@ -93,8 +93,8 @@
             </Grid>
         </Grid>
         <Grid Grid.Column="1" Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}">
-            <views:ProviderView ViewModel="{x:Bind ViewModel.SelectedProvider, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.WelcomeScreenCollapsed, Mode=OneWay}" />
+            <views:CloudView ViewModel="{x:Bind ViewModel.SelectedProvider, Mode=OneWay}"
+                             Visibility="{x:Bind ViewModel.WelcomeScreenCollapsed, Mode=OneWay}" />
             <Grid Visibility="{x:Bind ViewModel.WelcomeScreenVisible, Mode=OneWay}" 
                   Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}">
                 <StackPanel HorizontalAlignment="Center"

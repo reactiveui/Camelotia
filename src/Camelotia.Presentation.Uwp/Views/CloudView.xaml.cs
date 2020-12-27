@@ -5,27 +5,27 @@ using Windows.UI.Xaml.Controls;
 
 namespace Camelotia.Presentation.Uwp.Views
 {
-    public sealed partial class ProviderView : UserControl, IViewFor<IProviderViewModel>
+    public sealed partial class CloudView : UserControl, IViewFor<ICloudViewModel>
     {
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty
-               .Register(nameof(ViewModel), typeof(IProviderViewModel), typeof(ProviderView), null);
+               .Register(nameof(ViewModel), typeof(ICloudViewModel), typeof(CloudView), null);
 
-        public ProviderView()
+        public CloudView()
         {
             InitializeComponent();
             this.WhenActivated(disposables => { });
         }
 
-        public IProviderViewModel ViewModel
+        public ICloudViewModel ViewModel
         {
-            get => (IProviderViewModel)GetValue(ViewModelProperty);
+            get => (ICloudViewModel)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
 
         object IViewFor.ViewModel
         {
             get => ViewModel;
-            set => ViewModel = (IProviderViewModel)value;
+            set => ViewModel = (ICloudViewModel)value;
         }
     }
 }
