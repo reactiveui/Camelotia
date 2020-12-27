@@ -7,7 +7,7 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.Interfaces
 {
-    public interface IProviderViewModel : INotifyPropertyChanged
+    public interface ICloudViewModel : INotifyPropertyChanged
     {
         Guid Id { get; }
         

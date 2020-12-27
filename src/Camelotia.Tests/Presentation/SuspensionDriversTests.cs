@@ -28,11 +28,11 @@ namespace Camelotia.Tests.Presentation
         {
             var state = new MainState
             {
-                SelectedSupportedType = ProviderType.GitHub
+                SelectedSupportedType = CloudType.GitHub
             };
             
-            state.Providers.AddOrUpdate(new ProviderState());
-            state.Providers.AddOrUpdate(new ProviderState
+            state.Clouds.AddOrUpdate(new CloudState());
+            state.Clouds.AddOrUpdate(new CloudState
             {
                 AuthState = new AuthState
                 {
@@ -49,10 +49,10 @@ namespace Camelotia.Tests.Presentation
             loaded.Should().BeOfType<MainState>();
 
             var retyped = (MainState) loaded;
-            retyped.SelectedSupportedType.Should().Be(ProviderType.GitHub);
-            retyped.Providers.Count.Should().Be(2);
-            retyped.ProviderStates.Should().NotBeEmpty();
-            retyped.ProviderStates.Should().Contain(provider =>
+            retyped.SelectedSupportedType.Should().Be(CloudType.GitHub);
+            retyped.Clouds.Count.Should().Be(2);
+            retyped.CloudStates.Should().NotBeEmpty();
+            retyped.CloudStates.Should().Contain(provider =>
                 provider.AuthState.DirectAuthState.Username == "Joseph Joestar" &&
                 provider.AuthState.DirectAuthState.Password == "Dio");
 

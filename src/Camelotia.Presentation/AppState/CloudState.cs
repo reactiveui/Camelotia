@@ -5,7 +5,7 @@ using Camelotia.Services.Models;
 namespace Camelotia.Presentation.AppState
 {
     [DataContract]
-    public class ProviderState
+    public class CloudState
     {
         [DataMember]
         public CreateFolderState CreateFolderState { get; set; } = new CreateFolderState();
@@ -26,7 +26,7 @@ namespace Camelotia.Presentation.AppState
         public DateTime Created { get; set; } = DateTime.Now;
         
         [DataMember]
-        public ProviderType Type { get; set; } = ProviderType.Local;
+        public CloudType Type { get; set; } = CloudType.Local;
         
         [DataMember]
         public string User { get; set; }
@@ -35,7 +35,7 @@ namespace Camelotia.Presentation.AppState
         public string Token { get; set; }
         
         [IgnoreDataMember]
-        public ProviderParameters Parameters => new ProviderParameters
+        public CloudParameters Parameters => new CloudParameters
         {
             Id = Id,
             Created = Created,

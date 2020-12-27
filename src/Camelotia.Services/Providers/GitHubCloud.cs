@@ -11,7 +11,7 @@ using Octokit;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class GitHubProvider : IProvider
+    public sealed class GitHubCloud : ICloud
     {
         private const string GithubApplicationId = "my-cool-app";
         private readonly GitHubClient _gitHub = new GitHubClient(new ProductHeaderValue(GithubApplicationId));
@@ -19,14 +19,14 @@ namespace Camelotia.Services.Providers
         private readonly HttpClient _httpClient = new HttpClient();
         private string _currentUserName;
         
-        public GitHubProvider(ProviderParameters model)
+        public GitHubCloud(CloudParameters model)
         {
             Parameters = model;
             _isAuthenticated.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
 
-        public ProviderParameters Parameters { get; }
+        public CloudParameters Parameters { get; }
 
         public long? Size => null;
 

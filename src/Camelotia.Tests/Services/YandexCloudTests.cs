@@ -9,20 +9,20 @@ using Xunit;
 
 namespace Camelotia.Tests.Services
 {
-    public sealed class YandexFileSystemProviderTests
+    public sealed class YandexCloudTests
     {
         private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
-        private readonly ProviderParameters _model = new ProviderParameters
+        private readonly CloudParameters _model = new CloudParameters
         {
             Id = Guid.NewGuid(),
-            Type = ProviderType.Yandex,
+            Type = CloudType.Yandex,
             Created = DateTime.Now
         };
 
         [Fact]
         public void VerifyDefaultPropertyValues()
         {
-            var provider = new YandexDiskProvider(_model, _authenticator);
+            var provider = new YandexDiskCloud(_model, _authenticator);
             provider.InitialPath.Should().Be(Path.DirectorySeparatorChar.ToString());
 
             provider.CanCreateFolder.Should().BeTrue();

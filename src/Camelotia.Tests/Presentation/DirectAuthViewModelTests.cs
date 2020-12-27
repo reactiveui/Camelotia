@@ -13,7 +13,7 @@ namespace Camelotia.Tests.Presentation
 {
     public sealed class DirectAuthViewModelTests
     {
-        private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly ICloud _provider = Substitute.For<ICloud>();
         private readonly DirectAuthState _state = new DirectAuthState();
 
         [Fact]

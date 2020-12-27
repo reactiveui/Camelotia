@@ -10,15 +10,15 @@ using Xunit;
 
 namespace Camelotia.Tests.Services
 {
-    public sealed class LocalFileSystemProviderTests
+    public sealed class LocalCloudTests
     {
         private static readonly Guid LocalIdentifier = Guid.NewGuid();
         private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
-        private readonly IProvider _provider = new LocalProvider(new ProviderParameters
+        private readonly ICloud _provider = new LocalCloud(new CloudParameters
         {
             Id = LocalIdentifier,
             Created = DateTime.Now,
-            Type = ProviderType.Local
+            Type = CloudType.Local
         });
 
         [Fact]

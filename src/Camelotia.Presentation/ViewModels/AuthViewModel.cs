@@ -10,13 +10,13 @@ namespace Camelotia.Presentation.ViewModels
     {
         private readonly ObservableAsPropertyHelper<bool> _isAuthenticated;
         private readonly ObservableAsPropertyHelper<bool> _isAnonymous;
-        private readonly IProvider _provider;
+        private readonly ICloud _provider;
         
         public AuthViewModel(
             IDirectAuthViewModel direct,
             IHostAuthViewModel host,
             IOAuthViewModel open,
-            IProvider provider)
+            ICloud provider)
         {
             OAuth = open;
             HostAuth = host;

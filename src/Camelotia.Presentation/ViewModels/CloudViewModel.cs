@@ -1,24 +1,24 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 using System.Reactive;
-using System.Reactive.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Extensions;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
-using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public delegate IProviderViewModel ProviderViewModelFactory(ProviderState state, IProvider provider);
+    public delegate ICloudViewModel CloudViewModelFactory(CloudState state, ICloud provider);
 
-    public sealed class ProviderViewModel : ReactiveObject, IProviderViewModel, IActivatableViewModel
+    public sealed class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatableViewModel
     {
         private readonly ObservableAsPropertyHelper<IEnumerable<IFolderViewModel>> _breadCrumbs;
         private readonly ObservableAsPropertyHelper<IEnumerable<IFileViewModel>> _files;
@@ -31,19 +31,19 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _canLogout;
         private readonly ObservableAsPropertyHelper<bool> _isReady;
-        private readonly IProvider _provider;
+        private readonly ICloud _cloud;
 
-        public ProviderViewModel(
-            ProviderState state,
+        public CloudViewModel(
+            CloudState state,
             CreateFolderViewModelFactory createFolderFactory,
             RenameFileViewModelFactory renameFactory,
             FileViewModelFactory fileFactory,
             FolderViewModelFactory folderFactory,
             IAuthViewModel auth,
             IFileManager files,
-            IProvider provider)
+            ICloud cloud)
         {
-            _provider = provider;
+            _cloud = cloud;
             Folder = createFolderFactory(this);
             Rename = renameFactory(this);
             Auth = auth;
@@ -58,7 +58,7 @@ namespace Camelotia.Presentation.ViewModels
                 .ToProperty(this, x => x.CanInteract);
             
             Refresh = ReactiveCommand.CreateFromTask(
-                () => provider.Get(CurrentPath),
+                () => cloud.Get(CurrentPath),
                 canInteract);
             
             _files = Refresh
@@ -93,7 +93,7 @@ namespace Camelotia.Presentation.ViewModels
             var canCurrentPathGoBack = this
                 .WhenAnyValue(x => x.CurrentPath)
                 .Where(path => path != null)
-                .Select(path => path.Length > provider.InitialPath.Length)
+                .Select(path => path.Length > cloud.InitialPath.Length)
                 .CombineLatest(Refresh.IsExecuting, canInteract, (valid, busy, ci) => valid && ci && !busy);
             
             Back = ReactiveCommand.Create(
@@ -105,13 +105,13 @@ namespace Camelotia.Presentation.ViewModels
             _currentPath = Open
                 .Merge(Back)
                 .Merge(SetPath)
-                .Select(path => path ?? provider.InitialPath)
+                .Select(path => path ?? cloud.InitialPath)
                 .DistinctUntilChanged()
-                .Log(this, $"Current path changed in {provider.Name}")
-                .ToProperty(this, x => x.CurrentPath, state.CurrentPath ?? provider.InitialPath);
+                .Log(this, $"Current path changed in {cloud.Name}")
+                .ToProperty(this, x => x.CurrentPath, state.CurrentPath ?? cloud.InitialPath);
 
             var getBreadCrumbs = ReactiveCommand.CreateFromTask(
-                () => provider.GetBreadCrumbs(CurrentPath));
+                () => cloud.GetBreadCrumbs(CurrentPath));
 
             _breadCrumbs = getBreadCrumbs
                 .Where(items => items != null && items.Any())
@@ -166,7 +166,7 @@ namespace Camelotia.Presentation.ViewModels
                 () => Observable
                     .FromAsync(files.OpenRead)
                     .Where(response => response.Name != null && response.Stream != null)
-                    .Select(args => _provider.UploadFile(CurrentPath, args.Stream, args.Name))
+                    .Select(args => _cloud.UploadFile(CurrentPath, args.Stream, args.Name))
                     .SelectMany(task => task.ToObservable()), 
                 canUploadToCurrentPath);
 
@@ -181,21 +181,21 @@ namespace Camelotia.Presentation.ViewModels
                 () => Observable
                     .FromAsync(() => files.OpenWrite(SelectedFile.Name))
                     .Where(stream => stream != null)
-                    .Select(stream => _provider.DownloadFile(SelectedFile.Path, stream))
+                    .Select(stream => _cloud.DownloadFile(SelectedFile.Path, stream))
                     .SelectMany(task => task.ToObservable()), 
                 canDownloadSelectedFile);
             
-            var canLogout = provider
+            var canLogout = cloud
                 .IsAuthorized
                 .DistinctUntilChanged()
                 .Select(loggedIn => loggedIn && (
-                    provider.SupportsDirectAuth ||
-                    provider.SupportsOAuth || 
-                    provider.SupportsHostAuth))
+                    cloud.SupportsDirectAuth ||
+                    cloud.SupportsOAuth || 
+                    cloud.SupportsHostAuth))
                 .CombineLatest(canInteract, (logout, interact) => logout && interact)
                 .ObserveOn(RxApp.MainThreadScheduler);
 
-            Logout = ReactiveCommand.CreateFromTask(provider.Logout, canLogout);
+            Logout = ReactiveCommand.CreateFromTask(cloud.Logout, canLogout);
             
             _canLogout = canLogout
                 .ToProperty(this, x => x.CanLogout);
@@ -206,7 +206,7 @@ namespace Camelotia.Presentation.ViewModels
                 .CombineLatest(Refresh.IsExecuting, canInteract, (del, loading, ci) => del && !loading && ci);
 
             DeleteSelectedFile = ReactiveCommand.CreateFromTask(
-                () => provider.Delete(SelectedFile.Path, SelectedFile.IsFolder),
+                () => cloud.Delete(SelectedFile.Path, SelectedFile.IsFolder),
                 canDeleteSelection);
 
             DeleteSelectedFile.InvokeCommand(Refresh);
@@ -225,18 +225,18 @@ namespace Camelotia.Presentation.ViewModels
                 .Merge(DownloadSelectedFile.ThrownExceptions)
                 .Merge(Refresh.ThrownExceptions)
                 .Merge(getBreadCrumbs.ThrownExceptions)
-                .Log(this, $"Exception occured in provider {provider.Name}")
+                .Log(this, $"Exception occured in provider {cloud.Name}")
                 .Subscribe();
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Subscribe(path => state.CurrentPath = path);
 
             this.WhenAnyValue(x => x.Auth.IsAuthenticated)
-                .Select(authenticated => authenticated ? _provider.Parameters?.Token : null)
+                .Select(authenticated => authenticated ? _cloud.Parameters?.Token : null)
                 .Subscribe(token => state.Token = token);
 
             this.WhenAnyValue(x => x.Auth.IsAuthenticated)
-                .Select(authenticated => authenticated ? _provider.Parameters?.User : null)
+                .Select(authenticated => authenticated ? _cloud.Parameters?.User : null)
                 .Subscribe(user => state.User = user);
             
             this.WhenActivated(ActivateAutoRefresh);
@@ -278,15 +278,15 @@ namespace Camelotia.Presentation.ViewModels
 
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
 
-        public Guid Id => _provider.Id;
+        public Guid Id => _cloud.Id;
         
-        public string Name => _provider.Name;
+        public string Name => _cloud.Name;
         
-        public DateTime Created => _provider.Created;
+        public DateTime Created => _cloud.Created;
 
-        public string Size => _provider.Size?.ByteSizeToString() ?? "Unknown";
+        public string Size => _cloud.Size?.ByteSizeToString() ?? "Unknown";
 
-        public string Description => $"{_provider.Name} file system.";
+        public string Description => $"{_cloud.Name} file system.";
 
         public ReactiveCommand<Unit, Unit> DownloadSelectedFile { get; }
 
@@ -310,12 +310,12 @@ namespace Camelotia.Presentation.ViewModels
         {
             this.WhenAnyValue(x => x.Auth.IsAuthenticated)
                 .Where(authenticated => authenticated)
-                .Select(ignore => Unit.Default)
+                .Select(_ => Unit.Default)
                 .InvokeCommand(Refresh)
                 .DisposeWith(disposable);
 
             Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
-                .Select(unit => RefreshingIn - 1)
+                .Select(_ => RefreshingIn - 1)
                 .Where(value => value >= 0)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => RefreshingIn = x)
@@ -324,12 +324,12 @@ namespace Camelotia.Presentation.ViewModels
             this.WhenAnyValue(x => x.RefreshingIn)
                 .Skip(1)
                 .Where(refreshing => refreshing == 0)
-                .Log(this, $"Refreshing provider {_provider.Name} path {CurrentPath}")
-                .Select(value => Unit.Default)
+                .Log(this, $"Refreshing provider {_cloud.Name} path {CurrentPath}")
+                .Select(_ => Unit.Default)
                 .InvokeCommand(Refresh)
                 .DisposeWith(disposable);
 
-            Refresh.Select(results => 30)
+            Refresh.Select(_ => 30)
                 .StartWith(30)
                 .Subscribe(x => RefreshingIn = x)
                 .DisposeWith(disposable);

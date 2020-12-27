@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class YandexDiskProvider : IProvider
+    public sealed class YandexDiskCloud : ICloud
     {
         private const string YandexAuthTokenUrl = "https://oauth.yandex.ru/token";
         private const string ApiMoveFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/move";
@@ -28,7 +28,7 @@ namespace Camelotia.Services.Providers
         private readonly HttpClient _http = new HttpClient();
         private readonly IAuthenticator _authenticator;
 
-        public YandexDiskProvider(ProviderParameters model, IAuthenticator authenticator)
+        public YandexDiskCloud(CloudParameters model, IAuthenticator authenticator)
         {
             Parameters = model;
             _authenticator = authenticator;
@@ -36,7 +36,7 @@ namespace Camelotia.Services.Providers
             EnsureLoggedInIfTokenSaved();
         }
 
-        public ProviderParameters Parameters { get; }
+        public CloudParameters Parameters { get; }
 
         public long? Size => null;
 

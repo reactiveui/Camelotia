@@ -7,19 +7,19 @@ using Xunit;
 
 namespace Camelotia.Tests.Services
 {
-    public sealed class VkontakteFileSystemProviderTests
+    public sealed class VkCloudTests
     {
-        private readonly ProviderParameters _model = new ProviderParameters
+        private readonly CloudParameters _model = new CloudParameters
         {
             Id = Guid.NewGuid(),
-            Type = ProviderType.VkDocs,
+            Type = CloudType.VkDocs,
             Created = DateTime.Now
         };
 
         [Fact]
         public void VerifyDefaultPropertyValues()
         {
-            var provider = new VkDocsProvider(_model);
+            var provider = new VkDocsCloud(_model);
             provider.InitialPath.Should().Be(Path.DirectorySeparatorChar.ToString());
 
             provider.CanCreateFolder.Should().BeFalse();

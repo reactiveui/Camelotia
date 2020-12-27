@@ -14,7 +14,7 @@ namespace Camelotia.Tests.Presentation
 {
     public sealed class HostAuthViewModelTests
     {
-        private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly ICloud _provider = Substitute.For<ICloud>();
         private readonly HostAuthState _state = new HostAuthState();
 
         [Fact]

@@ -10,20 +10,20 @@ using FluentFTP;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class FtpProvider : IProvider
+    public sealed class FtpCloud : ICloud
     {
         private static readonly string[] PathSeparators = { "\\", "/" };
         
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private Func<FtpClient> _factory;
 
-        public FtpProvider(ProviderParameters model)
+        public FtpCloud(CloudParameters model)
         {
             Parameters = model;
             _isAuthorized.OnNext(false);
         }
 
-        public ProviderParameters Parameters { get; }
+        public CloudParameters Parameters { get; }
 
         public long? Size => null;
 

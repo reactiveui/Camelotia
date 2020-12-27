@@ -18,7 +18,7 @@ using File = Google.Apis.Drive.v3.Data.File;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class GoogleDriveProvider : IProvider
+    public sealed class GoogleDriveCloud : ICloud
     {
         private const string GoogleDriveApplicationName = "Camelotia";
         private const string GoogleDriveClientId = "1096201018044-qbv35mo5cd7b5utfjpg83v5lsuhssvvg.apps.googleusercontent.com";
@@ -29,7 +29,7 @@ namespace Camelotia.Services.Providers
         private readonly IBlobCache _blobCache;
         private DriveService _driveService;
         
-        public GoogleDriveProvider(ProviderParameters model, IBlobCache blobCache)
+        public GoogleDriveCloud(CloudParameters model, IBlobCache blobCache)
         {
             Parameters = model;
             _blobCache = blobCache;
@@ -37,7 +37,7 @@ namespace Camelotia.Services.Providers
             EnsureLoggedInIfTokenSaved();
         }
 
-        public ProviderParameters Parameters { get; }
+        public CloudParameters Parameters { get; }
 
         public long? Size => null;
 

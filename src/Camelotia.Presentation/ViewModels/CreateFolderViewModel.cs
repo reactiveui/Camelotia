@@ -11,7 +11,7 @@ using ReactiveUI.Validation.Helpers;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public delegate ICreateFolderViewModel CreateFolderViewModelFactory(IProviderViewModel providerViewModel);
+    public delegate ICreateFolderViewModel CreateFolderViewModelFactory(ICloudViewModel providerViewModel);
 
     public sealed class CreateFolderViewModel : ReactiveValidationObject, ICreateFolderViewModel
     {
@@ -20,7 +20,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<string> _path;
         
-        public CreateFolderViewModel(CreateFolderState state, IProviderViewModel owner, IProvider provider)
+        public CreateFolderViewModel(CreateFolderState state, ICloudViewModel owner, ICloud provider)
         {
             _path = owner
                 .WhenAnyValue(x => x.CurrentPath)

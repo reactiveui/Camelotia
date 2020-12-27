@@ -15,8 +15,8 @@ namespace Camelotia.Tests.Presentation
     public sealed class CreateFolderViewModelTests
     {
         private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
-        private readonly IProviderViewModel _model = Substitute.For<IProviderViewModel>();
-        private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly ICloudViewModel _model = Substitute.For<ICloudViewModel>();
+        private readonly ICloud _provider = Substitute.For<ICloud>();
         private readonly CreateFolderState _state = new CreateFolderState();
         
         [Fact]

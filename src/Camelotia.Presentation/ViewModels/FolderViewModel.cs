@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public delegate IFolderViewModel FolderViewModelFactory(FolderModel folder, IProviderViewModel provider);
+    public delegate IFolderViewModel FolderViewModelFactory(FolderModel folder, ICloudViewModel provider);
 
     public sealed class FolderViewModel : ReactiveObject, IFolderViewModel
     {
         private readonly FolderModel _folder;
 
-        public FolderViewModel(IProviderViewModel provider, FolderModel folder)
+        public FolderViewModel(ICloudViewModel provider, FolderModel folder)
         {
             Provider = provider;
             _folder = folder;
@@ -21,7 +21,7 @@ namespace Camelotia.Presentation.ViewModels
                 : Enumerable.Empty<IFolderViewModel>();
         }
 
-        public IProviderViewModel Provider { get; }
+        public ICloudViewModel Provider { get; }
 
         public string Name => _folder.Name;
 

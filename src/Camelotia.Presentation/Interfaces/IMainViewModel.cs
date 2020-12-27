@@ -9,13 +9,13 @@ namespace Camelotia.Presentation.Interfaces
 {
     public interface IMainViewModel : INotifyPropertyChanged
     {
-        ReadOnlyObservableCollection<IProviderViewModel> Providers { get; }
+        ReadOnlyObservableCollection<ICloudViewModel> Clouds { get; }
         
-        IProviderViewModel SelectedProvider { get; set; }
+        ICloudViewModel SelectedProvider { get; set; }
         
-        IEnumerable<ProviderType> SupportedTypes { get; }
+        IEnumerable<CloudType> SupportedTypes { get; }
 
-        ProviderType SelectedSupportedType { get; set; }
+        CloudType SelectedSupportedType { get; set; }
 
         bool WelcomeScreenCollapsed { get; }
 

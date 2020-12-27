@@ -6,19 +6,19 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public delegate IFileViewModel FileViewModelFactory(FileModel file, IProviderViewModel provider);
+    public delegate IFileViewModel FileViewModelFactory(FileModel file, ICloudViewModel provider);
 
     public sealed class FileViewModel : ReactiveObject, IFileViewModel
     {
         private readonly FileModel _file;
 
-        public FileViewModel(IProviderViewModel provider, FileModel file)
+        public FileViewModel(ICloudViewModel provider, FileModel file)
         {
             Provider = provider;
             _file = file;
         }
 
-        public IProviderViewModel Provider { get; }
+        public ICloudViewModel Provider { get; }
 
         public string Modified => _file.Modified?.ToString(CultureInfo.InvariantCulture) ?? "A long time ago";
 

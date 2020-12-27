@@ -6,28 +6,28 @@ using Xunit;
 
 namespace Camelotia.Tests.Services
 {
-    public sealed class GithubProviderTests
+    public sealed class FtpCloudTests
     {
-        private readonly ProviderParameters _model = new ProviderParameters
+        private readonly CloudParameters _model = new CloudParameters
         {
             Id = Guid.NewGuid(),
             Created = DateTime.Now,
-            Type = ProviderType.GitHub
+            Type = CloudType.Ftp
         };
 
         [Fact]
         public void VerifyDefaultPropertyValues()
         {
-            var provider = new GitHubProvider(_model);
-            provider.InitialPath.Should().Be(string.Empty);
+            var provider = new FtpCloud(_model);
+            provider.InitialPath.Should().Be("/");
 
-            provider.CanCreateFolder.Should().BeFalse();
+            provider.CanCreateFolder.Should().BeTrue();
             provider.Created.Should().Be(_model.Created);
-            provider.Name.Should().Be("GitHub");
+            provider.Name.Should().Be("Ftp");
             provider.Id.Should().Be(_model.Id);
 
-            provider.SupportsDirectAuth.Should().BeTrue();
-            provider.SupportsHostAuth.Should().BeFalse();
+            provider.SupportsDirectAuth.Should().BeFalse();
+            provider.SupportsHostAuth.Should().BeTrue();
             provider.SupportsOAuth.Should().BeFalse();
         }
     }

@@ -1,6 +1,6 @@
 namespace Camelotia.Services.Models
 {
-    public enum ProviderType
+    public enum CloudType
     {
         Ftp,
         GitHub,

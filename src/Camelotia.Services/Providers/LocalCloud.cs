@@ -9,11 +9,11 @@ using Camelotia.Services.Models;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class LocalProvider : IProvider
+    public sealed class LocalCloud : ICloud
     {
-        public LocalProvider(ProviderParameters model) => Parameters = model;
+        public LocalCloud(CloudParameters model) => Parameters = model;
 
-        public ProviderParameters Parameters { get; }
+        public CloudParameters Parameters { get; }
 
         public Guid Id => Parameters.Id;
 

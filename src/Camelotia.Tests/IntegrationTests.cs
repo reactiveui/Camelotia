@@ -24,9 +24,9 @@ namespace Camelotia.Tests
         [Fact]
         public void ShouldWireUpAppViewModels()
         {
-            _state.Providers.AddOrUpdate(new ProviderState
+            _state.Clouds.AddOrUpdate(new CloudState
             {
-                Type = ProviderType.Local,
+                Type = CloudType.Local,
                 CreateFolderState = new CreateFolderState
                 {
                     Name = "Example",
@@ -35,12 +35,12 @@ namespace Camelotia.Tests
             });
             
             var main = BuildMainViewModel();
-            main.SupportedTypes.Should().Contain(ProviderType.Local);
-            main.SelectedSupportedType.Should().Be(ProviderType.Local);
-            main.Providers.Should().NotBeEmpty();
-            main.Providers.Count.Should().Be(1);
+            main.SupportedTypes.Should().Contain(CloudType.Local);
+            main.SelectedSupportedType.Should().Be(CloudType.Local);
+            main.Clouds.Should().NotBeEmpty();
+            main.Clouds.Count.Should().Be(1);
             
-            var provider = main.Providers[0];
+            var provider = main.Clouds[0];
             provider.Name.Should().Be("Local");
             provider.CanInteract.Should().BeFalse();
             provider.Rename.IsVisible.Should().BeFalse();
@@ -54,8 +54,8 @@ namespace Camelotia.Tests
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
             return new MainViewModel(
                 _state,
-                new ProviderFactory(_authenticator, _cache), 
-                (state, provider) => new ProviderViewModel(state,
+                new CloudFactory(_authenticator, _cache), 
+                (state, provider) => new CloudViewModel(state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
                     owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
                     (file, owner) => new FileViewModel(owner, file),

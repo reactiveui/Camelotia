@@ -10,20 +10,20 @@ using Renci.SshNet;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class SftpProvider : IProvider
+    public sealed class SftpCloud : ICloud
     {
         private static readonly string[] PathSeparators = { "\\", "/" };
 
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private Func<SftpClient> _factory;
 
-        public SftpProvider(ProviderParameters model)
+        public SftpCloud(CloudParameters model)
         {
             Parameters = model;
             _isAuthorized.OnNext(false);
         }
 
-        public ProviderParameters Parameters { get; }
+        public CloudParameters Parameters { get; }
 
         public long? Size => null;
 

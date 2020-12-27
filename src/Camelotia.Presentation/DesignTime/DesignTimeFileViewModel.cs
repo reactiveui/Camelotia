@@ -9,11 +9,11 @@ namespace Camelotia.Presentation.DesignTime
     {
         public DesignTimeFileViewModel() : this(null) { }
 
-        public DesignTimeFileViewModel(DesignTimeProviderViewModel provider) => Provider = provider;
+        public DesignTimeFileViewModel(DesignTimeCloudViewModel provider) => Provider = provider;
 
         public string Name { get; } = "Awesome file.";
 
-        public IProviderViewModel Provider { get; }
+        public ICloudViewModel Provider { get; }
 
         public string Modified { get; } = DateTime.Now.ToString(CultureInfo.InvariantCulture);
 

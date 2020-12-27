@@ -15,7 +15,7 @@ namespace Camelotia.Tests.Presentation
         private readonly IDirectAuthViewModel _direct = Substitute.For<IDirectAuthViewModel>();
         private readonly IHostAuthViewModel _host = Substitute.For<IHostAuthViewModel>();
         private readonly IOAuthViewModel _open = Substitute.For<IOAuthViewModel>();
-        private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly ICloud _provider = Substitute.For<ICloud>();
         
         [Fact]
         public void IsAuthenticatedPropertyShouldDependOnFileProvider()

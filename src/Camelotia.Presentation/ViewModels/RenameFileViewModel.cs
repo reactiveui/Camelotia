@@ -11,7 +11,7 @@ using ReactiveUI.Validation.Helpers;
 
 namespace Camelotia.Presentation.ViewModels
 {
-    public delegate IRenameFileViewModel RenameFileViewModelFactory(IProviderViewModel providerViewModel);
+    public delegate IRenameFileViewModel RenameFileViewModelFactory(ICloudViewModel providerViewModel);
 
     public sealed class RenameFileViewModel : ReactiveValidationObject, IRenameFileViewModel
     {
@@ -20,7 +20,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<string> _oldName;
         
-        public RenameFileViewModel(RenameFileState state, IProviderViewModel owner, IProvider provider)
+        public RenameFileViewModel(RenameFileState state, ICloudViewModel owner, ICloud provider)
         {
             _oldName = owner
                 .WhenAnyValue(x => x.SelectedFile.Name)

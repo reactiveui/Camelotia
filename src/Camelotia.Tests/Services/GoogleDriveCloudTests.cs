@@ -1,34 +1,37 @@
 using System;
+using Akavache;
 using Camelotia.Services.Models;
 using Camelotia.Services.Providers;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace Camelotia.Tests.Services
 {
-    public sealed class FtpProviderTests
+    public sealed class GoogleDriveCloudTests
     {
-        private readonly ProviderParameters _model = new ProviderParameters
+        private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
+        private readonly CloudParameters _model = new CloudParameters
         {
             Id = Guid.NewGuid(),
             Created = DateTime.Now,
-            Type = ProviderType.Ftp
+            Type = CloudType.GoogleDrive
         };
 
         [Fact]
         public void VerifyDefaultPropertyValues()
         {
-            var provider = new FtpProvider(_model);
+            var provider = new GoogleDriveCloud(_model, _blobCache);
             provider.InitialPath.Should().Be("/");
 
-            provider.CanCreateFolder.Should().BeTrue();
+            provider.CanCreateFolder.Should().BeFalse();
             provider.Created.Should().Be(_model.Created);
-            provider.Name.Should().Be("Ftp");
+            provider.Name.Should().Be("GoogleDrive");
             provider.Id.Should().Be(_model.Id);
 
             provider.SupportsDirectAuth.Should().BeFalse();
-            provider.SupportsHostAuth.Should().BeTrue();
-            provider.SupportsOAuth.Should().BeFalse();
+            provider.SupportsHostAuth.Should().BeFalse();
+            provider.SupportsOAuth.Should().BeTrue();
         }
     }
 }

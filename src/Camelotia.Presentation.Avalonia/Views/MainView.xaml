@@ -69,10 +69,10 @@
                      BorderThickness="0"
                      IsVisible="{Binding IsReady}"
                      SelectedItem="{Binding SelectedProvider, Mode=TwoWay}"
-                     Items="{Binding Providers, Mode=OneWay}"
+                     Items="{Binding Clouds, Mode=OneWay}"
                      Background="Transparent">
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="interfaces:IProviderViewModel">
+                    <DataTemplate DataType="interfaces:ICloudViewModel">
                         <Grid ColumnDefinitions="Auto, *">
                             <DrawingPresenter Grid.Column="0"
                                               Opacity="0.5"
@@ -116,14 +116,14 @@
                          IsVisible="{Binding IsLoading}" />
         </Grid>
         <Grid Grid.Column="1">
-            <Carousel Items="{Binding Providers, Mode=OneWay}"
+            <Carousel Items="{Binding Clouds, Mode=OneWay}"
                       IsVisible="{Binding WelcomeScreenCollapsed, Mode=OneWay}"
                       SelectedItem="{Binding SelectedProvider, Mode=OneWay}">
                 <Carousel.PageTransition>
                     <CrossFade Duration="0.75" />
                 </Carousel.PageTransition>
                 <Carousel.DataTemplates>
-                    <DataTemplate DataType="interfaces:IProviderViewModel">
+                    <DataTemplate DataType="interfaces:ICloudViewModel">
                         <views:ProviderView DataContext="{Binding}" />
                     </DataTemplate>
                 </Carousel.DataTemplates>

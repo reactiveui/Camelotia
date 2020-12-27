@@ -9,20 +9,20 @@ namespace Camelotia.Presentation.DesignTime
 {
     public class DesignTimeMainViewModel : ReactiveObject, IMainViewModel
     {
-        public ReadOnlyObservableCollection<IProviderViewModel> Providers { get; } = 
-            new ReadOnlyObservableCollection<IProviderViewModel>(
-                new ObservableCollection<IProviderViewModel>(
-                    new List<IProviderViewModel>
+        public ReadOnlyObservableCollection<ICloudViewModel> Clouds { get; } = 
+            new ReadOnlyObservableCollection<ICloudViewModel>(
+                new ObservableCollection<ICloudViewModel>(
+                    new List<ICloudViewModel>
                     {
-                        new DesignTimeProviderViewModel(),
-                        new DesignTimeProviderViewModel()
+                        new DesignTimeCloudViewModel(),
+                        new DesignTimeCloudViewModel()
                     }));
         
-        public IProviderViewModel SelectedProvider { get; set; } = new DesignTimeProviderViewModel();
+        public ICloudViewModel SelectedProvider { get; set; } = new DesignTimeCloudViewModel();
 
-        public IEnumerable<ProviderType> SupportedTypes { get; } = new[] {ProviderType.Ftp, ProviderType.Sftp};
+        public IEnumerable<CloudType> SupportedTypes { get; } = new[] {CloudType.Ftp, CloudType.Sftp};
 
-        public ProviderType SelectedSupportedType { get; set; } = ProviderType.Sftp;
+        public CloudType SelectedSupportedType { get; set; } = CloudType.Sftp;
 
         public bool WelcomeScreenCollapsed { get; } = true;
         

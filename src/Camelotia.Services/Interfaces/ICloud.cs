@@ -6,7 +6,7 @@ using Camelotia.Services.Models;
 
 namespace Camelotia.Services.Interfaces
 {
-    public interface IProvider
+    public interface ICloud
     {
         Guid Id { get; }
         
@@ -36,7 +36,7 @@ namespace Camelotia.Services.Interfaces
         
         IObservable<bool> IsAuthorized { get; }
 
-        ProviderParameters Parameters { get; }
+        CloudParameters Parameters { get; }
         
         bool SupportsDirectAuth { get; }
 

@@ -13,7 +13,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ObservableAsPropertyHelper<bool> _isBusy;
         
-        public OAuthViewModel(IProvider provider)
+        public OAuthViewModel(ICloud provider)
         {
             Login = ReactiveCommand.CreateFromTask(provider.OAuth);
             

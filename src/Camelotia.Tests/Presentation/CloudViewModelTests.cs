@@ -15,15 +15,15 @@ using Xunit;
 
 namespace Camelotia.Tests.Presentation
 {
-    public sealed class ProviderViewModelTests
+    public sealed class CloudViewModelTests
     {
         private static readonly string Separator = Path.DirectorySeparatorChar.ToString();
         private readonly ICreateFolderViewModel _folder = Substitute.For<ICreateFolderViewModel>();
         private readonly IRenameFileViewModel _rename = Substitute.For<IRenameFileViewModel>();
         private readonly IAuthViewModel _auth = Substitute.For<IAuthViewModel>();
         private readonly IFileManager _files = Substitute.For<IFileManager>();
-        private readonly IProvider _provider = Substitute.For<IProvider>();
-        private readonly ProviderState _state = new ProviderState();
+        private readonly ICloud _cloud = Substitute.For<ICloud>();
+        private readonly CloudState _state = new CloudState();
 
         [Fact]
         public void ShouldDisplayLoadingReadyIndicatorsProperly() 
@@ -39,8 +39,8 @@ namespace Camelotia.Tests.Presentation
         [Fact]
         public void ShouldDisplayCurrentPathProperly() 
         {
-            _provider.InitialPath.Returns(Separator);
-            _provider.Get(Separator).ReturnsForAnyArgs(Enumerable.Empty<FileModel>());
+            _cloud.InitialPath.Returns(Separator);
+            _cloud.Get(Separator).ReturnsForAnyArgs(Enumerable.Empty<FileModel>());
             
             var model = BuildProviderViewModel();
             model.IsCurrentPathEmpty.Should().BeFalse();
@@ -57,9 +57,9 @@ namespace Camelotia.Tests.Presentation
         public void ShouldInheritMetaDataFromProvider() 
         {
             var now = DateTime.Now;
-            _provider.Name.Returns("Foo");
-            _provider.Size.Returns(42);
-            _provider.Created.Returns(now);
+            _cloud.Name.Returns("Foo");
+            _cloud.Size.Returns(42);
+            _cloud.Created.Returns(now);
 
             var model = BuildProviderViewModel();
             model.Name.Should().Be("Foo");
@@ -72,15 +72,15 @@ namespace Camelotia.Tests.Presentation
         public void LogoutShouldBeEnabledOnlyWhenAuthorized()
         {
             var authorized = new BehaviorSubject<bool>(true);
-            _provider.IsAuthorized.Returns(authorized);
-            _provider.SupportsDirectAuth.Returns(true);
+            _cloud.IsAuthorized.Returns(authorized);
+            _cloud.SupportsDirectAuth.Returns(true);
 
             var model = BuildProviderViewModel();
             model.Logout.CanExecute().Should().BeTrue();
             model.Logout.Execute().Subscribe();
             
             authorized.OnNext(false);
-            _provider.Received(1).Logout();
+            _cloud.Received(1).Logout();
             model.Logout.CanExecute().Should().BeFalse();            
         }
 
@@ -88,9 +88,9 @@ namespace Camelotia.Tests.Presentation
         public void ShouldBeAbleToOpenSelectedPath() 
         {
             var file = new FileModel { Name = "foo", Path = Separator + "foo", IsFolder = true };
-            _provider.Get(Separator).Returns(Enumerable.Repeat(file, 1));
+            _cloud.Get(Separator).Returns(Enumerable.Repeat(file, 1));
             _auth.IsAuthenticated.Returns(true);
-            _provider.InitialPath.Returns(Separator);
+            _cloud.InitialPath.Returns(Separator);
 
             var model = BuildProviderViewModel();
             using (model.Activator.Activate())
@@ -113,7 +113,7 @@ namespace Camelotia.Tests.Presentation
         [Fact]
         public void ShouldRefreshContentOfCurrentPathWhenFileIsUploaded() 
         {
-            _provider.InitialPath.Returns(Separator);            
+            _cloud.InitialPath.Returns(Separator);            
             _files.OpenRead().Returns(("example", Stream.Null));
             _auth.IsAuthenticated.Returns(true);
 
@@ -121,16 +121,16 @@ namespace Camelotia.Tests.Presentation
             model.CurrentPath.Should().Be(Separator);
             model.UploadToCurrentPath.CanExecute().Should().BeTrue();
             model.UploadToCurrentPath.Execute().Subscribe();
-            _provider.Received(1).Get(Separator);
+            _cloud.Received(1).Get(Separator);
         }
 
         [Fact]
         public void ShouldSetSelectedFileToNullWithCurrentPathChanges() 
         {
             var file = new FileModel { Name = "foo", Path = Separator + "foo", IsFolder = true };
-            _provider.Get(Separator).Returns(Enumerable.Repeat(file, 1));
+            _cloud.Get(Separator).Returns(Enumerable.Repeat(file, 1));
             _auth.IsAuthenticated.Returns(true);
-            _provider.InitialPath.Returns(Separator);
+            _cloud.InitialPath.Returns(Separator);
 
             var model = BuildProviderViewModel();
             model.Refresh.Execute().Subscribe();
@@ -152,9 +152,9 @@ namespace Camelotia.Tests.Presentation
         public void ShouldNotPublishNullCurrentPathValues()
         {
             var file = new FileModel { Name = "foo", Path = Separator + "foo", IsFolder = true };
-            _provider.Get(Separator).Returns(Enumerable.Repeat(file, 1));
+            _cloud.Get(Separator).Returns(Enumerable.Repeat(file, 1));
             _auth.IsAuthenticated.Returns(true);
-            _provider.InitialPath.Returns(Separator);
+            _cloud.InitialPath.Returns(Separator);
 
             var model = BuildProviderViewModel();
             model.Refresh.Execute().Subscribe();
@@ -190,7 +190,7 @@ namespace Camelotia.Tests.Presentation
             _state.Token.Should().BeNullOrEmpty();
             _state.User.Should().BeNullOrEmpty();
 
-            _provider.Parameters.ReturnsForAnyArgs(new ProviderParameters {Token = "foo", User = "bar"});
+            _cloud.Parameters.ReturnsForAnyArgs(new CloudParameters {Token = "foo", User = "bar"});
             _auth.IsAuthenticated.ReturnsForAnyArgs(true);
             model.RaisePropertyChanged(nameof(model.Auth));
 
@@ -207,7 +207,7 @@ namespace Camelotia.Tests.Presentation
         [Fact]
         public void BreadCrumbsShouldBeHiddenWhenEmpty()
         {   
-            _provider.GetBreadCrumbs(Separator).ReturnsForAnyArgs(Enumerable.Empty<FolderModel>());
+            _cloud.GetBreadCrumbs(Separator).ReturnsForAnyArgs(Enumerable.Empty<FolderModel>());
 
             var model = BuildProviderViewModel();
             model.ShowBreadCrumbs.Should().BeFalse();
@@ -219,8 +219,8 @@ namespace Camelotia.Tests.Presentation
         public void BreadCrumbsShouldBeShownWhenValid()
         {         
             var folder = new FolderModel (Separator + "foo", "foo", null);
-            _provider.GetBreadCrumbs(Separator).Returns(Enumerable.Repeat(folder, 1));            
-            _provider.InitialPath.Returns(Separator);
+            _cloud.GetBreadCrumbs(Separator).Returns(Enumerable.Repeat(folder, 1));            
+            _cloud.InitialPath.Returns(Separator);
 
             var model = BuildProviderViewModel();
 
@@ -235,15 +235,15 @@ namespace Camelotia.Tests.Presentation
             model.BreadCrumbs.Should().HaveCount(1);
         }
 
-        private ProviderViewModel BuildProviderViewModel()
+        private CloudViewModel BuildProviderViewModel()
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
-            return new ProviderViewModel(_state,
+            return new CloudViewModel(_state,
                 x => _folder, x => _rename, 
                 (x, y) => new FileViewModel(y, x),
                 (x, y) => new FolderViewModel(y, x),
-                _auth, _files, _provider
+                _auth, _files, _cloud
             );
         }
     }

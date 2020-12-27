@@ -11,17 +11,17 @@ namespace Camelotia.Presentation.AppState
     public class MainState
     {
         [IgnoreDataMember]
-        public SourceCache<ProviderState, Guid> Providers { get; } = new SourceCache<ProviderState, Guid>(x => x.Id);
+        public SourceCache<CloudState, Guid> Clouds { get; } = new SourceCache<CloudState, Guid>(x => x.Id);
 
         [DataMember]
-        public IEnumerable<ProviderState> ProviderStates
+        public IEnumerable<CloudState> CloudStates
         {
-            get => Providers.Items.ToList();
-            set => Providers.AddOrUpdate(value);
+            get => Clouds.Items.ToList();
+            set => Clouds.AddOrUpdate(value);
         }
         
         [DataMember]
-        public ProviderType? SelectedSupportedType { get; set; }
+        public CloudType? SelectedSupportedType { get; set; }
         
         [DataMember]
         public Guid SelectedProviderId { get; set; }

@@ -12,7 +12,7 @@ namespace Camelotia.Tests.Presentation
 {
     public sealed class OAuthViewModelTests
     {
-        private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly ICloud _provider = Substitute.For<ICloud>();
 
         [Fact]
         public void ShouldBeBusyWhenLoggingIn() 

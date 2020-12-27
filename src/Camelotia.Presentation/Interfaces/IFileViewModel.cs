@@ -6,7 +6,7 @@ namespace Camelotia.Presentation.Interfaces
     {
         string Name { get; }
 
-        IProviderViewModel Provider { get; }
+        ICloudViewModel Provider { get; }
 
         string Modified { get; }
 

@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Camelotia.Tests.Services
 {
-    public sealed class ProviderFactoryTests
+    public sealed class CloudFactoryTests
     {
         private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
         private readonly IObjectBlobCache _blobCache = Substitute.For<IObjectBlobCache>();
@@ -16,19 +16,19 @@ namespace Camelotia.Tests.Services
         [Fact]
         public void SupportedProviderTypesShouldNotBeEmpty()
         {
-            var factory = new ProviderFactory(_authenticator, _blobCache);
-            factory.SupportedTypes.Should().NotBeEmpty();
-            factory.SupportedTypes.Should().Contain(ProviderType.Local);
-            factory.SupportedTypes.Should().Contain(ProviderType.GitHub);
+            var factory = new CloudFactory(_authenticator, _blobCache);
+            factory.SupportedClouds.Should().NotBeEmpty();
+            factory.SupportedClouds.Should().Contain(CloudType.Local);
+            factory.SupportedClouds.Should().Contain(CloudType.GitHub);
         }
 
         [Fact]
         public void ShouldInstantiateSupportedProviders()
         {
-            var factory = new ProviderFactory(_authenticator, _blobCache);
-            var provider = factory.CreateProvider(new ProviderParameters {Type = ProviderType.Local});
+            var factory = new CloudFactory(_authenticator, _blobCache);
+            var provider = factory.CreateCloud(new CloudParameters {Type = CloudType.Local});
             provider.Should().NotBeNull();
-            provider.Name.Should().Be(ProviderType.Local.ToString());
+            provider.Name.Should().Be(CloudType.Local.ToString());
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ObservableAsPropertyHelper<bool> _isBusy;
         
-        public DirectAuthViewModel(DirectAuthState state, IProvider provider)
+        public DirectAuthViewModel(DirectAuthState state, ICloud provider)
         {
             this.ValidationRule(x => x.Username,
                 name => !string.IsNullOrWhiteSpace(name),

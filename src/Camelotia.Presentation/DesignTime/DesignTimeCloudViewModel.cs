@@ -8,9 +8,9 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.DesignTime
 {
-    public class DesignTimeProviderViewModel : ReactiveObject, IProviderViewModel
+    public class DesignTimeCloudViewModel : ReactiveObject, ICloudViewModel
     {
-        public DesignTimeProviderViewModel()
+        public DesignTimeCloudViewModel()
         {
             Files = new[] 
             { 

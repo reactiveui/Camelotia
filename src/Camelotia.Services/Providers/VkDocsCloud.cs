@@ -18,19 +18,19 @@ using VkNet.Model.Attachments;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class VkDocsProvider : IProvider
+    public sealed class VkDocsCloud : ICloud
     {
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private IVkApi _api = new VkApi();
         
-        public VkDocsProvider(ProviderParameters model)
+        public VkDocsCloud(CloudParameters model)
         {
             Parameters = model;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
 
-        public ProviderParameters Parameters { get; }
+        public CloudParameters Parameters { get; }
 
         public long? Size => null;
 
