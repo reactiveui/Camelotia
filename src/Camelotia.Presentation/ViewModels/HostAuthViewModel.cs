@@ -18,7 +18,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ObservableAsPropertyHelper<bool> _isBusy;
         
-        public HostAuthViewModel(HostAuthState state, IProvider provider)
+        public HostAuthViewModel(HostAuthState state, ICloud provider)
         {
             this.ValidationRule(x => x.Username,
                 name => !string.IsNullOrWhiteSpace(name),

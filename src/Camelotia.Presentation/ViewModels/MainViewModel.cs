@@ -17,17 +17,17 @@ namespace Camelotia.Presentation.ViewModels
 {
     public sealed class MainViewModel : ReactiveObject, IMainViewModel
     {
-        private readonly ReadOnlyObservableCollection<IProviderViewModel> _providers;
+        private readonly ReadOnlyObservableCollection<ICloudViewModel> _providers;
         private readonly ObservableAsPropertyHelper<bool> _welcomeScreenCollapsed;
         private readonly ObservableAsPropertyHelper<bool> _welcomeScreenVisible;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _isReady;
-        private readonly IProviderFactory _factory;
+        private readonly ICloudFactory _factory;
 
-        public MainViewModel(MainState state, IProviderFactory factory, ProviderViewModelFactory createViewModel)
+        public MainViewModel(MainState state, ICloudFactory factory, CloudViewModelFactory createViewModel)
         {
             _factory = factory;
-            Refresh = ReactiveCommand.Create(state.Providers.Refresh);
+            Refresh = ReactiveCommand.Create(state.Clouds.Refresh);
             
             _isLoading = Refresh
                 .IsExecuting
@@ -38,9 +38,9 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(executing => !executing)
                 .ToProperty(this, x => x.IsReady);
             
-            state.Providers.Connect()
-                .Transform(ps => createViewModel(ps, factory.CreateProvider(ps.Parameters)))
-                .Sort(SortExpressionComparer<IProviderViewModel>.Descending(x => x.Created))
+            state.Clouds.Connect()
+                .Transform(ps => createViewModel(ps, factory.CreateCloud(ps.Parameters)))
+                .Sort(SortExpressionComparer<ICloudViewModel>.Descending(x => x.Created))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _providers)
                 .Subscribe();
@@ -50,15 +50,15 @@ namespace Camelotia.Presentation.ViewModels
                 .Select(provider => provider != null);
             
             Remove = ReactiveCommand.Create(
-                () => state.Providers.RemoveKey(SelectedProvider.Id), 
+                () => state.Clouds.RemoveKey(SelectedProvider.Id), 
                 canRemove);
 
             var canAddProvider = this
                 .WhenAnyValue(x => x.SelectedSupportedType)
-                .Select(type => Enum.IsDefined(typeof(ProviderType), type));
+                .Select(type => Enum.IsDefined(typeof(CloudType), type));
             
             Add = ReactiveCommand.Create(
-                () => state.Providers.AddOrUpdate(new ProviderState { Type = SelectedSupportedType }),
+                () => state.Clouds.AddOrUpdate(new CloudState { Type = SelectedSupportedType }),
                 canAddProvider);
 
             _welcomeScreenVisible = this
@@ -78,7 +78,7 @@ namespace Camelotia.Presentation.ViewModels
             Unselect = ReactiveCommand.Create(() => Unit.Default, canUnselect);
             Unselect.Subscribe(unit => SelectedProvider = null);
             
-            var outputCollectionChanges = Providers
+            var outputCollectionChanges = Clouds
                 .ToObservableChangeSet(x => x.Id)
                 .Publish()
                 .RefCount();
@@ -104,10 +104,10 @@ namespace Camelotia.Presentation.ViewModels
         }
         
         [Reactive] 
-        public ProviderType SelectedSupportedType { get; set; }
+        public CloudType SelectedSupportedType { get; set; }
 
         [Reactive] 
-        public IProviderViewModel SelectedProvider { get; set; }
+        public ICloudViewModel SelectedProvider { get; set; }
 
         public ReactiveCommand<Unit, Unit> Unselect { get; }
 
@@ -117,9 +117,9 @@ namespace Camelotia.Presentation.ViewModels
 
         public ReactiveCommand<Unit, Unit> Add { get; }
 
-        public ReadOnlyObservableCollection<IProviderViewModel> Providers => _providers;
+        public ReadOnlyObservableCollection<ICloudViewModel> Clouds => _providers;
 
-        public IEnumerable<ProviderType> SupportedTypes => _factory.SupportedTypes;
+        public IEnumerable<CloudType> SupportedTypes => _factory.SupportedClouds;
 
         public bool WelcomeScreenCollapsed => _welcomeScreenCollapsed.Value;
 

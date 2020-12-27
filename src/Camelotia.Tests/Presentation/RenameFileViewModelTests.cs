@@ -13,9 +13,9 @@ namespace Camelotia.Tests.Presentation
 {
     public sealed class RenameFileViewModelTests
     {
-        private readonly IProviderViewModel _model = Substitute.For<IProviderViewModel>();
+        private readonly ICloudViewModel _model = Substitute.For<ICloudViewModel>();
         private readonly IFileViewModel _file = Substitute.For<IFileViewModel>();
-        private readonly IProvider _provider = Substitute.For<IProvider>();
+        private readonly ICloud _provider = Substitute.For<ICloud>();
         private readonly RenameFileState _state = new RenameFileState();
 
         [Fact]

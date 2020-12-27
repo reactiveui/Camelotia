@@ -5,7 +5,7 @@
              xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
              x:Class="Camelotia.Presentation.Avalonia.Views.ProviderView">
     <Design.DataContext>
-        <designTime:DesignTimeProviderViewModel />
+        <designTime:DesignTimeCloudViewModel />
     </Design.DataContext>
     <UserControl.Styles>
       <Style Selector="ListBox.BreadCrumb">

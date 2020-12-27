@@ -56,8 +56,8 @@ namespace Camelotia.Presentation.Xamarin.Droid
         {
             return new MainViewModel(
                 RxApp.SuspensionHost.GetAppState<MainState>(),
-                new ProviderFactory(new AndroidYandexAuthenticator(this), Akavache.BlobCache.UserAccount),
-                (state, provider) => new ProviderViewModel(state,
+                new CloudFactory(new AndroidYandexAuthenticator(this), Akavache.BlobCache.UserAccount),
+                (state, provider) => new CloudViewModel(state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
                     owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
                     (file, owner) => new FileViewModel(owner, file),

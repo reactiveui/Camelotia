@@ -30,7 +30,7 @@ namespace Camelotia.Tests.Presentation
             model.Refresh.CanExecute().Should().BeTrue();
             model.Refresh.Execute().Subscribe();
                 
-            model.Providers.Should().BeEmpty();
+            model.Clouds.Should().BeEmpty();
             model.IsLoading.Should().BeFalse();
             model.IsReady.Should().BeTrue();
         }
@@ -38,17 +38,17 @@ namespace Camelotia.Tests.Presentation
         [Fact]
         public void ShouldSelectProviderFromStateWhenProvidersGetLoaded()
         {
-            var provider = new ProviderState();
-            _state.Providers.AddOrUpdate(provider);
+            var provider = new CloudState();
+            _state.Clouds.AddOrUpdate(provider);
             _state.SelectedProviderId = provider.Id;
                 
             var model = BuildMainViewModel();
-            model.Providers.Should().NotBeEmpty();
+            model.Clouds.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
             model.SelectedProvider.Id.Should().Be(provider.Id);
             model.Refresh.Execute().Subscribe();
                 
-            model.Providers.Should().NotBeEmpty();
+            model.Clouds.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
             model.SelectedProvider.Id.Should().Be(provider.Id);
         }
@@ -56,96 +56,96 @@ namespace Camelotia.Tests.Presentation
         [Fact]
         public void ShouldUnselectSelectedProvider() 
         {
-            var provider = new ProviderState();
-            _state.Providers.AddOrUpdate(provider);
+            var provider = new CloudState();
+            _state.Clouds.AddOrUpdate(provider);
             _state.SelectedProviderId = provider.Id;
 
             var model = BuildMainViewModel();
-            model.Providers.Should().NotBeEmpty();
+            model.Clouds.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
             model.SelectedProvider.Id.Should().Be(provider.Id);
             model.Unselect.CanExecute().Should().BeTrue();
             model.Unselect.Execute().Subscribe();
 
-            model.Providers.Should().NotBeEmpty();
+            model.Clouds.Should().NotBeEmpty();
             model.SelectedProvider.Should().BeNull();
         }
 
         [Fact]
         public void ShouldOrderProvidersBasedOnDateAdded()
         {
-            _state.Providers.AddOrUpdate(new[]
+            _state.Clouds.AddOrUpdate(new[]
             {
-                new ProviderState { Created = new DateTime(2000, 1, 1, 1, 1, 1) },
-                new ProviderState { Created = new DateTime(2015, 1, 1, 1, 1, 1) },
-                new ProviderState { Created = new DateTime(2010, 1, 1, 1, 1, 1) }
+                new CloudState { Created = new DateTime(2000, 1, 1, 1, 1, 1) },
+                new CloudState { Created = new DateTime(2015, 1, 1, 1, 1, 1) },
+                new CloudState { Created = new DateTime(2010, 1, 1, 1, 1, 1) }
             });
 
             var model = BuildMainViewModel();
-            model.Providers.Should().NotBeEmpty();
-            model.Providers.Count.Should().Be(3);
+            model.Clouds.Should().NotBeEmpty();
+            model.Clouds.Count.Should().Be(3);
 
-            model.Providers[0].Created.Should().Be(new DateTime(2015, 1, 1, 1, 1, 1));
-            model.Providers[1].Created.Should().Be(new DateTime(2010, 1, 1, 1, 1, 1));
-            model.Providers[2].Created.Should().Be(new DateTime(2000, 1, 1, 1, 1, 1));
+            model.Clouds[0].Created.Should().Be(new DateTime(2015, 1, 1, 1, 1, 1));
+            model.Clouds[1].Created.Should().Be(new DateTime(2010, 1, 1, 1, 1, 1));
+            model.Clouds[2].Created.Should().Be(new DateTime(2000, 1, 1, 1, 1, 1));
         }
 
         [Fact]
         public void ShouldUnselectProviderOnceDeleted()
         {
-            var provider = new ProviderState();
-            _state.Providers.AddOrUpdate(new ProviderState());
-            _state.Providers.AddOrUpdate(provider);
+            var provider = new CloudState();
+            _state.Clouds.AddOrUpdate(new CloudState());
+            _state.Clouds.AddOrUpdate(provider);
             _state.SelectedProviderId = provider.Id;
             
             var model = BuildMainViewModel();
-            model.Providers.Count.Should().Be(2);
+            model.Clouds.Count.Should().Be(2);
             model.SelectedProvider.Should().NotBeNull();
             model.SelectedProvider.Id.Should().Be(provider.Id);
             model.Remove.Execute().Subscribe();
 
             model.SelectedProvider.Should().BeNull();
-            model.Providers.Count.Should().Be(1);
+            model.Clouds.Count.Should().Be(1);
         }
 
         [Fact]
         public void ShouldAddNewProviders()
         {
             var model = BuildMainViewModel();
-            model.Providers.Should().BeEmpty();
+            model.Clouds.Should().BeEmpty();
             model.SelectedProvider.Should().BeNull();
-            model.SelectedSupportedType = ProviderType.Local;
+            model.SelectedSupportedType = CloudType.Local;
             model.Add.Execute().Subscribe();
 
-            model.Providers.Should().NotBeEmpty();
-            model.Providers.Count.Should().Be(1);
+            model.Clouds.Should().NotBeEmpty();
+            model.Clouds.Count.Should().Be(1);
         }
         
         [Fact]
         public void ShouldSynchronizeSelectedTypeWithState()
         {
-            _state.SelectedSupportedType = ProviderType.Local;
+            _state.SelectedSupportedType = CloudType.Local;
             
             var model = BuildMainViewModel();
-            model.SelectedSupportedType.Should().Be(ProviderType.Local);
-            model.SelectedSupportedType = ProviderType.Ftp;
-            _state.SelectedSupportedType.Should().Be(ProviderType.Ftp);
+            model.SelectedSupportedType.Should().Be(CloudType.Local);
+            model.SelectedSupportedType = CloudType.Ftp;
+            _state.SelectedSupportedType.Should().Be(CloudType.Ftp);
 
-            model.SelectedSupportedType = ProviderType.Local;
-            _state.SelectedSupportedType.Should().Be(ProviderType.Local);
+            model.SelectedSupportedType = CloudType.Local;
+            _state.SelectedSupportedType.Should().Be(CloudType.Local);
         }
 
         [Fact]
         public void ShouldSaveUserSelectionToStateObject()
         {
-            _state.Providers.AddOrUpdate(new ProviderState());
-            _state.Providers.AddOrUpdate(new ProviderState());
+            _state.Clouds.AddOrUpdate(new CloudState());
+            _state.Clouds.AddOrUpdate(new CloudState());
             
             var model = BuildMainViewModel();
             model.SelectedProvider.Should().BeNull();
             _state.SelectedProviderId.Should().BeEmpty();
 
-            model.SelectedProvider = model.Providers.First();
+            model.SelectedProvider = model.Clouds.First();
             _state.SelectedProviderId.Should().NotBeEmpty();
             _state.SelectedProviderId.Should().Be(model.SelectedProvider.Id);
         }
@@ -154,12 +154,12 @@ namespace Camelotia.Tests.Presentation
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
-            return new MainViewModel(_state, new ProviderFactory(
+            return new MainViewModel(_state, new CloudFactory(
                 Substitute.For<IAuthenticator>(), 
                 Substitute.For<IBlobCache>()), 
                 (state, provider) =>
             {
-                var entry = Substitute.For<IProviderViewModel>();
+                var entry = Substitute.For<ICloudViewModel>();
                 entry.Created.Returns(provider.Created);
                 entry.Id.Returns(provider.Id);
                 return entry;

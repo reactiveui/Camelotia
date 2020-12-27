@@ -24,20 +24,20 @@ namespace Camelotia.Presentation.Xamarin.Views
                     .Events().Clicked
                     .Select(args => ViewModel.SelectedProvider)
                     .Where(provider => provider != null)
-                    .Select(x => new ProviderExplorerView { ViewModel = x })
+                    .Select(x => new CloudExplorerView { ViewModel = x })
                     .Subscribe(NavigateToProvider)
                     .DisposeWith(disposables);
             });
         }
 
-        private void NavigateToProvider(ProviderExplorerView view)
+        private void NavigateToProvider(CloudExplorerView view)
         {
             _listeners?.Dispose();
             _listeners = new CompositeDisposable();
 
             view.WhenAnyValue(x => x.ViewModel.Auth.IsAuthenticated)
                 .Where(authenticated => authenticated)
-                .Select(x => new ProviderExplorerView { ViewModel = ViewModel.SelectedProvider })
+                .Select(x => new CloudExplorerView { ViewModel = ViewModel.SelectedProvider })
                 .Subscribe(NavigateWithoutBackStack)
                 .DisposeWith(_listeners);
 
@@ -56,7 +56,7 @@ namespace Camelotia.Presentation.Xamarin.Views
             view.WhenAnyValue(x => x.ViewModel.Folder.IsVisible)
                 .Where(visible => !visible)
                 .Skip(1)
-                .Select(x => new ProviderExplorerView { ViewModel = ViewModel.SelectedProvider })
+                .Select(x => new CloudExplorerView { ViewModel = ViewModel.SelectedProvider })
                 .Subscribe(NavigateWithoutBackStack)
                 .DisposeWith(_listeners);
 
@@ -69,7 +69,7 @@ namespace Camelotia.Presentation.Xamarin.Views
             view.WhenAnyValue(x => x.ViewModel.Rename.IsVisible)
                 .Where(visible => !visible)
                 .Skip(1)
-                .Select(x => new ProviderExplorerView { ViewModel = ViewModel.SelectedProvider })
+                .Select(x => new CloudExplorerView { ViewModel = ViewModel.SelectedProvider })
                 .Subscribe(NavigateWithoutBackStack)
                 .DisposeWith(_listeners);
         }

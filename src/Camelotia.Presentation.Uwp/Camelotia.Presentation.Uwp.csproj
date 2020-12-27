@@ -143,8 +143,8 @@
     <Compile Include="Views\OAuthView.xaml.cs">
       <DependentUpon>OAuthView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ProviderView.xaml.cs">
-      <DependentUpon>ProviderView.xaml</DependentUpon>
+    <Compile Include="Views\CloudView.xaml.cs">
+      <DependentUpon>CloudView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RenameFileView.xaml.cs">
       <DependentUpon>RenameFileView.xaml</DependentUpon>
@@ -198,7 +198,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ProviderView.xaml">
+    <Page Include="Views\CloudView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -209,10 +209,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.10</Version>
+      <Version>6.2.11</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI.Events">
-      <Version>11.5.35</Version>
+      <Version>13.0.27</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

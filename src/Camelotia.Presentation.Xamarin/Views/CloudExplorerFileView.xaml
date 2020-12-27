@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<rxui:ReactiveViewCell 
+    x:TypeArguments="vm:IFileViewModel"  
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Camelotia.Presentation.Xamarin.Views.CloudExplorerFileView"
+    xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
+    xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize"
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+    xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    x:DataType="{x:Type vm:IFileViewModel}"
+    mc:Ignorable="d"
+    Height="90">
+    <d:ViewCell.BindingContext>
+        <designTime:DesignTimeFileViewModel />
+    </d:ViewCell.BindingContext>
+    <ViewCell.View>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="63" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <iconize:IconImage
+                VerticalOptions="StartAndExpand"
+                x:Name="IconImage"
+                Margin="14, 12, 14, 5"
+                IconColor="#6453B3"
+                HeightRequest="35"
+                WidthRequest="35" />
+            <StackLayout Margin="0, 7, 7, 5" Grid.Column="1">
+                <Label Text="{Binding Name}" FontSize="16" LineBreakMode="NoWrap" />
+                <Label Text="{Binding Modified}" LineBreakMode="NoWrap" />
+                <Label Text="{Binding Size}" FontAttributes="Bold" LineBreakMode="NoWrap" />
+            </StackLayout>
+        </Grid>
+    </ViewCell.View>
+</rxui:ReactiveViewCell>

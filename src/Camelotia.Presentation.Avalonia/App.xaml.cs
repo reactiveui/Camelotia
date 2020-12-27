@@ -32,11 +32,11 @@ namespace Camelotia.Presentation.Avalonia
             window.SwitchThemeButton.Click += (sender, args) => styles.UseNextTheme();
             window.DataContext = new MainViewModel(
                 RxApp.SuspensionHost.GetAppState<MainState>(),
-                new ProviderFactory(
+                new CloudFactory(
                     new AvaloniaYandexAuthenticator(), 
                     Akavache.BlobCache.UserAccount
                 ),
-                (state, provider) => new ProviderViewModel(state,
+                (state, provider) => new CloudViewModel(state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
                     owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
                     (file, owner) => new FileViewModel(owner, file),

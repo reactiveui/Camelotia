@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<rxui:ReactiveContentPage 
+    x:TypeArguments="vm:ICloudViewModel"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Camelotia.Presentation.Xamarin.Views.CloudExplorerView"
+    xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
+    xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+    xmlns:view="clr-namespace:Camelotia.Presentation.Xamarin.Views"
+    xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize"
+    xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    x:DataType="{x:Type vm:ICloudViewModel}"
+    Title="{Binding Name}"
+    mc:Ignorable="d">
+    <d:ContentPage.BindingContext>
+        <designTime:DesignTimeCloudViewModel />
+    </d:ContentPage.BindingContext>
+    <ContentPage.ToolbarItems>
+        <iconize:IconToolbarItem Command="{Binding Refresh}" Icon="fas-sync-alt" />
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="55" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Padding="3" BackgroundColor="#311b92">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0"
+                       Text="{Binding CurrentPath}"
+                       HorizontalTextAlignment="Start"
+                       VerticalTextAlignment="Center"
+                       LineBreakMode="HeadTruncation"
+                       TextColor="#ffffff"
+                       FontSize="18"
+                       Margin="15, 0" />
+                <controls:AccentButton 
+                    Grid.Column="1"
+                    Command="{Binding Back}"
+                    Text="Back" />
+                <controls:AccentButton 
+                    Grid.Column="2"
+                    Command="{Binding Open}"
+                    Text="Open" />
+            </Grid>
+            <ListView Grid.Row="1"
+                      Margin="0, -6, 0, -6"
+                      IsPullToRefreshEnabled="True"
+                      CachingStrategy="RecycleElementAndDataTemplate"
+                      ItemsSource="{Binding Files}"
+                      SelectedItem="{Binding SelectedFile}"
+                      RefreshCommand="{Binding Refresh}"
+                      SeparatorVisibility="None"
+                      x:Name="FilesListView"
+                      HasUnevenRows="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <view:CloudExplorerFileView ViewModel="{Binding}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Grid Grid.Row="2" 
+                  Padding="3" 
+                  BackgroundColor="#dddddd">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <iconize:IconButton 
+                    Grid.Column="0"
+                    IsVisible="{Binding CanLogout}"
+                    Command="{Binding Logout}"
+                    BorderColor="Transparent"
+                    BackgroundColor="Transparent"
+                    TextColor="#311b92"
+                    Text="fas-sign-out-alt"
+                    FontSize="20"/>
+                <iconize:IconButton 
+                    Grid.Column="1"
+                    Command="{Binding DeleteSelectedFile}"
+                    BorderColor="Transparent"
+                    BackgroundColor="Transparent"
+                    TextColor="#311b92"
+                    Text="fas-trash" 
+                    FontSize="20"/>
+                <iconize:IconButton 
+                    Grid.Column="2"
+                    Command="{Binding UploadToCurrentPath}"
+                    BorderColor="Transparent"
+                    BackgroundColor="Transparent"
+                    TextColor="#311b92"
+                    Text="fas-cloud-upload-alt" 
+                    FontSize="20"/>
+                <iconize:IconButton 
+                    Grid.Column="3"
+                    Command="{Binding DownloadSelectedFile}"
+                    BorderColor="Transparent"
+                    BackgroundColor="Transparent"
+                    Text="fas-cloud-download-alt" 
+                    TextColor="#311b92"
+                    FontSize="20"/>
+                <iconize:IconButton 
+                    Grid.Column="4"
+                    Command="{Binding Folder.Open}"
+                    BorderColor="Transparent"
+                    BackgroundColor="Transparent"
+                    TextColor="#311b92"
+                    Text="fas-folder" 
+                    FontSize="20"/>
+                <iconize:IconButton 
+                    Grid.Column="5"
+                    Command="{Binding Rename.Open}"
+                    BorderColor="Transparent"
+                    BackgroundColor="Transparent"
+                    TextColor="#311b92"
+                    Text="fas-edit" 
+                    FontSize="20"/>
+            </Grid>
+        </Grid>
+    </ContentPage.Content>
+</rxui:ReactiveContentPage>
