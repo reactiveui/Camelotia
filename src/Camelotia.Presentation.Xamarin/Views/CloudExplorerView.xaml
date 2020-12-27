@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <rxui:ReactiveContentPage 
-    x:TypeArguments="vm:IProviderViewModel"
+    x:TypeArguments="vm:ICloudViewModel"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Class="Camelotia.Presentation.Xamarin.Views.ProviderExplorerView"
+    x:Class="Camelotia.Presentation.Xamarin.Views.CloudExplorerView"
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
@@ -12,11 +12,11 @@
     xmlns:controls="clr-namespace:Camelotia.Presentation.Xamarin.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-    x:DataType="{x:Type vm:IProviderViewModel}"
+    x:DataType="{x:Type vm:ICloudViewModel}"
     Title="{Binding Name}"
     mc:Ignorable="d">
     <d:ContentPage.BindingContext>
-        <designTime:DesignTimeProviderViewModel />
+        <designTime:DesignTimeCloudViewModel />
     </d:ContentPage.BindingContext>
     <ContentPage.ToolbarItems>
         <iconize:IconToolbarItem Command="{Binding Refresh}" Icon="fas-sync-alt" />
@@ -63,7 +63,7 @@
                       HasUnevenRows="True">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <view:ProviderExplorerFileView ViewModel="{Binding}" />
+                        <view:CloudExplorerFileView ViewModel="{Binding}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

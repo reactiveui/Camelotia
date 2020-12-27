@@ -6,9 +6,9 @@ using ReactiveUI;
 namespace Camelotia.Presentation.Xamarin.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class MainProviderView : ReactiveViewCell<IProviderViewModel>
+    public partial class MainCloudView : ReactiveViewCell<ICloudViewModel>
     {
-        public MainProviderView()
+        public MainCloudView()
         {
             InitializeComponent();
             this.WhenActivated(disposables => { });

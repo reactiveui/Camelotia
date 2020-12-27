@@ -28,11 +28,14 @@
     <Compile Update="Views\MainMasterView.xaml.cs">
       <DependentUpon>MainMasterView.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\MainProviderView.xaml.cs">
-      <DependentUpon>MainProviderView.xaml</DependentUpon>
+    <Compile Update="Views\MainCloudView.xaml.cs">
+      <DependentUpon>MainCloudView.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\ProviderExplorerFileView.xaml.cs">
-      <DependentUpon>ProviderExplorerFileView.xaml</DependentUpon>
+    <Compile Update="Views\CloudExplorerFileView.xaml.cs">
+      <DependentUpon>CloudExplorerFileView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CloudExplorerView.xaml.cs">
+      <DependentUpon>CloudExplorerView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -43,7 +46,7 @@
     <EmbeddedResource Update="Views\HostAuthView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\ProviderExplorerView.xaml">
+    <EmbeddedResource Update="Views\CloudExplorerView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\AuthView.xaml">
@@ -58,10 +61,10 @@
     <EmbeddedResource Update="Views\OAuthView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\ProviderExplorerFileView.xaml">
+    <EmbeddedResource Update="Views\CloudExplorerFileView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\MainProviderView.xaml">
+    <EmbeddedResource Update="Views\MainCloudView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\RenameFileView.xaml">

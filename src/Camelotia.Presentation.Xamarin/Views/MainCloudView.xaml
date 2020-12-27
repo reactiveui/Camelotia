@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <rxui:ReactiveViewCell 
-    x:TypeArguments="vm:IProviderViewModel" 
+    x:TypeArguments="vm:ICloudViewModel" 
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Class="Camelotia.Presentation.Xamarin.Views.MainProviderView"
+    x:Class="Camelotia.Presentation.Xamarin.Views.MainCloudView"
     xmlns:vm="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
     xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
     xmlns:iconize="clr-namespace:Plugin.Iconize;assembly=Plugin.Iconize"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-    x:DataType="{x:Type vm:IProviderViewModel}"
+    x:DataType="{x:Type vm:ICloudViewModel}"
     mc:Ignorable="d">
     <d:ViewCell.BindingContext>
-        <designTime:DesignTimeProviderViewModel />
+        <designTime:DesignTimeCloudViewModel />
     </d:ViewCell.BindingContext>
     <ViewCell.View>
         <Grid>

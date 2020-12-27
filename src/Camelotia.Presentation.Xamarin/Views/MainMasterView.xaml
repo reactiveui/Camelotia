@@ -40,15 +40,15 @@
                 Text="Add" />
         </Grid>
         <ListView IsVisible="{Binding IsReady}"
-                  ItemsSource="{Binding Providers}"
+                  ItemsSource="{Binding Clouds}"
                   SelectedItem="{Binding SelectedProvider}"
                   Margin="0, -6, 0, -6"
                   SeparatorVisibility="None"
                   HasUnevenRows="True" 
                   Grid.Row="1">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="vm:IProviderViewModel">
-                    <view:MainProviderView ViewModel="{Binding}" />
+                <DataTemplate x:DataType="vm:ICloudViewModel">
+                    <view:MainCloudView ViewModel="{Binding}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

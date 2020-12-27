@@ -9,9 +9,9 @@ using Camelotia.Presentation.Interfaces;
 namespace Camelotia.Presentation.Xamarin.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ProviderExplorerFileView : ReactiveViewCell<IFileViewModel>
+    public partial class CloudExplorerFileView : ReactiveViewCell<IFileViewModel>
     {
-        public ProviderExplorerFileView()
+        public CloudExplorerFileView()
         {
             InitializeComponent();
             this.WhenActivated(disposables =>
