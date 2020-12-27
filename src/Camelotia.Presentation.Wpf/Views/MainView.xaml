@@ -68,7 +68,7 @@
                      BorderBrush="#eeeeee" 
                      BorderThickness="0 2 2 0"
                      SelectedItem="{Binding SelectedProvider, Mode=TwoWay}"
-                     ItemsSource="{Binding Providers, Mode=OneWay}">
+                     ItemsSource="{Binding Clouds, Mode=OneWay}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <materialDesign:TransitioningContent>
@@ -125,7 +125,7 @@
             </Border>
         </Grid>
         <Grid Grid.Column="1">
-            <views:ProviderView DataContext="{Binding SelectedProvider, Mode=OneWay}" />
+            <views:CloudView DataContext="{Binding SelectedProvider, Mode=OneWay}" />
             <Grid Background="#FFFFFF" Visibility="{Binding WelcomeScreenVisible, Converter={StaticResource BooleanToVisibility}}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <materialDesign:PackIcon Kind="CloudOutline"
