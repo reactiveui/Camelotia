@@ -24,9 +24,13 @@ namespace Camelotia.Presentation.Wpf
         {
             base.OnStartup(e);
             Akavache.BlobCache.ApplicationName = "Camelotia";
+            var mainState = RxApp.SuspensionHost.GetAppState<MainState>();
             var mainViewModel = new MainViewModel(
-                RxApp.SuspensionHost.GetAppState<MainState>(),
-                new CloudFactory(new WindowsPresentationYandexAuthenticator(), Akavache.BlobCache.UserAccount),
+                mainState,
+                new CloudFactory(
+                    mainState.CloudConfiguration,
+                    new WindowsPresentationYandexAuthenticator(),
+                    Akavache.BlobCache.UserAccount),
                 (state, provider) => new CloudViewModel(
                     state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),

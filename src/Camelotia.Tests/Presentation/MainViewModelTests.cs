@@ -157,6 +157,7 @@ namespace Camelotia.Tests.Presentation
             return new MainViewModel(
                 _state,
                 new CloudFactory(
+                    _state.CloudConfiguration,
                     Substitute.For<IAuthenticator>(),
                     Substitute.For<IBlobCache>()),
                 (state, provider) =>

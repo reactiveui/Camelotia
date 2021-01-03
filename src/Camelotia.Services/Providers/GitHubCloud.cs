@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using Camelotia.Services.Configuration;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Octokit;
@@ -13,15 +14,15 @@ namespace Camelotia.Services.Providers
 {
     public sealed class GitHubCloud : ICloud, IDisposable
     {
-        private const string GithubApplicationId = "my-cool-app";
-        private readonly GitHubClient _gitHub = new GitHubClient(new ProductHeaderValue(GithubApplicationId));
         private readonly ISubject<bool> _isAuthenticated = new ReplaySubject<bool>(1);
         private readonly HttpClient _httpClient = new HttpClient();
+        private readonly GitHubClient _gitHub;
         private string _currentUserName;
 
-        public GitHubCloud(CloudParameters model)
+        public GitHubCloud(CloudParameters model, GitHubCloudOptions options)
         {
             Parameters = model;
+            _gitHub = new GitHubClient(new ProductHeaderValue(options.GithubApplicationId));
             _isAuthenticated.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }

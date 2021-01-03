@@ -1,5 +1,6 @@
 using System;
 using Akavache;
+using Camelotia.Presentation.AppState;
 using Camelotia.Services.Models;
 using Camelotia.Services.Providers;
 using FluentAssertions;
@@ -10,6 +11,7 @@ namespace Camelotia.Tests.Services
 {
     public sealed class GoogleDriveCloudTests
     {
+        private readonly MainState _state = new MainState();
         private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
         private readonly CloudParameters _model = new CloudParameters
         {
@@ -21,7 +23,7 @@ namespace Camelotia.Tests.Services
         [Fact]
         public void VerifyDefaultPropertyValues()
         {
-            var provider = new GoogleDriveCloud(_model, _blobCache);
+            var provider = new GoogleDriveCloud(_model, _blobCache, _state.CloudConfiguration.GoogleDrive);
             provider.InitialPath.Should().Be("/");
 
             provider.CanCreateFolder.Should().BeFalse();

@@ -54,7 +54,7 @@ namespace Camelotia.Tests
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
             return new MainViewModel(
                 _state,
-                new CloudFactory(_authenticator, _cache),
+                new CloudFactory(_state.CloudConfiguration, _authenticator, _cache),
                 (state, provider) => new CloudViewModel(
                     state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),

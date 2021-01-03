@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Camelotia.Services.Configuration;
 using Camelotia.Services.Models;
 using DynamicData;
 
@@ -25,5 +26,8 @@ namespace Camelotia.Presentation.AppState
 
         [DataMember]
         public Guid SelectedProviderId { get; set; }
+
+        [DataMember]
+        public CloudConfiguration CloudConfiguration { get; set; } = new CloudConfiguration();
     }
 }

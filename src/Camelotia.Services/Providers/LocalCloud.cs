@@ -136,14 +136,10 @@ namespace Camelotia.Services.Providers
                 .Sum();
         }
 
-        private static IEnumerable<DriveInfo> GetAllDrives()
-        {
-            var drives = DriveInfo
+        private static IEnumerable<DriveInfo> GetAllDrives() =>
+            DriveInfo
                 .GetDrives()
                 .Where(p => p.DriveType != DriveType.CDRom && p.IsReady);
-
-            return drives;
-        }
 
         private static bool IsDirectory(string path)
         {

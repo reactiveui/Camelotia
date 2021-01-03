@@ -13,7 +13,6 @@ namespace Camelotia.Services.Providers
     public sealed class FtpCloud : ICloud
     {
         private static readonly string[] PathSeparators = { "\\", "/" };
-
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private Func<FtpClient> _factory;
 

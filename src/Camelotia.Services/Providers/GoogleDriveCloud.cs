@@ -7,6 +7,7 @@ using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using Akavache;
+using Camelotia.Services.Configuration;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Google.Apis.Auth.OAuth2;
@@ -20,19 +21,16 @@ namespace Camelotia.Services.Providers
 {
     public sealed class GoogleDriveCloud : ICloud, IDisposable
     {
-        private const string GoogleDriveApplicationName = "Camelotia";
-        private const string GoogleDriveClientId = "1096201018044-qbv35mo5cd7b5utfjpg83v5lsuhssvvg.apps.googleusercontent.com";
-        private const string GoogleDriveClientSecret = "L-xoeULle07kb_jHleqMxWo2";
-        private const string GoogleDriveUserName = "user";
-
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
+        private readonly GoogleDriveCloudOptions _options;
         private readonly IBlobCache _blobCache;
         private DriveService _driveService;
 
-        public GoogleDriveCloud(CloudParameters model, IBlobCache blobCache)
+        public GoogleDriveCloud(CloudParameters model, IBlobCache blobCache, GoogleDriveCloudOptions options)
         {
             Parameters = model;
             _blobCache = blobCache;
+            _options = options;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
@@ -141,9 +139,13 @@ namespace Camelotia.Services.Providers
         {
             var credential = await GoogleWebAuthorizationBroker
                 .AuthorizeAsync(
-                    new ClientSecrets { ClientId = GoogleDriveClientId, ClientSecret = GoogleDriveClientSecret },
+                    new ClientSecrets
+                    {
+                        ClientId = _options.GoogleDriveClientId,
+                        ClientSecret = _options.GoogleDriveClientSecret
+                    },
                     new[] { DriveService.Scope.Drive },
-                    GoogleDriveUserName,
+                    _options.GoogleDriveUserName,
                     CancellationToken.None,
                     new AkavacheDataStore(_blobCache, Id))
                 .ConfigureAwait(false);
@@ -151,7 +153,7 @@ namespace Camelotia.Services.Providers
             var initializer = new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
-                ApplicationName = GoogleDriveApplicationName
+                ApplicationName = _options.GoogleDriveApplicationName
             };
 
             _driveService = new DriveService(initializer);
@@ -184,8 +186,7 @@ namespace Camelotia.Services.Providers
             public async Task<T> GetAsync<T>(string key)
             {
                 var identity = $"google-drive-{_id}-{key}";
-                var value = await _blobCache.GetOrFetchObject(identity, () => Task.FromResult(default(T)));
-                return value;
+                return await _blobCache.GetOrFetchObject(identity, () => Task.FromResult(default(T)));
             }
 
             public Task ClearAsync() => Task.CompletedTask;

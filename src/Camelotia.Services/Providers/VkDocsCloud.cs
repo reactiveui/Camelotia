@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
+using Camelotia.Services.Configuration;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Newtonsoft.Json;
@@ -21,11 +22,13 @@ namespace Camelotia.Services.Providers
     public sealed class VkDocsCloud : ICloud, IDisposable
     {
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>();
+        private readonly VkDocsCloudOptions _options;
         private IVkApi _api = new VkApi();
 
-        public VkDocsCloud(CloudParameters model)
+        public VkDocsCloud(CloudParameters model, VkDocsCloudOptions options)
         {
             Parameters = model;
+            _options = options;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
@@ -63,7 +66,7 @@ namespace Camelotia.Services.Providers
 
             await _api.AuthorizeAsync(new ApiAuthParams
             {
-                ApplicationId = 5560698,
+                ApplicationId = _options.ApplicationId,
                 Login = login,
                 Password = password,
                 Settings = Settings.Documents

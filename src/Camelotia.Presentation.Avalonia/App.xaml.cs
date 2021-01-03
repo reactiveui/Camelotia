@@ -27,12 +27,14 @@ namespace Camelotia.Presentation.Avalonia
             // Configure app dependencies.
             var window = new MainView();
             var styles = new AvaloniaStyleManager(window);
+            var mainState = RxApp.SuspensionHost.GetAppState<MainState>();
 
             Akavache.BlobCache.ApplicationName = "CamelotiaV2";
             window.SwitchThemeButton.Click += (sender, args) => styles.UseNextTheme();
             window.DataContext = new MainViewModel(
-                RxApp.SuspensionHost.GetAppState<MainState>(),
+                mainState,
                 new CloudFactory(
+                    mainState.CloudConfiguration,
                     new AvaloniaYandexAuthenticator(),
                     Akavache.BlobCache.UserAccount),
                 (state, provider) => new CloudViewModel(

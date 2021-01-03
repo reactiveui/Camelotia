@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using Camelotia.Services.Configuration;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Newtonsoft.Json;
@@ -20,18 +21,16 @@ namespace Camelotia.Services.Providers
         private const string ApiDownloadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/download?path=";
         private const string ApiUploadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/upload?path=";
         private const string ApiGetPathBase = "https://cloud-api.yandex.net:443/v1/disk/resources?path=";
-        private const string HashAuthClientId = "7762e3fccbe3431db2652a8434618790";
-        private const string CodeAuthClientSecret = "317a14f5491447e8bd3a9e7e14ce46cd";
-        private const string CodeAuthClientId = "122661520b174cb5b85b4a3c26aa66f6";
-
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
         private readonly HttpClient _http = new HttpClient();
         private readonly IAuthenticator _authenticator;
+        private readonly YandexDiskCloudOptions _options;
 
-        public YandexDiskCloud(CloudParameters model, IAuthenticator authenticator)
+        public YandexDiskCloud(CloudParameters model, IAuthenticator authenticator, YandexDiskCloudOptions options)
         {
             Parameters = model;
             _authenticator = authenticator;
+            _options = options;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
@@ -161,14 +160,14 @@ namespace Camelotia.Services.Providers
             _isAuthorized.OnNext(true);
         }
 
-        private static async Task<string> GetAuthenticationTokenFromCode(string code)
+        private async Task<string> GetAuthenticationTokenFromCode(string code)
         {
             using var http = new HttpClient();
             using var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 ["code"] = code,
-                ["client_id"] = CodeAuthClientId,
-                ["client_secret"] = CodeAuthClientSecret,
+                ["client_id"] = _options.CodeAuthClientId,
+                ["client_secret"] = _options.CodeAuthClientSecret,
                 ["grant_type"] = "authorization_code"
             });
             using var response = await http.PostAsync(YandexAuthTokenUrl, content).ConfigureAwait(false);
@@ -178,17 +177,17 @@ namespace Camelotia.Services.Providers
             return model.AccessToken;
         }
 
-        private static Uri GetYandexAuthTokenUrl()
+        private Uri GetYandexAuthTokenUrl()
         {
             var uri = "https://oauth.yandex.ru/authorize?response_type=token" +
-                     $"&client_id={HashAuthClientId}";
+                     $"&client_id={_options.HashAuthClientId}";
             return new Uri(uri);
         }
 
-        private static Uri GetYandexAuthCodeUrl(string redirect)
+        private Uri GetYandexAuthCodeUrl(string redirect)
         {
             var uri = "https://oauth.yandex.ru/authorize?response_type=code" +
-                     $"&client_id={CodeAuthClientId}&redirect_url={redirect}";
+                     $"&client_id={_options.CodeAuthClientId}&redirect_url={redirect}";
             return new Uri(uri);
         }
 

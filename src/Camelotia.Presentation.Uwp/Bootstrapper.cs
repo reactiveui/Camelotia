@@ -12,12 +12,21 @@ namespace Camelotia.Presentation.Uwp
     {
         public static IMainViewModel BuildMainViewModel()
         {
+            var mainState = RxApp.SuspensionHost.GetAppState<MainState>();
             return new MainViewModel(
-                RxApp.SuspensionHost.GetAppState<MainState>(),
+                mainState,
                 new CloudFactory(
+                    mainState.CloudConfiguration,
                     new UniversalWindowsYandexAuthenticator(),
                     Akavache.BlobCache.UserAccount,
-                    new[] { CloudType.Yandex, CloudType.VkDocs, CloudType.Ftp, CloudType.Sftp, CloudType.GitHub }),
+                    new[]
+                    {
+                        CloudType.Yandex,
+                        CloudType.VkDocs,
+                        CloudType.Ftp,
+                        CloudType.Sftp,
+                        CloudType.GitHub
+                    }),
                 (state, provider) => new CloudViewModel(
                     state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
