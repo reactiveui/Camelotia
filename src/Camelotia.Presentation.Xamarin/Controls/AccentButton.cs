@@ -2,5 +2,7 @@
 
 namespace Camelotia.Presentation.Xamarin.Controls
 {
-    public class AccentButton : Button { }
+    public class AccentButton : Button
+    {
+    }
 }

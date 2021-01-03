@@ -12,7 +12,7 @@ namespace Camelotia.Tests.Services
     {
         private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
         private readonly IObjectBlobCache _blobCache = Substitute.For<IObjectBlobCache>();
-        
+
         [Fact]
         public void SupportedProviderTypesShouldNotBeEmpty()
         {
@@ -26,7 +26,7 @@ namespace Camelotia.Tests.Services
         public void ShouldInstantiateSupportedProviders()
         {
             var factory = new CloudFactory(_authenticator, _blobCache);
-            var provider = factory.CreateCloud(new CloudParameters {Type = CloudType.Local});
+            var provider = factory.CreateCloud(new CloudParameters { Type = CloudType.Local });
             provider.Should().NotBeNull();
             provider.Name.Should().Be(CloudType.Local.ToString());
         }

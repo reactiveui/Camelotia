@@ -56,11 +56,11 @@ namespace Camelotia.Presentation.ViewModels
 
             _canInteract = canInteract
                 .ToProperty(this, x => x.CanInteract);
-            
+
             Refresh = ReactiveCommand.CreateFromTask(
                 () => cloud.Get(CurrentPath),
                 canInteract);
-            
+
             _files = Refresh
                 .Select(
                     items => items
@@ -74,7 +74,7 @@ namespace Camelotia.Presentation.ViewModels
             _isLoading = Refresh
                 .IsExecuting
                 .ToProperty(this, x => x.IsLoading);
-            
+
             _isReady = Refresh
                 .IsExecuting
                 .Skip(1)
@@ -85,7 +85,7 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && file.IsFolder)
                 .CombineLatest(Refresh.IsExecuting, canInteract, (folder, busy, ci) => folder && ci && !busy);
-            
+
             Open = ReactiveCommand.Create(
                 () => Path.Combine(CurrentPath, SelectedFile.Name),
                 canOpenCurrentPath);
@@ -95,9 +95,9 @@ namespace Camelotia.Presentation.ViewModels
                 .Where(path => path != null)
                 .Select(path => path.Length > cloud.InitialPath.Length)
                 .CombineLatest(Refresh.IsExecuting, canInteract, (valid, busy, ci) => valid && ci && !busy);
-            
+
             Back = ReactiveCommand.Create(
-                () => Path.GetDirectoryName(CurrentPath), 
+                () => Path.GetDirectoryName(CurrentPath),
                 canCurrentPathGoBack);
 
             SetPath = ReactiveCommand.Create<string, string>(path => path);
@@ -122,7 +122,7 @@ namespace Camelotia.Presentation.ViewModels
                 .ThrownExceptions
                 .Select(exception => false)
                 .Merge(getBreadCrumbs.Select(items => items != null && items.Any()))
-                .ObserveOn(RxApp.MainThreadScheduler)                
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ShowBreadCrumbs);
 
             _hideBreadCrumbs = this
@@ -132,16 +132,16 @@ namespace Camelotia.Presentation.ViewModels
 
             this.WhenAnyValue(x => x.CurrentPath, x => x.IsReady)
                 .Where(x => x.Item1 != null && x.Item2)
-                .Select(_ => Unit.Default)                
+                .Select(_ => Unit.Default)
                 .InvokeCommand(getBreadCrumbs);
 
             this.WhenAnyValue(x => x.CurrentPath)
                 .Skip(1)
-                .Select(path => Unit.Default)
+                .Select(_ => Unit.Default)
                 .InvokeCommand(Refresh);
 
             this.WhenAnyValue(x => x.CurrentPath)
-                .Subscribe(path => SelectedFile = null);
+                .Subscribe(_ => SelectedFile = null);
 
             _isCurrentPathEmpty = this
                 .WhenAnyValue(x => x.Files)
@@ -161,13 +161,13 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.CurrentPath)
                 .Select(path => path != null)
                 .CombineLatest(Refresh.IsExecuting, canInteract, (up, loading, can) => up && can && !loading);
-                
+
             UploadToCurrentPath = ReactiveCommand.CreateFromObservable(
                 () => Observable
                     .FromAsync(files.OpenRead)
                     .Where(response => response.Name != null && response.Stream != null)
                     .Select(args => _cloud.UploadFile(CurrentPath, args.Stream, args.Name))
-                    .SelectMany(task => task.ToObservable()), 
+                    .SelectMany(task => task.ToObservable()),
                 canUploadToCurrentPath);
 
             UploadToCurrentPath.InvokeCommand(Refresh);
@@ -176,27 +176,27 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(file => file != null && !file.IsFolder)
                 .CombineLatest(Refresh.IsExecuting, canInteract, (down, loading, can) => down && !loading && can);
-                
+
             DownloadSelectedFile = ReactiveCommand.CreateFromObservable(
                 () => Observable
                     .FromAsync(() => files.OpenWrite(SelectedFile.Name))
                     .Where(stream => stream != null)
                     .Select(stream => _cloud.DownloadFile(SelectedFile.Path, stream))
-                    .SelectMany(task => task.ToObservable()), 
+                    .SelectMany(task => task.ToObservable()),
                 canDownloadSelectedFile);
-            
+
             var canLogout = cloud
                 .IsAuthorized
                 .DistinctUntilChanged()
                 .Select(loggedIn => loggedIn && (
                     cloud.SupportsDirectAuth ||
-                    cloud.SupportsOAuth || 
+                    cloud.SupportsOAuth ||
                     cloud.SupportsHostAuth))
                 .CombineLatest(canInteract, (logout, interact) => logout && interact)
                 .ObserveOn(RxApp.MainThreadScheduler);
 
             Logout = ReactiveCommand.CreateFromTask(cloud.Logout, canLogout);
-            
+
             _canLogout = canLogout
                 .ToProperty(this, x => x.CanLogout);
 
@@ -215,7 +215,7 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.SelectedFile)
                 .Select(selection => selection != null)
                 .CombineLatest(Refresh.IsExecuting, canInteract, (sel, loading, ci) => sel && !loading && ci);
-            
+
             UnselectFile = ReactiveCommand.Create(
                 () => { SelectedFile = null; },
                 canUnselectFile);
@@ -238,7 +238,7 @@ namespace Camelotia.Presentation.ViewModels
             this.WhenAnyValue(x => x.Auth.IsAuthenticated)
                 .Select(authenticated => authenticated ? _cloud.Parameters?.User : null)
                 .Subscribe(user => state.User = user);
-            
+
             this.WhenActivated(ActivateAutoRefresh);
         }
 
@@ -271,17 +271,17 @@ namespace Camelotia.Presentation.ViewModels
         public bool CanInteract => _canInteract?.Value ?? false;
 
         public IAuthViewModel Auth { get; }
-        
-        public IRenameFileViewModel Rename { get; }  
-        
+
+        public IRenameFileViewModel Rename { get; }
+
         public ICreateFolderViewModel Folder { get; }
 
         public ViewModelActivator Activator { get; } = new ViewModelActivator();
 
         public Guid Id => _cloud.Id;
-        
+
         public string Name => _cloud.Name;
-        
+
         public DateTime Created => _cloud.Created;
 
         public string Size => _cloud.Size?.ByteSizeToString() ?? "Unknown";

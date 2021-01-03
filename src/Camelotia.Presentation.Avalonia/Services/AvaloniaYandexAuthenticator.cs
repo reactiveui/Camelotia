@@ -31,12 +31,12 @@ namespace Camelotia.Presentation.Avalonia.Services
             }
             .Start();
 
-            var context = await listener.GetContextAsync();
+            var context = await listener.GetContextAsync().ConfigureAwait(false);
             var code = context.Request.QueryString["code"];
 
             var buffer = Encoding.UTF8.GetBytes(SuccessContent);
             context.Response.ContentLength64 = buffer.Length;
-            await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+            await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
 
             context.Response.Close();
             listener.Close();

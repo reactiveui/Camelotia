@@ -1,8 +1,8 @@
-﻿using Camelotia.Presentation.Interfaces;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Models;
 using ReactiveUI;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Camelotia.Presentation.ViewModels
 {
@@ -16,7 +16,7 @@ namespace Camelotia.Presentation.ViewModels
         {
             Provider = provider;
             _folder = folder;
-            Children = folder.Children != null && folder.Children.Any()
+            Children = folder.Children?.Any() == true
                 ? folder.Children.Select(f => new FolderViewModel(provider, f))
                 : Enumerable.Empty<IFolderViewModel>();
         }

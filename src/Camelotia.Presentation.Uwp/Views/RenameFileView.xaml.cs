@@ -1,9 +1,9 @@
-﻿using Camelotia.Presentation.Interfaces;
+﻿using System;
+using System.Reactive.Disposables;
+using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Formatters;
-using System;
-using System.Reactive.Disposables;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 

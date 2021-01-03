@@ -1,9 +1,9 @@
-﻿using Camelotia.Services.Interfaces;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Camelotia.Services.Interfaces;
 
 namespace Camelotia.Presentation.Wpf.Services
 {
@@ -31,12 +31,12 @@ namespace Camelotia.Presentation.Wpf.Services
             }
             .Start();
 
-            var context = await listener.GetContextAsync();
+            var context = await listener.GetContextAsync().ConfigureAwait(false);
             var code = context.Request.QueryString["code"];
 
             var buffer = Encoding.UTF8.GetBytes(SuccessContent);
             context.Response.ContentLength64 = buffer.Length;
-            await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+            await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
 
             context.Response.Close();
             listener.Close();

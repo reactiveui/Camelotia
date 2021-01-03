@@ -1,24 +1,24 @@
-﻿using Camelotia.Presentation.Interfaces;
-using Camelotia.Presentation.ViewModels;
-using Camelotia.Presentation.Xamarin.Droid.Services;
+﻿using System;
 using System.Reactive.Subjects;
-using System;
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Content;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Infrastructure;
+using Camelotia.Presentation.Interfaces;
+using Camelotia.Presentation.ViewModels;
+using Camelotia.Presentation.Xamarin.Droid.Services;
 using Camelotia.Services;
 using ReactiveUI;
 
 namespace Camelotia.Presentation.Xamarin.Droid
 {
     [Activity(
-        Label = "Camelotia.Presentation.Xamarin", 
-        Icon = "@mipmap/icon", 
-        Theme = "@style/MainTheme", 
-        MainLauncher = true, 
+        Label = "Camelotia.Presentation.Xamarin",
+        Icon = "@mipmap/icon",
+        Theme = "@style/MainTheme",
+        MainLauncher = true,
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
@@ -57,7 +57,8 @@ namespace Camelotia.Presentation.Xamarin.Droid
             return new MainViewModel(
                 RxApp.SuspensionHost.GetAppState<MainState>(),
                 new CloudFactory(new AndroidYandexAuthenticator(this), Akavache.BlobCache.UserAccount),
-                (state, provider) => new CloudViewModel(state,
+                (state, provider) => new CloudViewModel(
+                    state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
                     owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
                     (file, owner) => new FileViewModel(owner, file),
@@ -66,12 +67,9 @@ namespace Camelotia.Presentation.Xamarin.Droid
                         new DirectAuthViewModel(state.AuthState.DirectAuthState, provider),
                         new HostAuthViewModel(state.AuthState.HostAuthState, provider),
                         new OAuthViewModel(provider),
-                        provider
-                    ),
+                        provider),
                     new AndroidFileManager(this),
-                    provider
-                )
-            );
+                    provider));
         }
     }
 }

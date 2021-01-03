@@ -19,10 +19,10 @@ namespace Camelotia.Presentation.AppState
             get => Clouds.Items.ToList();
             set => Clouds.AddOrUpdate(value);
         }
-        
+
         [DataMember]
         public CloudType? SelectedSupportedType { get; set; }
-        
+
         [DataMember]
         public Guid SelectedProviderId { get; set; }
     }

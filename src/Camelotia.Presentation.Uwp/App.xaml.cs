@@ -1,13 +1,13 @@
 ﻿using System;
+using Camelotia.Presentation.AppState;
+using Camelotia.Presentation.Infrastructure;
+using Camelotia.Presentation.Uwp.Views;
+using ReactiveUI;
 using Windows.ApplicationModel.Activation;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Camelotia.Presentation.Uwp.Views;
-using Camelotia.Presentation.AppState;
-using Camelotia.Presentation.Infrastructure;
-using ReactiveUI;
-using Windows.Storage;
 
 namespace Camelotia.Presentation.Uwp
 {

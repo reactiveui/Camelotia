@@ -9,7 +9,7 @@ namespace Camelotia.Presentation.Interfaces
         IReactiveObject
     {
         string Address { get; set; }
-        
+
         string Port { get; set; }
     }
 }

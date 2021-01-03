@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class YandexDiskCloud : ICloud
+    public sealed class YandexDiskCloud : ICloud, IDisposable
     {
         private const string YandexAuthTokenUrl = "https://oauth.yandex.ru/token";
         private const string ApiMoveFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/move";
@@ -23,7 +23,7 @@ namespace Camelotia.Services.Providers
         private const string HashAuthClientId = "7762e3fccbe3431db2652a8434618790";
         private const string CodeAuthClientSecret = "317a14f5491447e8bd3a9e7e14ce46cd";
         private const string CodeAuthClientId = "122661520b174cb5b85b4a3c26aa66f6";
-        
+
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
         private readonly HttpClient _http = new HttpClient();
         private readonly IAuthenticator _authenticator;
@@ -49,11 +49,11 @@ namespace Camelotia.Services.Providers
         public IObservable<bool> IsAuthorized => _isAuthorized;
 
         public bool SupportsDirectAuth => false;
-        
+
         public bool SupportsHostAuth => false;
 
         public bool SupportsOAuth => true;
-        
+
         public bool CanCreateFolder => true;
 
         public string InitialPath => Path.DirectorySeparatorChar.ToString();
@@ -61,14 +61,14 @@ namespace Camelotia.Services.Providers
         public Task HostAuth(string address, int port, string login, string password) => Task.CompletedTask;
 
         public Task DirectAuth(string login, string password) => Task.CompletedTask;
-        
+
         public async Task<IEnumerable<FileModel>> Get(string path)
         {
             var yaPath = path.Replace("\\", "/");
             var encodedPath = WebUtility.UrlEncode(yaPath);
             var pathUrl = ApiGetPathBase + encodedPath;
             using var response = await _http.GetAsync(pathUrl).ConfigureAwait(false);
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
 
             var content = JsonConvert.DeserializeObject<YandexContentResponse>(json);
@@ -76,7 +76,7 @@ namespace Camelotia.Services.Providers
             {
                 Name = file.Name,
                 IsFolder = file.Type == "dir",
-                Path = file.Path.Replace("disk:", ""),
+                Path = file.Path.Replace("disk:", string.Empty),
                 Modified = file.Created,
                 Size = file.Size
             });
@@ -91,14 +91,14 @@ namespace Camelotia.Services.Providers
             var pathUrl = ApiDownloadFileUrl + encodedPath;
             using var response = await _http.GetAsync(pathUrl).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var content = JsonConvert.DeserializeObject<YandexFileLoadResponse>(json);
-                
+
             using (var file = await _http.GetAsync(content.Href).ConfigureAwait(false))
             using (var stream = await file.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 await stream.CopyToAsync(to).ConfigureAwait(false);
 
-            await to.FlushAsync();
+            await to.FlushAsync().ConfigureAwait(false);
             to.Close();
         }
 
@@ -116,7 +116,7 @@ namespace Camelotia.Services.Providers
             var directoryName = Path.GetDirectoryName(path);
             var fromPath = WebUtility.UrlEncode(path);
             var toPath = Path.Combine(directoryName, name);
-            
+
             var pathUrl = $"{ApiMoveFileUrl}?from={fromPath}&path={toPath}";
             using var response = await _http.PostAsync(pathUrl, null).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
@@ -129,7 +129,7 @@ namespace Camelotia.Services.Providers
             var pathUrl = ApiUploadFileUrl + encodedPath;
             using var response = await _http.GetAsync(pathUrl).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var content = JsonConvert.DeserializeObject<YandexFileLoadResponse>(json);
 
             var httpContent = new StreamContent(@from);
@@ -155,12 +155,43 @@ namespace Camelotia.Services.Providers
 
         public async Task OAuth()
         {
-            var token = await GetAuthenticationToken();
+            var token = await GetAuthenticationToken().ConfigureAwait(false);
             Parameters.Token = token;
             ApplyTokenToHeaders(token);
             _isAuthorized.OnNext(true);
         }
-        
+
+        private static async Task<string> GetAuthenticationTokenFromCode(string code)
+        {
+            using var http = new HttpClient();
+            using var content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                ["code"] = code,
+                ["client_id"] = CodeAuthClientId,
+                ["client_secret"] = CodeAuthClientSecret,
+                ["grant_type"] = "authorization_code"
+            });
+            using var response = await http.PostAsync(YandexAuthTokenUrl, content).ConfigureAwait(false);
+            var token = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var model = JsonConvert.DeserializeObject<YandexTokenAuthResponse>(token);
+            response.EnsureSuccessStatusCode();
+            return model.AccessToken;
+        }
+
+        private static Uri GetYandexAuthTokenUrl()
+        {
+            var uri = "https://oauth.yandex.ru/authorize?response_type=token" +
+                     $"&client_id={HashAuthClientId}";
+            return new Uri(uri);
+        }
+
+        private static Uri GetYandexAuthCodeUrl(string redirect)
+        {
+            var uri = "https://oauth.yandex.ru/authorize?response_type=code" +
+                     $"&client_id={CodeAuthClientId}&redirect_url={redirect}";
+            return new Uri(uri);
+        }
+
         private void EnsureLoggedInIfTokenSaved()
         {
             var token = Parameters.Token;
@@ -183,44 +214,13 @@ namespace Camelotia.Services.Providers
                 case GrantType.AuthorizationCode:
                     var server = $"http://{IPAddress.Loopback}:{3000}/";
                     var codeUri = GetYandexAuthCodeUrl(server);
-                    var code = await _authenticator.ReceiveCode(codeUri, new Uri(server));
-                    return await GetAuthenticationTokenFromCode(code);
+                    var code = await _authenticator.ReceiveCode(codeUri, new Uri(server)).ConfigureAwait(false);
+                    return await GetAuthenticationTokenFromCode(code).ConfigureAwait(false);
                 case GrantType.AccessToken:
                     var tokenUri = GetYandexAuthTokenUrl();
-                    return await _authenticator.ReceiveToken(tokenUri);
+                    return await _authenticator.ReceiveToken(tokenUri).ConfigureAwait(false);
                 default: throw new InvalidOperationException();
             }
-        }
-
-        private static async Task<string> GetAuthenticationTokenFromCode(string code)
-        {
-            using var http = new HttpClient();
-            using var content = new FormUrlEncodedContent(new Dictionary<string, string>
-            {
-                ["code"] = code,
-                ["client_id"] = CodeAuthClientId,
-                ["client_secret"] = CodeAuthClientSecret,
-                ["grant_type"] = "authorization_code"
-            });
-            using var response = await http.PostAsync(YandexAuthTokenUrl, content).ConfigureAwait(false);
-            var token = await response.Content.ReadAsStringAsync();
-            var model = JsonConvert.DeserializeObject<YandexTokenAuthResponse>(token);
-            response.EnsureSuccessStatusCode();
-            return model.AccessToken;
-        }
-
-        private static Uri GetYandexAuthTokenUrl()
-        {
-            var uri = "https://oauth.yandex.ru/authorize?response_type=token" +
-                     $"&client_id={HashAuthClientId}";
-            return new Uri(uri);
-        }
-
-        private static Uri GetYandexAuthCodeUrl(string redirect)
-        {
-            var uri = "https://oauth.yandex.ru/authorize?response_type=code" +
-                     $"&client_id={CodeAuthClientId}&redirect_url={redirect}";
-            return new Uri(uri);
         }
 
         private class YandexContentItemResponse
@@ -263,6 +263,12 @@ namespace Camelotia.Services.Providers
         {
             [JsonProperty("access_token")]
             public string AccessToken { get; set; }
+        }
+
+        public void Dispose()
+        {
+            _http.Dispose();
+            _isAuthorized.Dispose();
         }
     }
 }

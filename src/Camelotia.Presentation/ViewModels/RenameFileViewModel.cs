@@ -4,8 +4,8 @@ using System.Reactive.Linq;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
-using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 
@@ -19,25 +19,27 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<string> _errorMessage;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<string> _oldName;
-        
+
         public RenameFileViewModel(RenameFileState state, ICloudViewModel owner, ICloud provider)
         {
             _oldName = owner
                 .WhenAnyValue(x => x.SelectedFile.Name)
                 .ToProperty(this, x => x.OldName);
-            
-            this.ValidationRule(x => x.NewName,
+
+            this.ValidationRule(
+                x => x.NewName,
                 name => !string.IsNullOrWhiteSpace(name),
                 "New name shouldn't be empty.");
 
-            var oldRule = this.ValidationRule(x => x.OldName,
+            var oldRule = this.ValidationRule(
+                x => x.OldName,
                 name => !string.IsNullOrWhiteSpace(name),
                 "Old name shouldn't be empty.");
-            
+
             Rename = ReactiveCommand.CreateFromTask(
                 () => provider.RenameFile(owner.SelectedFile.Path, NewName),
                 this.IsValid());
-            
+
             _isLoading = Rename
                 .IsExecuting
                 .ToProperty(this, x => x.IsLoading);
@@ -46,29 +48,29 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.CanInteract)
                 .Skip(1)
                 .StartWith(true);
-            
+
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => !visible)
                 .CombineLatest(
                     canInteract,
-                    oldRule.WhenAnyValue(x => x.IsValid), 
+                    oldRule.WhenAnyValue(x => x.IsValid),
                     (visible, interact, old) => visible && old && interact);
-            
+
             var canClose = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => visible);
-            
-            Open = ReactiveCommand.Create(() => {}, canOpen);
-            Close = ReactiveCommand.Create(() => {}, canClose);
-            
+
+            Open = ReactiveCommand.Create(() => { }, canOpen);
+            Close = ReactiveCommand.Create(() => { }, canClose);
+
             Open.Select(unit => true)
                 .Merge(Close.Select(unit => false))
                 .Subscribe(visible => IsVisible = visible);
-            
+
             Close.Subscribe(x => NewName = string.Empty);
             Rename.InvokeCommand(Close);
-            
+
             _hasErrorMessage = Rename
                 .ThrownExceptions
                 .Select(exception => true)
@@ -86,11 +88,11 @@ namespace Camelotia.Presentation.ViewModels
             this.WhenAnyValue(x => x.NewName)
                 .Subscribe(name => state.NewName = name);
         }
-        
-        [Reactive] 
+
+        [Reactive]
         public bool IsVisible { get; set; }
-        
-        [Reactive] 
+
+        [Reactive]
         public string NewName { get; set; }
 
         public bool HasErrorMessage => _hasErrorMessage.Value;

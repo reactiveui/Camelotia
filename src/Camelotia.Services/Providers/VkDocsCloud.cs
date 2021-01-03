@@ -10,19 +10,19 @@ using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Newtonsoft.Json;
-using VkNet.Enums.Filters;
-using VkNet.Model;
 using VkNet;
 using VkNet.Abstractions;
+using VkNet.Enums.Filters;
+using VkNet.Model;
 using VkNet.Model.Attachments;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class VkDocsCloud : ICloud
+    public sealed class VkDocsCloud : ICloud, IDisposable
     {
         private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private IVkApi _api = new VkApi();
-        
+
         public VkDocsCloud(CloudParameters model)
         {
             Parameters = model;
@@ -67,12 +67,12 @@ namespace Camelotia.Services.Providers
                 Login = login,
                 Password = password,
                 Settings = Settings.Documents
-            });
+            }).ConfigureAwait(false);
 
             Parameters.Token = _api.Token;
             _isAuthorized.OnNext(_api.IsAuthorized);
         }
-        
+
         public Task Logout()
         {
             _api = new VkApi();
@@ -83,7 +83,7 @@ namespace Camelotia.Services.Providers
 
         public async Task<IEnumerable<FileModel>> Get(string path)
         {
-            var documents = await _api.Docs.GetAsync();
+            var documents = await _api.Docs.GetAsync().ConfigureAwait(false);
             return documents.Select(document => new FileModel
             {
                 Name = document.Title,
@@ -99,23 +99,22 @@ namespace Camelotia.Services.Providers
         public async Task DownloadFile(string from, Stream to)
         {
             var id = long.Parse(from);
-            var users = await _api.Users.GetAsync(new long[0]);
+            var users = await _api.Users.GetAsync(Array.Empty<long>()).ConfigureAwait(false);
             var currentUser = users.First();
 
-            var documents = await _api.Docs.GetByIdAsync(new[] {new Document {Id = id, OwnerId = currentUser.Id}});
+            var documents = await _api.Docs.GetByIdAsync(new[] { new Document { Id = id, OwnerId = currentUser.Id } }).ConfigureAwait(false);
             var document = documents.First();
-            Console.WriteLine  (document.Uri);
 
             var uri = document.Uri;
             var isValidUriString = Uri.IsWellFormedUriString(uri, UriKind.Absolute);
             if (!isValidUriString) throw new InvalidOperationException("Uri is invalid.");
-            
+
             using (var http = new HttpClient())
             using (var response = await http.GetAsync(uri).ConfigureAwait(false))
             using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 await stream.CopyToAsync(to).ConfigureAwait(false);
 
-            await to.FlushAsync();
+            await to.FlushAsync().ConfigureAwait(false);
             to.Close();
         }
 
@@ -127,12 +126,12 @@ namespace Camelotia.Services.Providers
         {
             var server = await _api.Docs.GetUploadServerAsync().ConfigureAwait(false);
             var uri = new Uri(server.UploadUrl);
-            
+
             var bytes = await StreamToArray(from).ConfigureAwait(false);
             var ext = Path.GetFileNameWithoutExtension(name);
             if (ext == null) throw new ArgumentNullException(nameof(name));
 
-            using var response = await PostSingleFileAsync(uri, bytes, ext.Trim('.'), name);
+            using var response = await PostSingleFileAsync(uri, bytes, ext.Trim('.'), name).ConfigureAwait(false);
             using var reader = new StreamReader(response, Encoding.UTF8);
             var message = await reader.ReadToEndAsync().ConfigureAwait(false);
             var json = JsonConvert.DeserializeObject<DocUploadResponse>(message);
@@ -145,26 +144,24 @@ namespace Camelotia.Services.Providers
         public async Task Delete(string path, bool isFolder)
         {
             var id = long.Parse(path);
-            var users = await _api.Users.GetAsync(new long[0]);
-            var currentUser = users.First();
-            await _api.Docs.DeleteAsync(currentUser.Id, id);
+            var users = await _api.Users.GetAsync(Array.Empty<long>()).ConfigureAwait(false);
+            var currentUser = users[0];
+            await _api.Docs.DeleteAsync(currentUser.Id, id).ConfigureAwait(false);
         }
 
-        private async void EnsureLoggedInIfTokenSaved()
+        public void Dispose()
         {
-            var token = Parameters.Token;
-            if (string.IsNullOrWhiteSpace(token) || _api.IsAuthorized) return;
-            await _api.AuthorizeAsync(new ApiAuthParams {AccessToken = token});
-            _isAuthorized.OnNext(true);
+            _isAuthorized.Dispose();
+            _api.Dispose();
         }
-        
+
         private static async Task<byte[]> StreamToArray(Stream stream)
         {
             using var memory = new MemoryStream();
-            await stream.CopyToAsync(memory);
+            await stream.CopyToAsync(memory).ConfigureAwait(false);
             return memory.ToArray();
         }
-        
+
         private static async Task<Stream> PostSingleFileAsync(Uri uri, byte[] bytes, string type, string name)
         {
             using var http = new HttpClient();
@@ -172,13 +169,21 @@ namespace Camelotia.Services.Providers
             using var byteArrayContent = new ByteArrayContent(bytes);
             byteArrayContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
             {
-                FileName = name, 
+                FileName = name,
                 Name = type
             };
-                
+
             multipartFormDataContent.Add(byteArrayContent);
             var response = await http.PostAsync(uri, multipartFormDataContent).ConfigureAwait(false);
             return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+        }
+
+        private async void EnsureLoggedInIfTokenSaved()
+        {
+            var token = Parameters.Token;
+            if (string.IsNullOrWhiteSpace(token) || _api.IsAuthorized) return;
+            await _api.AuthorizeAsync(new ApiAuthParams { AccessToken = token }).ConfigureAwait(false);
+            _isAuthorized.OnNext(true);
         }
 
         private class DocUploadResponse

@@ -1,8 +1,8 @@
-﻿using Camelotia.Services.Interfaces;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Camelotia.Services.Interfaces;
 
 namespace Camelotia.Presentation.Wpf.Services
 {
@@ -20,7 +20,7 @@ namespace Camelotia.Presentation.Wpf.Services
             return Task.FromResult((name, stream));
         }
 
-        public Task<Stream> OpenWrite(string name) 
+        public Task<Stream> OpenWrite(string name)
         {
             using (var dialog = new FolderBrowserDialog())
             {

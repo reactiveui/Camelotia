@@ -2,12 +2,12 @@
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Camelotia.Presentation.Interfaces;
+using ReactiveUI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Camelotia.Presentation.Interfaces;
-using ReactiveUI;
 
 namespace Camelotia.Presentation.Uwp.Views
 {

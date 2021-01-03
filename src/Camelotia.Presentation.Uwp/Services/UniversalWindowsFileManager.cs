@@ -1,10 +1,10 @@
-﻿using Camelotia.Services.Interfaces;
-using Windows.Storage.Pickers;
-using Windows.Storage;
-using System.Threading.Tasks;
-using System.IO;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Camelotia.Services.Interfaces;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 
 namespace Camelotia.Presentation.Uwp.Services
 {
@@ -16,7 +16,7 @@ namespace Camelotia.Presentation.Uwp.Services
             picker.FileTypeFilter.Add("*");
             var file = await picker.PickSingleFileAsync();
             if (file == null) return (null, null);
-            var stream = await file.OpenStreamForReadAsync();
+            var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false);
             return (file.Name, stream);
         }
 
@@ -28,7 +28,7 @@ namespace Camelotia.Presentation.Uwp.Services
             var file = await picker.PickSaveFileAsync();
             if (file == null) return null;
             await FileIO.WriteTextAsync(file, string.Empty);
-            var stream = await file.OpenStreamForWriteAsync();
+            var stream = await file.OpenStreamForWriteAsync().ConfigureAwait(false);
             return stream;
         }
     }

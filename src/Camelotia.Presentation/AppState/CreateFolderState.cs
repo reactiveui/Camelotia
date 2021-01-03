@@ -7,7 +7,7 @@ namespace Camelotia.Presentation.AppState
     {
         [DataMember]
         public string Name { get; set; }
-        
+
         [DataMember]
         public bool IsVisible { get; set; }
     }

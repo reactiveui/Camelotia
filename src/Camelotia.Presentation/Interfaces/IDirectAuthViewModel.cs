@@ -12,15 +12,15 @@ namespace Camelotia.Presentation.Interfaces
         IReactiveObject
     {
         string Username { get; set; }
-        
+
         string Password { get; set; }
-        
+
         ReactiveCommand<Unit, Unit> Login { get; }
-        
+
         bool HasErrorMessage { get; }
-        
+
         string ErrorMessage { get; }
-        
+
         bool IsBusy { get; }
     }
 }

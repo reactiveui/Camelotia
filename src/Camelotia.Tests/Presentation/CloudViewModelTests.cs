@@ -26,22 +26,22 @@ namespace Camelotia.Tests.Presentation
         private readonly CloudState _state = new CloudState();
 
         [Fact]
-        public void ShouldDisplayLoadingReadyIndicatorsProperly() 
+        public void ShouldDisplayLoadingReadyIndicatorsProperly()
         {
             var model = BuildProviderViewModel();
             model.IsLoading.Should().BeFalse();
             model.IsReady.Should().BeFalse();
-                
+
             model.Refresh.Execute().Subscribe();
             model.IsReady.Should().BeTrue();
         }
 
         [Fact]
-        public void ShouldDisplayCurrentPathProperly() 
+        public void ShouldDisplayCurrentPathProperly()
         {
             _cloud.InitialPath.Returns(Separator);
             _cloud.Get(Separator).ReturnsForAnyArgs(Enumerable.Empty<FileModel>());
-            
+
             var model = BuildProviderViewModel();
             model.IsCurrentPathEmpty.Should().BeFalse();
             model.CurrentPath.Should().Be(Separator);
@@ -54,7 +54,7 @@ namespace Camelotia.Tests.Presentation
         }
 
         [Fact]
-        public void ShouldInheritMetaDataFromProvider() 
+        public void ShouldInheritMetaDataFromProvider()
         {
             var now = DateTime.Now;
             _cloud.Name.Returns("Foo");
@@ -78,14 +78,14 @@ namespace Camelotia.Tests.Presentation
             var model = BuildProviderViewModel();
             model.Logout.CanExecute().Should().BeTrue();
             model.Logout.Execute().Subscribe();
-            
+
             authorized.OnNext(false);
             _cloud.Received(1).Logout();
-            model.Logout.CanExecute().Should().BeFalse();            
+            model.Logout.CanExecute().Should().BeFalse();
         }
 
         [Fact]
-        public void ShouldBeAbleToOpenSelectedPath() 
+        public void ShouldBeAbleToOpenSelectedPath()
         {
             var file = new FileModel { Name = "foo", Path = Separator + "foo", IsFolder = true };
             _cloud.Get(Separator).Returns(Enumerable.Repeat(file, 1));
@@ -97,23 +97,23 @@ namespace Camelotia.Tests.Presentation
             {
                 model.Files.Should().NotBeEmpty();
                 model.CurrentPath.Should().Be(Separator);
-                
+
                 model.SelectedFile = model.Files.First();
                 model.Open.CanExecute().Should().BeTrue();
                 model.Open.Execute().Subscribe();
-                
+
                 model.CurrentPath.Should().Be(Separator + "foo");
                 model.Back.CanExecute().Should().BeTrue();
                 model.Back.Execute().Subscribe();
-                
+
                 model.CurrentPath.Should().Be(Separator);
             }
         }
 
         [Fact]
-        public void ShouldRefreshContentOfCurrentPathWhenFileIsUploaded() 
+        public void ShouldRefreshContentOfCurrentPathWhenFileIsUploaded()
         {
-            _cloud.InitialPath.Returns(Separator);            
+            _cloud.InitialPath.Returns(Separator);
             _files.OpenRead().Returns(("example", Stream.Null));
             _auth.IsAuthenticated.Returns(true);
 
@@ -125,7 +125,7 @@ namespace Camelotia.Tests.Presentation
         }
 
         [Fact]
-        public void ShouldSetSelectedFileToNullWithCurrentPathChanges() 
+        public void ShouldSetSelectedFileToNullWithCurrentPathChanges()
         {
             var file = new FileModel { Name = "foo", Path = Separator + "foo", IsFolder = true };
             _cloud.Get(Separator).Returns(Enumerable.Repeat(file, 1));
@@ -158,7 +158,7 @@ namespace Camelotia.Tests.Presentation
 
             var model = BuildProviderViewModel();
             model.Refresh.Execute().Subscribe();
-            
+
             model.Files.Should().NotBeEmpty();
             model.CurrentPath.Should().Be(Separator);
             model.Back.Execute().Subscribe();
@@ -190,7 +190,7 @@ namespace Camelotia.Tests.Presentation
             _state.Token.Should().BeNullOrEmpty();
             _state.User.Should().BeNullOrEmpty();
 
-            _cloud.Parameters.ReturnsForAnyArgs(new CloudParameters {Token = "foo", User = "bar"});
+            _cloud.Parameters.ReturnsForAnyArgs(new CloudParameters { Token = "foo", User = "bar" });
             _auth.IsAuthenticated.ReturnsForAnyArgs(true);
             model.RaisePropertyChanged(nameof(model.Auth));
 
@@ -206,29 +206,29 @@ namespace Camelotia.Tests.Presentation
 
         [Fact]
         public void BreadCrumbsShouldBeHiddenWhenEmpty()
-        {   
+        {
             _cloud.GetBreadCrumbs(Separator).ReturnsForAnyArgs(Enumerable.Empty<FolderModel>());
 
             var model = BuildProviderViewModel();
             model.ShowBreadCrumbs.Should().BeFalse();
             model.HideBreadCrumbs.Should().BeTrue();
-            model.BreadCrumbs.Should().BeNullOrEmpty();            
+            model.BreadCrumbs.Should().BeNullOrEmpty();
         }
 
         [Fact]
         public void BreadCrumbsShouldBeShownWhenValid()
-        {         
-            var folder = new FolderModel (Separator + "foo", "foo", null);
-            _cloud.GetBreadCrumbs(Separator).Returns(Enumerable.Repeat(folder, 1));            
+        {
+            var folder = new FolderModel(Separator + "foo", "foo", null);
+            _cloud.GetBreadCrumbs(Separator).Returns(Enumerable.Repeat(folder, 1));
             _cloud.InitialPath.Returns(Separator);
 
             var model = BuildProviderViewModel();
 
             model.ShowBreadCrumbs.Should().BeFalse();
             model.HideBreadCrumbs.Should().BeTrue();
-            model.BreadCrumbs.Should().BeNullOrEmpty();            
+            model.BreadCrumbs.Should().BeNullOrEmpty();
             model.Refresh.Execute().Subscribe();
-            
+
             model.ShowBreadCrumbs.Should().BeTrue();
             model.HideBreadCrumbs.Should().BeFalse();
             model.BreadCrumbs.Should().NotBeNullOrEmpty();
@@ -239,12 +239,15 @@ namespace Camelotia.Tests.Presentation
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
-            return new CloudViewModel(_state,
-                x => _folder, x => _rename, 
+            return new CloudViewModel(
+                _state,
+                x => _folder,
+                x => _rename,
                 (x, y) => new FileViewModel(y, x),
                 (x, y) => new FolderViewModel(y, x),
-                _auth, _files, _cloud
-            );
+                _auth,
+                _files,
+                _cloud);
         }
     }
 }

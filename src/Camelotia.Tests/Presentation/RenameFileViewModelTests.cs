@@ -19,19 +19,19 @@ namespace Camelotia.Tests.Presentation
         private readonly RenameFileState _state = new RenameFileState();
 
         [Fact]
-        public void ShouldProperlyInitializeRenameFileViewModel() 
+        public void ShouldProperlyInitializeRenameFileViewModel()
         {
             var model = BuildRenameFileViewModel();
             model.OldName.Should().BeNullOrEmpty();
             model.NewName.Should().BeNullOrEmpty();
-            
+
             model.ErrorMessage.Should().BeNullOrEmpty();
             model.HasErrorMessage.Should().BeFalse();
             model.IsVisible.Should().BeFalse();
         }
 
         [Fact]
-        public void ShouldChangeVisibility() 
+        public void ShouldChangeVisibility()
         {
             _model.CanInteract.Returns(true);
             _model.SelectedFile.Returns(_file);
@@ -41,7 +41,7 @@ namespace Camelotia.Tests.Presentation
             model.Open.CanExecute().Should().BeTrue();
             model.Close.CanExecute().Should().BeFalse();
             model.IsVisible.Should().BeFalse();
-            
+
             model.Open.Execute().Subscribe();
             model.Open.CanExecute().Should().BeFalse();
             model.Close.CanExecute().Should().BeTrue();
@@ -54,12 +54,12 @@ namespace Camelotia.Tests.Presentation
         }
 
         [Fact]
-        public void ShouldRenameFileSuccessfullyAndCloseViewModel() 
+        public void ShouldRenameFileSuccessfullyAndCloseViewModel()
         {
             _model.CanInteract.Returns(true);
             _model.SelectedFile.Returns(_file);
             _file.Name.Returns("foo");
-            
+
             var model = BuildRenameFileViewModel();
             model.OldName.Should().Be("foo");
             model.IsVisible.Should().BeFalse();
@@ -75,27 +75,27 @@ namespace Camelotia.Tests.Presentation
 
             model.Close.CanExecute().Should().BeTrue();
             model.Open.CanExecute().Should().BeFalse();
-            
+
             model.NewName = "Foo";
             model.Rename.CanExecute().Should().BeTrue();
             model.Rename.Execute().Subscribe();
-            
+
             model.IsLoading.Should().BeFalse();
             model.Rename.CanExecute().Should().BeFalse();
             model.NewName.Should().BeNullOrEmpty();
             model.OldName.Should().Be("foo");
             model.IsVisible.Should().BeFalse();
-            
+
             model.Close.CanExecute().Should().BeFalse();
             model.Open.CanExecute().Should().BeTrue();
         }
-        
+
         [Fact]
         public void ShouldUpdateValidationsForProperties()
         {
             _model.SelectedFile.Returns(_file);
             _file.Name.Returns("foo");
-            
+
             var model = BuildRenameFileViewModel();
             model.Rename.CanExecute().Should().BeFalse();
             model.GetErrors(string.Empty).Should().HaveCount(1);

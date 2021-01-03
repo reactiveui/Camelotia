@@ -9,7 +9,7 @@ namespace Camelotia.Presentation.Uwp.Views
     {
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty
                .Register(nameof(ViewModel), typeof(IOAuthViewModel), typeof(OAuthView), null);
-        
+
         public OAuthView()
         {
             InitializeComponent();

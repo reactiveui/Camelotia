@@ -4,8 +4,8 @@ using System.Reactive.Linq;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
-using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 
@@ -19,25 +19,27 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<string> _path;
-        
+
         public CreateFolderViewModel(CreateFolderState state, ICloudViewModel owner, ICloud provider)
         {
             _path = owner
                 .WhenAnyValue(x => x.CurrentPath)
                 .ToProperty(this, x => x.Path);
-            
-            this.ValidationRule(x => x.Name,
+
+            this.ValidationRule(
+                x => x.Name,
                 name => !string.IsNullOrWhiteSpace(name),
                 "Folder name shouldn't be empty.");
 
-            var pathRule = this.ValidationRule(x => x.Path,
+            var pathRule = this.ValidationRule(
+                x => x.Path,
                 path => !string.IsNullOrWhiteSpace(path),
                 "Path shouldn't be empty");
-            
+
             Create = ReactiveCommand.CreateFromTask(
                 () => provider.CreateFolder(Path, Name),
                 this.IsValid());
-            
+
             _isLoading = Create.IsExecuting
                 .ToProperty(this, x => x.IsLoading);
 
@@ -45,26 +47,26 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(x => x.CanInteract)
                 .Skip(1)
                 .StartWith(true);
-            
+
             var canOpen = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => !visible)
                 .CombineLatest(
                     canInteract,
-                    pathRule.WhenAnyValue(x => x.IsValid), 
+                    pathRule.WhenAnyValue(x => x.IsValid),
                     (visible, interact, path) => visible && provider.CanCreateFolder && interact && path);
-            
+
             var canClose = this
                 .WhenAnyValue(x => x.IsVisible)
                 .Select(visible => visible);
-            
-            Open = ReactiveCommand.Create(() => {}, canOpen);
-            Close = ReactiveCommand.Create(() => {}, canClose);
-            
+
+            Open = ReactiveCommand.Create(() => { }, canOpen);
+            Close = ReactiveCommand.Create(() => { }, canClose);
+
             Open.Select(unit => true)
                 .Merge(Close.Select(unit => false))
                 .Subscribe(visible => IsVisible = visible);
-            
+
             Close.Subscribe(x => Name = string.Empty);
             Create.InvokeCommand(Close);
 
@@ -92,7 +94,7 @@ namespace Camelotia.Presentation.ViewModels
 
         [Reactive]
         public string Name { get; set; }
-        
+
         [Reactive]
         public bool IsVisible { get; set; }
 
@@ -103,7 +105,7 @@ namespace Camelotia.Presentation.ViewModels
         public bool IsLoading => _isLoading.Value;
 
         public string Path => _path.Value;
-        
+
         public ReactiveCommand<Unit, Unit> Create { get; }
 
         public ReactiveCommand<Unit, Unit> Close { get; }

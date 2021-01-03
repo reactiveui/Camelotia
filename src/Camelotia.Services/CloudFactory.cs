@@ -19,9 +19,9 @@ namespace Camelotia.Services
         {
             _cache = cache;
             _authenticator = authenticator;
-            SupportedClouds = supported ?? new []
+            SupportedClouds = supported ?? new[]
             {
-                CloudType.Local, 
+                CloudType.Local,
                 CloudType.Ftp,
                 CloudType.Sftp,
                 CloudType.Yandex,
@@ -30,7 +30,7 @@ namespace Camelotia.Services
                 CloudType.VkDocs
             };
         }
-        
+
         public IReadOnlyCollection<CloudType> SupportedClouds { get; }
 
         public ICloud CreateCloud(CloudParameters parameters) => parameters.Type switch

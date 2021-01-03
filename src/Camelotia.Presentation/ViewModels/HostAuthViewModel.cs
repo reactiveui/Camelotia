@@ -1,14 +1,13 @@
+using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
-using ReactiveUI.Fody.Helpers;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
-using VkNet.Enums;
 
 namespace Camelotia.Presentation.ViewModels
 {
@@ -17,25 +16,29 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<string> _errorMessage;
         private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ObservableAsPropertyHelper<bool> _isBusy;
-        
+
         public HostAuthViewModel(HostAuthState state, ICloud provider)
         {
-            this.ValidationRule(x => x.Username,
+            this.ValidationRule(
+                x => x.Username,
                 name => !string.IsNullOrWhiteSpace(name),
                 "User name shouldn't be null or white space.");
 
-            this.ValidationRule(x => x.Password,
+            this.ValidationRule(
+                x => x.Password,
                 pass => !string.IsNullOrWhiteSpace(pass),
                 "Password shouldn't be null or white space.");
 
-            this.ValidationRule(x => x.Address,
+            this.ValidationRule(
+                x => x.Address,
                 host => !string.IsNullOrWhiteSpace(host),
                 "Host address shouldn't be null or white space.");
 
-            this.ValidationRule(x => x.Port,
+            this.ValidationRule(
+                x => x.Port,
                 port => int.TryParse(port, out _),
                 "Port should be a valid integer.");
-            
+
             Login = ReactiveCommand.CreateFromTask(
                 () => provider.HostAuth(Address, int.Parse(Port), Username, Password),
                 this.IsValid());
@@ -43,7 +46,7 @@ namespace Camelotia.Presentation.ViewModels
             _isBusy = Login
                 .IsExecuting
                 .ToProperty(this, x => x.IsBusy);
-            
+
             _errorMessage = Login
                 .ThrownExceptions
                 .Select(exception => exception.Message)
@@ -70,17 +73,17 @@ namespace Camelotia.Presentation.ViewModels
             this.WhenAnyValue(x => x.Port)
                 .Subscribe(name => state.Port = name);
         }
-        
+
         [Reactive]
         public string Port { get; set; }
-        
-        [Reactive] 
+
+        [Reactive]
         public string Address { get; set; }
-        
-        [Reactive] 
+
+        [Reactive]
         public string Username { get; set; }
-        
-        [Reactive] 
+
+        [Reactive]
         public string Password { get; set; }
 
         public string ErrorMessage => _errorMessage.Value;
@@ -88,7 +91,7 @@ namespace Camelotia.Presentation.ViewModels
         public bool HasErrorMessage => _hasErrorMessage.Value;
 
         public bool IsBusy => _isBusy.Value;
-        
+
         public ReactiveCommand<Unit, Unit> Login { get; }
     }
 }

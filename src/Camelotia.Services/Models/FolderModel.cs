@@ -11,9 +11,11 @@ namespace Camelotia.Services.Models
             Name = name;
             Children = children ?? Enumerable.Empty<FolderModel>();
         }
-        
+
         public string FullPath { get; }
+
         public string Name { get; }
+
         public IEnumerable<FolderModel> Children { get; }
     }
 }

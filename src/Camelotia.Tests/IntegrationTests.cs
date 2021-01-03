@@ -33,13 +33,13 @@ namespace Camelotia.Tests
                     IsVisible = true
                 }
             });
-            
+
             var main = BuildMainViewModel();
             main.SupportedTypes.Should().Contain(CloudType.Local);
             main.SelectedSupportedType.Should().Be(CloudType.Local);
             main.Clouds.Should().NotBeEmpty();
             main.Clouds.Count.Should().Be(1);
-            
+
             var provider = main.Clouds[0];
             provider.Name.Should().Be("Local");
             provider.CanInteract.Should().BeFalse();
@@ -47,15 +47,16 @@ namespace Camelotia.Tests
             provider.Folder.IsVisible.Should().BeTrue();
             provider.Folder.Name.Should().Be("Example");
         }
-        
+
         private IMainViewModel BuildMainViewModel()
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
             return new MainViewModel(
                 _state,
-                new CloudFactory(_authenticator, _cache), 
-                (state, provider) => new CloudViewModel(state,
+                new CloudFactory(_authenticator, _cache),
+                (state, provider) => new CloudViewModel(
+                    state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
                     owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
                     (file, owner) => new FileViewModel(owner, file),
@@ -64,11 +65,9 @@ namespace Camelotia.Tests
                         new DirectAuthViewModel(state.AuthState.DirectAuthState, provider),
                         new HostAuthViewModel(state.AuthState.HostAuthState, provider),
                         new OAuthViewModel(provider),
-                        provider
-                    ), 
-                    _files, provider
-                )
-            );
+                        provider),
+                    _files,
+                    provider));
         }
     }
 }

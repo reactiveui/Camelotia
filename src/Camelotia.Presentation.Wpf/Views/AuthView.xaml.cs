@@ -1,10 +1,10 @@
-﻿using Camelotia.Presentation.Interfaces;
-using ReactiveUI;
-using System;
+﻿using System;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Reactive.Disposables;
+using Camelotia.Presentation.Interfaces;
+using ReactiveUI;
 
 namespace Camelotia.Presentation.Wpf.Views
 {
@@ -17,7 +17,7 @@ namespace Camelotia.Presentation.Wpf.Views
         {
             InitializeComponent();
             DataContextChanged += (sender, args) => ViewModel = DataContext as IAuthViewModel;
-            this.WhenActivated(disposable => 
+            this.WhenActivated(disposable =>
             {
                 this.WhenAnyValue(x => x.ViewModel.SupportsDirectAuth)
                     .Where(supports => supports)

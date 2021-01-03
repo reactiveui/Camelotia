@@ -1,8 +1,8 @@
-﻿using Camelotia.Presentation.Interfaces;
-using ReactiveUI;
+﻿using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System;
+using Camelotia.Presentation.Interfaces;
+using ReactiveUI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -16,7 +16,7 @@ namespace Camelotia.Presentation.Uwp.Views
         public AuthView()
         {
             InitializeComponent();
-            this.WhenActivated(disposables => 
+            this.WhenActivated(disposables =>
             {
                 this.WhenAnyValue(x => x.ViewModel.SupportsDirectAuth)
                     .Where(supports => supports)

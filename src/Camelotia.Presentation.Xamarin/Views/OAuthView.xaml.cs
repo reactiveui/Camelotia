@@ -1,7 +1,7 @@
 ﻿using Camelotia.Presentation.Interfaces;
-using Xamarin.Forms.Xaml;
-using ReactiveUI.XamForms;
 using ReactiveUI;
+using ReactiveUI.XamForms;
+using Xamarin.Forms.Xaml;
 
 namespace Camelotia.Presentation.Xamarin.Views
 {

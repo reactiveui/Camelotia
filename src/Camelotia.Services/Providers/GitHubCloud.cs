@@ -11,14 +11,14 @@ using Octokit;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class GitHubCloud : ICloud
+    public sealed class GitHubCloud : ICloud, IDisposable
     {
         private const string GithubApplicationId = "my-cool-app";
         private readonly GitHubClient _gitHub = new GitHubClient(new ProductHeaderValue(GithubApplicationId));
         private readonly ISubject<bool> _isAuthenticated = new ReplaySubject<bool>(1);
         private readonly HttpClient _httpClient = new HttpClient();
         private string _currentUserName;
-        
+
         public GitHubCloud(CloudParameters model)
         {
             Parameters = model;
@@ -39,13 +39,13 @@ namespace Camelotia.Services.Providers
         public string InitialPath => string.Empty;
 
         public IObservable<bool> IsAuthorized => _isAuthenticated;
-        
+
         public bool SupportsDirectAuth => true;
 
         public bool SupportsHostAuth => false;
 
         public bool SupportsOAuth => false;
-        
+
         public bool CanCreateFolder => false;
 
         public Task HostAuth(string address, int port, string login, string password) => Task.CompletedTask;
@@ -56,7 +56,7 @@ namespace Camelotia.Services.Providers
         {
             _currentUserName = login;
             _gitHub.Credentials = new Credentials(login, password);
-            await _gitHub.User.Current();
+            await _gitHub.User.Current().ConfigureAwait(false);
             Parameters.Token = password;
             Parameters.User = login;
             _isAuthenticated.OnNext(true);
@@ -69,11 +69,11 @@ namespace Camelotia.Services.Providers
             _isAuthenticated.OnNext(false);
             return Task.CompletedTask;
         }
-        
+
         public async Task<IEnumerable<FileModel>> Get(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
-            {                
+            {
                 var repositories = await GetRepositories().ConfigureAwait(false);
                 return repositories.Select(repo => new FileModel
                 {
@@ -98,21 +98,21 @@ namespace Camelotia.Services.Providers
         }
 
         public async Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path)
-        {            
+        {
             var folderModels = new List<FolderModel>();
             var repositories = await GetRepositories().ConfigureAwait(false);
-            var rootModel = new FolderModel("", "\\", repositories.Select(repo => new FolderModel(repo.Name, repo.Name)));
+            var rootModel = new FolderModel(string.Empty, "\\", repositories.Select(repo => new FolderModel(repo.Name, repo.Name)));
             folderModels.Add(rootModel);
 
             var details = GetRepositoryNameAndFilePath(path);
             if (!string.IsNullOrEmpty(details.Repository))
-            {                
+            {
                 var pathParts = details.Path.Split(new string[] { details.Separator }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 pathParts.Insert(0, details.Separator);
                 for (var i = 0; i < pathParts.Count; i++)
                 {
                     var subPath = pathParts[i];
-                    var relativePath = Path.Combine(pathParts.Take(i+1).ToArray());
+                    var relativePath = Path.Combine(pathParts.Take(i + 1).ToArray());
                     var contents = await GetRepositoryContents(details.Repository, relativePath).ConfigureAwait(false);
                     var folderModel = new FolderModel(
                         details.Repository + relativePath,
@@ -120,11 +120,12 @@ namespace Camelotia.Services.Providers
                         contents
                             .Where(content => content.Type == "dir")
                             .Select(content => new FolderModel(
-                                details.Repository + relativePath + details.Separator + content.Name, 
+                                details.Repository + relativePath + details.Separator + content.Name,
                                 content.Name)));
                     folderModels.Add(folderModel);
                 }
             }
+
             return folderModels;
         }
 
@@ -140,7 +141,7 @@ namespace Camelotia.Services.Providers
             using (var stream = await file.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 await stream.CopyToAsync(to).ConfigureAwait(false);
 
-            await to.FlushAsync();
+            await to.FlushAsync().ConfigureAwait(false);
             to.Close();
         }
 
@@ -151,6 +152,25 @@ namespace Camelotia.Services.Providers
         public Task UploadFile(string to, Stream from, string name) => throw new NotImplementedException();
 
         public Task Delete(string path, bool isFolder) => throw new NotImplementedException();
+
+        public void Dispose()
+        {
+            _httpClient.Dispose();
+        }
+
+        private static (string Repository, string Path, string Separator) GetRepositoryNameAndFilePath(string input)
+        {
+            var separator = Path.DirectorySeparatorChar;
+            var parts = input.Split(separator);
+            var repositoryName = parts.First();
+            var pathParts = Enumerable
+                .Repeat(separator.ToString(), 1)
+                .Concat(parts.Skip(1))
+                .ToArray();
+
+            var path = Path.Combine(pathParts);
+            return (repositoryName, path, separator.ToString());
+        }
 
         private Task<IReadOnlyList<Repository>> GetRepositories()
         {
@@ -169,24 +189,10 @@ namespace Camelotia.Services.Providers
 
         private void EnsureLoggedInIfTokenSaved()
         {
-            if (Parameters?.User == null || Parameters?.Token == null) return;   
+            if (Parameters?.User == null || Parameters?.Token == null) return;
             _gitHub.Credentials = new Credentials(Parameters.User, Parameters.Token);
             _currentUserName = Parameters.User;
             _isAuthenticated.OnNext(true);
-        }
-
-        private static (string Repository, string Path, string Separator) GetRepositoryNameAndFilePath(string input)
-        {
-            var separator = Path.DirectorySeparatorChar;
-            var parts = input.Split(separator);
-            var repositoryName = parts.First();
-            var pathParts = Enumerable
-                .Repeat(separator.ToString(), 1)
-                .Concat(parts.Skip(1))
-                .ToArray();
-
-            var path = Path.Combine(pathParts);
-            return (repositoryName, path, separator.ToString());
         }
     }
 }

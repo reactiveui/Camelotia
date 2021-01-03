@@ -1,8 +1,8 @@
-﻿using Android.App;
+﻿using System;
+using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Webkit;
-using System;
 
 namespace Camelotia.Presentation.Xamarin.Droid
 {

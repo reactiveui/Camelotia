@@ -17,7 +17,7 @@ namespace Camelotia.Tests.Presentation
             var stringValue = byteCount.ByteSizeToString();
             stringValue.Should().Be(expectedValue);
         }
-        
+
         [Theory]
         [InlineData(115, 1, "115B")]
         [InlineData(115, 3, "115B")]

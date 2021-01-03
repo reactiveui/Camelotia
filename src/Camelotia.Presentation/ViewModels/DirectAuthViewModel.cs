@@ -16,25 +16,27 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<string> _errorMessage;
         private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ObservableAsPropertyHelper<bool> _isBusy;
-        
+
         public DirectAuthViewModel(DirectAuthState state, ICloud provider)
         {
-            this.ValidationRule(x => x.Username,
+            this.ValidationRule(
+                x => x.Username,
                 name => !string.IsNullOrWhiteSpace(name),
                 "User name shouldn't be null or white space.");
 
-            this.ValidationRule(x => x.Password,
+            this.ValidationRule(
+                x => x.Password,
                 pass => !string.IsNullOrWhiteSpace(pass),
                 "Password shouldn't be null or white space.");
-            
+
             Login = ReactiveCommand.CreateFromTask(
                 () => provider.DirectAuth(Username, Password),
                 this.IsValid());
-            
+
             _isBusy = Login
                 .IsExecuting
                 .ToProperty(this, x => x.IsBusy);
-            
+
             _errorMessage = Login
                 .ThrownExceptions
                 .Select(exception => exception.Message)
@@ -55,13 +57,13 @@ namespace Camelotia.Presentation.ViewModels
             this.WhenAnyValue(x => x.Password)
                 .Subscribe(pass => state.Password = pass);
         }
-        
+
         [Reactive]
         public string Username { get; set; }
-        
+
         [Reactive]
         public string Password { get; set; }
-        
+
         public bool IsBusy => _isBusy.Value;
 
         public string ErrorMessage => _errorMessage.Value;

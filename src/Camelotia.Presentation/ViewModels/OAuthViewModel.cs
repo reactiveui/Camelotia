@@ -3,7 +3,6 @@ using System.Reactive.Linq;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 
 namespace Camelotia.Presentation.ViewModels
 {
@@ -12,11 +11,11 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<string> _errorMessage;
         private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
         private readonly ObservableAsPropertyHelper<bool> _isBusy;
-        
+
         public OAuthViewModel(ICloud provider)
         {
             Login = ReactiveCommand.CreateFromTask(provider.OAuth);
-            
+
             _isBusy = Login
                 .IsExecuting
                 .ToProperty(this, x => x.IsBusy);
@@ -33,7 +32,7 @@ namespace Camelotia.Presentation.ViewModels
                 .Merge(Login.Select(unit => false))
                 .ToProperty(this, x => x.HasErrorMessage);
         }
-        
+
         public ReactiveCommand<Unit, Unit> Login { get; }
 
         public string ErrorMessage => _errorMessage.Value;

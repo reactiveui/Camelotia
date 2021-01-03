@@ -1,10 +1,10 @@
-﻿using Camelotia.Presentation.Interfaces;
+﻿using Camelotia.Presentation.AppState;
+using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.Uwp.Services;
 using Camelotia.Presentation.ViewModels;
+using Camelotia.Services;
 using Camelotia.Services.Models;
 using ReactiveUI;
-using Camelotia.Services;
-using Camelotia.Presentation.AppState;
 
 namespace Camelotia.Presentation.Uwp
 {
@@ -15,11 +15,11 @@ namespace Camelotia.Presentation.Uwp
             return new MainViewModel(
                 RxApp.SuspensionHost.GetAppState<MainState>(),
                 new CloudFactory(
-                    new UniversalWindowsYandexAuthenticator(), 
+                    new UniversalWindowsYandexAuthenticator(),
                     Akavache.BlobCache.UserAccount,
-                    new[] { CloudType.Yandex, CloudType.VkDocs, CloudType.Ftp, CloudType.Sftp, CloudType.GitHub }
-                ),
-                (state, provider) => new CloudViewModel(state,
+                    new[] { CloudType.Yandex, CloudType.VkDocs, CloudType.Ftp, CloudType.Sftp, CloudType.GitHub }),
+                (state, provider) => new CloudViewModel(
+                    state,
                     owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),
                     owner => new RenameFileViewModel(state.RenameFileState, owner, provider),
                     (file, owner) => new FileViewModel(owner, file),
@@ -28,12 +28,9 @@ namespace Camelotia.Presentation.Uwp
                         new DirectAuthViewModel(state.AuthState.DirectAuthState, provider),
                         new HostAuthViewModel(state.AuthState.HostAuthState, provider),
                         new OAuthViewModel(provider),
-                        provider
-                    ),
-                     new UniversalWindowsFileManager(),
-                    provider
-                )
-            );
+                        provider),
+                    new UniversalWindowsFileManager(),
+                    provider));
         }
     }
 }
