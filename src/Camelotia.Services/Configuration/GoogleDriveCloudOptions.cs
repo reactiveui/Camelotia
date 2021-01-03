@@ -6,15 +6,15 @@ namespace Camelotia.Services.Configuration
     public class GoogleDriveCloudOptions
     {
         [DataMember]
-        public string GoogleDriveApplicationName { get; set; }
+        public string GoogleDriveApplicationName { get; set; } = "Camelotia";
 
         [DataMember]
-        public string GoogleDriveClientId { get; set; }
+        public string GoogleDriveClientId { get; set; } = "1096201018044-qbv35mo5cd7b5utfjpg83v5lsuhssvvg.apps.googleusercontent.com";
 
         [DataMember]
-        public string GoogleDriveClientSecret { get; set; }
+        public string GoogleDriveClientSecret { get; set; } = "L-xoeULle07kb_jHleqMxWo2";
 
         [DataMember]
-        public string GoogleDriveUserName { get; set; }
+        public string GoogleDriveUserName { get; set; } = "user";
     }
 }

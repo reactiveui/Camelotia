@@ -6,6 +6,6 @@ namespace Camelotia.Services.Configuration
     public class VkDocsCloudOptions
     {
         [DataMember]
-        public ulong ApplicationId { get; set; }
+        public ulong ApplicationId { get; set; } = 5560698;
     }
 }

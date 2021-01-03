@@ -6,6 +6,6 @@ namespace Camelotia.Services.Configuration
     public class GitHubCloudOptions
     {
         [DataMember]
-        public string GithubApplicationId { get; set; }
+        public string GithubApplicationId { get; set; } = "my-cool-app";
     }
 }
