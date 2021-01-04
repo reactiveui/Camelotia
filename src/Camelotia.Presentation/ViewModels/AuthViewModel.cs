@@ -2,7 +2,6 @@ using System.Reactive.Linq;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 
 namespace Camelotia.Presentation.ViewModels
 {
@@ -11,7 +10,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _isAuthenticated;
         private readonly ObservableAsPropertyHelper<bool> _isAnonymous;
         private readonly ICloud _provider;
-        
+
         public AuthViewModel(
             IDirectAuthViewModel direct,
             IHostAuthViewModel host,
@@ -22,7 +21,7 @@ namespace Camelotia.Presentation.ViewModels
             HostAuth = host;
             DirectAuth = direct;
             _provider = provider;
-            
+
             _isAuthenticated = _provider
                 .IsAuthorized
                 .DistinctUntilChanged()
@@ -47,9 +46,9 @@ namespace Camelotia.Presentation.ViewModels
         public bool SupportsOAuth => _provider.SupportsOAuth;
 
         public IDirectAuthViewModel DirectAuth { get; }
-        
+
         public IHostAuthViewModel HostAuth { get; }
-        
+
         public IOAuthViewModel OAuth { get; }
     }
 }

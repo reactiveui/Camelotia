@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reactive.Disposables;
 using Camelotia.Presentation.Interfaces;
-using Xamarin.Forms.Xaml;
-using ReactiveUI.XamForms;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Formatters;
+using ReactiveUI.XamForms;
+using Xamarin.Forms.Xaml;
 
 namespace Camelotia.Presentation.Xamarin.Views
 {

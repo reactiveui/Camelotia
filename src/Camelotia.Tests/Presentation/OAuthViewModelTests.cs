@@ -15,27 +15,27 @@ namespace Camelotia.Tests.Presentation
         private readonly ICloud _provider = Substitute.For<ICloud>();
 
         [Fact]
-        public void ShouldBeBusyWhenLoggingIn() 
+        public void ShouldBeBusyWhenLoggingIn()
         {
             _provider.OAuth().Returns(new Task(() => { }));
-            
+
             var model = BuildOAuthViewModel();
             model.IsBusy.Should().BeFalse();
             model.Login.CanExecute().Should().BeTrue();
             model.Login.Execute().Subscribe();
-            
+
             model.IsBusy.Should().BeTrue();
         }
 
         [Fact]
-        public void HasErrorMessageShouldTriggerWhenProviderBreaks() 
+        public void HasErrorMessageShouldTriggerWhenProviderBreaks()
         {
             _provider.OAuth().Returns(x => throw new Exception("example"));
-            
-            var model = BuildOAuthViewModel();    
+
+            var model = BuildOAuthViewModel();
             model.ErrorMessage.Should().BeNullOrEmpty();
             model.HasErrorMessage.Should().BeFalse();
-            
+
             model.Login.CanExecute().Should().BeTrue();
             model.Login.Execute().Subscribe(ok => { }, err => { });
 

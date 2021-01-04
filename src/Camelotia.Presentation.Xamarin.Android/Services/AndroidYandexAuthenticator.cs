@@ -12,7 +12,7 @@ namespace Camelotia.Presentation.Xamarin.Droid.Services
         public AndroidYandexAuthenticator(MainActivity activity) => _activity = activity;
 
         public GrantType GrantType => GrantType.AccessToken;
-        
+
         public Task<string> ReceiveCode(Uri uri, Uri returnUri) => throw new PlatformNotSupportedException();
 
         public async Task<string> ReceiveToken(Uri uri)
@@ -26,7 +26,7 @@ namespace Camelotia.Presentation.Xamarin.Droid.Services
                 .AuthenticationCodeReceived
                 .Subscribe(completion.SetResult);
 
-            var token = await completion.Task;
+            var token = await completion.Task.ConfigureAwait(false);
             subscription.Dispose();
             return token;
         }

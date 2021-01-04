@@ -9,7 +9,7 @@ namespace Camelotia.Presentation.Avalonia.Views
     public sealed class MainView : ReactiveWindow<IMainViewModel>
     {
         public Button SwitchThemeButton => this.FindControl<Button>("SwitchThemeButton");
-        
+
         public MainView()
         {
             this.WhenActivated(disposables => { });

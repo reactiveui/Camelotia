@@ -43,7 +43,7 @@ namespace Camelotia.Services.Providers
 
         public Task DirectAuth(string login, string password) => Task.CompletedTask;
 
-        public Task<IEnumerable<FileModel>> Get(string path) => Task.Run(() =>
+        public Task<IEnumerable<FileModel>> GetFiles(string path) => Task.Run(() =>
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -63,23 +63,26 @@ namespace Camelotia.Services.Providers
 
             var query =
                 from file in Directory.GetFileSystemEntries(path)
-               let isDirectory = IsDirectory(file)
-               let fileInfo = new FileInfo(file)
-               select new FileModel
-               {
-                   Path = file,
-                   Name = Path.GetFileName(file),
-                   IsFolder = IsDirectory(file),
-                   Modified = fileInfo.LastWriteTime,
-                   Size = isDirectory ? 0 : fileInfo.Length
-               };
+                let isDirectory = IsDirectory(file)
+                let fileInfo = new FileInfo(file)
+                select new FileModel
+                {
+                    Path = file,
+                    Name = Path.GetFileName(file),
+                    IsFolder = IsDirectory(file),
+                    Modified = fileInfo.LastWriteTime,
+                    Size = isDirectory ? 0 : fileInfo.Length
+                };
             return query.ToList().AsEnumerable();
         });
 
         public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => Task.Run(() =>
         {
-            if (!Directory.Exists(path)) throw new ArgumentException("Directory doesn't exist.");
-            
+            if (!Directory.Exists(path))
+            {
+                return Enumerable.Empty<FolderModel>();
+            }
+
             return SplitPath(path)
                    .Select(di => new FolderModel(di.FullName, di.Name, di.GetDirectories().Select(di => new FolderModel(di.FullName, di.Name))))
                    .Reverse()
@@ -93,7 +96,7 @@ namespace Camelotia.Services.Providers
 
             using var fileStream = File.OpenRead(@from);
             fileStream.Seek(0, SeekOrigin.Begin);
-            await fileStream.CopyToAsync(to);
+            await fileStream.CopyToAsync(to).ConfigureAwait(false);
         }
 
         public Task CreateFolder(string at, string name) => Task.Run(() =>
@@ -119,7 +122,7 @@ namespace Camelotia.Services.Providers
             var path = Path.Combine(to, name);
             using var fileStream = File.Create(path);
             from.Seek(0, SeekOrigin.Begin);
-            await from.CopyToAsync(fileStream);
+            await from.CopyToAsync(fileStream).ConfigureAwait(false);
         }
 
         public Task Delete(string path, bool isFolder) => Task.Run(() =>
@@ -136,14 +139,10 @@ namespace Camelotia.Services.Providers
                 .Sum();
         }
 
-        private static IEnumerable<DriveInfo> GetAllDrives()
-        {
-            var drives = DriveInfo
+        private static IEnumerable<DriveInfo> GetAllDrives() =>
+            DriveInfo
                 .GetDrives()
                 .Where(p => p.DriveType != DriveType.CDRom && p.IsReady);
-
-            return drives;
-        }
 
         private static bool IsDirectory(string path)
         {
@@ -158,7 +157,7 @@ namespace Camelotia.Services.Providers
             {
                 yield return directoryInfo;
                 directoryInfo = directoryInfo.Parent;
-            };
+            }
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using Camelotia.Services.Interfaces;
+﻿using System;
 using System.Threading.Tasks;
-using System;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Controls;
+using Camelotia.Services.Interfaces;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Camelotia.Presentation.Uwp.Services
 {
@@ -20,7 +20,7 @@ namespace Camelotia.Presentation.Uwp.Services
         {
             _taskCompletionSource = new TaskCompletionSource<string>();
             await WebView.ClearTemporaryWebDataAsync();
-            await Window.Current.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => 
+            await Window.Current.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 var root = Window.Current.Content;
                 var web = FindControl<WebView>(root);
@@ -31,26 +31,11 @@ namespace Camelotia.Presentation.Uwp.Services
                 web.Navigate(uri);
             });
 
-            return await _taskCompletionSource.Task;
+            return await _taskCompletionSource.Task.ConfigureAwait(false);
         }
 
-        private void OnNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
-        {
-            var currentUriString = args.Uri.ToString();
-            if (!currentUriString.Contains("#"))
-                return;
-
-            sender.NavigationCompleted -= OnNavigationCompleted;
-            var token = currentUriString
-                .Split('#')[1]
-                .Split('&')[0]
-                .Split('=')[1];
-
-            _taskCompletionSource.SetResult(token);
-            sender.Visibility = Visibility.Collapsed;
-        }
-
-        private static TControl FindControl<TControl>(UIElement parent) where TControl : FrameworkElement
+        private static TControl FindControl<TControl>(UIElement parent)
+            where TControl : FrameworkElement
         {
             var targetType = typeof(TControl);
             if (parent == null) return null;
@@ -67,7 +52,24 @@ namespace Camelotia.Presentation.Uwp.Services
                 result = rec;
                 break;
             }
+
             return result;
+        }
+
+        private void OnNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        {
+            var currentUriString = args.Uri.ToString();
+            if (!currentUriString.Contains("#"))
+                return;
+
+            sender.NavigationCompleted -= OnNavigationCompleted;
+            var token = currentUriString
+                .Split('#')[1]
+                .Split('&')[0]
+                .Split('=')[1];
+
+            _taskCompletionSource.SetResult(token);
+            sender.Visibility = Visibility.Collapsed;
         }
     }
 }

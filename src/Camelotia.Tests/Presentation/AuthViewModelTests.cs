@@ -16,17 +16,17 @@ namespace Camelotia.Tests.Presentation
         private readonly IHostAuthViewModel _host = Substitute.For<IHostAuthViewModel>();
         private readonly IOAuthViewModel _open = Substitute.For<IOAuthViewModel>();
         private readonly ICloud _provider = Substitute.For<ICloud>();
-        
+
         [Fact]
         public void IsAuthenticatedPropertyShouldDependOnFileProvider()
         {
             var authorized = new Subject<bool>();
             _provider.IsAuthorized.Returns(authorized);
-            
+
             var model = BuildAuthViewModel();
             model.IsAuthenticated.Should().BeFalse();
             model.IsAnonymous.Should().BeTrue();
-            
+
             authorized.OnNext(true);
             model.IsAuthenticated.Should().BeTrue();
             model.IsAnonymous.Should().BeFalse();

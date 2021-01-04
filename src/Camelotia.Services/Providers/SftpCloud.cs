@@ -13,7 +13,6 @@ namespace Camelotia.Services.Providers
     public sealed class SftpCloud : ICloud
     {
         private static readonly string[] PathSeparators = { "\\", "/" };
-
         private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
         private Func<SftpClient> _factory;
 
@@ -32,15 +31,15 @@ namespace Camelotia.Services.Providers
         public string Name => Parameters.Type.ToString();
 
         public DateTime Created => Parameters.Created;
-        
+
         public string InitialPath => Path.DirectorySeparatorChar.ToString();
 
         public IObservable<bool> IsAuthorized => _isAuthorized;
-        
+
         public bool SupportsDirectAuth => false;
-        
+
         public bool SupportsHostAuth => true;
-        
+
         public bool SupportsOAuth => false;
 
         public bool CanCreateFolder => true;
@@ -63,9 +62,10 @@ namespace Camelotia.Services.Providers
                 connection.ListDirectory("/");
                 connection.Disconnect();
             }
+
             _isAuthorized.OnNext(true);
         });
-        
+
         public Task Logout()
         {
             _factory = null;
@@ -73,7 +73,7 @@ namespace Camelotia.Services.Providers
             return Task.CompletedTask;
         }
 
-        public Task<IEnumerable<FileModel>> Get(string path) => Task.Run(() =>
+        public Task<IEnumerable<FileModel>> GetFiles(string path) => Task.Run(() =>
         {
             path = path.Replace("\\", "/");
             using var connection = _factory();
@@ -96,7 +96,7 @@ namespace Camelotia.Services.Providers
 
         public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => Task.Run(() =>
         {
-            var pathParts = new List<string> { "/" }; //Add root path first
+            var pathParts = new List<string> { "/" }; // Add root path first
             pathParts.AddRange(path.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries));
             var foldermodels = new List<FolderModel>();
             using var connection = _factory();
@@ -114,6 +114,7 @@ namespace Camelotia.Services.Providers
                         .Select(f => new FolderModel(f.FullName, f.Name)));
                 foldermodels.Add(folder);
             }
+
             connection.Disconnect();
             return foldermodels.AsEnumerable();
         });

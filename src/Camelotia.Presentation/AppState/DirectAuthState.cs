@@ -7,7 +7,7 @@ namespace Camelotia.Presentation.AppState
     {
         [DataMember]
         public string Username { get; set; }
-        
+
         [DataMember]
         public string Password { get; set; }
     }

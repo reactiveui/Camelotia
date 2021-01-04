@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Camelotia.Presentation.AppState;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Camelotia.Services.Providers;
@@ -11,6 +12,7 @@ namespace Camelotia.Tests.Services
 {
     public sealed class YandexCloudTests
     {
+        private readonly MainState _state = new MainState();
         private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
         private readonly CloudParameters _model = new CloudParameters
         {
@@ -22,7 +24,7 @@ namespace Camelotia.Tests.Services
         [Fact]
         public void VerifyDefaultPropertyValues()
         {
-            var provider = new YandexDiskCloud(_model, _authenticator);
+            var provider = new YandexDiskCloud(_model, _authenticator, _state.CloudConfiguration.YandexDisk);
             provider.InitialPath.Should().Be(Path.DirectorySeparatorChar.ToString());
 
             provider.CanCreateFolder.Should().BeTrue();

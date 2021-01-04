@@ -10,9 +10,9 @@ namespace Camelotia.Presentation.Interfaces
     public interface IMainViewModel : INotifyPropertyChanged
     {
         ReadOnlyObservableCollection<ICloudViewModel> Clouds { get; }
-        
+
         ICloudViewModel SelectedProvider { get; set; }
-        
+
         IEnumerable<CloudType> SupportedTypes { get; }
 
         CloudType SelectedSupportedType { get; set; }
@@ -28,9 +28,9 @@ namespace Camelotia.Presentation.Interfaces
         ReactiveCommand<Unit, Unit> Remove { get; }
 
         ReactiveCommand<Unit, Unit> Add { get; }
-        
+
         bool IsLoading { get; }
-        
+
         bool IsReady { get; }
     }
 }

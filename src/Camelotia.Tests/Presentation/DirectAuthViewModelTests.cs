@@ -30,14 +30,14 @@ namespace Camelotia.Tests.Presentation
         public void HasErrorMessageShouldTriggerWhenProviderBreaks()
         {
             _provider.DirectAuth("hello", "world").Returns(x => throw new Exception("example"));
-            
+
             var model = BuildDirectAuthViewModel();
             model.HasErrorMessage.Should().BeFalse();
-                
+
             model.Username = "hello";
             model.Password = "world";
             model.Login.Execute().Subscribe(ok => { }, error => { });
-            
+
             model.HasErrorMessage.Should().BeTrue();
             model.ErrorMessage.Should().Be("example");
         }
@@ -46,10 +46,10 @@ namespace Camelotia.Tests.Presentation
         public void ShouldBeBusyWhenLoggingIn()
         {
             _provider.DirectAuth("hello", "world").Returns(new Task(() => { }));
-            
+
             var model = BuildDirectAuthViewModel();
             model.IsBusy.Should().BeFalse();
-            
+
             model.Username = "hello";
             model.Password = "world";
             model.Login.Execute().Subscribe();
@@ -80,13 +80,13 @@ namespace Camelotia.Tests.Presentation
             model.GetErrors(nameof(model.Password)).Should().BeEmpty();
             model.HasErrors.Should().BeFalse();
         }
-        
+
         [Fact]
         public void ShouldUpdateStateProperties()
         {
             const string user = "Joseph";
             const string pass = "qwerty";
-            
+
             var model = BuildDirectAuthViewModel();
             _state.Username.Should().BeNullOrWhiteSpace();
             _state.Password.Should().BeNullOrWhiteSpace();

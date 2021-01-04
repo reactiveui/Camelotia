@@ -1,7 +1,7 @@
-﻿using Camelotia.Presentation.Interfaces;
-using ReactiveUI;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using Camelotia.Presentation.Interfaces;
+using ReactiveUI;
 
 namespace Camelotia.Presentation.Wpf.Views
 {

@@ -1,7 +1,7 @@
-﻿using Camelotia.Presentation.Interfaces;
+﻿using System.Windows;
+using Camelotia.Presentation.Interfaces;
 using MahApps.Metro.Controls;
 using ReactiveUI;
-using System.Windows;
 
 namespace Camelotia.Presentation.Wpf
 {

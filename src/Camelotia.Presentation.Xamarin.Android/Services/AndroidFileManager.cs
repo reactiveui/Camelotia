@@ -1,11 +1,11 @@
-﻿using Camelotia.Services.Interfaces;
-using Plugin.FilePicker;
+﻿using System.IO;
 using System.Threading.Tasks;
-using System.IO;
-using Android.Widget;
+using Android;
 using Android.Content.PM;
 using Android.OS;
-using Android;
+using Android.Widget;
+using Camelotia.Services.Interfaces;
+using Plugin.FilePicker;
 
 namespace Camelotia.Presentation.Xamarin.Droid.Services
 {
@@ -18,7 +18,7 @@ namespace Camelotia.Presentation.Xamarin.Droid.Services
         public async Task<(string Name, Stream Stream)> OpenRead()
         {
             CheckAppPermissions();
-            var file = await CrossFilePicker.Current.PickFile();
+            var file = await CrossFilePicker.Current.PickFile().ConfigureAwait(false);
             if (file == null) return (null, null);
 
             var fileName = file.FileName;
@@ -56,7 +56,8 @@ namespace Camelotia.Presentation.Xamarin.Droid.Services
             if (manager.CheckPermission(read, packageName) != Permission.Granted &&
                 manager.CheckPermission(write, packageName) != Permission.Granted)
             {
-                _activity.RequestPermissions(new string[] 
+                _activity.RequestPermissions(
+                    new string[]
                 {
                     Manifest.Permission.ReadExternalStorage,
                     Manifest.Permission.WriteExternalStorage

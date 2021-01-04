@@ -35,9 +35,12 @@ namespace Camelotia.Presentation.ViewModels
         public override bool Equals(object obj)
         {
             if (obj is FileViewModel other)
+            {
                 return Equals(_file.Path, other._file.Path) &&
                        Equals(_file.Modified, other._file.Modified) &&
                        Equals(Provider, other.Provider);
+            }
+
             return false;
         }
 

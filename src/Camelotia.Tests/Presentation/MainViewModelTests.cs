@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reactive.Concurrency;
+using Akavache;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
@@ -8,7 +9,6 @@ using Camelotia.Services;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using DynamicData;
-using Akavache;
 using FluentAssertions;
 using NSubstitute;
 using ReactiveUI;
@@ -19,17 +19,17 @@ namespace Camelotia.Tests.Presentation
     public sealed class MainViewModelTests
     {
         private readonly MainState _state = new MainState();
-        
+
         [Fact]
-        public void ShouldIndicateWhenLoadingAndReady() 
+        public void ShouldIndicateWhenLoadingAndReady()
         {
             var model = BuildMainViewModel();
             model.IsLoading.Should().BeFalse();
             model.IsReady.Should().BeTrue();
-                
+
             model.Refresh.CanExecute().Should().BeTrue();
             model.Refresh.Execute().Subscribe();
-                
+
             model.Clouds.Should().BeEmpty();
             model.IsLoading.Should().BeFalse();
             model.IsReady.Should().BeTrue();
@@ -41,20 +41,20 @@ namespace Camelotia.Tests.Presentation
             var provider = new CloudState();
             _state.Clouds.AddOrUpdate(provider);
             _state.SelectedProviderId = provider.Id;
-                
+
             var model = BuildMainViewModel();
             model.Clouds.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
             model.SelectedProvider.Id.Should().Be(provider.Id);
             model.Refresh.Execute().Subscribe();
-                
+
             model.Clouds.Should().NotBeEmpty();
             model.SelectedProvider.Should().NotBeNull();
             model.SelectedProvider.Id.Should().Be(provider.Id);
         }
 
         [Fact]
-        public void ShouldUnselectSelectedProvider() 
+        public void ShouldUnselectSelectedProvider()
         {
             var provider = new CloudState();
             _state.Clouds.AddOrUpdate(provider);
@@ -97,7 +97,7 @@ namespace Camelotia.Tests.Presentation
             _state.Clouds.AddOrUpdate(new CloudState());
             _state.Clouds.AddOrUpdate(provider);
             _state.SelectedProviderId = provider.Id;
-            
+
             var model = BuildMainViewModel();
             model.Clouds.Count.Should().Be(2);
             model.SelectedProvider.Should().NotBeNull();
@@ -120,12 +120,12 @@ namespace Camelotia.Tests.Presentation
             model.Clouds.Should().NotBeEmpty();
             model.Clouds.Count.Should().Be(1);
         }
-        
+
         [Fact]
         public void ShouldSynchronizeSelectedTypeWithState()
         {
             _state.SelectedSupportedType = CloudType.Local;
-            
+
             var model = BuildMainViewModel();
             model.SelectedSupportedType.Should().Be(CloudType.Local);
             model.SelectedSupportedType = CloudType.Ftp;
@@ -140,7 +140,7 @@ namespace Camelotia.Tests.Presentation
         {
             _state.Clouds.AddOrUpdate(new CloudState());
             _state.Clouds.AddOrUpdate(new CloudState());
-            
+
             var model = BuildMainViewModel();
             model.SelectedProvider.Should().BeNull();
             _state.SelectedProviderId.Should().BeEmpty();
@@ -154,16 +154,19 @@ namespace Camelotia.Tests.Presentation
         {
             RxApp.MainThreadScheduler = Scheduler.Immediate;
             RxApp.TaskpoolScheduler = Scheduler.Immediate;
-            return new MainViewModel(_state, new CloudFactory(
-                Substitute.For<IAuthenticator>(), 
-                Substitute.For<IBlobCache>()), 
+            return new MainViewModel(
+                _state,
+                new CloudFactory(
+                    _state.CloudConfiguration,
+                    Substitute.For<IAuthenticator>(),
+                    Substitute.For<IBlobCache>()),
                 (state, provider) =>
-            {
-                var entry = Substitute.For<ICloudViewModel>();
-                entry.Created.Returns(provider.Created);
-                entry.Id.Returns(provider.Id);
-                return entry;
-            });
+                {
+                    var entry = Substitute.For<ICloudViewModel>();
+                    entry.Created.Returns(provider.Created);
+                    entry.Id.Returns(provider.Id);
+                    return entry;
+                });
         }
     }
 }

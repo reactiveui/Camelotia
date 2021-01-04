@@ -1,4 +1,5 @@
 using Akavache;
+using Camelotia.Presentation.AppState;
 using Camelotia.Services;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
@@ -12,11 +13,12 @@ namespace Camelotia.Tests.Services
     {
         private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
         private readonly IObjectBlobCache _blobCache = Substitute.For<IObjectBlobCache>();
-        
+        private readonly MainState _state = new MainState();
+
         [Fact]
         public void SupportedProviderTypesShouldNotBeEmpty()
         {
-            var factory = new CloudFactory(_authenticator, _blobCache);
+            var factory = new CloudFactory(_state.CloudConfiguration, _authenticator, _blobCache);
             factory.SupportedClouds.Should().NotBeEmpty();
             factory.SupportedClouds.Should().Contain(CloudType.Local);
             factory.SupportedClouds.Should().Contain(CloudType.GitHub);
@@ -25,8 +27,8 @@ namespace Camelotia.Tests.Services
         [Fact]
         public void ShouldInstantiateSupportedProviders()
         {
-            var factory = new CloudFactory(_authenticator, _blobCache);
-            var provider = factory.CreateCloud(new CloudParameters {Type = CloudType.Local});
+            var factory = new CloudFactory(_state.CloudConfiguration, _authenticator, _blobCache);
+            var provider = factory.CreateCloud(new CloudParameters { Type = CloudType.Local });
             provider.Should().NotBeNull();
             provider.Name.Should().Be(CloudType.Local.ToString());
         }

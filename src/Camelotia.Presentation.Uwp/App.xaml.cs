@@ -1,17 +1,17 @@
 ﻿using System;
+using Camelotia.Presentation.AppState;
+using Camelotia.Presentation.Infrastructure;
+using Camelotia.Presentation.Uwp.Views;
+using ReactiveUI;
 using Windows.ApplicationModel.Activation;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Camelotia.Presentation.Uwp.Views;
-using Camelotia.Presentation.AppState;
-using Camelotia.Presentation.Infrastructure;
-using ReactiveUI;
-using Windows.Storage;
 
 namespace Camelotia.Presentation.Uwp
 {
-    sealed partial class App : Application
+    public sealed partial class App : Application
     {
         public App() => InitializeComponent();
 
@@ -41,7 +41,7 @@ namespace Camelotia.Presentation.Uwp
             }
         }
 
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }

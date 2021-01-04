@@ -1,12 +1,13 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using Akavache;
+using Camelotia.Services.Configuration;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using Google.Apis.Auth.OAuth2;
@@ -18,21 +19,18 @@ using File = Google.Apis.Drive.v3.Data.File;
 
 namespace Camelotia.Services.Providers
 {
-    public sealed class GoogleDriveCloud : ICloud
+    public sealed class GoogleDriveCloud : ICloud, IDisposable
     {
-        private const string GoogleDriveApplicationName = "Camelotia";
-        private const string GoogleDriveClientId = "1096201018044-qbv35mo5cd7b5utfjpg83v5lsuhssvvg.apps.googleusercontent.com";
-        private const string GoogleDriveClientSecret = "L-xoeULle07kb_jHleqMxWo2";
-        private const string GoogleDriveUserName = "user";
-        
-        private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
+        private readonly ReplaySubject<bool> _isAuthorized = new ReplaySubject<bool>(1);
+        private readonly GoogleDriveCloudOptions _options;
         private readonly IBlobCache _blobCache;
         private DriveService _driveService;
-        
-        public GoogleDriveCloud(CloudParameters model, IBlobCache blobCache)
+
+        public GoogleDriveCloud(CloudParameters model, IBlobCache blobCache, GoogleDriveCloudOptions options)
         {
             Parameters = model;
             _blobCache = blobCache;
+            _options = options;
             _isAuthorized.OnNext(false);
             EnsureLoggedInIfTokenSaved();
         }
@@ -52,14 +50,14 @@ namespace Camelotia.Services.Providers
         public IObservable<bool> IsAuthorized => _isAuthorized;
 
         public bool SupportsDirectAuth => false;
-        
+
         public bool SupportsHostAuth => false;
-        
+
         public bool SupportsOAuth => true;
-        
+
         public bool CanCreateFolder => false;
-        
-        public async Task<IEnumerable<FileModel>> Get(string path)
+
+        public async Task<IEnumerable<FileModel>> GetFiles(string path)
         {
             var list = _driveService.Files.List();
             list.PageSize = 1000;
@@ -79,7 +77,7 @@ namespace Camelotia.Services.Providers
 
         public async Task UploadFile(string to, Stream from, string name)
         {
-            var create = _driveService.Files.Create(new File {Name = name}, from, "application/vnd.google-apps.file");
+            var create = _driveService.Files.Create(new File { Name = name }, from, "application/vnd.google-apps.file");
             await create.UploadAsync().ConfigureAwait(false);
         }
 
@@ -88,12 +86,12 @@ namespace Camelotia.Services.Providers
             var file = _driveService.Files.Get(from);
             var progress = await file.DownloadAsync(to).ConfigureAwait(false);
             while (progress.Status == DownloadStatus.Downloading)
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false);
         }
 
         public async Task RenameFile(string path, string name)
         {
-            var update = _driveService.Files.Update(new File {Name = name}, path);
+            var update = _driveService.Files.Update(new File { Name = name }, path);
             await update.ExecuteAsync().ConfigureAwait(false);
         }
 
@@ -114,8 +112,7 @@ namespace Camelotia.Services.Providers
         public Task Logout() => Task.Run(async () =>
         {
             var keys = await _blobCache.GetAllKeys();
-            var googleDriveKeys = keys.Where(x => x.StartsWith("google-drive"));
-            foreach (var driveKey in googleDriveKeys) 
+            foreach (var driveKey in keys.Where(x => x.StartsWith("google-drive", StringComparison.OrdinalIgnoreCase)))
                 await _blobCache.Invalidate(driveKey);
 
             _driveService = null;
@@ -128,8 +125,8 @@ namespace Camelotia.Services.Providers
             try
             {
                 var driveKeys = await _blobCache.GetAllKeys();
-                if (driveKeys.Any(x => x.StartsWith($"google-drive-{Id}")))
-                    await AuthenticateAsync();
+                if (driveKeys.Any(x => x.StartsWith($"google-drive-{Id}", StringComparison.OrdinalIgnoreCase)))
+                    await AuthenticateAsync().ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -141,9 +138,13 @@ namespace Camelotia.Services.Providers
         {
             var credential = await GoogleWebAuthorizationBroker
                 .AuthorizeAsync(
-                    new ClientSecrets {ClientId = GoogleDriveClientId, ClientSecret = GoogleDriveClientSecret},
-                    new[] {DriveService.Scope.Drive},
-                    GoogleDriveUserName,
+                    new ClientSecrets
+                    {
+                        ClientId = _options.GoogleDriveClientId,
+                        ClientSecret = _options.GoogleDriveClientSecret
+                    },
+                    new[] { DriveService.Scope.Drive },
+                    _options.GoogleDriveUserName,
                     CancellationToken.None,
                     new AkavacheDataStore(_blobCache, Id))
                 .ConfigureAwait(false);
@@ -151,7 +152,7 @@ namespace Camelotia.Services.Providers
             var initializer = new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
-                ApplicationName = GoogleDriveApplicationName
+                ApplicationName = _options.GoogleDriveApplicationName
             };
 
             _driveService = new DriveService(initializer);
@@ -184,11 +185,16 @@ namespace Camelotia.Services.Providers
             public async Task<T> GetAsync<T>(string key)
             {
                 var identity = $"google-drive-{_id}-{key}";
-                var value = await _blobCache.GetOrFetchObject(identity, () => Task.FromResult(default(T)));
-                return value;
+                return await _blobCache.GetOrFetchObject(identity, () => Task.FromResult(default(T)));
             }
 
             public Task ClearAsync() => Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            _driveService?.Dispose();
+            _isAuthorized.Dispose();
         }
     }
 }

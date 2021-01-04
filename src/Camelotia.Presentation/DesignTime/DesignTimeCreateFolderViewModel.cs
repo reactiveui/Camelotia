@@ -8,11 +8,11 @@ namespace Camelotia.Presentation.DesignTime
 {
     public class DesignTimeCreateFolderViewModel : ReactiveValidationObject, ICreateFolderViewModel
     {
-        public DesignTimeCreateFolderViewModel() => this.ValidationRule(x => x.Name, name => false, "Validation error.");
-        
+        public DesignTimeCreateFolderViewModel() => this.ValidationRule(x => x.Name, _ => false, "Validation error.");
+
         public bool IsLoading { get; }
 
-        public bool IsVisible { get; set; } = false;
+        public bool IsVisible { get; set; }
 
         public string Name { get; set; }
 
@@ -21,11 +21,11 @@ namespace Camelotia.Presentation.DesignTime
         public bool HasErrorMessage { get; } = true;
 
         public string ErrorMessage { get; } = "Error message example.";
-        
+
         public ReactiveCommand<Unit, Unit> Create { get; }
-        
+
         public ReactiveCommand<Unit, Unit> Close { get; }
-        
+
         public ReactiveCommand<Unit, Unit> Open { get; }
     }
 }

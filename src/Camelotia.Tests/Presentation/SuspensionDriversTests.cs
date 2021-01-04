@@ -18,19 +18,19 @@ namespace Camelotia.Tests.Presentation
         public Task NewtonsoftJsonSuspensionDriverShouldSaveAndLoadState() =>
             SuspensionDriverShouldSaveAndLoadState(
                 new NewtonsoftJsonSuspensionDriver(Path.GetTempFileName()));
-        
+
         [Fact]
         public Task AkavacheSuspensionDriverShouldSaveAndLoadState() =>
             SuspensionDriverShouldSaveAndLoadState(
                 new AkavacheSuspensionDriver<MainState>("Camelotia-Tests"));
-        
+
         private static async Task SuspensionDriverShouldSaveAndLoadState(ISuspensionDriver driver)
         {
             var state = new MainState
             {
                 SelectedSupportedType = CloudType.GitHub
             };
-            
+
             state.Clouds.AddOrUpdate(new CloudState());
             state.Clouds.AddOrUpdate(new CloudState
             {
@@ -48,7 +48,7 @@ namespace Camelotia.Tests.Presentation
             var loaded = await driver.LoadState();
             loaded.Should().BeOfType<MainState>();
 
-            var retyped = (MainState) loaded;
+            var retyped = (MainState)loaded;
             retyped.SelectedSupportedType.Should().Be(CloudType.GitHub);
             retyped.Clouds.Count.Should().Be(2);
             retyped.CloudStates.Should().NotBeEmpty();
@@ -57,10 +57,9 @@ namespace Camelotia.Tests.Presentation
                 provider.AuthState.DirectAuthState.Password == "Dio");
 
             await driver.InvalidateState();
-            await Assert.ThrowsAnyAsync<Exception>(async () => await driver.LoadState());
+            await Assert.ThrowsAnyAsync<Exception>(async () => await driver.LoadState()).ConfigureAwait(false);
             await driver.SaveState(new MainState());
             await driver.LoadState();
         }
-        
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using Camelotia.Presentation.AppState;
 using Camelotia.Services.Models;
 using Camelotia.Services.Providers;
 using FluentAssertions;
@@ -8,6 +9,7 @@ namespace Camelotia.Tests.Services
 {
     public sealed class GithubCloudTests
     {
+        private readonly MainState _state = new MainState();
         private readonly CloudParameters _model = new CloudParameters
         {
             Id = Guid.NewGuid(),
@@ -18,7 +20,7 @@ namespace Camelotia.Tests.Services
         [Fact]
         public void VerifyDefaultPropertyValues()
         {
-            var provider = new GitHubCloud(_model);
+            var provider = new GitHubCloud(_model, _state.CloudConfiguration.GitHub);
             provider.InitialPath.Should().Be(string.Empty);
 
             provider.CanCreateFolder.Should().BeFalse();

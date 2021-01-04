@@ -7,7 +7,10 @@ namespace Camelotia.Presentation.DesignTime
 {
     public class DesignTimeFileViewModel : ReactiveObject, IFileViewModel
     {
-        public DesignTimeFileViewModel() : this(null) { }
+        public DesignTimeFileViewModel()
+            : this(null)
+        {
+        }
 
         public DesignTimeFileViewModel(DesignTimeCloudViewModel provider) => Provider = provider;
 
@@ -17,7 +20,7 @@ namespace Camelotia.Presentation.DesignTime
 
         public string Modified { get; } = DateTime.Now.ToString(CultureInfo.InvariantCulture);
 
-        public bool IsFolder { get; } = false;
+        public bool IsFolder { get; }
 
         public bool IsFile { get; } = true;
 

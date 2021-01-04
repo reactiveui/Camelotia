@@ -21,7 +21,7 @@ internal class Build : NukeBuild
     const string CoverageFileName = "coverage.cobertura.xml";
 
     public static int Main() => Execute<Build>(x => x.RunInteractive);
-    
+
     [Parameter] readonly string Configuration = IsLocalBuild ? "Debug" : "Release";
     [Parameter] readonly bool Interactive;
     [Parameter] readonly bool Full;
@@ -35,7 +35,7 @@ internal class Build : NukeBuild
             .GlobDirectories("**/bin", "**/obj", "**/AppPackages", "**/BundleArtifacts")
             .Concat(RootDirectory.GlobDirectories("**/artifacts"))
             .ForEach(DeleteDirectory));
-    
+
     Target RunUnitTests => _ => _
         .DependsOn(Clean)
         .Executes(() => SourceDirectory
@@ -171,7 +171,7 @@ internal class Build : NukeBuild
         .Executes(() => SourceDirectory
             .GlobFiles($"**/{InteractiveProjectName}.csproj")
             .Where(x => Interactive)
-            .ForEach(path => 
+            .ForEach(path =>
                 DotNetRun(settings => settings
                     .SetProjectFile(path)
                     .SetConfiguration(Configuration)

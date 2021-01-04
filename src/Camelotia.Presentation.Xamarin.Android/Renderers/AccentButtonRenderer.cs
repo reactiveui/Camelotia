@@ -9,11 +9,15 @@ using Color = Xamarin.Forms.Color;
 using VisualElement = Xamarin.Forms.VisualElement;
 
 [assembly: ExportRenderer(typeof(AccentButton), typeof(AccentButtonRenderer))]
+
 namespace Camelotia.Presentation.Xamarin.Droid.Renderers
 {
     public class AccentButtonRenderer : ButtonRenderer
     {
-        public AccentButtonRenderer(Context context) : base(context) {  }
+        public AccentButtonRenderer(Context context)
+            : base(context)
+        {
+        }
 
         protected override void OnElementChanged(ElementChangedEventArgs<Button> e)
         {
@@ -29,15 +33,6 @@ namespace Camelotia.Presentation.Xamarin.Droid.Renderers
                 ApplyColors((AccentButton)sender);
         }
 
-        private void ApplyColors(VisualElement control)
-        {
-            var background = GetBackgroundColor(control).ToAndroid();
-            Control.Background.SetColorFilter(background, PorterDuff.Mode.Src);
-
-            var foreground = GetForegroundColor(control).ToAndroid();
-            Control.SetTextColor(foreground);
-        }
-
         private static Color GetBackgroundColor(VisualElement control)
         {
             return control.IsEnabled
@@ -47,9 +42,18 @@ namespace Camelotia.Presentation.Xamarin.Droid.Renderers
 
         private static Color GetForegroundColor(VisualElement control)
         {
-            return control.IsEnabled 
+            return control.IsEnabled
                 ? Color.FromRgb(254, 254, 254)
                 : Color.FromRgb(140, 123, 219);
+        }
+
+        private void ApplyColors(VisualElement control)
+        {
+            var background = GetBackgroundColor(control).ToAndroid();
+            Control.Background.SetColorFilter(background, PorterDuff.Mode.Src);
+
+            var foreground = GetForegroundColor(control).ToAndroid();
+            Control.SetTextColor(foreground);
         }
     }
 }

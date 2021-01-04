@@ -1,8 +1,8 @@
-﻿using Android.App;
+﻿using System;
+using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Webkit;
-using System;
 
 namespace Camelotia.Presentation.Xamarin.Droid
 {
@@ -33,7 +33,7 @@ namespace Camelotia.Presentation.Xamarin.Droid
             webView.LoadUrl(url);
         }
 
-        public class WebViewObserver : WebViewClient
+        internal class WebViewObserver : WebViewClient
         {
             private readonly Action<string> _tokenReceived;
 
@@ -42,7 +42,7 @@ namespace Camelotia.Presentation.Xamarin.Droid
             public override void OnPageFinished(WebView view, string url)
             {
                 base.OnPageFinished(view, url);
-                if (!url.Contains('#')) return;
+                if (!url.Contains('#', StringComparison.OrdinalIgnoreCase)) return;
                 var token = url
                     .Split('#')[1]
                     .Split('&')[0]
