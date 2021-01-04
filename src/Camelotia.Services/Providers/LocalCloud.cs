@@ -43,7 +43,7 @@ namespace Camelotia.Services.Providers
 
         public Task DirectAuth(string login, string password) => Task.CompletedTask;
 
-        public Task<IEnumerable<FileModel>> Get(string path) => Task.Run(() =>
+        public Task<IEnumerable<FileModel>> GetFiles(string path) => Task.Run(() =>
         {
             if (string.IsNullOrWhiteSpace(path))
             {

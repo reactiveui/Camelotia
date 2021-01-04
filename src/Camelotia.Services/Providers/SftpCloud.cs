@@ -73,7 +73,7 @@ namespace Camelotia.Services.Providers
             return Task.CompletedTask;
         }
 
-        public Task<IEnumerable<FileModel>> Get(string path) => Task.Run(() =>
+        public Task<IEnumerable<FileModel>> GetFiles(string path) => Task.Run(() =>
         {
             path = path.Replace("\\", "/");
             using var connection = _factory();

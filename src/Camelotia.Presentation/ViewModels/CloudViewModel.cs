@@ -58,7 +58,7 @@ namespace Camelotia.Presentation.ViewModels
                 .ToProperty(this, x => x.CanInteract);
 
             Refresh = ReactiveCommand.CreateFromTask(
-                () => cloud.Get(CurrentPath),
+                () => cloud.GetFiles(CurrentPath),
                 canInteract);
 
             _files = Refresh

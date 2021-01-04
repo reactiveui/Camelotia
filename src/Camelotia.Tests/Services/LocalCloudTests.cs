@@ -36,7 +36,7 @@ namespace Camelotia.Tests.Services
         [Fact]
         public async Task ShouldReturnFilesFromSpecificPath()
         {
-            var real = await _provider.Get(Separator).ConfigureAwait(false);
+            var real = await _provider.GetFiles(Separator).ConfigureAwait(false);
             var expected = Directory.GetFileSystemEntries(Separator);
             foreach (var model in real)
             {
@@ -52,7 +52,7 @@ namespace Camelotia.Tests.Services
         [Fact]
         public async Task ShouldReturnDrivesFromAnEmptyPath()
         {
-            var real = await _provider.Get(_provider.InitialPath).ConfigureAwait(false);
+            var real = await _provider.GetFiles(_provider.InitialPath).ConfigureAwait(false);
             var expected = DriveInfo
                 .GetDrives()
                 .Where(p => p.DriveType != DriveType.CDRom && p.IsReady)

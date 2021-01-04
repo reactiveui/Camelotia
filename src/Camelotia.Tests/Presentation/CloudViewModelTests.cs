@@ -40,7 +40,7 @@ namespace Camelotia.Tests.Presentation
         public void ShouldDisplayCurrentPathProperly()
         {
             _cloud.InitialPath.Returns(Separator);
-            _cloud.Get(Separator).ReturnsForAnyArgs(Enumerable.Empty<FileModel>());
+            _cloud.GetFiles(Separator).ReturnsForAnyArgs(Enumerable.Empty<FileModel>());
 
             var model = BuildProviderViewModel();
             model.IsCurrentPathEmpty.Should().BeFalse();
@@ -88,7 +88,7 @@ namespace Camelotia.Tests.Presentation
         public void ShouldBeAbleToOpenSelectedPath()
         {
             var file = new FileModel { Name = "foo", Path = Separator + "foo", IsFolder = true };
-            _cloud.Get(Separator).Returns(Enumerable.Repeat(file, 1));
+            _cloud.GetFiles(Separator).Returns(Enumerable.Repeat(file, 1));
             _auth.IsAuthenticated.Returns(true);
             _cloud.InitialPath.Returns(Separator);
 
@@ -121,14 +121,14 @@ namespace Camelotia.Tests.Presentation
             model.CurrentPath.Should().Be(Separator);
             model.UploadToCurrentPath.CanExecute().Should().BeTrue();
             model.UploadToCurrentPath.Execute().Subscribe();
-            _cloud.Received(1).Get(Separator);
+            _cloud.Received(1).GetFiles(Separator);
         }
 
         [Fact]
         public void ShouldSetSelectedFileToNullWithCurrentPathChanges()
         {
             var file = new FileModel { Name = "foo", Path = Separator + "foo", IsFolder = true };
-            _cloud.Get(Separator).Returns(Enumerable.Repeat(file, 1));
+            _cloud.GetFiles(Separator).Returns(Enumerable.Repeat(file, 1));
             _auth.IsAuthenticated.Returns(true);
             _cloud.InitialPath.Returns(Separator);
 
@@ -152,7 +152,7 @@ namespace Camelotia.Tests.Presentation
         public void ShouldNotPublishNullCurrentPathValues()
         {
             var file = new FileModel { Name = "foo", Path = Separator + "foo", IsFolder = true };
-            _cloud.Get(Separator).Returns(Enumerable.Repeat(file, 1));
+            _cloud.GetFiles(Separator).Returns(Enumerable.Repeat(file, 1));
             _auth.IsAuthenticated.Returns(true);
             _cloud.InitialPath.Returns(Separator);
 

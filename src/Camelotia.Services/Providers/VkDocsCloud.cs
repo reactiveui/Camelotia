@@ -84,7 +84,7 @@ namespace Camelotia.Services.Providers
             return Task.CompletedTask;
         }
 
-        public async Task<IEnumerable<FileModel>> Get(string path)
+        public async Task<IEnumerable<FileModel>> GetFiles(string path)
         {
             var documents = await _api.Docs.GetAsync().ConfigureAwait(false);
             return documents.Select(document => new FileModel

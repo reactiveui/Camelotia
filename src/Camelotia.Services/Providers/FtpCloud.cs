@@ -51,11 +51,11 @@ namespace Camelotia.Services.Providers
         public async Task HostAuth(string address, int port, string login, string password)
         {
             _factory = () => new FtpClient(address, port, login, password);
-            await Get("/").ConfigureAwait(false);
+            await GetFiles("/").ConfigureAwait(false);
             _isAuthorized.OnNext(true);
         }
 
-        public async Task<IEnumerable<FileModel>> Get(string path)
+        public async Task<IEnumerable<FileModel>> GetFiles(string path)
         {
             using var connection = _factory();
             await connection.ConnectAsync().ConfigureAwait(false);

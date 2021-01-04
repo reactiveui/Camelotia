@@ -71,7 +71,7 @@ namespace Camelotia.Services.Providers
             return Task.CompletedTask;
         }
 
-        public async Task<IEnumerable<FileModel>> Get(string path)
+        public async Task<IEnumerable<FileModel>> GetFiles(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -137,7 +137,7 @@ namespace Camelotia.Services.Providers
                 .GetAllContents(_currentUserName, details.Repository, details.Path)
                 .ConfigureAwait(false);
 
-            var downloadUrl = contents.First().DownloadUrl;
+            var downloadUrl = contents[0].DownloadUrl;
             using (var file = await _httpClient.GetAsync(downloadUrl).ConfigureAwait(false))
             using (var stream = await file.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 await stream.CopyToAsync(to).ConfigureAwait(false);

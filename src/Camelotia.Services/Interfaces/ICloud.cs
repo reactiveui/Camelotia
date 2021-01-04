@@ -18,13 +18,13 @@ namespace Camelotia.Services.Interfaces
 
         string InitialPath { get; }
 
-        Task<IEnumerable<FileModel>> Get(string path);
+        Task<IEnumerable<FileModel>> GetFiles(string path);
 
         Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path);
 
-        Task UploadFile(string to, Stream from, string name);
+        Task UploadFile(string toPath, Stream fromStream, string name);
 
-        Task DownloadFile(string from, Stream to);
+        Task DownloadFile(string fromPath, Stream fromStream);
 
         Task CreateFolder(string path, string name);
 

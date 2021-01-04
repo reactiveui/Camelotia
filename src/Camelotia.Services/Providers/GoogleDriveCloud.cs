@@ -57,7 +57,7 @@ namespace Camelotia.Services.Providers
 
         public bool CanCreateFolder => false;
 
-        public async Task<IEnumerable<FileModel>> Get(string path)
+        public async Task<IEnumerable<FileModel>> GetFiles(string path)
         {
             var list = _driveService.Files.List();
             list.PageSize = 1000;
@@ -112,8 +112,7 @@ namespace Camelotia.Services.Providers
         public Task Logout() => Task.Run(async () =>
         {
             var keys = await _blobCache.GetAllKeys();
-            var googleDriveKeys = keys.Where(x => x.StartsWith("google-drive"));
-            foreach (var driveKey in googleDriveKeys)
+            foreach (var driveKey in keys.Where(x => x.StartsWith("google-drive", StringComparison.OrdinalIgnoreCase)))
                 await _blobCache.Invalidate(driveKey);
 
             _driveService = null;
@@ -126,7 +125,7 @@ namespace Camelotia.Services.Providers
             try
             {
                 var driveKeys = await _blobCache.GetAllKeys();
-                if (driveKeys.Any(x => x.StartsWith($"google-drive-{Id}")))
+                if (driveKeys.Any(x => x.StartsWith($"google-drive-{Id}", StringComparison.OrdinalIgnoreCase)))
                     await AuthenticateAsync().ConfigureAwait(false);
             }
             catch (Exception)

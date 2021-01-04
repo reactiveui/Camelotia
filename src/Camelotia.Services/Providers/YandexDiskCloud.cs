@@ -61,7 +61,7 @@ namespace Camelotia.Services.Providers
 
         public Task DirectAuth(string login, string password) => Task.CompletedTask;
 
-        public async Task<IEnumerable<FileModel>> Get(string path)
+        public async Task<IEnumerable<FileModel>> GetFiles(string path)
         {
             var yaPath = path.Replace("\\", "/");
             var encodedPath = WebUtility.UrlEncode(yaPath);

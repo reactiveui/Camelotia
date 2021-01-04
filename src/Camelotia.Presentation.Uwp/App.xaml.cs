@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Camelotia.Presentation.Uwp
 {
-    sealed partial class App : Application
+    public sealed partial class App : Application
     {
         public App() => InitializeComponent();
 
@@ -41,7 +41,7 @@ namespace Camelotia.Presentation.Uwp
             }
         }
 
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
