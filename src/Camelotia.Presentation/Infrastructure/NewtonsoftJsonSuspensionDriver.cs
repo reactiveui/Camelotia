@@ -11,6 +11,13 @@ namespace Camelotia.Presentation.Infrastructure
     public sealed class NewtonsoftJsonSuspensionDriver : ISuspensionDriver
     {
         private readonly string _stateFilePath;
+        private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All,
+            NullValueHandling = NullValueHandling.Ignore,
+            ObjectCreationHandling = ObjectCreationHandling.Replace,
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+        };
 
         public NewtonsoftJsonSuspensionDriver(string stateFilePath) => _stateFilePath = stateFilePath;
 
@@ -29,13 +36,13 @@ namespace Camelotia.Presentation.Infrastructure
             }
 
             var lines = File.ReadAllText(_stateFilePath);
-            var state = JsonConvert.DeserializeObject<object>(lines);
+            var state = JsonConvert.DeserializeObject<object>(lines, _settings);
             return Observable.Return(state);
         }
 
         public IObservable<Unit> SaveState(object state)
         {
-            var lines = JsonConvert.SerializeObject(state, Formatting.Indented);
+            var lines = JsonConvert.SerializeObject(state, Formatting.Indented, _settings);
             File.WriteAllText(_stateFilePath, lines);
             return Observable.Return(Unit.Default);
         }
