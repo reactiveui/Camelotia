@@ -106,7 +106,7 @@
                         Content="Remove" />
                 <Button Grid.Column="1"
                         Classes="Primary"
-                        Name="SwitchThemeButton"
+                        x:Name="SwitchThemeButton"
                         HorizontalAlignment="Stretch"
                         Content="Switch Theme" />
             </Grid>

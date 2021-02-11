@@ -5,12 +5,12 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia.Views
 {
-    public sealed class ProviderView : ReactiveUserControl<ICloudViewModel>
+    public sealed partial class ProviderView : ReactiveUserControl<ICloudViewModel>
     {
         public ProviderView()
         {
-            this.WhenActivated(disposables => { });
             AvaloniaXamlLoader.Load(this);
+            this.WhenActivated(disposables => { });
         }
     }
 }

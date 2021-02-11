@@ -5,12 +5,12 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia.Views
 {
-    public sealed class HostAuthView : ReactiveUserControl<IHostAuthViewModel>
+    public sealed partial class HostAuthView : ReactiveUserControl<IHostAuthViewModel>
     {
         public HostAuthView()
         {
-            this.WhenActivated(disposables => { });
             AvaloniaXamlLoader.Load(this);
+            this.WhenActivated(disposables => { });
         }
     }
 }

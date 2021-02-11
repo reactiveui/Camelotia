@@ -8,14 +8,8 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia.Views
 {
-    public sealed class FolderView : ReactiveUserControl<IFolderViewModel>
+    public sealed partial class FolderView : ReactiveUserControl<IFolderViewModel>
     {
-        private MenuItem TopLevelMenu => this.FindControl<MenuItem>("TopLevelMenu");
-
-        private DrawingPresenter ArrowRight => this.FindControl<DrawingPresenter>("ArrowRight");
-
-        private DrawingPresenter ArrowDown => this.FindControl<DrawingPresenter>("ArrowDown");
-
         public FolderView()
         {
             AvaloniaXamlLoader.Load(this);

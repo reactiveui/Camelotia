@@ -11,7 +11,7 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia.Views
 {
-    public sealed class FileView : ReactiveUserControl<IFileViewModel>
+    public sealed partial class FileView : ReactiveUserControl<IFileViewModel>
     {
         public FileView()
         {

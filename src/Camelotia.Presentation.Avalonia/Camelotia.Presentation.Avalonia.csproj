@@ -12,6 +12,7 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.9.12" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.12" />
     <PackageReference Include="Citrus.Avalonia" Version="1.2.6" />
+    <PackageReference Include="XamlNameReferenceGenerator" Version="0.2.1-preview" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,7 @@
     <EmbeddedResource Include="**\*.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <AdditionalFiles Include="**\*.xaml" />
   </ItemGroup>
 
 </Project>
