@@ -5,12 +5,12 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia.Views
 {
-    public sealed class RenameFileView : ReactiveUserControl<IRenameFileViewModel>
+    public sealed partial class RenameFileView : ReactiveUserControl<IRenameFileViewModel>
     {
         public RenameFileView()
         {
-            this.WhenActivated(disposables => { });
             AvaloniaXamlLoader.Load(this);
+            this.WhenActivated(disposables => { });
         }
     }
 }

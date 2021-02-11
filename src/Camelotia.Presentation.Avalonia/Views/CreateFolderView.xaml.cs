@@ -5,12 +5,12 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia.Views
 {
-    public sealed class CreateFolderView : ReactiveUserControl<ICreateFolderViewModel>
+    public sealed partial class CreateFolderView : ReactiveUserControl<ICreateFolderViewModel>
     {
         public CreateFolderView()
         {
-            this.WhenActivated(disposables => { });
             AvaloniaXamlLoader.Load(this);
+            this.WhenActivated(disposables => { });
         }
     }
 }

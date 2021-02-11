@@ -5,12 +5,12 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia.Views
 {
-    public sealed class DirectAuthView : ReactiveUserControl<IDirectAuthViewModel>
+    public sealed partial class DirectAuthView : ReactiveUserControl<IDirectAuthViewModel>
     {
         public DirectAuthView()
         {
-            this.WhenActivated(disposables => { });
             AvaloniaXamlLoader.Load(this);
+            this.WhenActivated(disposables => { });
         }
     }
 }
