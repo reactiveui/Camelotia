@@ -28,6 +28,7 @@ namespace Camelotia.Presentation.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _hideBreadCrumbs;
         private readonly ObservableAsPropertyHelper<string> _currentPath;
         private readonly ObservableAsPropertyHelper<bool> _canInteract;
+        private readonly ObservableAsPropertyHelper<bool> _canInteractAuthenticated;
         private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _canLogout;
         private readonly ObservableAsPropertyHelper<bool> _isReady;
@@ -52,15 +53,24 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(
                     x => x.Folder.IsVisible,
                     x => x.Rename.IsVisible,
-                    x => x.Auth.IsAuthenticated,
-                    (folder, rename, auth) => !folder && !rename && auth);
+                    (folder, rename) => !folder && !rename);
 
             _canInteract = canInteract
                 .ToProperty(this, x => x.CanInteract);
 
+            var canInteractAuthenticated = this
+                .WhenAnyValue(
+                    x => x.Folder.IsVisible,
+                    x => x.Rename.IsVisible,
+                    x => x.Auth.IsAuthenticated,
+                    (folder, rename, auth) => !folder && !rename && auth);
+
+            _canInteractAuthenticated = canInteractAuthenticated
+                .ToProperty(this, x => x.CanInteractAuthenticated);
+
             Refresh = ReactiveCommand.CreateFromTask(
                 () => cloud.GetFiles(CurrentPath),
-                canInteract);
+                canInteractAuthenticated);
 
             _files = Refresh
                 .Select(
@@ -270,6 +280,8 @@ namespace Camelotia.Presentation.ViewModels
         public bool IsReady => _isReady.Value;
 
         public bool CanInteract => _canInteract?.Value ?? false;
+
+        public bool CanInteractAuthenticated => _canInteractAuthenticated?.Value ?? false;
 
         public IAuthViewModel Auth { get; }
 
