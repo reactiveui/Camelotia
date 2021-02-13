@@ -52,7 +52,8 @@ namespace Camelotia.Presentation.ViewModels
                 .WhenAnyValue(
                     x => x.Folder.IsVisible,
                     x => x.Rename.IsVisible,
-                    (folder, rename) => !folder && !rename);
+                    x => x.Auth.IsAuthenticated,
+                    (folder, rename, auth) => !folder && !rename && auth);
 
             _canInteract = canInteract
                 .ToProperty(this, x => x.CanInteract);
