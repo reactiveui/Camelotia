@@ -25,26 +25,15 @@ namespace Camelotia.Presentation.Avalonia.Services
         public AvaloniaStyleManager(Window window)
         {
             _window = window;
-
-            // We add the style to the window styles section, so it
-            // will override the default style defined in App.xaml.
             if (window.Styles.Count == 0)
                 window.Styles.Add(_seaStyle);
-
-            // If there are styles defined already, we assume that
-            // the first style imported it related to citrus.
-            // This allows one to override citrus styles.
             else window.Styles[0] = _seaStyle;
         }
 
         public Theme CurrentTheme { get; private set; } = Theme.Sea;
 
-        public void UseTheme(Theme theme)
-        {
-            // Here, we change the first style in the main window styles
-            // section, and the main window instantly refreshes. Remember
-            // to invoke such methods from the UI thread.
-            _window.Styles[0] = theme switch
+        private void UseTheme(Theme theme) =>
+            _window.Styles[0] = (CurrentTheme = theme) switch
             {
                 Theme.Citrus => _citrusStyle,
                 Theme.Sea => _seaStyle,
@@ -54,13 +43,7 @@ namespace Camelotia.Presentation.Avalonia.Services
                 _ => throw new ArgumentOutOfRangeException(nameof(theme))
             };
 
-            CurrentTheme = theme;
-        }
-
-        public void UseNextTheme()
-        {
-            // This method allows to support switching among all
-            // supported color schemes one by one.
+        public void UseNextTheme() =>
             UseTheme(CurrentTheme switch
             {
                 Theme.Citrus => Theme.Sea,
@@ -70,7 +53,6 @@ namespace Camelotia.Presentation.Avalonia.Services
                 Theme.Magma => Theme.Citrus,
                 _ => throw new ArgumentOutOfRangeException(nameof(CurrentTheme))
             });
-        }
 
         private static StyleInclude CreateStyle(string url)
         {

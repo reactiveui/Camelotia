@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia
@@ -12,6 +11,6 @@ namespace Camelotia.Presentation.Avalonia
             => AppBuilder.Configure<App>()
                 .UseReactiveUI()
                 .UsePlatformDetect()
-                .LogToDebug();
+                .LogToTrace();
     }
 }
