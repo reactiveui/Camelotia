@@ -12,12 +12,12 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
     <PackageReference Include="Citrus.Avalonia" Version="1.4.3" />
-    <PackageReference Include="XamlNameReferenceGenerator" Version="0.2.1-preview" />
+    <PackageReference Include="XamlNameReferenceGenerator" Version="0.5.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pharmacist.MsBuild" Version="1.8.1" PrivateAssets="all" />
-    <PackageReference Include="Pharmacist.Common" Version="1.8.1" />
+    <PackageReference Include="Pharmacist.MsBuild" Version="2.0.6" PrivateAssets="all" />
+    <PackageReference Include="Pharmacist.Common" Version="2.0.6" />
   </ItemGroup>
 
   <ItemGroup>

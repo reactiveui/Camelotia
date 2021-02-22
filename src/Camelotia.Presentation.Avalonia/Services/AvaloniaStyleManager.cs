@@ -32,7 +32,7 @@ namespace Camelotia.Presentation.Avalonia.Services
 
         public Theme CurrentTheme { get; private set; } = Theme.Sea;
 
-        private void UseTheme(Theme theme) =>
+        public void UseTheme(Theme theme) =>
             _window.Styles[0] = (CurrentTheme = theme) switch
             {
                 Theme.Citrus => _citrusStyle,
