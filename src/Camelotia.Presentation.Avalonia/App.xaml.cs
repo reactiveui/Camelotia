@@ -38,6 +38,8 @@ namespace Camelotia.Presentation.Avalonia
                     MinHeight = 590,
                     MinWidth = 850,
                 };
+
+                AttachDevTools(window);
                 window.Content = CreateView(window);
                 window.Show();
             }
@@ -53,6 +55,8 @@ namespace Camelotia.Presentation.Avalonia
                     HorizontalContentAlignment = HorizontalAlignment.Center,
                     VerticalContentAlignment = VerticalAlignment.Center,
                 };
+
+                AttachDevTools(window);
                 window.StartWatchingSourceFilesForHotReloading();
                 window.Show();
             }
@@ -92,6 +96,13 @@ namespace Camelotia.Presentation.Avalonia
                         provider),
                     new AvaloniaFileManager(window),
                     provider));
+        }
+
+        private static void AttachDevTools(TopLevel window)
+        {
+#if DEBUG
+            window.AttachDevTools();
+#endif
         }
 
         private static bool IsRelease()

@@ -1,5 +1,4 @@
 using System.Reactive.Disposables;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
@@ -11,7 +10,7 @@ namespace Camelotia.Presentation.Avalonia.Views
     {
         public DirectAuthView()
         {
-            AvaloniaXamlLoader.Load(this);
+            InitializeComponent();
             this.WhenActivated(disposables =>
             {
                 this.BindValidation(ViewModel, x => x.Username, x => x.UsernameValidation.Text)

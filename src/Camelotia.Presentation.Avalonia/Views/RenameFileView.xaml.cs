@@ -1,4 +1,3 @@
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
@@ -9,7 +8,7 @@ namespace Camelotia.Presentation.Avalonia.Views
     {
         public RenameFileView()
         {
-            AvaloniaXamlLoader.Load(this);
+            InitializeComponent();
             this.WhenActivated(disposables => { });
         }
     }

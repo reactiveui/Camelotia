@@ -2,7 +2,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Layout;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
@@ -13,7 +12,7 @@ namespace Camelotia.Presentation.Avalonia.Views
     {
         public AuthView()
         {
-            AvaloniaXamlLoader.Load(this);
+            InitializeComponent();
             this.WhenActivated(disposables =>
             {
                 this.WhenAnyValue(x => x.ViewModel)
