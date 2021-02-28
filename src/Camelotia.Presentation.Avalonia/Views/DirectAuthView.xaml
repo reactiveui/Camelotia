@@ -27,13 +27,22 @@
         </StackPanel>
         <TextBlock Text="Please, enter your user name:" Margin="0 5" />
         <TextBox Watermark="User name..." Text="{Binding Username, Mode=TwoWay}" />
+        <TextBlock x:Name="UsernameValidation"
+                   Foreground="{DynamicResource ErrorBrush}"
+                   TextWrapping="Wrap" />
         <TextBlock Text="Please, enter your password:" Margin="0 5" />
         <TextBox Text="{Binding Password, Mode=TwoWay}"
                  Watermark="Password..."
                  PasswordChar="*" />
+        <TextBlock x:Name="PasswordValidation"
+                   Foreground="{DynamicResource ErrorBrush}"
+                   TextWrapping="Wrap" />
         <Button Content="Login"
                 HorizontalAlignment="Stretch"
                 Command="{Binding Login}"
                 Margin="0 10" />
+        <TextBlock x:Name="FormValidation"
+                   Foreground="{DynamicResource ErrorBrush}"
+                   TextWrapping="Wrap" />
     </StackPanel>
 </UserControl>

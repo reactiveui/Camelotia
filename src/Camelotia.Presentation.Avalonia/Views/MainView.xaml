@@ -1,16 +1,18 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
-        xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
-        x:Class="Camelotia.Presentation.Avalonia.Views.MainView"
-        MinHeight="590" MinWidth="850" 
-        Height="590" Width="850"
-        FontFamily="Ubuntu">
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
+    xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+    xmlns:reactiveUi="http://reactiveui.net"
+    x:Class="Camelotia.Presentation.Avalonia.Views.MainView"
+    MinHeight="590" MinWidth="850" 
+    Height="590" Width="850"
+    FontFamily="Ubuntu">
     <Design.DataContext>
         <designTime:DesignTimeMainViewModel />
     </Design.DataContext>
-    <Window.Styles>
+    <UserControl.Styles>
         <!-- The first StyleInclude here will be replaced at runtime, 
              see Services/AvaloniaStyleManager.cs for more info. Other
              styles will override any styles defined before them. -->
@@ -23,19 +25,9 @@
             <Setter Property="Margin" Value="0" />
             <Setter Property="Padding" Value="0" />
         </Style>
-    </Window.Styles>
-    <Grid Background="{DynamicResource ThemeBackgroundBrush}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="2*" />
-        </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+    </UserControl.Styles>
+    <Grid Background="{DynamicResource ThemeBackgroundBrush}" ColumnDefinitions="1*,2*">
+        <Grid Grid.Column="0" RowDefinitions="Auto,Auto,*,Auto">
             <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <DrawingPresenter VerticalAlignment="Top"
                                   Margin="20 10 0 0"
@@ -47,11 +39,7 @@
                            Margin="15 14 15 10"
                            FontSize="17" />
             </StackPanel>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+            <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
                 <ComboBox Grid.Column="0" 
                           Margin="12 6 12 12"
                           Items="{Binding SupportedTypes, Mode=OneWay}"
@@ -95,11 +83,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Grid Grid.Row="3" Margin="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <Grid Grid.Row="3" Margin="5" ColumnDefinitions="*,*">
                 <Button Grid.Column="0"
                         HorizontalAlignment="Stretch"
                         Command="{Binding Remove}"
@@ -116,18 +100,14 @@
                          IsVisible="{Binding IsLoading}" />
         </Grid>
         <Grid Grid.Column="1">
-            <Carousel Items="{Binding Clouds, Mode=OneWay}"
-                      IsVisible="{Binding WelcomeScreenCollapsed, Mode=OneWay}"
-                      SelectedItem="{Binding SelectedProvider, Mode=OneWay}">
-                <Carousel.PageTransition>
+            <reactiveUi:TransitioningContentControl IsVisible="{Binding WelcomeScreenCollapsed, Mode=OneWay}">
+                <reactiveUi:TransitioningContentControl.PageTransition>
                     <CrossFade Duration="0.75" />
-                </Carousel.PageTransition>
-                <Carousel.DataTemplates>
-                    <DataTemplate DataType="interfaces:ICloudViewModel">
-                        <views:ProviderView DataContext="{Binding}" />
-                    </DataTemplate>
-                </Carousel.DataTemplates>
-            </Carousel>
+                </reactiveUi:TransitioningContentControl.PageTransition>
+                <reactiveUi:TransitioningContentControl.Content>
+                    <views:ProviderView DataContext="{Binding SelectedProvider, Mode=OneWay}" />
+                </reactiveUi:TransitioningContentControl.Content>
+            </reactiveUi:TransitioningContentControl>
             <Grid IsVisible="{Binding WelcomeScreenVisible, Mode=OneWay}"
                   Background="{DynamicResource ThemeCardBrush}">
                 <StackPanel HorizontalAlignment="Center"
@@ -138,4 +118,4 @@
             </Grid>
         </Grid>
     </Grid>
-</Window>
+</UserControl>

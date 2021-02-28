@@ -26,23 +26,34 @@
                        Margin="10" />
         </StackPanel>
         <TextBlock Text="Please, enter host address with port:" Margin="0 5" />
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
+        <Grid ColumnDefinitions="3*,2*">
             <TextBox Grid.Column="0" Watermark="Address..." Text="{Binding Address, Mode=TwoWay}" />
             <TextBox Grid.Column="1" Watermark="Port..." Text="{Binding Port, Mode=TwoWay}" Margin="10 5 0 5"/>
         </Grid>
+        <TextBlock x:Name="AddressValidation"
+                   Foreground="{DynamicResource ErrorBrush}"
+                   TextWrapping="Wrap" />
+        <TextBlock x:Name="PortValidation"
+                   Foreground="{DynamicResource ErrorBrush}"
+                   TextWrapping="Wrap" />
         <TextBlock Text="Please, enter your user name:" Margin="0 5" />
         <TextBox Watermark="User name..." Text="{Binding Username, Mode=TwoWay}" />
+        <TextBlock x:Name="UsernameValidation"
+                   Foreground="{DynamicResource ErrorBrush}"
+                   TextWrapping="Wrap" />
         <TextBlock Text="Please, enter your password:" Margin="0 5" />
         <TextBox Text="{Binding Password, Mode=TwoWay}"
                  Watermark="Password..."
                  PasswordChar="*" />
+        <TextBlock x:Name="PasswordValidation"
+                   Foreground="{DynamicResource ErrorBrush}"
+                   TextWrapping="Wrap" />
         <Button Content="Login"
                 HorizontalAlignment="Stretch"
                 Command="{Binding Login}"
                 Margin="0 10" />
+        <TextBlock x:Name="FormValidation"
+                   Foreground="{DynamicResource ErrorBrush}"
+                   TextWrapping="Wrap" />
     </StackPanel>
 </UserControl>

@@ -15,14 +15,7 @@
             <MenuItem Header="Unselect" Command="{Binding Provider.UnselectFile}" />
         </ContextMenu>
     </UserControl.ContextMenu>
-    <Grid Margin="10 0">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="3*" />
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="2*" />
-        </Grid.ColumnDefinitions>
+    <Grid Margin="10 0" ColumnDefinitions="Auto,3*,1*,1*,2*">
         <DrawingPresenter Grid.Column="0" 
                           IsVisible="{Binding IsFolder}"
                           Width="16" 

@@ -31,11 +31,7 @@
         </StackPanel>
         <TextBlock Text="Please, enter new file name:" Margin="0 5" />
         <TextBox Text="{Binding NewName, Mode=TwoWay}" Watermark="File name..." />
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
+        <Grid ColumnDefinitions="3*,2*">
             <Button Grid.Column="0"
                     Content="Rename file"
                     HorizontalAlignment="Stretch"

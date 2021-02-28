@@ -22,7 +22,7 @@ internal class Build : NukeBuild
 
     public static int Main() => Execute<Build>(x => x.RunInteractive);
 
-    [Parameter] readonly string Configuration = IsLocalBuild ? "Debug" : "Release";
+    [Parameter] readonly string Configuration = "Release";
     [Parameter] readonly bool Interactive;
     [Parameter] readonly bool Full;
 

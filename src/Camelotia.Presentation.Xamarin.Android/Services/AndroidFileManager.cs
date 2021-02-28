@@ -58,10 +58,11 @@ namespace Camelotia.Presentation.Xamarin.Droid.Services
             {
                 _activity.RequestPermissions(
                     new string[]
-                {
-                    Manifest.Permission.ReadExternalStorage,
-                    Manifest.Permission.WriteExternalStorage
-                }, 1);
+                    {
+                        Manifest.Permission.ReadExternalStorage,
+                        Manifest.Permission.WriteExternalStorage
+                    },
+                    1);
             }
         }
     }
