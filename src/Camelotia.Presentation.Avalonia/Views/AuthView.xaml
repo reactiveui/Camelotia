@@ -1,17 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
              x:Class="Camelotia.Presentation.Avalonia.Views.AuthView"
              xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation">
     <Design.DataContext>
         <designTime:DesignTimeAuthViewModel />
     </Design.DataContext>
-    <Carousel Name="AuthTabs">
-        <Carousel.PageTransition>
-            <PageSlide Duration="0.25" Orientation="Vertical" />
-        </Carousel.PageTransition>
-        <views:DirectAuthView DataContext="{Binding DirectAuth}" />
-        <views:OAuthView DataContext="{Binding OAuth}" />
-        <views:HostAuthView DataContext="{Binding HostAuth}" />
-    </Carousel>
 </UserControl>
