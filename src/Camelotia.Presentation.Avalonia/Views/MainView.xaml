@@ -84,14 +84,10 @@
             </ListBox>
             <Grid Grid.Row="3" Margin="5" ColumnDefinitions="*,*">
                 <Button Grid.Column="0"
+                        Grid.ColumnSpan="2"
                         HorizontalAlignment="Stretch"
                         Command="{Binding Remove}"
-                        Content="Remove" />
-                <Button Grid.Column="1"
-                        Classes="Primary"
-                        x:Name="SwitchThemeButton"
-                        HorizontalAlignment="Stretch"
-                        Content="Switch Theme" />
+                        Content="Remove selected" />
             </Grid>
             <ProgressBar Grid.Row="2"
                          Orientation="Vertical"

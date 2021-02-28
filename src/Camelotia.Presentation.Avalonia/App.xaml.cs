@@ -44,13 +44,11 @@ namespace Camelotia.Presentation.Avalonia
         public object CreateView(Window window)
         {
             var view = new MainView();
-            var styles = new AvaloniaStyleManager(view);
-            view.SwitchThemeButton.Click += (_, _) => styles.UseNextTheme();
             view.DataContext ??= CreateViewModel(window);
             return view;
         }
 
-        private MainViewModel CreateViewModel(Window window)
+        private static MainViewModel CreateViewModel(Window window)
         {
             var main = RxApp.SuspensionHost.GetAppState<MainState>();
             return new MainViewModel(
