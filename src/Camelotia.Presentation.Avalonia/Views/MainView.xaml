@@ -4,6 +4,7 @@
     xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
+    xmlns:reactiveUi="http://reactiveui.net"
     x:Class="Camelotia.Presentation.Avalonia.Views.MainView"
     MinHeight="590" MinWidth="850" 
     Height="590" Width="850"
@@ -95,18 +96,14 @@
                          IsVisible="{Binding IsLoading}" />
         </Grid>
         <Grid Grid.Column="1">
-            <Carousel Items="{Binding Clouds, Mode=OneWay}"
-                      IsVisible="{Binding WelcomeScreenCollapsed, Mode=OneWay}"
-                      SelectedItem="{Binding SelectedProvider, Mode=OneWay}">
-                <Carousel.PageTransition>
+            <reactiveUi:TransitioningContentControl IsVisible="{Binding WelcomeScreenCollapsed, Mode=OneWay}">
+                <reactiveUi:TransitioningContentControl.PageTransition>
                     <CrossFade Duration="0.75" />
-                </Carousel.PageTransition>
-                <Carousel.DataTemplates>
-                    <DataTemplate DataType="interfaces:ICloudViewModel">
-                        <views:ProviderView DataContext="{Binding}" />
-                    </DataTemplate>
-                </Carousel.DataTemplates>
-            </Carousel>
+                </reactiveUi:TransitioningContentControl.PageTransition>
+                <reactiveUi:TransitioningContentControl.Content>
+                    <views:ProviderView DataContext="{Binding SelectedProvider, Mode=OneWay}" />
+                </reactiveUi:TransitioningContentControl.Content>
+            </reactiveUi:TransitioningContentControl>
             <Grid IsVisible="{Binding WelcomeScreenVisible, Mode=OneWay}"
                   Background="{DynamicResource ThemeCardBrush}">
                 <StackPanel HorizontalAlignment="Center"

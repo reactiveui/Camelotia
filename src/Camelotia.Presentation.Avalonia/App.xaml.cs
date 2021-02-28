@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reactive;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using Camelotia.Presentation.AppState;
@@ -48,6 +49,9 @@ namespace Camelotia.Presentation.Avalonia
                     Width = 850,
                     MinHeight = 590,
                     MinWidth = 850,
+                    Content = "Please wait for the app to rebuild from sources...",
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
                 };
                 window.StartWatchingSourceFilesForHotReloading();
                 window.Show();
