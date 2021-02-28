@@ -27,8 +27,7 @@ namespace Camelotia.Presentation.Avalonia.Views
 
                 this.ContextMenu
                     .Events()
-                    .ContextMenuOpening
-                    .Do(args => args.Cancel = false)
+                    .MenuOpened
                     .Subscribe(args => ViewModel.Provider.SelectedFile = ViewModel)
                     .DisposeWith(disposables);
             });

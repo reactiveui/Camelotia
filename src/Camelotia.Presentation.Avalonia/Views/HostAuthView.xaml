@@ -26,11 +26,7 @@
                        Margin="10" />
         </StackPanel>
         <TextBlock Text="Please, enter host address with port:" Margin="0 5" />
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
+        <Grid ColumnDefinitions="3*,2*">
             <TextBox Grid.Column="0" Watermark="Address..." Text="{Binding Address, Mode=TwoWay}" />
             <TextBox Grid.Column="1" Watermark="Port..." Text="{Binding Port, Mode=TwoWay}" Margin="10 5 0 5"/>
         </Grid>

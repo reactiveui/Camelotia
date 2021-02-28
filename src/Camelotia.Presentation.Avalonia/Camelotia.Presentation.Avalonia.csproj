@@ -8,10 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
-    <PackageReference Include="Citrus.Avalonia" Version="1.4.3" />
+    <PackageReference Include="Avalonia" Version="0.9.12" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.12" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.12" />
+    <PackageReference Include="Citrus.Avalonia" Version="1.2.6" />
+    <PackageReference Include="Live.Avalonia" Version="1.1.1" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="0.5.1" />
   </ItemGroup>
 

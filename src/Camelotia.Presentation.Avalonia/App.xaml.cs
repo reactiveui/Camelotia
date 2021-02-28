@@ -1,4 +1,7 @@
+using System;
+using System.Reactive;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using Camelotia.Presentation.AppState;
@@ -7,34 +10,53 @@ using Camelotia.Presentation.Avalonia.Views;
 using Camelotia.Presentation.Infrastructure;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services;
+using Live.Avalonia;
 using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia
 {
-    public class App : Application
+    public class App : Application, ILiveView
     {
         public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
         public override void OnFrameworkInitializationCompleted()
         {
-            // Configure ReactiveUI suspension management.
+            Akavache.BlobCache.ApplicationName = "CamelotiaV2";
             var suspension = new AutoSuspendHelper(ApplicationLifetime);
             RxApp.SuspensionHost.CreateNewAppState = () => new MainState();
             RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver("appstate.json"));
             suspension.OnFrameworkInitializationCompleted();
+
+            var window = new LiveViewHost(this, Console.WriteLine)
+            {
+                Height = 590,
+                Width = 850,
+                MinHeight = 590,
+                MinWidth = 850,
+            };
+            window.StartWatchingSourceFilesForHotReloading();
+            window.Show();
+
+            RxApp.DefaultExceptionHandler = Observer.Create<Exception>(Console.WriteLine);
             base.OnFrameworkInitializationCompleted();
+        }
 
-            // Configure app dependencies.
-            var window = new MainView();
-            var styles = new AvaloniaStyleManager(window);
-            var mainState = RxApp.SuspensionHost.GetAppState<MainState>();
+        public object CreateView(Window window)
+        {
+            var view = new MainView();
+            var styles = new AvaloniaStyleManager(view);
+            view.SwitchThemeButton.Click += (_, _) => styles.UseNextTheme();
+            view.DataContext ??= CreateViewModel(window);
+            return view;
+        }
 
-            Akavache.BlobCache.ApplicationName = "CamelotiaV2";
-            window.SwitchThemeButton.Click += (sender, args) => styles.UseNextTheme();
-            window.DataContext = new MainViewModel(
-                mainState,
+        private MainViewModel CreateViewModel(Window window)
+        {
+            var main = RxApp.SuspensionHost.GetAppState<MainState>();
+            return new MainViewModel(
+                main,
                 new CloudFactory(
-                    mainState.CloudConfiguration,
+                    main.CloudConfiguration,
                     new AvaloniaYandexAuthenticator(),
                     Akavache.BlobCache.UserAccount),
                 (state, provider) => new CloudViewModel(
@@ -50,8 +72,6 @@ namespace Camelotia.Presentation.Avalonia
                         provider),
                     new AvaloniaFileManager(window),
                     provider));
-
-            window.Show();
         }
     }
 }

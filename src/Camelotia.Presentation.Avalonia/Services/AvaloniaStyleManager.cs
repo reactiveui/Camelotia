@@ -1,6 +1,7 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.Styling;
+using Avalonia.Styling;
 
 namespace Camelotia.Presentation.Avalonia.Services
 {
@@ -20,9 +21,9 @@ namespace Camelotia.Presentation.Avalonia.Services
         private readonly StyleInclude _citrusStyle = CreateStyle("avares://Citrus.Avalonia/Citrus.xaml");
         private readonly StyleInclude _rustStyle = CreateStyle("avares://Citrus.Avalonia/Rust.xaml");
         private readonly StyleInclude _seaStyle = CreateStyle("avares://Citrus.Avalonia/Sea.xaml");
-        private readonly Window _window;
+        private readonly IStyleHost _window;
 
-        public AvaloniaStyleManager(Window window)
+        public AvaloniaStyleManager(IStyleHost window)
         {
             _window = window;
             if (window.Styles.Count == 0)

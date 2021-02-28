@@ -31,11 +31,7 @@
         </StackPanel>
         <TextBlock Text="Please, enter new folder name:" Margin="0 5" />
         <TextBox Watermark="Folder name..." Text="{Binding Name, Mode=TwoWay}" />
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
+        <Grid ColumnDefinitions="3*,2*">
             <Button Grid.Column="0"
                     Content="Create folder"
                     HorizontalAlignment="Stretch"

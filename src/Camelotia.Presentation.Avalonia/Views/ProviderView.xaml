@@ -36,31 +36,14 @@
         <Setter Property="Margin" Value="0"/>
         <Setter Property="BorderThickness" Value="0"/>
       </Style>
-        <Style>
-          <Style.Resources>
-            <GeometryDrawing x:Key="ArrowUp" Brush="{DynamicResource ThemeCardBrush}" Geometry="M 256,464 C 370.9,464 464,370.9 464,256 464,141.1 370.9,48 256,48 141.1,48 48,141.1 48,256 c 0,114.9 93.1,208 208,208 z m 0,-32 C 209,432 164.8,413.7 131.6,380.4 98.3,347.2 80,303 80,256 80,209 98.3,164.8 131.6,131.6 164.8,98.3 209,80 256,80 c 47,0 91.2,18.3 124.4,51.6 33.3,33.2 51.6,77.4 51.6,124.4 0,47 -18.3,91.2 -51.6,124.4 C 347.2,413.7 303,432 256,432 Z M 147.6,301.3 c -7.5,-7.5 -7.5,-19.8 0,-27.3 l 95.7,-95.4 c 7.3,-7.3 19.1,-7.5 26.6,-0.6 l 94.3,94 c 3.8,3.8 5.7,8.7 5.7,13.7 0,4.9 -1.9,9.9 -5.6,13.6 -7.5,7.5 -19.7,7.6 -27.3,0 l -81,-79.8 -81.1,81.9 c -7.5,7.5 -19.7,7.5 -27.3,-0.1 z" />
-            <GeometryDrawing x:Key="ArrowDown" Brush="{DynamicResource ThemeCardBrush}" Geometry="m 48,256 c 0,114.9 93.1,208 208,208 114.9,0 208,-93.1 208,-208 C 464,141.1 370.9,48 256,48 141.1,48 48,141.1 48,256 Z m 32,0 C 80,209 98.3,164.8 131.6,131.6 164.8,98.3 209,80 256,80 c 47,0 91.2,18.3 124.4,51.6 33.3,33.2 51.6,77.4 51.6,124.4 0,47 -18.3,91.2 -51.6,124.4 C 347.2,413.7 303,432 256,432 209,432 164.8,413.7 131.6,380.4 98.3,347.2 80,303 80,256 Z M 210.7,147.6 c 7.5,-7.5 19.8,-7.5 27.3,0 l 95.4,95.7 c 7.3,7.3 7.5,19.1 0.6,26.6 l -94,94.3 c -3.8,3.8 -8.7,5.7 -13.7,5.7 -4.9,0 -9.9,-1.9 -13.6,-5.6 -7.5,-7.5 -7.6,-19.7 0,-27.3 l 79.9,-81.1 -81.9,-81.1 c -7.6,-7.4 -7.6,-19.6 0,-27.2 z" />
-          </Style.Resources>
-        </Style>
     </UserControl.Styles>
     <Grid>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Margin="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-              <Button Grid.Column="0"
-                      Command="{Binding Back}"
-                      ToolTip.Tip="Back"
-                      Classes="Primary">
+        <Grid RowDefinitions="Auto,*,Auto,Auto">
+            <Grid Grid.Row="0" Margin="5" ColumnDefinitions="Auto,*,Auto">
+                <Button Grid.Column="0"
+                        Command="{Binding Back}"
+                        ToolTip.Tip="Back"
+                        Classes="Primary">
                 <DrawingPresenter Height="16" Drawing="{DynamicResource ArrowUp}"/>
               </Button>
                 <TextBlock Grid.Column="1"
@@ -139,14 +122,7 @@
                     </Grid>
                 </Grid>
             </Border>
-            <Grid Grid.Row="2" Margin="5 5 5 0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <Grid Grid.Row="2" Margin="5 5 5 0" ColumnDefinitions="*,*,2*,*,*">
                 <Button Grid.Column="0"
                         Content="Delete"
                         Classes="Primary"
@@ -173,14 +149,7 @@
                         HorizontalAlignment="Stretch"
                         Command="{Binding DownloadSelectedFile}" />
             </Grid>
-            <Grid Grid.Row="3" Margin="5 0 5 5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <Grid Grid.Row="3" Margin="5 0 5 5" ColumnDefinitions="*,*,2*,*,*">
                 <Button Grid.Column="0"
                         Content="Logout"
                         Classes="Primary"

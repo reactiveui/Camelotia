@@ -5,7 +5,7 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia.Views
 {
-    public sealed partial class MainView : ReactiveWindow<IMainViewModel>
+    public sealed partial class MainView : ReactiveUserControl<IMainViewModel>
     {
         public MainView()
         {

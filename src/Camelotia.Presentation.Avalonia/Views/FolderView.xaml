@@ -31,12 +31,6 @@
       <Style Selector="TextBlock">
         <Setter Property="VerticalAlignment" Value="Center"/>
       </Style>
-        <Style>
-          <Style.Resources>
-            <GeometryDrawing x:Key="ChevronRight" Brush="{DynamicResource ThemeAccentBrush}" Geometry="F1M6.3901,12.2803L5.3291,11.2193 8.5491,8.0003 5.3291,4.7803 6.3901,3.7193 10.6701,8.0003z" />
-            <GeometryDrawing x:Key="ChevronDown" Brush="{DynamicResource ThemeAccentBrush}" Geometry="F1M8,12L2.331,6.897 3.669,5.411 8,9.309 12.331,5.411 13.669,6.897z" />
-          </Style.Resources>
-        </Style>
     </UserControl.Styles>
     <Grid>
       <Button Command="{Binding Provider.SetPath}" CommandParameter="{Binding FullPath}">
@@ -63,5 +57,4 @@
         </StackPanel>
       </Button>
     </Grid>
-    
 </UserControl>
