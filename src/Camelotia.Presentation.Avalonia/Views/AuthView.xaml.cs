@@ -27,11 +27,11 @@ namespace Camelotia.Presentation.Avalonia.Views
         private static IControl ResolveControl(IAuthViewModel context)
         {
             if (context.SupportsDirectAuth)
-                return new DirectAuthView {DataContext = context.DirectAuth};
+                return new DirectAuthView { DataContext = context.DirectAuth };
             if (context.SupportsOAuth)
-                return new OAuthView {DataContext = context.OAuth};
+                return new OAuthView { DataContext = context.OAuth };
             if (context.SupportsHostAuth)
-                return new HostAuthView {DataContext = context.HostAuth};
+                return new HostAuthView { DataContext = context.HostAuth };
             return new TextBlock
             {
                 Text = "No supported authentication method found.",

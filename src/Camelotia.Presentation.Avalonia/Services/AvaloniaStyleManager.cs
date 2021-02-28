@@ -43,6 +43,15 @@ namespace Camelotia.Presentation.Avalonia.Services
                 _ => throw new ArgumentOutOfRangeException(nameof(CurrentTheme))
             });
 
+        private static StyleInclude CreateStyle(string url)
+        {
+            var self = new Uri("resm:Styles?assembly=Citrus.Avalonia.Sandbox");
+            return new StyleInclude(self)
+            {
+                Source = new Uri(url)
+            };
+        }
+
         private void UseTheme(Theme theme)
         {
             CurrentTheme = theme;
@@ -54,15 +63,6 @@ namespace Camelotia.Presentation.Avalonia.Services
                 Theme.Candy => _candyStyle,
                 Theme.Magma => _magmaStyle,
                 _ => throw new ArgumentOutOfRangeException(nameof(theme))
-            };
-        }
-
-        private static StyleInclude CreateStyle(string url)
-        {
-            var self = new Uri("resm:Styles?assembly=Citrus.Avalonia.Sandbox");
-            return new StyleInclude(self)
-            {
-                Source = new Uri(url)
             };
         }
     }
