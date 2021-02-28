@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Reactive;
 using Avalonia;
 using Avalonia.Controls;
@@ -27,15 +28,30 @@ namespace Camelotia.Presentation.Avalonia
             RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver("appstate.json"));
             suspension.OnFrameworkInitializationCompleted();
 
-            var window = new LiveViewHost(this, Console.WriteLine)
+            if (Debugger.IsAttached || IsRelease())
             {
-                Height = 590,
-                Width = 850,
-                MinHeight = 590,
-                MinWidth = 850,
-            };
-            window.StartWatchingSourceFilesForHotReloading();
-            window.Show();
+                var window = new Window
+                {
+                    Height = 590,
+                    Width = 850,
+                    MinHeight = 590,
+                    MinWidth = 850,
+                };
+                window.Content = CreateView(window);
+                window.Show();
+            }
+            else
+            {
+                var window = new LiveViewHost(this, Console.WriteLine)
+                {
+                    Height = 590,
+                    Width = 850,
+                    MinHeight = 590,
+                    MinWidth = 850,
+                };
+                window.StartWatchingSourceFilesForHotReloading();
+                window.Show();
+            }
 
             RxApp.DefaultExceptionHandler = Observer.Create<Exception>(Console.WriteLine);
             base.OnFrameworkInitializationCompleted();
@@ -70,6 +86,15 @@ namespace Camelotia.Presentation.Avalonia
                         provider),
                     new AvaloniaFileManager(window),
                     provider));
+        }
+
+        private static bool IsRelease()
+        {
+#if RELEASE
+            return true;
+#else
+            return false;
+#endif
         }
     }
 }
