@@ -14,7 +14,6 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
     <PackageReference Include="Avalonia.ReactiveUI.Events" Version="0.10.0" />
     <PackageReference Include="Citrus.Avalonia" Version="1.4.3" />
-    <PackageReference Include="Live.Avalonia" Version="1.2.1" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.0.1" />
   </ItemGroup>
 

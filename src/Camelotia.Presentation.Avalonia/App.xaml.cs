@@ -12,12 +12,11 @@ using Camelotia.Presentation.Avalonia.Views;
 using Camelotia.Presentation.Infrastructure;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services;
-using Live.Avalonia;
 using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia
 {
-    public class App : Application, ILiveView
+    public class App : Application
     {
         public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
@@ -29,37 +28,17 @@ namespace Camelotia.Presentation.Avalonia
             RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver("appstate.json"));
             suspension.OnFrameworkInitializationCompleted();
 
-            if (Debugger.IsAttached || IsRelease())
+            var window = new Window
             {
-                var window = new Window
-                {
-                    Height = 590,
-                    Width = 850,
-                    MinHeight = 590,
-                    MinWidth = 850,
-                };
+                Height = 590,
+                Width = 850,
+                MinHeight = 590,
+                MinWidth = 850,
+            };
 
-                AttachDevTools(window);
-                window.Content = CreateView(window);
-                window.Show();
-            }
-            else
-            {
-                var window = new LiveViewHost(this, Console.WriteLine)
-                {
-                    Height = 590,
-                    Width = 850,
-                    MinHeight = 590,
-                    MinWidth = 850,
-                    Content = "Please wait for the app to rebuild from sources...",
-                    HorizontalContentAlignment = HorizontalAlignment.Center,
-                    VerticalContentAlignment = VerticalAlignment.Center,
-                };
-
-                AttachDevTools(window);
-                window.StartWatchingSourceFilesForHotReloading();
-                window.Show();
-            }
+            AttachDevTools(window);
+            window.Content = CreateView(window);
+            window.Show();
 
             RxApp.DefaultExceptionHandler = Observer.Create<Exception>(Console.WriteLine);
             base.OnFrameworkInitializationCompleted();
@@ -102,15 +81,6 @@ namespace Camelotia.Presentation.Avalonia
         {
 #if DEBUG
             window.AttachDevTools();
-#endif
-        }
-
-        private static bool IsRelease()
-        {
-#if RELEASE
-            return true;
-#else
-            return false;
 #endif
         }
     }
