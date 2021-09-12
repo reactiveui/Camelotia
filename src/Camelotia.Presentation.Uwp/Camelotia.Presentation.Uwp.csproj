@@ -212,7 +212,7 @@
       <Version>6.2.12</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI.Events">
-      <Version>13.1.1</Version>
+      <Version>15.1.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

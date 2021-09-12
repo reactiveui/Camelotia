@@ -8,13 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
-    <PackageReference Include="Avalonia.ReactiveUI.Events" Version="0.10.0" />
-    <PackageReference Include="Citrus.Avalonia" Version="1.4.3" />
-    <PackageReference Include="XamlNameReferenceGenerator" Version="1.0.1" />
+    <PackageReference Include="Avalonia" Version="0.10.7" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.7" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.7" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.7" />
+    <PackageReference Include="Avalonia.ReactiveUI.Events" Version="0.10.7" />
+    <PackageReference Include="Citrus.Avalonia" Version="1.5.1" />
+    <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +29,10 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <AdditionalFiles Include="**\*.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Roslynator.Analyzers" Version="3.2.2" />
   </ItemGroup>
 
 </Project>

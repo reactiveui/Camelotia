@@ -10,9 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReactiveUI.XamForms" Version="13.1.1" />
-    <PackageReference Include="ReactiveUI.Events.XamForms" Version="13.1.1" />
-    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1821" />
+    <PackageReference Include="ReactiveUI.XamForms" Version="16.2.6" />
+    <PackageReference Include="ReactiveUI.Events.XamForms" Version="15.1.1" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2083" />
     <PackageReference Include="Xam.Plugin.Iconize" Version="3.5.0.112" />
     <PackageReference Include="Xam.Plugin.Iconize.FontAwesome" Version="3.5.0.112" />
   </ItemGroup>
@@ -109,5 +109,9 @@
     <None Update="Views\RenameFileView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Roslynator.Analyzers" Version="3.2.2" />
   </ItemGroup>
 </Project>
