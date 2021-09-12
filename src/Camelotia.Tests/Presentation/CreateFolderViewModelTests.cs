@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reactive.Concurrency;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
@@ -98,14 +99,14 @@ namespace Camelotia.Tests.Presentation
 
             var model = BuildCreateFolderViewModel();
             model.Create.CanExecute().Should().BeFalse();
-            model.GetErrors(string.Empty).Should().HaveCount(1);
-            model.GetErrors(nameof(model.Name)).Should().HaveCount(1);
+            model.GetErrors(string.Empty).Cast<object>().Should().HaveCount(1);
+            model.GetErrors(nameof(model.Name)).Cast<object>().Should().HaveCount(1);
             model.HasErrors.Should().BeTrue();
 
             model.Name = "Example";
             model.Create.CanExecute().Should().BeTrue();
-            model.GetErrors(string.Empty).Should().BeEmpty();
-            model.GetErrors(nameof(model.Name)).Should().BeEmpty();
+            model.GetErrors(string.Empty).Cast<object>().Should().BeEmpty();
+            model.GetErrors(nameof(model.Name)).Cast<object>().Should().BeEmpty();
             model.HasErrors.Should().BeFalse();
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading.Tasks;
 using Camelotia.Presentation.AppState;
@@ -86,11 +87,11 @@ namespace Camelotia.Tests.Presentation
         {
             var model = BuildHostAuthViewModel();
             model.Login.CanExecute().Should().BeFalse();
-            model.GetErrors(string.Empty).Should().HaveCount(4);
-            model.GetErrors(nameof(model.Username)).Should().NotBeEmpty();
-            model.GetErrors(nameof(model.Password)).Should().NotBeEmpty();
-            model.GetErrors(nameof(model.Address)).Should().NotBeEmpty();
-            model.GetErrors(nameof(model.Port)).Should().NotBeEmpty();
+            model.GetErrors(string.Empty).Cast<object>().Should().HaveCount(4);
+            model.GetErrors(nameof(model.Username)).Cast<object>().Should().NotBeEmpty();
+            model.GetErrors(nameof(model.Password)).Cast<object>().Should().NotBeEmpty();
+            model.GetErrors(nameof(model.Address)).Cast<object>().Should().NotBeEmpty();
+            model.GetErrors(nameof(model.Port)).Cast<object>().Should().NotBeEmpty();
             model.HasErrors.Should().BeTrue();
 
             model.Username = "Jotaro";
@@ -99,11 +100,11 @@ namespace Camelotia.Tests.Presentation
             model.Port = "5000";
 
             model.Login.CanExecute().Should().BeTrue();
-            model.GetErrors(string.Empty).Should().BeEmpty();
-            model.GetErrors(nameof(model.Username)).Should().BeEmpty();
-            model.GetErrors(nameof(model.Password)).Should().BeEmpty();
-            model.GetErrors(nameof(model.Address)).Should().BeEmpty();
-            model.GetErrors(nameof(model.Port)).Should().BeEmpty();
+            model.GetErrors(string.Empty).Cast<object>().Should().BeEmpty();
+            model.GetErrors(nameof(model.Username)).Cast<object>().Should().BeEmpty();
+            model.GetErrors(nameof(model.Password)).Cast<object>().Should().BeEmpty();
+            model.GetErrors(nameof(model.Address)).Cast<object>().Should().BeEmpty();
+            model.GetErrors(nameof(model.Port)).Cast<object>().Should().BeEmpty();
             model.HasErrors.Should().BeFalse();
         }
 
