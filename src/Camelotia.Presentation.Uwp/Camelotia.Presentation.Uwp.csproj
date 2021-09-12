@@ -211,8 +211,14 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
+    <PackageReference Include="ReactiveUI">
+      <Version>16.2.6</Version>
+    </PackageReference>
     <PackageReference Include="ReactiveUI.Events">
       <Version>15.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="ReactiveUI.Uwp">
+      <Version>16.2.6</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

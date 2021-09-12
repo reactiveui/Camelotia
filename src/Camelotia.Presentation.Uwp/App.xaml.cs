@@ -22,6 +22,7 @@ namespace Camelotia.Presentation.Uwp
                 .CreateFileAsync("state.json", CreationCollisionOption.OpenIfExists);
 
             var autoSuspendHelper = new AutoSuspendHelper(this);
+            RxApp.MainThreadScheduler = new SingleWindowDispatcherScheduler();
             RxApp.SuspensionHost.CreateNewAppState = () => new MainState();
             RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver(stateFile.Path));
             autoSuspendHelper.OnLaunched(e);
