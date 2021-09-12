@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reactive.Concurrency;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
@@ -98,14 +99,14 @@ namespace Camelotia.Tests.Presentation
 
             var model = BuildRenameFileViewModel();
             model.Rename.CanExecute().Should().BeFalse();
-            model.GetErrors(string.Empty).Should().HaveCount(1);
-            model.GetErrors(nameof(model.NewName)).Should().HaveCount(1);
+            model.GetErrors(string.Empty).Cast<object>().Should().HaveCount(1);
+            model.GetErrors(nameof(model.NewName)).Cast<object>().Should().HaveCount(1);
             model.HasErrors.Should().BeTrue();
 
             model.NewName = "bar";
             model.Rename.CanExecute().Should().BeTrue();
-            model.GetErrors(string.Empty).Should().BeEmpty();
-            model.GetErrors(nameof(model.NewName)).Should().BeEmpty();
+            model.GetErrors(string.Empty).Cast<object>().Should().BeEmpty();
+            model.GetErrors(nameof(model.NewName)).Cast<object>().Should().BeEmpty();
             model.HasErrors.Should().BeFalse();
         }
 

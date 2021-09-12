@@ -44,7 +44,7 @@ internal class Build : NukeBuild
                 DotNetTest(settings => settings
                     .SetProjectFile(path)
                     .SetConfiguration(Configuration)
-                    .SetLogger($"trx;LogFileName={ArtifactsDirectory / "report.trx"}")
+                    .AddLoggers($"trx;LogFileName={ArtifactsDirectory / "report.trx"}")
                     .AddProperty("CollectCoverage", true)
                     .AddProperty("CoverletOutputFormat", "cobertura")
                     .AddProperty("Exclude", "[xunit.*]*")

@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Interfaces;
+using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
 
 namespace Camelotia.Presentation.Avalonia.Views

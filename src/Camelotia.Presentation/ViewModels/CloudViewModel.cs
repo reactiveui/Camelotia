@@ -338,6 +338,7 @@ namespace Camelotia.Presentation.ViewModels
 
             Refresh.Select(_ => 30)
                 .StartWith(30)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => RefreshingIn = x)
                 .DisposeWith(disposable);
 

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading.Tasks;
 using Camelotia.Presentation.AppState;
@@ -61,23 +62,23 @@ namespace Camelotia.Tests.Presentation
         {
             var model = BuildDirectAuthViewModel();
             model.Login.CanExecute().Should().BeFalse();
-            model.GetErrors(string.Empty).Should().HaveCount(2);
-            model.GetErrors(nameof(model.Username)).Should().NotBeEmpty();
-            model.GetErrors(nameof(model.Password)).Should().NotBeEmpty();
+            model.GetErrors(string.Empty).Cast<object>().Should().HaveCount(2);
+            model.GetErrors(nameof(model.Username)).Cast<object>().Should().NotBeEmpty();
+            model.GetErrors(nameof(model.Password)).Cast<object>().Should().NotBeEmpty();
             model.HasErrors.Should().BeTrue();
 
             model.Username = "Jotaro";
             model.Login.CanExecute().Should().BeFalse();
-            model.GetErrors(string.Empty).Should().HaveCount(1);
-            model.GetErrors(nameof(model.Username)).Should().BeEmpty();
-            model.GetErrors(nameof(model.Password)).Should().NotBeEmpty();
+            model.GetErrors(string.Empty).Cast<object>().Should().HaveCount(1);
+            model.GetErrors(nameof(model.Username)).Cast<object>().Should().BeEmpty();
+            model.GetErrors(nameof(model.Password)).Cast<object>().Should().NotBeEmpty();
             model.HasErrors.Should().BeTrue();
 
             model.Password = "qwerty";
             model.Login.CanExecute().Should().BeTrue();
-            model.GetErrors(string.Empty).Should().BeEmpty();
-            model.GetErrors(nameof(model.Username)).Should().BeEmpty();
-            model.GetErrors(nameof(model.Password)).Should().BeEmpty();
+            model.GetErrors(string.Empty).Cast<object>().Should().BeEmpty();
+            model.GetErrors(nameof(model.Username)).Cast<object>().Should().BeEmpty();
+            model.GetErrors(nameof(model.Password)).Cast<object>().Should().BeEmpty();
             model.HasErrors.Should().BeFalse();
         }
 
