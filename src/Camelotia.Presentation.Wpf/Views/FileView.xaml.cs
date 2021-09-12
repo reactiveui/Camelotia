@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Camelotia.Presentation.Interfaces;
+using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
 
 namespace Camelotia.Presentation.Wpf.Views
