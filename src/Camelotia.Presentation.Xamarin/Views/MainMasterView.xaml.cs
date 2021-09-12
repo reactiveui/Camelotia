@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Camelotia.Presentation.Interfaces;
+using ReactiveMarbles.ObservableEvents;
 using ReactiveUI;
 using ReactiveUI.XamForms;
 using Xamarin.Forms;
