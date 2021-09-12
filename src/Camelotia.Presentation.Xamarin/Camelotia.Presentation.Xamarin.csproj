@@ -110,8 +110,4 @@
       <Generator>MSBuild:Compile</Generator>
     </None>
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Roslynator.Analyzers" Version="3.2.2" />
-  </ItemGroup>
 </Project>

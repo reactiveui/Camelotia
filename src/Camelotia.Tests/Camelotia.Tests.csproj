@@ -21,7 +21,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Camelotia.Presentation\Camelotia.Presentation.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="Roslynator.Analyzers" Version="3.2.2" />
-  </ItemGroup>
 </Project>

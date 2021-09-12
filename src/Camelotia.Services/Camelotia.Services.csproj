@@ -16,8 +16,4 @@
     <PackageReference Include="VkNet" Version="1.66.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Roslynator.Analyzers" Version="3.2.2" />
-  </ItemGroup>
-
 </Project>
