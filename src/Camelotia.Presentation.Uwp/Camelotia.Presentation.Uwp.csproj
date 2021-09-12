@@ -214,12 +214,10 @@
     <PackageReference Include="ReactiveUI">
       <Version>16.2.6</Version>
     </PackageReference>
-    <PackageReference Include="ReactiveUI.Events">
-      <Version>15.1.1</Version>
-    </PackageReference>
     <PackageReference Include="ReactiveUI.Uwp">
       <Version>16.2.6</Version>
     </PackageReference>
+    <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.1.3" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Camelotia.Presentation\Camelotia.Presentation.csproj">
