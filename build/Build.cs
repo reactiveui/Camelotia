@@ -12,7 +12,7 @@ using static Nuke.Common.Tools.MSBuild.MSBuildTasks;
 
 // ReSharper disable ArrangeTypeMemberModifiers
 
-[CheckBuildProjectConfigurations]
+[CheckBuildProjectConfigurations(TimeoutInMilliseconds = 2000)]
 [UnsetVisualStudioEnvironmentVariables]
 internal class Build : NukeBuild
 {
