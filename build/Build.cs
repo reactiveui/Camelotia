@@ -14,7 +14,7 @@ using static Nuke.Common.Tools.MSBuild.MSBuildTasks;
 
 [CheckBuildProjectConfigurations(TimeoutInMilliseconds = 2000)]
 [UnsetVisualStudioEnvironmentVariables]
-internal class Build : NukeBuild
+class Build : NukeBuild
 {
     const string InteractiveProjectName = "Camelotia.Presentation.Avalonia";
     const string CoverageFileName = "coverage.cobertura.xml";
@@ -63,15 +63,15 @@ internal class Build : NukeBuild
         .Executes(() =>
         {
             var execute = EnvironmentInfo.IsWin && Full;
-            Logger.Info($"Should compile for Universal Windows: {execute}");
+            Serilog.Log.Information($"Should compile for Universal Windows: {execute}");
             if (!execute) return;
 
-            Logger.Normal("Restoring packages required by UAP...");
+            Serilog.Log.Information("Restoring packages required by UAP...");
             var project = SourceDirectory.GlobFiles("**/*.Uwp.csproj").First();
             MSBuild(settings => settings
                 .SetProjectFile(project)
                 .SetTargets("Restore"));
-            Logger.Success("Successfully restored UAP packages.");
+            Serilog.Log.Information("Successfully restored UAP packages.");
 
             new[] { MSBuildTargetPlatform.x86,
                     MSBuildTargetPlatform.x64,
@@ -80,13 +80,13 @@ internal class Build : NukeBuild
 
             void BuildApp(MSBuildTargetPlatform platform)
             {
-                Logger.Normal("Cleaning UAP project...");
+                Serilog.Log.Information("Cleaning UAP project...");
                 MSBuild(settings => settings
                     .SetProjectFile(project)
                     .SetTargets("Clean"));
-                Logger.Success("Successfully managed to clean UAP project.");
+                Serilog.Log.Information("Successfully managed to clean UAP project.");
 
-                Logger.Normal($"Building UAP project for {platform}...");
+                Serilog.Log.Information($"Building UAP project for {platform}...");
                 MSBuild(settings => settings
                     .SetProjectFile(project)
                     .SetTargets("Build")
@@ -96,7 +96,7 @@ internal class Build : NukeBuild
                     .SetProperty("AppxPackageDir", ArtifactsDirectory)
                     .SetProperty("UapAppxPackageBuildMode", "CI")
                     .SetProperty("AppxBundle", "Always"));
-                Logger.Success($"Successfully built UAP project for {platform}.");
+                Serilog.Log.Information($"Successfully built UAP project for {platform}.");
             }
         });
 
@@ -105,38 +105,38 @@ internal class Build : NukeBuild
         .Executes(() =>
         {
             var execute = EnvironmentInfo.IsWin && Full;
-            Logger.Info($"Should compile for Android: {execute}");
+            Serilog.Log.Information($"Should compile for Android: {execute}");
             if (!execute) return;
 
-            Logger.Normal("Restoring packages required by Xamarin Android...");
+            Serilog.Log.Information("Restoring packages required by Xamarin Android...");
             var project = SourceDirectory.GlobFiles("**/*.Xamarin.Droid.csproj").First();
             MSBuild(settings => settings
                 .SetProjectFile(project)
                 .SetTargets("Restore"));
-            Logger.Success("Successfully restored Xamarin Android packages.");
+            Serilog.Log.Information("Successfully restored Xamarin Android packages.");
 
-            Logger.Normal("Building Xamarin Android project...");
+            Serilog.Log.Information("Building Xamarin Android project...");
             var java = Environment.GetEnvironmentVariable("JAVA_HOME");
             MSBuild(settings => settings
                 .SetProjectFile(project)
                 .SetTargets("Build")
                 .SetConfiguration(Configuration)
                 .SetProperty("JavaSdkDirectory", java));
-            Logger.Success("Successfully built Xamarin Android project.");
+            Serilog.Log.Information("Successfully built Xamarin Android project.");
 
-            Logger.Normal("Signing Android package...");
+            Serilog.Log.Information("Signing Android package...");
             MSBuild(settings => settings
                 .SetProjectFile(project)
                 .SetTargets("SignAndroidPackage")
                 .SetConfiguration(Configuration)
                 .SetProperty("JavaSdkDirectory", java));
-            Logger.Success("Successfully signed Xamarin Android APK.");
+            Serilog.Log.Information("Successfully signed Xamarin Android APK.");
 
-            Logger.Normal("Moving APK files to artifacts directory...");
+            Serilog.Log.Information("Moving APK files to artifacts directory...");
             SourceDirectory
                 .GlobFiles("**/bin/**/*-Signed.apk")
                 .ForEach(file => MoveFileToDirectory(file, ArtifactsDirectory));
-            Logger.Success("Successfully moved APK files.");
+            Serilog.Log.Information("Successfully moved APK files.");
         });
 
     Target CompileWindowsPresentationApp => _ => _
@@ -144,22 +144,22 @@ internal class Build : NukeBuild
         .Executes(() =>
         {
             var execute = EnvironmentInfo.IsWin && Full;
-            Logger.Info($"Should compile for WPF: {execute}");
+            Serilog.Log.Information($"Should compile for WPF: {execute}");
             if (!execute) return;
 
-            Logger.Normal("Restoring packages required by WPF app...");
+            Serilog.Log.Information("Restoring packages required by WPF app...");
             var project = SourceDirectory.GlobFiles("**/*.Wpf.csproj").First();
             MSBuild(settings => settings
                 .SetProjectFile(project)
                 .SetTargets("Restore"));
-            Logger.Success("Successfully restored Wpf packages.");
+            Serilog.Log.Information("Successfully restored Wpf packages.");
 
-            Logger.Normal("Building WPF project...");
+            Serilog.Log.Information("Building WPF project...");
             MSBuild(settings => settings
                 .SetProjectFile(project)
                 .SetTargets("Build")
                 .SetConfiguration(Configuration));
-            Logger.Success("Successfully built WPF project.");
+            Serilog.Log.Information("Successfully built WPF project.");
         });
 
     Target RunInteractive => _ => _
