@@ -3,15 +3,14 @@ using ReactiveUI;
 using ReactiveUI.XamForms;
 using Xamarin.Forms.Xaml;
 
-namespace Camelotia.Presentation.Xamarin.Views
+namespace Camelotia.Presentation.Xamarin.Views;
+
+[XamlCompilation(XamlCompilationOptions.Compile)]
+public partial class MainCloudView : ReactiveViewCell<ICloudViewModel>
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class MainCloudView : ReactiveViewCell<ICloudViewModel>
+    public MainCloudView()
     {
-        public MainCloudView()
-        {
-            InitializeComponent();
-            this.WhenActivated(disposables => { });
-        }
+        InitializeComponent();
+        this.WhenActivated(disposables => { });
     }
 }

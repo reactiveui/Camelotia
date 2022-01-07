@@ -1,21 +1,20 @@
 ﻿using System.ComponentModel;
 
-namespace Camelotia.Presentation.Interfaces
+namespace Camelotia.Presentation.Interfaces;
+
+public interface IFileViewModel : INotifyPropertyChanged
 {
-    public interface IFileViewModel : INotifyPropertyChanged
-    {
-        string Name { get; }
+    string Name { get; }
 
-        ICloudViewModel Provider { get; }
+    ICloudViewModel Provider { get; }
 
-        string Modified { get; }
+    string Modified { get; }
 
-        bool IsFolder { get; }
+    bool IsFolder { get; }
 
-        bool IsFile { get; }
+    bool IsFile { get; }
 
-        string Path { get; }
+    string Path { get; }
 
-        string Size { get; }
-    }
+    string Size { get; }
 }

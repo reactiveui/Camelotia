@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using Camelotia.Services.Models;
 
-namespace Camelotia.Services.Interfaces
-{
-    public interface ICloudFactory
-    {
-        ICloud CreateCloud(CloudParameters parameters);
+namespace Camelotia.Services.Interfaces;
 
-        IReadOnlyCollection<CloudType> SupportedClouds { get; }
-    }
+public interface ICloudFactory
+{
+    ICloud CreateCloud(CloudParameters parameters);
+
+    IReadOnlyCollection<CloudType> SupportedClouds { get; }
 }

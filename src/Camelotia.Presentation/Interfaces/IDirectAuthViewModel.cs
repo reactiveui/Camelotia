@@ -3,24 +3,23 @@ using System.Reactive;
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 
-namespace Camelotia.Presentation.Interfaces
+namespace Camelotia.Presentation.Interfaces;
+
+public interface IDirectAuthViewModel :
+    INotifyPropertyChanged,
+    INotifyDataErrorInfo,
+    IValidatableViewModel,
+    IReactiveObject
 {
-    public interface IDirectAuthViewModel :
-        INotifyPropertyChanged,
-        INotifyDataErrorInfo,
-        IValidatableViewModel,
-        IReactiveObject
-    {
-        string Username { get; set; }
+    string Username { get; set; }
 
-        string Password { get; set; }
+    string Password { get; set; }
 
-        ReactiveCommand<Unit, Unit> Login { get; }
+    ReactiveCommand<Unit, Unit> Login { get; }
 
-        bool HasErrorMessage { get; }
+    bool HasErrorMessage { get; }
 
-        string ErrorMessage { get; }
+    string ErrorMessage { get; }
 
-        bool IsBusy { get; }
-    }
+    bool IsBusy { get; }
 }

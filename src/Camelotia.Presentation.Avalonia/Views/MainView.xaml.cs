@@ -2,14 +2,13 @@ using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
 
-namespace Camelotia.Presentation.Avalonia.Views
+namespace Camelotia.Presentation.Avalonia.Views;
+
+public sealed partial class MainView : ReactiveUserControl<IMainViewModel>
 {
-    public sealed partial class MainView : ReactiveUserControl<IMainViewModel>
+    public MainView()
     {
-        public MainView()
-        {
-            InitializeComponent();
-            this.WhenActivated(disposables => { });
-        }
+        InitializeComponent();
+        this.WhenActivated(disposables => { });
     }
 }

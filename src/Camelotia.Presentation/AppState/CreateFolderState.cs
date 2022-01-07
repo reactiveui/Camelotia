@@ -1,14 +1,13 @@
 using System.Runtime.Serialization;
 
-namespace Camelotia.Presentation.AppState
-{
-    [DataContract]
-    public class CreateFolderState
-    {
-        [DataMember]
-        public string Name { get; set; }
+namespace Camelotia.Presentation.AppState;
 
-        [DataMember]
-        public bool IsVisible { get; set; }
-    }
+[DataContract]
+public class CreateFolderState
+{
+    [DataMember]
+    public string Name { get; set; }
+
+    [DataMember]
+    public bool IsVisible { get; set; }
 }

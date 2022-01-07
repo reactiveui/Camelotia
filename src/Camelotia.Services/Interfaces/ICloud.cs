@@ -4,52 +4,51 @@ using System.IO;
 using System.Threading.Tasks;
 using Camelotia.Services.Models;
 
-namespace Camelotia.Services.Interfaces
+namespace Camelotia.Services.Interfaces;
+
+public interface ICloud
 {
-    public interface ICloud
-    {
-        Guid Id { get; }
+    Guid Id { get; }
 
-        long? Size { get; }
+    long? Size { get; }
 
-        string Name { get; }
+    string Name { get; }
 
-        DateTime Created { get; }
+    DateTime Created { get; }
 
-        string InitialPath { get; }
+    string InitialPath { get; }
 
-        Task<IEnumerable<FileModel>> GetFiles(string path);
+    Task<IEnumerable<FileModel>> GetFiles(string path);
 
-        Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path);
+    Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path);
 
-        Task UploadFile(string toPath, Stream fromStream, string name);
+    Task UploadFile(string toPath, Stream fromStream, string name);
 
-        Task DownloadFile(string fromPath, Stream fromStream);
+    Task DownloadFile(string fromPath, Stream fromStream);
 
-        Task CreateFolder(string path, string name);
+    Task CreateFolder(string path, string name);
 
-        Task RenameFile(string path, string name);
+    Task RenameFile(string path, string name);
 
-        Task Delete(string path, bool isFolder);
+    Task Delete(string path, bool isFolder);
 
-        Task DirectAuth(string login, string password);
+    Task DirectAuth(string login, string password);
 
-        Task HostAuth(string address, int port, string login, string password);
+    Task HostAuth(string address, int port, string login, string password);
 
-        Task OAuth();
+    Task OAuth();
 
-        Task Logout();
+    Task Logout();
 
-        bool CanCreateFolder { get; }
+    bool CanCreateFolder { get; }
 
-        IObservable<bool> IsAuthorized { get; }
+    IObservable<bool> IsAuthorized { get; }
 
-        CloudParameters Parameters { get; }
+    CloudParameters Parameters { get; }
 
-        bool SupportsDirectAuth { get; }
+    bool SupportsDirectAuth { get; }
 
-        bool SupportsHostAuth { get; }
+    bool SupportsHostAuth { get; }
 
-        bool SupportsOAuth { get; }
-    }
+    bool SupportsOAuth { get; }
 }

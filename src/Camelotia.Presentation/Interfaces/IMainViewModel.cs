@@ -5,32 +5,31 @@ using System.Reactive;
 using Camelotia.Services.Models;
 using ReactiveUI;
 
-namespace Camelotia.Presentation.Interfaces
+namespace Camelotia.Presentation.Interfaces;
+
+public interface IMainViewModel : INotifyPropertyChanged
 {
-    public interface IMainViewModel : INotifyPropertyChanged
-    {
-        ReadOnlyObservableCollection<ICloudViewModel> Clouds { get; }
+    ReadOnlyObservableCollection<ICloudViewModel> Clouds { get; }
 
-        ICloudViewModel SelectedProvider { get; set; }
+    ICloudViewModel SelectedProvider { get; set; }
 
-        IEnumerable<CloudType> SupportedTypes { get; }
+    IEnumerable<CloudType> SupportedTypes { get; }
 
-        CloudType SelectedSupportedType { get; set; }
+    CloudType SelectedSupportedType { get; set; }
 
-        bool WelcomeScreenCollapsed { get; }
+    bool WelcomeScreenCollapsed { get; }
 
-        bool WelcomeScreenVisible { get; }
+    bool WelcomeScreenVisible { get; }
 
-        ReactiveCommand<Unit, Unit> Unselect { get; }
+    ReactiveCommand<Unit, Unit> Unselect { get; }
 
-        ReactiveCommand<Unit, Unit> Refresh { get; }
+    ReactiveCommand<Unit, Unit> Refresh { get; }
 
-        ReactiveCommand<Unit, Unit> Remove { get; }
+    ReactiveCommand<Unit, Unit> Remove { get; }
 
-        ReactiveCommand<Unit, Unit> Add { get; }
+    ReactiveCommand<Unit, Unit> Add { get; }
 
-        bool IsLoading { get; }
+    bool IsLoading { get; }
 
-        bool IsReady { get; }
-    }
+    bool IsReady { get; }
 }

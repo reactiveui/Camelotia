@@ -3,30 +3,29 @@ using System.Reactive;
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 
-namespace Camelotia.Presentation.Interfaces
+namespace Camelotia.Presentation.Interfaces;
+
+public interface IRenameFileViewModel :
+    INotifyPropertyChanged,
+    INotifyDataErrorInfo,
+    IValidatableViewModel,
+    IReactiveObject
 {
-    public interface IRenameFileViewModel :
-        INotifyPropertyChanged,
-        INotifyDataErrorInfo,
-        IValidatableViewModel,
-        IReactiveObject
-    {
-        bool IsLoading { get; }
+    bool IsLoading { get; }
 
-        bool IsVisible { get; set; }
+    bool IsVisible { get; set; }
 
-        string OldName { get; }
+    string OldName { get; }
 
-        string NewName { get; set; }
+    string NewName { get; set; }
 
-        bool HasErrorMessage { get; }
+    bool HasErrorMessage { get; }
 
-        string ErrorMessage { get; }
+    string ErrorMessage { get; }
 
-        ReactiveCommand<Unit, Unit> Rename { get; }
+    ReactiveCommand<Unit, Unit> Rename { get; }
 
-        ReactiveCommand<Unit, Unit> Close { get; }
+    ReactiveCommand<Unit, Unit> Close { get; }
 
-        ReactiveCommand<Unit, Unit> Open { get; }
-    }
+    ReactiveCommand<Unit, Unit> Open { get; }
 }

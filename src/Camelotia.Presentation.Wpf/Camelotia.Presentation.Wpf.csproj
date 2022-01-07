@@ -2,9 +2,11 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <StartupObject>Camelotia.Presentation.Wpf.Program</StartupObject>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6-windows</TargetFramework>
     <IncludePackageReferencesDuringMarkupCompilation>true</IncludePackageReferencesDuringMarkupCompilation>
     <UseWpf>true</UseWpf>
+    <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="akavache" Version="7.3.1" />

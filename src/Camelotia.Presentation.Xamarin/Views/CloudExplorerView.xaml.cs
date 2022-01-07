@@ -4,19 +4,18 @@ using ReactiveUI;
 using ReactiveUI.XamForms;
 using Xamarin.Forms.Xaml;
 
-namespace Camelotia.Presentation.Xamarin.Views
+namespace Camelotia.Presentation.Xamarin.Views;
+
+[XamlCompilation(XamlCompilationOptions.Compile)]
+public partial class CloudExplorerView : ReactiveContentPage<ICloudViewModel>
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class CloudExplorerView : ReactiveContentPage<ICloudViewModel>
+    public CloudExplorerView()
     {
-        public CloudExplorerView()
+        InitializeComponent();
+        this.WhenActivated(disposables =>
         {
-            InitializeComponent();
-            this.WhenActivated(disposables =>
-            {
-                this.OneWayBind(ViewModel, x => x.IsLoading, x => x.FilesListView.IsRefreshing)
-                    .DisposeWith(disposables);
-            });
-        }
+            this.OneWayBind(ViewModel, x => x.IsLoading, x => x.FilesListView.IsRefreshing)
+                .DisposeWith(disposables);
+        });
     }
 }
