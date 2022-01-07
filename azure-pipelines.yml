@@ -5,6 +5,12 @@ jobs:
   variables:
     buildConfiguration: 'Release'
   steps:
+  - task: UseDotNet@2
+    displayName: 'Install .NET 6 SDK'
+    inputs:
+      packageType: 'sdk'
+      version: '6.0.x'
+      performMultiLevelLookup: true
   - script: cd $(Build.SourcesDirectory) && bash ./build.sh
     displayName: 'Linux Build and Tests'
   - task: PublishTestResults@2
