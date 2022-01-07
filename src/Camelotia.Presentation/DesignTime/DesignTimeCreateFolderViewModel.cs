@@ -4,28 +4,27 @@ using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 
-namespace Camelotia.Presentation.DesignTime
+namespace Camelotia.Presentation.DesignTime;
+
+public class DesignTimeCreateFolderViewModel : ReactiveValidationObject, ICreateFolderViewModel
 {
-    public class DesignTimeCreateFolderViewModel : ReactiveValidationObject, ICreateFolderViewModel
-    {
-        public DesignTimeCreateFolderViewModel() => this.ValidationRule(x => x.Name, _ => false, "Validation error.");
+    public DesignTimeCreateFolderViewModel() => this.ValidationRule(x => x.Name, _ => false, "Validation error.");
 
-        public bool IsLoading { get; }
+    public bool IsLoading { get; }
 
-        public bool IsVisible { get; set; }
+    public bool IsVisible { get; set; }
 
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        public string Path { get; } = "/home/path";
+    public string Path { get; } = "/home/path";
 
-        public bool HasErrorMessage { get; } = true;
+    public bool HasErrorMessage { get; } = true;
 
-        public string ErrorMessage { get; } = "Error message example.";
+    public string ErrorMessage { get; } = "Error message example.";
 
-        public ReactiveCommand<Unit, Unit> Create { get; }
+    public ReactiveCommand<Unit, Unit> Create { get; }
 
-        public ReactiveCommand<Unit, Unit> Close { get; }
+    public ReactiveCommand<Unit, Unit> Close { get; }
 
-        public ReactiveCommand<Unit, Unit> Open { get; }
-    }
+    public ReactiveCommand<Unit, Unit> Open { get; }
 }

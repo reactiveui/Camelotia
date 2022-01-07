@@ -7,33 +7,32 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Camelotia.Tests.Services
+namespace Camelotia.Tests.Services;
+
+public sealed class GoogleDriveCloudTests
 {
-    public sealed class GoogleDriveCloudTests
+    private readonly MainState _state = new();
+    private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
+    private readonly CloudParameters _model = new()
     {
-        private readonly MainState _state = new MainState();
-        private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
-        private readonly CloudParameters _model = new CloudParameters
-        {
-            Id = Guid.NewGuid(),
-            Created = DateTime.Now,
-            Type = CloudType.GoogleDrive
-        };
+        Id = Guid.NewGuid(),
+        Created = DateTime.Now,
+        Type = CloudType.GoogleDrive
+    };
 
-        [Fact]
-        public void VerifyDefaultPropertyValues()
-        {
-            var provider = new GoogleDriveCloud(_model, _blobCache, _state.CloudConfiguration.GoogleDrive);
-            provider.InitialPath.Should().Be("/");
+    [Fact]
+    public void VerifyDefaultPropertyValues()
+    {
+        var provider = new GoogleDriveCloud(_model, _blobCache, _state.CloudConfiguration.GoogleDrive);
+        provider.InitialPath.Should().Be("/");
 
-            provider.CanCreateFolder.Should().BeFalse();
-            provider.Created.Should().Be(_model.Created);
-            provider.Name.Should().Be("GoogleDrive");
-            provider.Id.Should().Be(_model.Id);
+        provider.CanCreateFolder.Should().BeFalse();
+        provider.Created.Should().Be(_model.Created);
+        provider.Name.Should().Be("GoogleDrive");
+        provider.Id.Should().Be(_model.Id);
 
-            provider.SupportsDirectAuth.Should().BeFalse();
-            provider.SupportsHostAuth.Should().BeFalse();
-            provider.SupportsOAuth.Should().BeTrue();
-        }
+        provider.SupportsDirectAuth.Should().BeFalse();
+        provider.SupportsHostAuth.Should().BeFalse();
+        provider.SupportsOAuth.Should().BeTrue();
     }
 }

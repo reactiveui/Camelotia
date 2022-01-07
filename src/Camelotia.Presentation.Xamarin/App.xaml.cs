@@ -6,19 +6,18 @@ using Xamarin.Forms.Xaml;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 
-namespace Camelotia.Presentation.Xamarin
-{
-    public partial class App : Application
-    {
-        public App(IMainViewModel viewModel)
-        {
-            Plugin.Iconize.Iconize
-                .With(new FontAwesomeRegularModule())
-                .With(new FontAwesomeSolidModule())
-                .With(new FontAwesomeBrandsModule());
+namespace Camelotia.Presentation.Xamarin;
 
-            InitializeComponent();
-            MainPage = new MainView { ViewModel = viewModel };
-        }
+public partial class App : Application
+{
+    public App(IMainViewModel viewModel)
+    {
+        Plugin.Iconize.Iconize
+            .With(new FontAwesomeRegularModule())
+            .With(new FontAwesomeSolidModule())
+            .With(new FontAwesomeBrandsModule());
+
+        InitializeComponent();
+        MainPage = new MainView { ViewModel = viewModel };
     }
 }

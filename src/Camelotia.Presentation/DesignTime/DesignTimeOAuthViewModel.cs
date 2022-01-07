@@ -2,16 +2,15 @@ using System.Reactive;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
 
-namespace Camelotia.Presentation.DesignTime
+namespace Camelotia.Presentation.DesignTime;
+
+public class DesignTimeOAuthViewModel : ReactiveObject, IOAuthViewModel
 {
-    public class DesignTimeOAuthViewModel : ReactiveObject, IOAuthViewModel
-    {
-        public ReactiveCommand<Unit, Unit> Login { get; }
+    public ReactiveCommand<Unit, Unit> Login { get; }
 
-        public bool HasErrorMessage { get; } = true;
+    public bool HasErrorMessage { get; } = true;
 
-        public string ErrorMessage { get; } = "Error message example.";
+    public string ErrorMessage { get; } = "Error message example.";
 
-        public bool IsBusy { get; }
-    }
+    public bool IsBusy { get; }
 }

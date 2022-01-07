@@ -4,22 +4,21 @@ using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 
-namespace Camelotia.Presentation.DesignTime
+namespace Camelotia.Presentation.DesignTime;
+
+public class DesignTimeDirectAuthViewModel : ReactiveValidationObject, IDirectAuthViewModel
 {
-    public class DesignTimeDirectAuthViewModel : ReactiveValidationObject, IDirectAuthViewModel
-    {
-        public DesignTimeDirectAuthViewModel() => this.ValidationRule(x => x.Username, name => false, "Validation error.");
+    public DesignTimeDirectAuthViewModel() => this.ValidationRule(x => x.Username, name => false, "Validation error.");
 
-        public string Username { get; set; } = "Joseph";
+    public string Username { get; set; } = "Joseph";
 
-        public string Password { get; set; }
+    public string Password { get; set; }
 
-        public ReactiveCommand<Unit, Unit> Login { get; }
+    public ReactiveCommand<Unit, Unit> Login { get; }
 
-        public bool HasErrorMessage { get; } = true;
+    public bool HasErrorMessage { get; } = true;
 
-        public string ErrorMessage { get; } = "Error message example.";
+    public string ErrorMessage { get; } = "Error message example.";
 
-        public bool IsBusy { get; }
-    }
+    public bool IsBusy { get; }
 }

@@ -10,56 +10,55 @@ using FluentAssertions;
 using ReactiveUI;
 using Xunit;
 
-namespace Camelotia.Tests.Presentation
+namespace Camelotia.Tests.Presentation;
+
+public class SuspensionDriversTests
 {
-    public class SuspensionDriversTests
+    [Fact]
+    public Task NewtonsoftJsonSuspensionDriverShouldSaveAndLoadState() =>
+        SuspensionDriverShouldSaveAndLoadState(
+            new NewtonsoftJsonSuspensionDriver(Path.GetTempFileName()));
+
+    [Fact]
+    public Task AkavacheSuspensionDriverShouldSaveAndLoadState() =>
+        SuspensionDriverShouldSaveAndLoadState(
+            new AkavacheSuspensionDriver<MainState>("Camelotia-Tests"));
+
+    private static async Task SuspensionDriverShouldSaveAndLoadState(ISuspensionDriver driver)
     {
-        [Fact]
-        public Task NewtonsoftJsonSuspensionDriverShouldSaveAndLoadState() =>
-            SuspensionDriverShouldSaveAndLoadState(
-                new NewtonsoftJsonSuspensionDriver(Path.GetTempFileName()));
-
-        [Fact]
-        public Task AkavacheSuspensionDriverShouldSaveAndLoadState() =>
-            SuspensionDriverShouldSaveAndLoadState(
-                new AkavacheSuspensionDriver<MainState>("Camelotia-Tests"));
-
-        private static async Task SuspensionDriverShouldSaveAndLoadState(ISuspensionDriver driver)
+        var state = new MainState
         {
-            var state = new MainState
-            {
-                SelectedSupportedType = CloudType.GitHub
-            };
+            SelectedSupportedType = CloudType.GitHub
+        };
 
-            state.Clouds.AddOrUpdate(new CloudState());
-            state.Clouds.AddOrUpdate(new CloudState
+        state.Clouds.AddOrUpdate(new CloudState());
+        state.Clouds.AddOrUpdate(new CloudState
+        {
+            AuthState = new AuthState
             {
-                AuthState = new AuthState
+                DirectAuthState = new DirectAuthState
                 {
-                    DirectAuthState = new DirectAuthState
-                    {
-                        Username = "Joseph Joestar",
-                        Password = "Dio"
-                    }
+                    Username = "Joseph Joestar",
+                    Password = "Dio"
                 }
-            });
+            }
+        });
 
-            await driver.SaveState(state);
-            var loaded = await driver.LoadState();
-            loaded.Should().BeOfType<MainState>();
+        await driver.SaveState(state);
+        var loaded = await driver.LoadState();
+        loaded.Should().BeOfType<MainState>();
 
-            var retyped = (MainState)loaded;
-            retyped.SelectedSupportedType.Should().Be(CloudType.GitHub);
-            retyped.Clouds.Count.Should().Be(2);
-            retyped.CloudStates.Should().NotBeEmpty();
-            retyped.CloudStates.Should().Contain(provider =>
-                provider.AuthState.DirectAuthState.Username == "Joseph Joestar" &&
-                provider.AuthState.DirectAuthState.Password == "Dio");
+        var retyped = (MainState)loaded;
+        retyped.SelectedSupportedType.Should().Be(CloudType.GitHub);
+        retyped.Clouds.Count.Should().Be(2);
+        retyped.CloudStates.Should().NotBeEmpty();
+        retyped.CloudStates.Should().Contain(provider =>
+            provider.AuthState.DirectAuthState.Username == "Joseph Joestar" &&
+            provider.AuthState.DirectAuthState.Password == "Dio");
 
-            await driver.InvalidateState();
-            await Assert.ThrowsAnyAsync<Exception>(async () => await driver.LoadState()).ConfigureAwait(false);
-            await driver.SaveState(new MainState());
-            await driver.LoadState();
-        }
+        await driver.InvalidateState();
+        await Assert.ThrowsAnyAsync<Exception>(async () => await driver.LoadState()).ConfigureAwait(false);
+        await driver.SaveState(new MainState());
+        await driver.LoadState();
     }
 }

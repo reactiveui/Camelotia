@@ -1,8 +1,7 @@
 ﻿using Xamarin.Forms;
 
-namespace Camelotia.Presentation.Xamarin.Controls
+namespace Camelotia.Presentation.Xamarin.Controls;
+
+public class AccentButton : Button
 {
-    public class AccentButton : Button
-    {
-    }
 }

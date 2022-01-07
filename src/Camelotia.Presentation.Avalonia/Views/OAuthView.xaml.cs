@@ -2,14 +2,13 @@ using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
 
-namespace Camelotia.Presentation.Avalonia.Views
+namespace Camelotia.Presentation.Avalonia.Views;
+
+public sealed partial class OAuthView : ReactiveUserControl<IOAuthViewModel>
 {
-    public sealed partial class OAuthView : ReactiveUserControl<IOAuthViewModel>
+    public OAuthView()
     {
-        public OAuthView()
-        {
-            InitializeComponent();
-            this.WhenActivated(disposables => { });
-        }
+        InitializeComponent();
+        this.WhenActivated(disposables => { });
     }
 }

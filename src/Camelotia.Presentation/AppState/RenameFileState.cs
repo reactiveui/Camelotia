@@ -1,11 +1,10 @@
 using System.Runtime.Serialization;
 
-namespace Camelotia.Presentation.AppState
+namespace Camelotia.Presentation.AppState;
+
+[DataContract]
+public class RenameFileState
 {
-    [DataContract]
-    public class RenameFileState
-    {
-        [DataMember]
-        public string NewName { get; set; }
-    }
+    [DataMember]
+    public string NewName { get; set; }
 }

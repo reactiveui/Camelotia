@@ -1,15 +1,14 @@
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 
-namespace Camelotia.Presentation.Interfaces
-{
-    public interface IHostAuthViewModel :
-        IDirectAuthViewModel,
-        IValidatableViewModel,
-        IReactiveObject
-    {
-        string Address { get; set; }
+namespace Camelotia.Presentation.Interfaces;
 
-        string Port { get; set; }
-    }
+public interface IHostAuthViewModel :
+    IDirectAuthViewModel,
+    IValidatableViewModel,
+    IReactiveObject
+{
+    string Address { get; set; }
+
+    string Port { get; set; }
 }

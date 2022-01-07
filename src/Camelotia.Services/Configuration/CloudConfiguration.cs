@@ -1,20 +1,19 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Camelotia.Services.Configuration
+namespace Camelotia.Services.Configuration;
+
+[DataContract]
+public class CloudConfiguration
 {
-    [DataContract]
-    public class CloudConfiguration
-    {
-        [DataMember]
-        public GitHubCloudOptions GitHub { get; set; } = new GitHubCloudOptions();
+    [DataMember]
+    public GitHubCloudOptions GitHub { get; set; } = new();
 
-        [DataMember]
-        public GoogleDriveCloudOptions GoogleDrive { get; set; } = new GoogleDriveCloudOptions();
+    [DataMember]
+    public GoogleDriveCloudOptions GoogleDrive { get; set; } = new();
 
-        [DataMember]
-        public VkDocsCloudOptions VkDocs { get; set; } = new VkDocsCloudOptions();
+    [DataMember]
+    public VkDocsCloudOptions VkDocs { get; set; } = new();
 
-        [DataMember]
-        public YandexDiskCloudOptions YandexDisk { get; set; } = new YandexDiskCloudOptions();
-    }
+    [DataMember]
+    public YandexDiskCloudOptions YandexDisk { get; set; } = new();
 }

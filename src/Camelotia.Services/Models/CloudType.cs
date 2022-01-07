@@ -1,13 +1,12 @@
-namespace Camelotia.Services.Models
+namespace Camelotia.Services.Models;
+
+public enum CloudType
 {
-    public enum CloudType
-    {
-        Ftp,
-        GitHub,
-        GoogleDrive,
-        Local,
-        Sftp,
-        VkDocs,
-        Yandex
-    }
+    Ftp,
+    GitHub,
+    GoogleDrive,
+    Local,
+    Sftp,
+    VkDocs,
+    Yandex
 }

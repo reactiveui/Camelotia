@@ -2,14 +2,13 @@ using Avalonia.ReactiveUI;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
 
-namespace Camelotia.Presentation.Avalonia.Views
+namespace Camelotia.Presentation.Avalonia.Views;
+
+public sealed partial class RenameFileView : ReactiveUserControl<IRenameFileViewModel>
 {
-    public sealed partial class RenameFileView : ReactiveUserControl<IRenameFileViewModel>
+    public RenameFileView()
     {
-        public RenameFileView()
-        {
-            InitializeComponent();
-            this.WhenActivated(disposables => { });
-        }
+        InitializeComponent();
+        this.WhenActivated(disposables => { });
     }
 }

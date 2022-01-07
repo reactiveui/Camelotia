@@ -5,32 +5,31 @@ using Camelotia.Services.Providers;
 using FluentAssertions;
 using Xunit;
 
-namespace Camelotia.Tests.Services
+namespace Camelotia.Tests.Services;
+
+public sealed class GithubCloudTests
 {
-    public sealed class GithubCloudTests
+    private readonly MainState _state = new();
+    private readonly CloudParameters _model = new()
     {
-        private readonly MainState _state = new MainState();
-        private readonly CloudParameters _model = new CloudParameters
-        {
-            Id = Guid.NewGuid(),
-            Created = DateTime.Now,
-            Type = CloudType.GitHub
-        };
+        Id = Guid.NewGuid(),
+        Created = DateTime.Now,
+        Type = CloudType.GitHub
+    };
 
-        [Fact]
-        public void VerifyDefaultPropertyValues()
-        {
-            var provider = new GitHubCloud(_model, _state.CloudConfiguration.GitHub);
-            provider.InitialPath.Should().Be(string.Empty);
+    [Fact]
+    public void VerifyDefaultPropertyValues()
+    {
+        var provider = new GitHubCloud(_model, _state.CloudConfiguration.GitHub);
+        provider.InitialPath.Should().Be(string.Empty);
 
-            provider.CanCreateFolder.Should().BeFalse();
-            provider.Created.Should().Be(_model.Created);
-            provider.Name.Should().Be("GitHub");
-            provider.Id.Should().Be(_model.Id);
+        provider.CanCreateFolder.Should().BeFalse();
+        provider.Created.Should().Be(_model.Created);
+        provider.Name.Should().Be("GitHub");
+        provider.Id.Should().Be(_model.Id);
 
-            provider.SupportsDirectAuth.Should().BeTrue();
-            provider.SupportsHostAuth.Should().BeFalse();
-            provider.SupportsOAuth.Should().BeFalse();
-        }
+        provider.SupportsDirectAuth.Should().BeTrue();
+        provider.SupportsHostAuth.Should().BeFalse();
+        provider.SupportsOAuth.Should().BeFalse();
     }
 }

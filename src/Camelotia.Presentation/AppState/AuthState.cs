@@ -1,14 +1,13 @@
 using System.Runtime.Serialization;
 
-namespace Camelotia.Presentation.AppState
-{
-    [DataContract]
-    public class AuthState
-    {
-        [DataMember]
-        public DirectAuthState DirectAuthState { get; set; } = new DirectAuthState();
+namespace Camelotia.Presentation.AppState;
 
-        [DataMember]
-        public HostAuthState HostAuthState { get; set; } = new HostAuthState();
-    }
+[DataContract]
+public class AuthState
+{
+    [DataMember]
+    public DirectAuthState DirectAuthState { get; set; } = new();
+
+    [DataMember]
+    public HostAuthState HostAuthState { get; set; } = new();
 }
