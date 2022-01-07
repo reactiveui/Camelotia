@@ -1,7 +1,7 @@
 jobs:
 - job: Linux
   pool:
-    vmImage: 'ubuntu-18.04'
+    vmImage: 'ubuntu-20.04'
   variables:
     buildConfiguration: 'Release'
   steps:
@@ -14,7 +14,7 @@ jobs:
 
 - job: Windows
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   variables:
     buildConfiguration: 'Release'
   steps:
