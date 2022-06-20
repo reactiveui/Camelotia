@@ -17,3 +17,6 @@ jobs:
       productNamespacePrefix: "Camelotia"
       useVisualStudioPreview: false
       useMauiCheckDotNetTool: false
+      installWindowsSdk: false
+      installWorkflows: false
+      solutionFile: 'Camelotia.sln'
