@@ -20,4 +20,3 @@ jobs:
       installWindowsSdk: false
       installWorkflows: false
       solutionFile: 'Camelotia.sln'
-      codeCovToken:  ${{ secrets.CODECOVTOKEN }}
