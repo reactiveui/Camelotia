@@ -134,5 +134,6 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
+  <Target Name="Pack"></Target>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
