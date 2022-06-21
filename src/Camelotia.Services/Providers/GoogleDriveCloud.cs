@@ -120,6 +120,7 @@ public sealed class GoogleDriveCloud : ICloud, IDisposable
         return Task.CompletedTask;
     });
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1075:Avoid empty catch clause that catches System.Exception.", Justification = "Deliberate ignore")]
     private void EnsureLoggedInIfTokenSaved() => Task.Run(async () =>
     {
         try

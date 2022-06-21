@@ -23,7 +23,7 @@ public sealed partial class FileView : ReactiveUserControl<IFileViewModel>
                 .InvokeCommand(this, x => x.ViewModel.Provider.Open)
                 .DisposeWith(disposables);
 
-            this.ContextMenu
+            ContextMenu
                 .Events()
                 .MenuOpened
                 .Subscribe(args => ViewModel.Provider.SelectedFile = ViewModel)
