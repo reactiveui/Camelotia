@@ -216,7 +216,7 @@
       <Version>16.2.6</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI.Uwp">
-      <Version>16.2.6</Version>
+      <Version>18.1.8</Version>
     </PackageReference>
     <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.1.3" PrivateAssets="all" />
   </ItemGroup>
