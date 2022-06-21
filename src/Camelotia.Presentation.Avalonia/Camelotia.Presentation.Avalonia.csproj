@@ -8,13 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.6" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.6" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.6" />
-    <PackageReference Include="Citrus.Avalonia" Version="1.5.1" />
+    <PackageReference Include="Avalonia" Version="0.10.15" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.15" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.15" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.15" />
+    <PackageReference Include="Citrus.Avalonia" Version="1.6.1" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
-    <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.1.3" PrivateAssets="all" />
+    <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.1.4" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
