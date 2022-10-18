@@ -8,7 +8,7 @@ Camelotia is a sample cross-platform application built with reactive extensions,
 
 <img src="images/UiAvalonia.png" width="550">
 
-In order to compile .NET Standard libraries, run tests and run the <a href="http://github.com/avaloniaui">Avalonia</a> application on Windows, Linux or MacOS operating system make sure to have latest [.NET Core SDK](https://dot.net/) installed. Launch the `Camelotia.Avalonia.sln` file to browse or to edit source files. Camelotia uses [Nuke Build](https://github.com/nuke-build/nuke) to build and test the solution. Execute the following commands to run the build scripts on Linux or MacOS:
+In order to compile .NET Standard libraries, run tests and run the <a href="https://github.com/avaloniaui">Avalonia</a> application on Windows, Linux or MacOS operating system make sure to have latest [.NET Core SDK](https://dot.net/) installed. Launch the `Camelotia.Avalonia.sln` file to browse or to edit source files. Camelotia uses [Nuke Build](https://github.com/nuke-build/nuke) to build and test the solution. Execute the following commands to run the build scripts on Linux or MacOS:
 
 ```sh
 # Linux or MacOS shell. Launches the Avalonia app after build.
@@ -50,8 +50,8 @@ To compile the <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/"
 - <a href="https://github.com/reactiveui/reactiveui.validation">ReactiveUI.Validation</a> reactive validation library
 - <a href="https://reactiveui.net/docs/handbook/events/">ReactiveUI.Events</a> turning regular events into observables
 - <a href="https://github.com/reactiveui/DynamicData">DynamicData</a> reactive collections
-- <a href="http://github.com/avaloniaui">AvaloniaUI</a> cross-platform XAML-based GUI framework
-- <a href="http://github.com/worldbeater/citrus.avalonia">Citrus.Avalonia</a> bright and modern AvaloniaUI theme
+- <a href="https://github.com/avaloniaui">AvaloniaUI</a> cross-platform XAML-based GUI framework
+- <a href="https://github.com/worldbeater/citrus.avalonia">Citrus.Avalonia</a> bright and modern AvaloniaUI theme
 - <a href="https://github.com/reactiveui/Akavache">Akavache</a> persistent key-value store
 - <a href="https://github.com/nuke-build/nuke">Nuke</a> build automation system for C#/.NET
 - <a href="https://github.com/xunit/xunit">XUnit</a> unit testing tool for .NET
