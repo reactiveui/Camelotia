@@ -8,7 +8,7 @@
   <ItemGroup>
     <PackageReference Include="akavache" Version="9.1.20" />
     <PackageReference Include="FluentFTP" Version="37.0.4" />
-    <PackageReference Include="Google.Apis.Drive.v3" Version="1.57.0.2789" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.68.0.3428" />
     <PackageReference Include="Octokit" Version="3.0.0" />
     <PackageReference Include="ssh.net" Version="2020.0.2" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
