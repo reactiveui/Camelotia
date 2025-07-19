@@ -1,4 +1,3 @@
-using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using Camelotia.Presentation.AppState;
@@ -71,4 +70,17 @@ public sealed class DirectAuthViewModel : ReactiveValidationObject, IDirectAuthV
     public bool HasErrorMessage => _hasErrorMessage.Value;
 
     public ReactiveCommand<Unit, Unit> Login { get; }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _errorMessage?.Dispose();
+            _hasErrorMessage?.Dispose();
+            _isBusy?.Dispose();
+            Login?.Dispose();
+        }
+
+        base.Dispose(disposing);
+    }
 }

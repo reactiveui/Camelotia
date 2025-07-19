@@ -1,4 +1,3 @@
-using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using Camelotia.Presentation.AppState;
@@ -93,4 +92,16 @@ public sealed class HostAuthViewModel : ReactiveValidationObject, IHostAuthViewM
     public bool IsBusy => _isBusy.Value;
 
     public ReactiveCommand<Unit, Unit> Login { get; }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _errorMessage?.Dispose();
+            _hasErrorMessage?.Dispose();
+            _isBusy?.Dispose();
+        }
+
+        base.Dispose(disposing);
+    }
 }

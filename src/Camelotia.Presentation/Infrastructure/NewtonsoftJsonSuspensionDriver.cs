@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using Newtonsoft.Json;
@@ -8,9 +6,8 @@ using ReactiveUI;
 
 namespace Camelotia.Presentation.Infrastructure;
 
-public sealed class NewtonsoftJsonSuspensionDriver : ISuspensionDriver
+public sealed class NewtonsoftJsonSuspensionDriver(string stateFilePath) : ISuspensionDriver
 {
-    private readonly string _stateFilePath;
     private readonly JsonSerializerSettings _settings = new()
     {
         TypeNameHandling = TypeNameHandling.All,
@@ -19,23 +16,21 @@ public sealed class NewtonsoftJsonSuspensionDriver : ISuspensionDriver
         ContractResolver = new CamelCasePropertyNamesContractResolver(),
     };
 
-    public NewtonsoftJsonSuspensionDriver(string stateFilePath) => _stateFilePath = stateFilePath;
-
     public IObservable<Unit> InvalidateState()
     {
-        if (File.Exists(_stateFilePath))
-            File.Delete(_stateFilePath);
+        if (File.Exists(stateFilePath))
+            File.Delete(stateFilePath);
         return Observable.Return(Unit.Default);
     }
 
     public IObservable<object> LoadState()
     {
-        if (!File.Exists(_stateFilePath))
+        if (!File.Exists(stateFilePath))
         {
-            return Observable.Throw<object>(new FileNotFoundException(_stateFilePath));
+            return Observable.Throw<object>(new FileNotFoundException(stateFilePath));
         }
 
-        var lines = File.ReadAllText(_stateFilePath);
+        var lines = File.ReadAllText(stateFilePath);
         var state = JsonConvert.DeserializeObject<object>(lines, _settings);
         return Observable.Return(state);
     }
@@ -43,7 +38,7 @@ public sealed class NewtonsoftJsonSuspensionDriver : ISuspensionDriver
     public IObservable<Unit> SaveState(object state)
     {
         var lines = JsonConvert.SerializeObject(state, Formatting.Indented, _settings);
-        File.WriteAllText(_stateFilePath, lines);
+        File.WriteAllText(stateFilePath, lines);
         return Observable.Return(Unit.Default);
     }
 }

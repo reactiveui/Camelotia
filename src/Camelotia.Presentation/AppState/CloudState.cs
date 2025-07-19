@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.Serialization;
 using Camelotia.Services.Models;
 

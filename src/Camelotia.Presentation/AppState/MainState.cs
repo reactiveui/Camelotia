@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 using Camelotia.Services.Configuration;
 using Camelotia.Services.Models;
@@ -17,7 +14,7 @@ public class MainState
     [DataMember]
     public IEnumerable<CloudState> CloudStates
     {
-        get => Clouds.Items.ToList();
+        get => [.. Clouds.Items];
         set => Clouds.AddOrUpdate(value);
     }
 

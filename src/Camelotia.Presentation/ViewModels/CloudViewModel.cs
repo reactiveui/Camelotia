@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -181,7 +177,7 @@ public sealed class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatab
 
         var canDownloadSelectedFile = this
             .WhenAnyValue(x => x.SelectedFile)
-            .Select(file => file != null && !file.IsFolder)
+            .Select(file => file?.IsFolder == false)
             .CombineLatest(Refresh.IsExecuting, canInteract, (down, loading, can) => down && !loading && can);
 
         DownloadSelectedFile = ReactiveCommand.CreateFromObservable(
@@ -209,7 +205,7 @@ public sealed class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatab
 
         var canDeleteSelection = this
             .WhenAnyValue(x => x.SelectedFile)
-            .Select(file => file != null && !file.IsFolder)
+            .Select(file => file?.IsFolder == false)
             .CombineLatest(Refresh.IsExecuting, canInteract, (del, loading, ci) => del && !loading && ci);
 
         DeleteSelectedFile = ReactiveCommand.CreateFromTask(

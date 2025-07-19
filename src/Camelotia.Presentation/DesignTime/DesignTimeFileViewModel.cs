@@ -1,22 +1,19 @@
-using System;
 using System.Globalization;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
 
 namespace Camelotia.Presentation.DesignTime;
 
-public class DesignTimeFileViewModel : ReactiveObject, IFileViewModel
+public class DesignTimeFileViewModel(DesignTimeCloudViewModel provider) : ReactiveObject, IFileViewModel
 {
     public DesignTimeFileViewModel()
         : this(null)
     {
     }
 
-    public DesignTimeFileViewModel(DesignTimeCloudViewModel provider) => Provider = provider;
-
     public string Name { get; } = "Awesome file.";
 
-    public ICloudViewModel Provider { get; }
+    public ICloudViewModel Provider { get; } = provider;
 
     public string Modified { get; } = DateTime.Now.ToString(CultureInfo.InvariantCulture);
 

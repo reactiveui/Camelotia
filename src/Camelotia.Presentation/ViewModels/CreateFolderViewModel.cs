@@ -1,4 +1,3 @@
-using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using Camelotia.Presentation.AppState;
@@ -111,4 +110,17 @@ public sealed class CreateFolderViewModel : ReactiveValidationObject, ICreateFol
     public ReactiveCommand<Unit, Unit> Close { get; }
 
     public ReactiveCommand<Unit, Unit> Open { get; }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _path?.Dispose();
+            _errorMessage?.Dispose();
+            _hasErrorMessage?.Dispose();
+            _isLoading?.Dispose();
+        }
+
+        base.Dispose(disposing);
+    }
 }

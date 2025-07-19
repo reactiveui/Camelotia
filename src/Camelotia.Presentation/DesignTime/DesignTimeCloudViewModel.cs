@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Models;
@@ -12,11 +9,11 @@ public class DesignTimeCloudViewModel : ReactiveObject, ICloudViewModel
 {
     public DesignTimeCloudViewModel()
     {
-        Files = new[]
-        {
+        Files =
+        [
             new DesignTimeFileViewModel(this),
             new DesignTimeFileViewModel(this)
-        };
+        ];
         SelectedFile = Files.FirstOrDefault();
     }
 
@@ -70,25 +67,23 @@ public class DesignTimeCloudViewModel : ReactiveObject, ICloudViewModel
 
     public string CurrentPath { get; } = "/home/files";
 
-    public IEnumerable<IFolderViewModel> BreadCrumbs { get; } = new List<IFolderViewModel>
-    {
+    public IEnumerable<IFolderViewModel> BreadCrumbs { get; } =
+    [
         new DesignTimeFolderViewModel(
             "home",
-            new[]
-            {
+            [
                 new DesignTimeFolderViewModel("home"),
                 new DesignTimeFolderViewModel("home1"),
                 new DesignTimeFolderViewModel("home2")
-            }),
+            ]),
         new DesignTimeFolderViewModel(
             "files",
-            new[]
-            {
+            [
                 new DesignTimeFolderViewModel("files"),
                 new DesignTimeFolderViewModel("files1"),
                 new DesignTimeFolderViewModel("files2")
-            })
-    };
+            ])
+    ];
 
     public string Description { get; } = "Mock file system.";
 

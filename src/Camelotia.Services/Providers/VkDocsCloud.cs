@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reactive.Subjects;
 using System.Text;
-using System.Threading.Tasks;
 using Camelotia.Services.Configuration;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
@@ -15,7 +9,6 @@ using VkNet;
 using VkNet.Abstractions;
 using VkNet.Enums.Filters;
 using VkNet.Model;
-using VkNet.Model.Attachments;
 
 namespace Camelotia.Services.Providers;
 

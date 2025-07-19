@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Camelotia.Presentation.Interfaces;
+﻿using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Models;
 using ReactiveUI;
 

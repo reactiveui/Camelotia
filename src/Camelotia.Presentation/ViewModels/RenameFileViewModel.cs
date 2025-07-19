@@ -1,4 +1,3 @@
-using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using Camelotia.Presentation.AppState;
@@ -108,4 +107,17 @@ public sealed class RenameFileViewModel : ReactiveValidationObject, IRenameFileV
     public ReactiveCommand<Unit, Unit> Close { get; }
 
     public ReactiveCommand<Unit, Unit> Open { get; }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _oldName?.Dispose();
+            _hasErrorMessage?.Dispose();
+            _errorMessage?.Dispose();
+            _isLoading?.Dispose();
+        }
+
+        base.Dispose(disposing);
+    }
 }

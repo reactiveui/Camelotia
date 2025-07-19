@@ -12,7 +12,7 @@ using static Nuke.Common.Tools.MSBuild.MSBuildTasks;
 
 // ReSharper disable ArrangeTypeMemberModifiers
 
-[CheckBuildProjectConfigurations(TimeoutInMilliseconds = 2000)]
+////[CheckBuildProjectConfigurations(TimeoutInMilliseconds = 2000)]
 [UnsetVisualStudioEnvironmentVariables]
 class Build : NukeBuild
 {
@@ -33,7 +33,7 @@ class Build : NukeBuild
         .Executes(() => SourceDirectory
             .GlobDirectories("**/bin", "**/obj", "**/AppPackages", "**/BundleArtifacts")
             .Concat(RootDirectory.GlobDirectories("**/artifacts"))
-            .ForEach(DeleteDirectory));
+            .ForEach(p => p.DeleteDirectory()));
 
     Target RunUnitTests => _ => _
         .DependsOn(Clean)

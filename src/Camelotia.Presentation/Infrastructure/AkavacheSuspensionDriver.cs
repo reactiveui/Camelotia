@@ -1,4 +1,3 @@
-using System;
 using System.Reactive;
 using Akavache;
 using Newtonsoft.Json;
