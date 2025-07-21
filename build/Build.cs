@@ -6,7 +6,6 @@ using Nuke.Common.IO;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.MSBuild;
 using Nuke.Common.Utilities.Collections;
-using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.MSBuild.MSBuildTasks;
 
@@ -135,7 +134,7 @@ class Build : NukeBuild
             Serilog.Log.Information("Moving APK files to artifacts directory...");
             SourceDirectory
                 .GlobFiles("**/bin/**/*-Signed.apk")
-                .ForEach(file => MoveFileToDirectory(file, ArtifactsDirectory));
+                .ForEach(file => file.MoveToDirectory(ArtifactsDirectory));
             Serilog.Log.Information("Successfully moved APK files.");
         });
 

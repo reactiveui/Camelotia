@@ -100,6 +100,7 @@ public sealed class HostAuthViewModel : ReactiveValidationObject, IHostAuthViewM
             _errorMessage?.Dispose();
             _hasErrorMessage?.Dispose();
             _isBusy?.Dispose();
+            Login?.Dispose();
         }
 
         base.Dispose(disposing);

@@ -11,6 +11,7 @@ using Camelotia.Presentation.ViewModels;
 using Camelotia.Presentation.Xamarin.Droid.Services;
 using Camelotia.Services;
 using ReactiveUI;
+using ReactiveUI.XamForms;
 
 namespace Camelotia.Presentation.Xamarin.Droid
 {

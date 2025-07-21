@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Camelotia.Services.Interfaces;
 
@@ -25,7 +21,7 @@ public sealed class AvaloniaFileManager : IFileManager
     {
         var fileDialog = new OpenFileDialog { AllowMultiple = false };
         var files = await fileDialog.ShowAsync(_window).ConfigureAwait(false);
-        var path = files.First();
+        var path = files[0];
 
         var attributes = File.GetAttributes(path);
         var isFolder = attributes.HasFlag(FileAttributes.Directory);

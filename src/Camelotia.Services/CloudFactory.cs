@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Akavache;
 using Camelotia.Services.Configuration;
 using Camelotia.Services.Interfaces;

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Camelotia.Services.Models;
+﻿namespace Camelotia.Services.Models;
 
 public class FolderModel
 {

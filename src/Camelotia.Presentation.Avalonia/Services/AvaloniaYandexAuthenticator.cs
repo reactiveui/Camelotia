@@ -1,8 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using Camelotia.Services.Interfaces;
 
 namespace Camelotia.Presentation.Avalonia.Services;

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Camelotia.Services.Models;
 
 namespace Camelotia.Services.Interfaces;

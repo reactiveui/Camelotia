@@ -1,5 +1,3 @@
-using System;
-
 namespace Camelotia.Services.Models;
 
 public class CloudParameters

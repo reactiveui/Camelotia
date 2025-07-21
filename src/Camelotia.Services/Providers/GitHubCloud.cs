@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Reactive.Subjects;
-using System.Threading.Tasks;
 using Camelotia.Services.Configuration;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;

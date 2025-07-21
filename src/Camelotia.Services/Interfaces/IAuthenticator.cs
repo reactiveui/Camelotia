@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Camelotia.Services.Interfaces;
+﻿namespace Camelotia.Services.Interfaces;
 
 public interface IAuthenticator
 {
