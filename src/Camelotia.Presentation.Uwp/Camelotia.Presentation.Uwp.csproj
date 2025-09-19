@@ -213,7 +213,7 @@
       <Version>6.2.14</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI">
-      <Version>20.4.1</Version>
+      <Version>21.0.1</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI.Uwp">
       <Version>18.4.1</Version>
