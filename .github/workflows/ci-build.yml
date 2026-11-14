@@ -6,17 +6,20 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  productNamespacePrefix: "Camelotia"
+# Needed so the reusable workflow can optionally delete the temp per-OS artifacts it creates.
+permissions:
+  contents: read
+  actions: write
 
 jobs:
   build:
     uses: reactiveui/actions-common/.github/workflows/workflow-common-setup-and-build.yml@main
     with:
       configuration: Release
-      productNamespacePrefix: "Camelotia"
-      useVisualStudioPreview: false
-      useMauiCheckDotNetTool: false
-      installWindowsSdk: false
-      installWorkflows: false
-      solutionFile: 'Camelotia.sln'
+      productNamespacePrefix: Camelotia
+      solutionFile: Camelotia.Avalonia.sln
+      installWorkloads: true
+      # The tests are xUnit, whose host rejects the TUnit-only detailed-logging switches.
+      enableDetailedTestLogging: false
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
