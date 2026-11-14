@@ -1,9 +1,10 @@
-﻿using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Camelotia.Presentation.Interfaces;
-using ReactiveUI;
+using Camelotia.Presentation.Infrastructure;
+using ReactiveUI.Primitives.Reactive.Disposables;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.Wpf.Views
 {
@@ -16,7 +17,7 @@ namespace Camelotia.Presentation.Wpf.Views
         {
             InitializeComponent();
             DataContextChanged += (sender, args) => ViewModel = DataContext as IFolderViewModel;
-            this.WhenActivated(disposables =>
+            this.WhenActivated((ContainerDisposable disposables) =>
             {
                 this.WhenAnyValue(x => x.TopLevelMenu.IsSubmenuOpen)
                     .Select(isOpen => !isOpen)

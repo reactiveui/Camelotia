@@ -1,4 +1,4 @@
-using Akavache;
+using Akavache.Reactive;
 using Camelotia.Services.Configuration;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;

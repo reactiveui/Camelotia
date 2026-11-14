@@ -1,10 +1,11 @@
-﻿using System;
-using System.Reactive.Disposables;
+using System;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Camelotia.Presentation.Interfaces;
-using ReactiveUI;
+using Camelotia.Presentation.Infrastructure;
+using ReactiveUI.Primitives.Reactive.Disposables;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.Wpf.Views;
 
@@ -17,7 +18,7 @@ public partial class AuthView : UserControl, IViewFor<IAuthViewModel>
     {
         InitializeComponent();
         DataContextChanged += (sender, args) => ViewModel = DataContext as IAuthViewModel;
-        this.WhenActivated(disposable =>
+        this.WhenActivated((ContainerDisposable disposable) =>
         {
             this.WhenAnyValue(x => x.ViewModel.SupportsDirectAuth)
                 .Where(supports => supports)

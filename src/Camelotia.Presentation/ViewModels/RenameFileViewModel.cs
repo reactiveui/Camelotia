@@ -4,15 +4,16 @@ using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.Helpers;
+using ReactiveUI.Reactive;
+using ReactiveUI.SourceGenerators;
+using ReactiveUI.Validation.Reactive.Extensions;
+using ReactiveUI.Validation.Reactive.Helpers;
 
 namespace Camelotia.Presentation.ViewModels;
 
 public delegate IRenameFileViewModel RenameFileViewModelFactory(ICloudViewModel providerViewModel);
 
-public sealed class RenameFileViewModel : ReactiveValidationObject, IRenameFileViewModel
+public sealed partial class RenameFileViewModel : ReactiveValidationObject, IRenameFileViewModel
 {
     private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
     private readonly ObservableAsPropertyHelper<string> _errorMessage;
@@ -89,10 +90,10 @@ public sealed class RenameFileViewModel : ReactiveValidationObject, IRenameFileV
     }
 
     [Reactive]
-    public bool IsVisible { get; set; }
+    public partial bool IsVisible { get; set; }
 
     [Reactive]
-    public string NewName { get; set; }
+    public partial string NewName { get; set; }
 
     public bool HasErrorMessage => _hasErrorMessage.Value;
 

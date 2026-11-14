@@ -1,6 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Tests;
 

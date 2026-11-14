@@ -3,7 +3,10 @@ using System.Reactive;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia.Reactive;
+using Akavache.Reactive;
+using Akavache.Reactive.Sqlite3;
+using Akavache.Reactive.SystemTextJson;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Avalonia.Services;
 using Camelotia.Presentation.Avalonia.Views;
@@ -11,6 +14,7 @@ using Camelotia.Presentation.Infrastructure;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.Avalonia;
 
@@ -20,10 +24,11 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        Akavache.BlobCache.ApplicationName = "CamelotiaV2";
+        Splat.Builder.AppBuilder.CreateSplatBuilder()
+            .WithAkavacheCacheDatabase<SystemJsonSerializer>(static builder => builder.WithSqliteProvider().WithSqliteDefaults(), "CamelotiaV2");
         var suspension = new AutoSuspendHelper(ApplicationLifetime);
-        RxApp.SuspensionHost.CreateNewAppState = () => new MainState();
-        RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver("appstate.json"));
+        RxSuspension.SuspensionHost.CreateNewAppState = () => new MainState();
+        RxSuspension.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver("appstate.json"));
         suspension.OnFrameworkInitializationCompleted();
 
         var window = new Window
@@ -38,8 +43,7 @@ public class App : Application
         window.Content = CreateView(window);
         window.Show();
 
-        RxApp.DefaultExceptionHandler = Observer.Create<Exception>(Console.WriteLine);
-        base.OnFrameworkInitializationCompleted();
+                base.OnFrameworkInitializationCompleted();
     }
 
     public object CreateView(Window window)
@@ -53,13 +57,13 @@ public class App : Application
 
     private static MainViewModel CreateViewModel(Window window)
     {
-        var main = RxApp.SuspensionHost.GetAppState<MainState>();
+        var main = RxSuspension.SuspensionHost.GetAppState<MainState>();
         return new MainViewModel(
             main,
             new CloudFactory(
                 main.CloudConfiguration,
                 new AvaloniaYandexAuthenticator(),
-                Akavache.BlobCache.UserAccount),
+                Akavache.Reactive.CacheDatabase.UserAccount),
             (state, provider) => new CloudViewModel(
                 state,
                 owner => new CreateFolderViewModel(state.CreateFolderState, owner, provider),

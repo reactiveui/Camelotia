@@ -1,5 +1,5 @@
 using System;
-using Akavache;
+using Akavache.Reactive;
 using Camelotia.Presentation.AppState;
 using Camelotia.Services.Models;
 using Camelotia.Services.Providers;

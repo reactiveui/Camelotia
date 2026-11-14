@@ -4,13 +4,14 @@ using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.Helpers;
+using ReactiveUI.Reactive;
+using ReactiveUI.SourceGenerators;
+using ReactiveUI.Validation.Reactive.Extensions;
+using ReactiveUI.Validation.Reactive.Helpers;
 
 namespace Camelotia.Presentation.ViewModels;
 
-public sealed class DirectAuthViewModel : ReactiveValidationObject, IDirectAuthViewModel
+public sealed partial class DirectAuthViewModel : ReactiveValidationObject, IDirectAuthViewModel
 {
     private readonly ObservableAsPropertyHelper<string> _errorMessage;
     private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
@@ -58,10 +59,10 @@ public sealed class DirectAuthViewModel : ReactiveValidationObject, IDirectAuthV
     }
 
     [Reactive]
-    public string Username { get; set; }
+    public partial string Username { get; set; }
 
     [Reactive]
-    public string Password { get; set; }
+    public partial string Password { get; set; }
 
     public bool IsBusy => _isBusy.Value;
 

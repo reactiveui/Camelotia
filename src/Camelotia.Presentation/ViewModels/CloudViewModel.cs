@@ -8,13 +8,16 @@ using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using Camelotia.Presentation.Infrastructure;
+using ReactiveUI.Primitives.Reactive.Disposables;
+using ReactiveUI.Reactive;
+using ReactiveUI.SourceGenerators;
 
 namespace Camelotia.Presentation.ViewModels;
 
 public delegate ICloudViewModel CloudViewModelFactory(CloudState state, ICloud provider);
 
-public sealed class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatableViewModel
+public sealed partial class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatableViewModel
 {
     private readonly ObservableAsPropertyHelper<IEnumerable<IFolderViewModel>> _breadCrumbs;
     private readonly ObservableAsPropertyHelper<IEnumerable<IFileViewModel>> _files;
@@ -125,7 +128,7 @@ public sealed class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatab
             .ThrownExceptions
             .Select(exception => false)
             .Merge(getBreadCrumbs.Select(items => items != null && items.Any()))
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .ToProperty(this, x => x.ShowBreadCrumbs);
 
         _hideBreadCrumbs = this
@@ -134,7 +137,7 @@ public sealed class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatab
             .ToProperty(this, x => x.HideBreadCrumbs);
 
         this.WhenAnyValue(x => x.CurrentPath, x => x.IsReady)
-            .Where(x => x.Item1 != null && x.Item2)
+            .Where(x => x.Property1 != null && x.Property2)
             .Select(_ => Unit.Default)
             .InvokeCommand(getBreadCrumbs);
 
@@ -156,7 +159,7 @@ public sealed class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatab
         _hasErrorMessage = Refresh
             .ThrownExceptions
             .Select(exception => true)
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Merge(Refresh.Select(x => false))
             .ToProperty(this, x => x.HasErrorMessage);
 
@@ -196,7 +199,7 @@ public sealed class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatab
                 cloud.SupportsOAuth ||
                 cloud.SupportsHostAuth))
             .CombineLatest(canInteract, (logout, interact) => logout && interact)
-            .ObserveOn(RxApp.MainThreadScheduler);
+            .ObserveOn(RxSchedulers.MainThreadScheduler);
 
         Logout = ReactiveCommand.CreateFromTask(cloud.Logout, canLogout);
 
@@ -246,10 +249,10 @@ public sealed class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatab
     }
 
     [Reactive]
-    public int RefreshingIn { get; private set; }
+    public partial int RefreshingIn { get; private set; }
 
     [Reactive]
-    public IFileViewModel SelectedFile { get; set; }
+    public partial IFileViewModel SelectedFile { get; set; }
 
     public bool IsCurrentPathEmpty => _isCurrentPathEmpty.Value;
 
@@ -309,7 +312,7 @@ public sealed class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatab
 
     public ReactiveCommand<string, string> SetPath { get; }
 
-    private void ActivateAutoRefresh(CompositeDisposable disposable)
+    private void ActivateAutoRefresh(ContainerDisposable disposable)
     {
         this.WhenAnyValue(x => x.Auth.IsAuthenticated)
             .Where(authenticated => authenticated)
@@ -320,7 +323,7 @@ public sealed class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatab
         Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
             .Select(_ => RefreshingIn - 1)
             .Where(value => value >= 0)
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(x => RefreshingIn = x)
             .DisposeWith(disposable);
 
@@ -334,7 +337,7 @@ public sealed class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatab
 
         Refresh.Select(_ => 30)
             .StartWith(30)
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(x => RefreshingIn = x)
             .DisposeWith(disposable);
 

@@ -37,11 +37,11 @@
         <StackPanel Orientation="Horizontal">
           <TextBlock Text="{Binding Name}"/>
           <Menu>
-            <MenuItem Name="TopLevelMenu" Items="{Binding Children}">
+            <MenuItem Name="TopLevelMenu" ItemsSource="{Binding Children}">
               <MenuItem.Header>
                 <Panel>
-                  <DrawingPresenter Name="ArrowRight" MaxHeight="16" MaxWidth="16" Drawing="{DynamicResource ChevronRight}"/>
-                  <DrawingPresenter Name="ArrowDown" MaxHeight="16" MaxWidth="16" Drawing="{DynamicResource ChevronDown}"/>
+                  <DrawingPresenter Name="ArrowRight" IsVisible="{Binding !#TopLevelMenu.IsSubMenuOpen}" MaxHeight="16" MaxWidth="16" Drawing="{DynamicResource ChevronRight}"/>
+                  <DrawingPresenter Name="ArrowDown" IsVisible="{Binding #TopLevelMenu.IsSubMenuOpen}" MaxHeight="16" MaxWidth="16" Drawing="{DynamicResource ChevronDown}"/>
                 </Panel>
               </MenuItem.Header>
               <MenuItem.Styles>

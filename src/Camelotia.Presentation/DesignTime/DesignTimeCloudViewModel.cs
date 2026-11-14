@@ -2,6 +2,7 @@ using System.Reactive;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Models;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.DesignTime;
 

@@ -6,6 +6,7 @@ using Camelotia.Services.Interfaces;
 using FluentAssertions;
 using NSubstitute;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 using Xunit;
 
 namespace Camelotia.Tests.Presentation;
@@ -60,8 +61,8 @@ public sealed class AuthViewModelTests
 
     private AuthViewModel BuildAuthViewModel()
     {
-        RxApp.MainThreadScheduler = Scheduler.Immediate;
-        RxApp.TaskpoolScheduler = Scheduler.Immediate;
+        RxSchedulers.MainThreadScheduler = Scheduler.Immediate;
+        RxSchedulers.TaskpoolScheduler = Scheduler.Immediate;
         return new AuthViewModel(_direct, _host, _open, _provider);
     }
 }

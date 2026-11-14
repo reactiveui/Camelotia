@@ -1,7 +1,8 @@
 using System.ComponentModel;
 using System.Reactive;
 using ReactiveUI;
-using ReactiveUI.Validation.Abstractions;
+using ReactiveUI.Reactive;
+using ReactiveUI.Validation.Reactive.Abstractions;
 
 namespace Camelotia.Presentation.Interfaces;
 

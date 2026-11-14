@@ -4,13 +4,14 @@ using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.Helpers;
+using ReactiveUI.Reactive;
+using ReactiveUI.SourceGenerators;
+using ReactiveUI.Validation.Reactive.Extensions;
+using ReactiveUI.Validation.Reactive.Helpers;
 
 namespace Camelotia.Presentation.ViewModels;
 
-public sealed class HostAuthViewModel : ReactiveValidationObject, IHostAuthViewModel
+public sealed partial class HostAuthViewModel : ReactiveValidationObject, IHostAuthViewModel
 {
     private readonly ObservableAsPropertyHelper<string> _errorMessage;
     private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
@@ -74,16 +75,16 @@ public sealed class HostAuthViewModel : ReactiveValidationObject, IHostAuthViewM
     }
 
     [Reactive]
-    public string Port { get; set; }
+    public partial string Port { get; set; }
 
     [Reactive]
-    public string Address { get; set; }
+    public partial string Address { get; set; }
 
     [Reactive]
-    public string Username { get; set; }
+    public partial string Username { get; set; }
 
     [Reactive]
-    public string Password { get; set; }
+    public partial string Password { get; set; }
 
     public string ErrorMessage => _errorMessage.Value;
 

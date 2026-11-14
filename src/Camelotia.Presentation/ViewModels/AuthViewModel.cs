@@ -2,6 +2,7 @@ using System.Reactive.Linq;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.ViewModels;
 
@@ -26,7 +27,7 @@ public sealed class AuthViewModel : ReactiveObject, IAuthViewModel
             .IsAuthorized
             .DistinctUntilChanged()
             .Log(this, $"Authentication state changed for {provider.Name}")
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .ToProperty(this, x => x.IsAuthenticated);
 
         _isAnonymous = this

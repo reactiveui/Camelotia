@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Reactive;
 using Camelotia.Services.Models;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.Interfaces;
 

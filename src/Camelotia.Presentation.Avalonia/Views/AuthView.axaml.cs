@@ -1,10 +1,11 @@
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Layout;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia.Reactive;
 using Camelotia.Presentation.Interfaces;
-using ReactiveUI;
+using Camelotia.Presentation.Infrastructure;
+using ReactiveUI.Primitives.Reactive.Disposables;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.Avalonia.Views;
 
@@ -13,7 +14,7 @@ public sealed partial class AuthView : ReactiveUserControl<IAuthViewModel>
     public AuthView()
     {
         InitializeComponent();
-        this.WhenActivated(disposables =>
+        this.WhenActivated((ContainerDisposable disposables) =>
         {
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(context => context != null)
@@ -23,7 +24,7 @@ public sealed partial class AuthView : ReactiveUserControl<IAuthViewModel>
         });
     }
 
-    private static IControl ResolveControl(IAuthViewModel context)
+    private static Control ResolveControl(IAuthViewModel context)
     {
         if (context.SupportsDirectAuth)
             return new DirectAuthView { DataContext = context.DirectAuth };

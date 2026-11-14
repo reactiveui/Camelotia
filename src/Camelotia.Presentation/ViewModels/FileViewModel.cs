@@ -1,8 +1,9 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Camelotia.Presentation.Extensions;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Models;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.ViewModels;
 

@@ -8,6 +8,7 @@ using Camelotia.Services.Interfaces;
 using FluentAssertions;
 using NSubstitute;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 using Xunit;
 
 namespace Camelotia.Tests.Presentation;
@@ -135,8 +136,8 @@ public sealed class HostAuthViewModelTests
 
     private HostAuthViewModel BuildHostAuthViewModel()
     {
-        RxApp.MainThreadScheduler = Scheduler.Immediate;
-        RxApp.TaskpoolScheduler = Scheduler.Immediate;
+        RxSchedulers.MainThreadScheduler = Scheduler.Immediate;
+        RxSchedulers.TaskpoolScheduler = Scheduler.Immediate;
         return new HostAuthViewModel(_state, _provider);
     }
 }

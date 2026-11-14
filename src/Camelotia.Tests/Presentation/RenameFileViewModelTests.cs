@@ -8,6 +8,7 @@ using Camelotia.Services.Interfaces;
 using FluentAssertions;
 using NSubstitute;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 using Xunit;
 
 namespace Camelotia.Tests.Presentation;
@@ -123,8 +124,8 @@ public sealed class RenameFileViewModelTests
 
     private RenameFileViewModel BuildRenameFileViewModel()
     {
-        RxApp.MainThreadScheduler = Scheduler.Immediate;
-        RxApp.TaskpoolScheduler = Scheduler.Immediate;
+        RxSchedulers.MainThreadScheduler = Scheduler.Immediate;
+        RxSchedulers.TaskpoolScheduler = Scheduler.Immediate;
         return new RenameFileViewModel(_state, _model, _provider);
     }
 }

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Camelotia.Services.Interfaces;
 
 namespace Camelotia.Presentation.Avalonia.Services;
@@ -11,24 +12,20 @@ public sealed class AvaloniaFileManager : IFileManager
 
     public async Task<Stream> OpenWrite(string name)
     {
-        var fileDialog = new OpenFolderDialog();
-        var folder = await fileDialog.ShowAsync(_window).ConfigureAwait(false);
-        var path = Path.Combine(folder, name);
+        var folders = await _window.StorageProvider
+            .OpenFolderPickerAsync(new FolderPickerOpenOptions { AllowMultiple = false })
+            .ConfigureAwait(false);
+        var path = Path.Combine(folders[0].Path.LocalPath, name);
         return File.Create(path);
     }
 
     public async Task<(string Name, Stream Stream)> OpenRead()
     {
-        var fileDialog = new OpenFileDialog { AllowMultiple = false };
-        var files = await fileDialog.ShowAsync(_window).ConfigureAwait(false);
-        var path = files[0];
-
-        var attributes = File.GetAttributes(path);
-        var isFolder = attributes.HasFlag(FileAttributes.Directory);
-        if (isFolder) throw new Exception("Folders are not supported.");
-
-        var stream = File.OpenRead(path);
-        var name = Path.GetFileName(path);
-        return (name, stream);
+        var files = await _window.StorageProvider
+            .OpenFilePickerAsync(new FilePickerOpenOptions { AllowMultiple = false })
+            .ConfigureAwait(false);
+        var file = files[0];
+        var stream = await file.OpenReadAsync().ConfigureAwait(false);
+        return (file.Name, stream);
     }
 }

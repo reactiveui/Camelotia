@@ -8,6 +8,7 @@ using Camelotia.Services.Models;
 using DynamicData;
 using FluentAssertions;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 using Xunit;
 
 namespace Camelotia.Tests.Presentation;
@@ -22,7 +23,7 @@ public class SuspensionDriversTests
     [Fact]
     public Task AkavacheSuspensionDriverShouldSaveAndLoadState() =>
         SuspensionDriverShouldSaveAndLoadState(
-            new AkavacheSuspensionDriver<MainState>("Camelotia-Tests"));
+            new AkavacheSuspensionDriver<MainState>());
 
     private static async Task SuspensionDriverShouldSaveAndLoadState(ISuspensionDriver driver)
     {

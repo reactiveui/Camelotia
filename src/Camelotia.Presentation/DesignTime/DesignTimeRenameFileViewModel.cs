@@ -1,8 +1,9 @@
 using System.Reactive;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
-using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.Helpers;
+using ReactiveUI.Reactive;
+using ReactiveUI.Validation.Reactive.Extensions;
+using ReactiveUI.Validation.Reactive.Helpers;
 
 namespace Camelotia.Presentation.DesignTime;
 

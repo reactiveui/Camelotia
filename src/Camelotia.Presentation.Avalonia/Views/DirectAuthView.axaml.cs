@@ -1,8 +1,9 @@
-using System.Reactive.Disposables;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia.Reactive;
 using Camelotia.Presentation.Interfaces;
-using ReactiveUI;
-using ReactiveUI.Validation.Extensions;
+using Camelotia.Presentation.Infrastructure;
+using ReactiveUI.Primitives.Reactive.Disposables;
+using ReactiveUI.Reactive;
+using ReactiveUI.Validation.Reactive.Extensions;
 
 namespace Camelotia.Presentation.Avalonia.Views;
 
@@ -11,7 +12,7 @@ public sealed partial class DirectAuthView : ReactiveUserControl<IDirectAuthView
     public DirectAuthView()
     {
         InitializeComponent();
-        this.WhenActivated(disposables =>
+        this.WhenActivated((ContainerDisposable disposables) =>
         {
             this.BindValidation(ViewModel, x => x.Username, x => x.UsernameValidation.Text)
                 .DisposeWith(disposables);

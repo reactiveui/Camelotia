@@ -1,5 +1,7 @@
-﻿using Avalonia;
-using Avalonia.ReactiveUI;
+using System;
+using System.Reactive;
+using Avalonia;
+using ReactiveUI.Avalonia.Reactive;
 
 namespace Camelotia.Presentation.Avalonia;
 
@@ -9,7 +11,7 @@ public static class Program
 
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
-            .UseReactiveUI()
+            .UseReactiveUI(static builder => builder.WithExceptionHandler(Observer.Create<Exception>(Console.WriteLine)))
             .UsePlatformDetect()
             .LogToTrace();
 }

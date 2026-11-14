@@ -1,5 +1,5 @@
 using System.Reactive.Concurrency;
-using Akavache;
+using Akavache.Reactive;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
@@ -10,6 +10,7 @@ using DynamicData;
 using FluentAssertions;
 using NSubstitute;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 using Xunit;
 
 namespace Camelotia.Tests;
@@ -50,8 +51,8 @@ public sealed class IntegrationTests
 
     private IMainViewModel BuildMainViewModel()
     {
-        RxApp.MainThreadScheduler = Scheduler.Immediate;
-        RxApp.TaskpoolScheduler = Scheduler.Immediate;
+        RxSchedulers.MainThreadScheduler = Scheduler.Immediate;
+        RxSchedulers.TaskpoolScheduler = Scheduler.Immediate;
         return new MainViewModel(
             _state,
             new CloudFactory(_state.CloudConfiguration, _authenticator, _cache),

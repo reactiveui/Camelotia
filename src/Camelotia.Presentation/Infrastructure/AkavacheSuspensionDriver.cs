@@ -1,8 +1,9 @@
 using System.Reactive;
-using Akavache;
-using Newtonsoft.Json;
+using System.Reactive.Linq;
+using System.Text.Json.Serialization.Metadata;
+using Akavache.Reactive;
 using ReactiveUI;
-using Splat;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.Infrastructure;
 
@@ -11,16 +12,13 @@ public class AkavacheSuspensionDriver<TAppState> : ISuspensionDriver
 {
     private const string Key = "camelotia-state";
 
-    static AkavacheSuspensionDriver() => Locator.CurrentMutable.RegisterConstant(new JsonSerializerSettings
-    {
-        ObjectCreationHandling = ObjectCreationHandling.Replace
-    });
+    public IObservable<Unit> InvalidateState() => CacheDatabase.UserAccount.InvalidateObject<TAppState>(Key);
 
-    public AkavacheSuspensionDriver(string appName = "CamelotiaV2") => BlobCache.ApplicationName = appName;
+    public IObservable<object?> LoadState() => CacheDatabase.UserAccount.GetObject<TAppState>(Key).Select(static x => (object?)x);
 
-    public IObservable<Unit> InvalidateState() => BlobCache.UserAccount.InvalidateObject<TAppState>(Key);
+    public IObservable<T?> LoadState<T>(JsonTypeInfo<T> typeInfo) => CacheDatabase.UserAccount.GetObject<T>(Key).Select(static x => (T?)x);
 
-    public IObservable<object> LoadState() => BlobCache.UserAccount.GetObject<TAppState>(Key);
+    public IObservable<Unit> SaveState<T>(T state) => CacheDatabase.UserAccount.InsertObject(Key, state);
 
-    public IObservable<Unit> SaveState(object state) => BlobCache.UserAccount.InsertObject(Key, (TAppState)state);
+    public IObservable<Unit> SaveState<T>(T state, JsonTypeInfo<T> typeInfo) => CacheDatabase.UserAccount.InsertObject(Key, state);
 }

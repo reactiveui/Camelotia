@@ -1,4 +1,4 @@
-using Akavache;
+using Akavache.Reactive;
 using Camelotia.Presentation.AppState;
 using Camelotia.Services;
 using Camelotia.Services.Interfaces;
@@ -12,7 +12,7 @@ namespace Camelotia.Tests.Services;
 public sealed class CloudFactoryTests
 {
     private readonly IAuthenticator _authenticator = Substitute.For<IAuthenticator>();
-    private readonly IObjectBlobCache _blobCache = Substitute.For<IObjectBlobCache>();
+    private readonly IBlobCache _blobCache = Substitute.For<IBlobCache>();
     private readonly MainState _state = new();
 
     [Fact]

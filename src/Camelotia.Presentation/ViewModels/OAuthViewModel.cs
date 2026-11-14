@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.ViewModels;
 

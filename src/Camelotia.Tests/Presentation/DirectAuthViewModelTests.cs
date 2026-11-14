@@ -8,6 +8,7 @@ using Camelotia.Services.Interfaces;
 using FluentAssertions;
 using NSubstitute;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 using Xunit;
 
 namespace Camelotia.Tests.Presentation;
@@ -101,8 +102,8 @@ public sealed class DirectAuthViewModelTests
 
     private DirectAuthViewModel BuildDirectAuthViewModel()
     {
-        RxApp.MainThreadScheduler = Scheduler.Immediate;
-        RxApp.TaskpoolScheduler = Scheduler.Immediate;
+        RxSchedulers.MainThreadScheduler = Scheduler.Immediate;
+        RxSchedulers.TaskpoolScheduler = Scheduler.Immediate;
         return new DirectAuthViewModel(_state, _provider);
     }
 }

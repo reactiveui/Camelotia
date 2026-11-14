@@ -9,7 +9,7 @@ public sealed class FtpCloud : ICloud
 {
     private static readonly string[] PathSeparators = { "\\", "/" };
     private readonly ISubject<bool> _isAuthorized = new ReplaySubject<bool>();
-    private Func<FtpClient> _factory;
+    private Func<AsyncFtpClient> _factory;
 
     public FtpCloud(CloudParameters model)
     {
@@ -45,7 +45,7 @@ public sealed class FtpCloud : ICloud
 
     public async Task HostAuth(string address, int port, string login, string password)
     {
-        _factory = () => new FtpClient(address, port, login, password);
+        _factory = () => new AsyncFtpClient(address, login, password, port);
         await GetFiles("/").ConfigureAwait(false);
         _isAuthorized.OnNext(true);
     }
@@ -53,12 +53,12 @@ public sealed class FtpCloud : ICloud
     public async Task<IEnumerable<FileModel>> GetFiles(string path)
     {
         using var connection = _factory();
-        await connection.ConnectAsync().ConfigureAwait(false);
-        var files = await connection.GetListingAsync(path).ConfigureAwait(false);
-        await connection.DisconnectAsync().ConfigureAwait(false);
+        await connection.Connect().ConfigureAwait(false);
+        var files = await connection.GetListing(path).ConfigureAwait(false);
+        await connection.Disconnect().ConfigureAwait(false);
         return files.Select(file => new FileModel
         {
-            IsFolder = file.Type == FtpFileSystemObjectType.Directory,
+            IsFolder = file.Type == FtpObjectType.Directory,
             Modified = file.Modified,
             Name = file.Name,
             Path = file.FullName,
@@ -72,51 +72,51 @@ public sealed class FtpCloud : ICloud
         pathParts.AddRange(path.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries));
         var foldermodels = new List<FolderModel>();
         using var connection = _factory();
-        await connection.ConnectAsync().ConfigureAwait(false);
+        await connection.Connect().ConfigureAwait(false);
         for (var i = 0; i < pathParts.Count; i++)
         {
             var fullPath = string.Join(PathSeparators[0], pathParts.Take(i + 1));
             var name = pathParts[i];
-            var listing = await connection.GetListingAsync(fullPath).ConfigureAwait(false);
+            var listing = await connection.GetListing(fullPath).ConfigureAwait(false);
             var folder = new FolderModel(
                 fullPath,
                 name,
                 listing
-                    .Where(f => f.Type == FtpFileSystemObjectType.Directory)
+                    .Where(f => f.Type == FtpObjectType.Directory)
                     .Select(f => new FolderModel(f.FullName, f.Name)));
             foldermodels.Add(folder);
         }
 
-        await connection.DisconnectAsync().ConfigureAwait(false);
+        await connection.Disconnect().ConfigureAwait(false);
         return foldermodels;
     }
 
     public async Task CreateFolder(string path, string name)
     {
         using var connection = _factory();
-        await connection.ConnectAsync().ConfigureAwait(false);
+        await connection.Connect().ConfigureAwait(false);
         var directory = Path.Combine(path, name);
-        await connection.CreateDirectoryAsync(directory).ConfigureAwait(false);
-        await connection.DisconnectAsync().ConfigureAwait(false);
+        await connection.CreateDirectory(directory).ConfigureAwait(false);
+        await connection.Disconnect().ConfigureAwait(false);
     }
 
     public async Task RenameFile(string path, string name)
     {
         using var connection = _factory();
-        await connection.ConnectAsync().ConfigureAwait(false);
+        await connection.Connect().ConfigureAwait(false);
         var directoryName = Path.GetDirectoryName(path);
         var newName = Path.Combine(directoryName, name);
-        await connection.RenameAsync(path, newName).ConfigureAwait(false);
-        await connection.DisconnectAsync().ConfigureAwait(false);
+        await connection.Rename(path, newName).ConfigureAwait(false);
+        await connection.Disconnect().ConfigureAwait(false);
     }
 
     public async Task Delete(string path, bool isFolder)
     {
         using var connection = _factory();
-        await connection.ConnectAsync().ConfigureAwait(false);
-        if (isFolder) await connection.DeleteDirectoryAsync(path).ConfigureAwait(false);
-        else await connection.DeleteFileAsync(path).ConfigureAwait(false);
-        await connection.DisconnectAsync().ConfigureAwait(false);
+        await connection.Connect().ConfigureAwait(false);
+        if (isFolder) await connection.DeleteDirectory(path).ConfigureAwait(false);
+        else await connection.DeleteFile(path).ConfigureAwait(false);
+        await connection.Disconnect().ConfigureAwait(false);
     }
 
     public Task Logout()
@@ -129,17 +129,17 @@ public sealed class FtpCloud : ICloud
     public async Task UploadFile(string to, Stream from, string name)
     {
         using var connection = _factory();
-        await connection.ConnectAsync().ConfigureAwait(false);
+        await connection.Connect().ConfigureAwait(false);
         var path = Path.Combine(to, name);
-        await connection.UploadAsync(@from, path).ConfigureAwait(false);
-        await connection.DisconnectAsync().ConfigureAwait(false);
+        await connection.UploadStream(@from, path).ConfigureAwait(false);
+        await connection.Disconnect().ConfigureAwait(false);
     }
 
     public async Task DownloadFile(string from, Stream to)
     {
         using var connection = _factory();
-        await connection.ConnectAsync().ConfigureAwait(false);
-        await connection.DownloadAsync(to, @from).ConfigureAwait(false);
-        await connection.DisconnectAsync().ConfigureAwait(false);
+        await connection.Connect().ConfigureAwait(false);
+        await connection.DownloadStream(to, @from).ConfigureAwait(false);
+        await connection.Disconnect().ConfigureAwait(false);
     }
 }

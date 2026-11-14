@@ -1,7 +1,9 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using Camelotia.Presentation.Interfaces;
-using ReactiveUI;
+using Camelotia.Presentation.Infrastructure;
+using ReactiveUI.Primitives.Reactive.Disposables;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.Wpf.Views
 {
@@ -14,7 +16,7 @@ namespace Camelotia.Presentation.Wpf.Views
         {
             InitializeComponent();
             DataContextChanged += (sender, args) => ViewModel = DataContext as IRenameFileViewModel;
-            this.WhenActivated(disposable => { });
+            this.WhenActivated((ContainerDisposable disposable) => { });
         }
 
         public IRenameFileViewModel ViewModel

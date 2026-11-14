@@ -11,6 +11,7 @@ using Camelotia.Services.Models;
 using FluentAssertions;
 using NSubstitute;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 using Xunit;
 
 namespace Camelotia.Tests.Presentation;
@@ -237,8 +238,8 @@ public sealed class CloudViewModelTests
 
     private CloudViewModel BuildProviderViewModel()
     {
-        RxApp.MainThreadScheduler = Scheduler.Immediate;
-        RxApp.TaskpoolScheduler = Scheduler.Immediate;
+        RxSchedulers.MainThreadScheduler = Scheduler.Immediate;
+        RxSchedulers.TaskpoolScheduler = Scheduler.Immediate;
         return new CloudViewModel(
             _state,
             x => _folder,

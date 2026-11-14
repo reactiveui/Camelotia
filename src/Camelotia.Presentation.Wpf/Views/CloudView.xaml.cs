@@ -1,8 +1,9 @@
-﻿using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Controls;
 using Camelotia.Presentation.Interfaces;
-using ReactiveUI;
+using Camelotia.Presentation.Infrastructure;
+using ReactiveUI.Primitives.Reactive.Disposables;
+using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.Wpf.Views;
 
@@ -15,7 +16,7 @@ public partial class CloudView : UserControl, IViewFor<ICloudViewModel>
     {
         InitializeComponent();
         DataContextChanged += (sender, args) => ViewModel = DataContext as ICloudViewModel;
-        this.WhenActivated(disposables =>
+        this.WhenActivated((ContainerDisposable disposables) =>
         {
             this.OneWayBind(
                     ViewModel,

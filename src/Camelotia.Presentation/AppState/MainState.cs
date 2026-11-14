@@ -1,4 +1,5 @@
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Camelotia.Services.Configuration;
 using Camelotia.Services.Models;
 using DynamicData;
@@ -9,12 +10,13 @@ namespace Camelotia.Presentation.AppState;
 public class MainState
 {
     [IgnoreDataMember]
+    [JsonIgnore]
     public SourceCache<CloudState, Guid> Clouds { get; } = new(x => x.Id);
 
     [DataMember]
     public IEnumerable<CloudState> CloudStates
     {
-        get => [.. Clouds.Items];
+        get => new List<CloudState>(Clouds.Items);
         set => Clouds.AddOrUpdate(value);
     }
 

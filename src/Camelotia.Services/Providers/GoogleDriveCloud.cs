@@ -1,6 +1,6 @@
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using Akavache;
+using Akavache.Reactive;
 using Camelotia.Services.Configuration;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
@@ -105,7 +105,7 @@ public sealed class GoogleDriveCloud : ICloud, IDisposable
 
     public Task Logout() => Task.Run(async () =>
     {
-        var keys = await _blobCache.GetAllKeys();
+        var keys = await _blobCache.GetAllKeys().ToList();
         foreach (var driveKey in keys.Where(x => x.StartsWith("google-drive", StringComparison.OrdinalIgnoreCase)))
             await _blobCache.Invalidate(driveKey);
 
@@ -119,7 +119,7 @@ public sealed class GoogleDriveCloud : ICloud, IDisposable
     {
         try
         {
-            var driveKeys = await _blobCache.GetAllKeys();
+            var driveKeys = await _blobCache.GetAllKeys().ToList();
             if (driveKeys.Any(x => x.StartsWith($"google-drive-{Id}", StringComparison.OrdinalIgnoreCase)))
                 await AuthenticateAsync().ConfigureAwait(false);
         }

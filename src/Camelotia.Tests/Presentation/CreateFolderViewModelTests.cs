@@ -9,6 +9,7 @@ using Camelotia.Services.Interfaces;
 using FluentAssertions;
 using NSubstitute;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 using Xunit;
 
 namespace Camelotia.Tests.Presentation;
@@ -128,8 +129,8 @@ public sealed class CreateFolderViewModelTests
 
     private CreateFolderViewModel BuildCreateFolderViewModel()
     {
-        RxApp.MainThreadScheduler = Scheduler.Immediate;
-        RxApp.TaskpoolScheduler = Scheduler.Immediate;
+        RxSchedulers.MainThreadScheduler = Scheduler.Immediate;
+        RxSchedulers.TaskpoolScheduler = Scheduler.Immediate;
         return new CreateFolderViewModel(_state, _model, _provider);
     }
 }
