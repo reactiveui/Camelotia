@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.2.0" />
     <PackageReference Include="ReactiveUI.Avalonia.Reactive" Version="12.1.6" />
     <PackageReference Include="Citrus.Avalonia" Version="2.1.1" />
     <PackageReference Include="Akavache.Sqlite3.Reactive" Version="13.0.0" />
