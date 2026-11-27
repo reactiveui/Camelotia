@@ -1,24 +1,53 @@
+// Copyright (c) 2019-2026 ReactiveUI and Contributors. All rights reserved.
+// ReactiveUI and Contributors licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for full license information.
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
-using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.DesignTime;
 
-public class DesignTimeAuthViewModel : ReactiveObject, IAuthViewModel
+/// <summary>Sample sign-in state for the designer.</summary>
+[System.Diagnostics.DebuggerDisplay("DesignTimeAuthViewModel: {IsAuthenticated}")]
+public sealed class DesignTimeAuthViewModel : ReactiveObject, IAuthViewModel
 {
-    public IDirectAuthViewModel DirectAuth { get; } = new DesignTimeDirectAuthViewModel();
+    /// <summary>Backs <see cref="DirectAuth"/>.</summary>
+    private readonly DesignTimeDirectAuthViewModel _directAuth = new();
 
-    public IHostAuthViewModel HostAuth { get; } = new DesignTimeHostAuthViewModel();
+    /// <summary>Backs <see cref="HostAuth"/>.</summary>
+    private readonly DesignTimeHostAuthViewModel _hostAuth = new();
 
-    public IOAuthViewModel OAuth { get; } = new DesignTimeOAuthViewModel();
+    /// <summary>Backs <see cref="OAuth"/>.</summary>
+    private readonly DesignTimeOAuthViewModel _oauth = new();
 
-    public bool SupportsDirectAuth { get; }
+    /// <inheritdoc/>
+    public IDirectAuthViewModel DirectAuth => _directAuth;
 
-    public bool SupportsHostAuth { get; }
+    /// <inheritdoc/>
+    public IHostAuthViewModel HostAuth => _hostAuth;
 
-    public bool SupportsOAuth { get; }
+    /// <inheritdoc/>
+    public IOAuthViewModel OAuth => _oauth;
 
-    public bool IsAuthenticated { get; } = true;
+    /// <inheritdoc/>
+    public bool SupportsDirectAuth => false;
 
-    public bool IsAnonymous { get; }
+    /// <inheritdoc/>
+    public bool SupportsHostAuth => false;
+
+    /// <inheritdoc/>
+    public bool SupportsOAuth => false;
+
+    /// <inheritdoc/>
+    public bool IsAuthenticated => true;
+
+    /// <inheritdoc/>
+    public bool IsAnonymous => false;
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        _directAuth.Dispose();
+        _hostAuth.Dispose();
+        _oauth.Dispose();
+    }
 }

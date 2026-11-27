@@ -1,0 +1,11 @@
+{
+  "solution": {
+    "path": "Camelotia.slnx",
+    "projects": [
+      "Camelotia.Presentation.Avalonia/Camelotia.Presentation.Avalonia.csproj",
+      "Camelotia.Presentation/Camelotia.Presentation.csproj",
+      "Camelotia.Services/Camelotia.Services.csproj",
+      "Camelotia.Tests/Camelotia.Tests.csproj"
+    ]
+  }
+}

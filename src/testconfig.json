@@ -1,0 +1,35 @@
+{
+    "platform": {
+        "execution": {
+            "parallel": false
+        }
+    },
+    "codeCoverage": {
+        "Configuration": {
+            "Format": "cobertura",
+            "CodeCoverage": {
+                "SkipAutoProperties": true,
+                "ModulePaths": {
+                    "Exclude": [
+                        ".*Tests\\.dll$"
+                    ]
+                },
+                "Functions": {
+                    "Exclude": [
+                        ".*__.*"
+                    ]
+                },
+                "Sources": {
+                    "Exclude": [
+                        ".*[\\\\/]obj[\\\\/].*"
+                    ]
+                },
+                "Attributes": {
+                    "Exclude": [
+                        "^System\\.CodeDom\\.Compiler\\.GeneratedCodeAttribute$"
+                    ]
+                }
+            }
+        }
+    }
+}

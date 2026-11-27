@@ -1,17 +1,30 @@
-using System.Reactive;
+// Copyright (c) 2019-2026 ReactiveUI and Contributors. All rights reserved.
+// ReactiveUI and Contributors licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for full license information.
+using System.Runtime.CompilerServices;
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
-using ReactiveUI.Reactive;
+using ReactiveUI.Primitives;
 
 namespace Camelotia.Presentation.DesignTime;
 
-public class DesignTimeOAuthViewModel : ReactiveObject, IOAuthViewModel
+/// <summary>A sample browser sign-in form for the designer.</summary>
+[System.Diagnostics.DebuggerDisplay("DesignTimeOAuthViewModel: {ErrorMessage}")]
+public sealed class DesignTimeOAuthViewModel : ReactiveObject, IOAuthViewModel
 {
-    public ReactiveCommand<Unit, Unit> Login { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> Login { get; } = DesignTimeCommands.Empty();
 
-    public bool HasErrorMessage { get; } = true;
+    /// <inheritdoc/>
+    public bool HasErrorMessage => true;
 
-    public string ErrorMessage { get; } = "Error message example.";
+    /// <inheritdoc/>
+    public string ErrorMessage => "Error message example.";
 
-    public bool IsBusy { get; }
+    /// <inheritdoc/>
+    public bool IsBusy => false;
+
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Dispose() => Login.Dispose();
 }

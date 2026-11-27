@@ -1,172 +1,156 @@
-using System;
-using System.Linq;
-using System.Reactive.Concurrency;
-using Akavache.Reactive;
+// Copyright (c) 2019-2026 ReactiveUI and Contributors. All rights reserved.
+// ReactiveUI and Contributors licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for full license information.
+using System.Runtime.CompilerServices;
 using Camelotia.Presentation.AppState;
-using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.ViewModels;
-using Camelotia.Services;
-using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
+using Camelotia.Tests.Fakes;
+using Camelotia.Tests.Infrastructure;
 using DynamicData;
-using FluentAssertions;
-using NSubstitute;
-using ReactiveUI;
-using ReactiveUI.Reactive;
-using Xunit;
+using ReactiveUI.Primitives;
 
 namespace Camelotia.Tests.Presentation;
 
-public sealed class MainViewModelTests
+/// <summary>Tests <see cref="MainViewModel"/> over a fake cloud factory.</summary>
+[System.Diagnostics.DebuggerDisplay("MainViewModelTests")]
+public sealed class MainViewModelTests : IDisposable
 {
+    /// <summary>The number of providers the ordering test saves.</summary>
+    private const int ProviderCount = 3;
+
+    /// <summary>The saved app state.</summary>
     private readonly MainState _state = new();
 
-    [Fact]
-    public void ShouldIndicateWhenLoadingAndReady()
+    /// <summary>Creates a fake provider for each saved one.</summary>
+    private readonly FakeCloudFactory _factory = new();
+
+    /// <summary>Lists the saved providers newest first, and selects the saved selection.</summary>
+    /// <returns>A task that completes when the test finishes.</returns>
+    [Test]
+    public async Task Clouds_ListNewestFirstAndRestoreTheSelection()
     {
-        var model = BuildMainViewModel();
-        model.IsLoading.Should().BeFalse();
-        model.IsReady.Should().BeTrue();
+        var newest = new CloudState { Created = TestValues.Moment.AddDays(ProviderCount) };
+        _state.Clouds.AddOrUpdate([new CloudState { Created = TestValues.Moment }, newest, new CloudState { Created = TestValues.Moment.AddDays(1) }]);
+        _state.SelectedProviderId = newest.Id;
+        using var model = Create();
 
-        model.Refresh.CanExecute().Should().BeTrue();
-        model.Refresh.Execute().Subscribe();
-
-        model.Clouds.Should().BeEmpty();
-        model.IsLoading.Should().BeFalse();
-        model.IsReady.Should().BeTrue();
+        await Assert.That(model.Clouds.Count).IsEqualTo(ProviderCount);
+        await Assert.That(model.Clouds[0].Id).IsEqualTo(newest.Id);
+        await Assert.That(model.Clouds[^1].Created).IsEqualTo(TestValues.Moment);
+        await Assert.That(model.SelectedProvider!.Id).IsEqualTo(newest.Id);
+        await Assert.That(model.WelcomeScreenVisible).IsFalse();
+        await Assert.That(model.WelcomeScreenCollapsed).IsTrue();
     }
 
-    [Fact]
-    public void ShouldSelectProviderFromStateWhenProvidersGetLoaded()
+    /// <summary>Adds a provider of the selected type with the current time, and saves the type.</summary>
+    /// <returns>A task that completes when the test finishes.</returns>
+    [Test]
+    public async Task Add_CreatesAProviderOfTheSelectedType()
     {
-        var provider = new CloudState();
-        _state.Clouds.AddOrUpdate(provider);
-        _state.SelectedProviderId = provider.Id;
+        using var model = Create();
+        var defaultType = model.SelectedSupportedType;
 
-        var model = BuildMainViewModel();
-        model.Clouds.Should().NotBeEmpty();
-        model.SelectedProvider.Should().NotBeNull();
-        model.SelectedProvider.Id.Should().Be(provider.Id);
-        model.Refresh.Execute().Subscribe();
-
-        model.Clouds.Should().NotBeEmpty();
-        model.SelectedProvider.Should().NotBeNull();
-        model.SelectedProvider.Id.Should().Be(provider.Id);
-    }
-
-    [Fact]
-    public void ShouldUnselectSelectedProvider()
-    {
-        var provider = new CloudState();
-        _state.Clouds.AddOrUpdate(provider);
-        _state.SelectedProviderId = provider.Id;
-
-        var model = BuildMainViewModel();
-        model.Clouds.Should().NotBeEmpty();
-        model.SelectedProvider.Should().NotBeNull();
-        model.SelectedProvider.Id.Should().Be(provider.Id);
-        model.Unselect.CanExecute().Should().BeTrue();
-        model.Unselect.Execute().Subscribe();
-
-        model.Clouds.Should().NotBeEmpty();
-        model.SelectedProvider.Should().BeNull();
-    }
-
-    [Fact]
-    public void ShouldOrderProvidersBasedOnDateAdded()
-    {
-        _state.Clouds.AddOrUpdate(new[]
-        {
-            new CloudState { Created = new DateTime(2000, 1, 1, 1, 1, 1) },
-            new CloudState { Created = new DateTime(2015, 1, 1, 1, 1, 1) },
-            new CloudState { Created = new DateTime(2010, 1, 1, 1, 1, 1) }
-        });
-
-        var model = BuildMainViewModel();
-        model.Clouds.Should().NotBeEmpty();
-        model.Clouds.Count.Should().Be(3);
-
-        model.Clouds[0].Created.Should().Be(new DateTime(2015, 1, 1, 1, 1, 1));
-        model.Clouds[1].Created.Should().Be(new DateTime(2010, 1, 1, 1, 1, 1));
-        model.Clouds[2].Created.Should().Be(new DateTime(2000, 1, 1, 1, 1, 1));
-    }
-
-    [Fact]
-    public void ShouldUnselectProviderOnceDeleted()
-    {
-        var provider = new CloudState();
-        _state.Clouds.AddOrUpdate(new CloudState());
-        _state.Clouds.AddOrUpdate(provider);
-        _state.SelectedProviderId = provider.Id;
-
-        var model = BuildMainViewModel();
-        model.Clouds.Count.Should().Be(2);
-        model.SelectedProvider.Should().NotBeNull();
-        model.SelectedProvider.Id.Should().Be(provider.Id);
-        model.Remove.Execute().Subscribe();
-
-        model.SelectedProvider.Should().BeNull();
-        model.Clouds.Count.Should().Be(1);
-    }
-
-    [Fact]
-    public void ShouldAddNewProviders()
-    {
-        var model = BuildMainViewModel();
-        model.Clouds.Should().BeEmpty();
-        model.SelectedProvider.Should().BeNull();
-        model.SelectedSupportedType = CloudType.Local;
-        model.Add.Execute().Subscribe();
-
-        model.Clouds.Should().NotBeEmpty();
-        model.Clouds.Count.Should().Be(1);
-    }
-
-    [Fact]
-    public void ShouldSynchronizeSelectedTypeWithState()
-    {
-        _state.SelectedSupportedType = CloudType.Local;
-
-        var model = BuildMainViewModel();
-        model.SelectedSupportedType.Should().Be(CloudType.Local);
         model.SelectedSupportedType = CloudType.Ftp;
-        _state.SelectedSupportedType.Should().Be(CloudType.Ftp);
+        await model.Add.RunAsync(RxVoid.Default);
 
-        model.SelectedSupportedType = CloudType.Local;
-        _state.SelectedSupportedType.Should().Be(CloudType.Local);
+        await Assert.That(defaultType).IsEqualTo(CloudType.Local);
+        await Assert.That(model.Clouds.Count).IsEqualTo(1);
+        await Assert.That(_factory.Created[^1].Parameters.Type).IsEqualTo(CloudType.Ftp);
+        await Assert.That(model.Clouds[0].Created).IsEqualTo(TestValues.Moment);
+        await Assert.That(_state.SelectedSupportedType).IsEqualTo(CloudType.Ftp);
+        await Assert.That(model.SupportedTypes).IsEquivalentTo(_factory.SupportedClouds);
     }
 
-    [Fact]
-    public void ShouldSaveUserSelectionToStateObject()
+    /// <summary>Restores the saved provider type.</summary>
+    /// <returns>A task that completes when the test finishes.</returns>
+    [Test]
+    public async Task SelectedSupportedType_RestoresTheSavedType()
     {
-        _state.Clouds.AddOrUpdate(new CloudState());
-        _state.Clouds.AddOrUpdate(new CloudState());
+        _state.SelectedSupportedType = CloudType.Ftp;
 
-        var model = BuildMainViewModel();
-        model.SelectedProvider.Should().BeNull();
-        _state.SelectedProviderId.Should().BeEmpty();
+        using var model = Create();
 
-        model.SelectedProvider = model.Clouds.First();
-        _state.SelectedProviderId.Should().NotBeEmpty();
-        _state.SelectedProviderId.Should().Be(model.SelectedProvider.Id);
+        await Assert.That(model.SelectedSupportedType).IsEqualTo(CloudType.Ftp);
     }
 
-    private MainViewModel BuildMainViewModel()
+    /// <summary>Saves the selection, unselects it, and removes the selected provider.</summary>
+    /// <returns>A task that completes when the test finishes.</returns>
+    [Test]
+    public async Task Selection_IsSavedUnselectedAndRemoved()
     {
-        RxSchedulers.MainThreadScheduler = Scheduler.Immediate;
-        RxSchedulers.TaskpoolScheduler = Scheduler.Immediate;
-        return new MainViewModel(
-            _state,
-            new CloudFactory(
-                _state.CloudConfiguration,
-                Substitute.For<IAuthenticator>(),
-                Substitute.For<IBlobCache>()),
-            (state, provider) =>
-            {
-                var entry = Substitute.For<ICloudViewModel>();
-                entry.Created.Returns(provider.Created);
-                entry.Id.Returns(provider.Id);
-                return entry;
-            });
+        _state.Clouds.AddOrUpdate(new CloudState());
+        using var model = Create();
+        var canRemoveNothing = model.Remove.CanRunNow();
+
+        model.SelectedProvider = model.Clouds[0];
+        var savedId = _state.SelectedProviderId;
+        await model.Unselect.RunAsync(RxVoid.Default);
+        var afterUnselect = model.SelectedProvider;
+        model.SelectedProvider = model.Clouds[0];
+        await model.Remove.RunAsync(RxVoid.Default);
+
+        await Assert.That(canRemoveNothing).IsFalse();
+        await Assert.That(savedId).IsEqualTo(_factory.Created[0].Id);
+        await Assert.That(afterUnselect).IsNull();
+        await Assert.That(model.Clouds).IsEmpty();
+        await Assert.That(model.SelectedProvider).IsNull();
+        await Assert.That(_state.SelectedProviderId).IsEqualTo(Guid.Empty);
+    }
+
+    /// <summary>Reloads the providers and reports when it is ready.</summary>
+    /// <returns>A task that completes when the test finishes.</returns>
+    [Test]
+    public async Task Refresh_ReloadsTheProviders()
+    {
+        _state.Clouds.AddOrUpdate(new CloudState());
+        using var model = Create();
+
+        await model.Refresh.RunAsync(RxVoid.Default);
+
+        await Assert.That(model.IsReady).IsTrue();
+        await Assert.That(model.IsLoading).IsFalse();
+        await Assert.That(model.Clouds.Count).IsEqualTo(1);
+    }
+
+    /// <summary>Rejects missing dependencies, and a factory with no provider types.</summary>
+    /// <returns>A task that completes when the test finishes.</returns>
+    [Test]
+    public async Task Constructor_RejectsBadDependencies()
+    {
+        using var empty = new FakeCloudFactory([]);
+
+        _ = await Assert.That(() => new MainViewModel(null!, _factory, CreateCloudViewModel, TimeProvider.System)).Throws<ArgumentNullException>();
+        _ = await Assert.That(() => new MainViewModel(_state, null!, CreateCloudViewModel, TimeProvider.System)).Throws<ArgumentNullException>();
+        _ = await Assert.That(() => new MainViewModel(_state, _factory, CreateCloudViewModel, null!)).Throws<ArgumentNullException>();
+        _ = await Assert.That(() => new MainViewModel(new(), empty, CreateCloudViewModel, TimeProvider.System)).Throws<InvalidOperationException>();
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        _state.Dispose();
+        _factory.Dispose();
+    }
+
+    /// <summary>Creates a browser view model for a saved provider.</summary>
+    /// <param name="state">The provider's saved state.</param>
+    /// <param name="provider">The provider.</param>
+    /// <returns>The browser view model.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static CloudViewModel CreateCloudViewModel(CloudState state, Camelotia.Services.Interfaces.ICloud provider) =>
+        ViewModelBuilder.CreateCloudViewModel(state, provider, new FakeFileManager());
+
+    /// <summary>Creates the view model with a clock fixed at <see cref="TestValues.Moment"/>.</summary>
+    /// <returns>The view model.</returns>
+    private MainViewModel Create() => new(_state, _factory, CreateCloudViewModel, new FixedTimeProvider(TestValues.Moment));
+
+    /// <summary>A clock that always reads the same time.</summary>
+    /// <param name="now">The time it reads.</param>
+    [System.Diagnostics.DebuggerDisplay("FixedTimeProvider")]
+    private sealed class FixedTimeProvider(DateTimeOffset now) : TimeProvider
+    {
+        /// <inheritdoc/>
+        public override DateTimeOffset GetUtcNow() => now;
     }
 }

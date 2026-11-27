@@ -1,266 +1,244 @@
+// Copyright (c) 2019-2026 ReactiveUI and Contributors. All rights reserved.
+// ReactiveUI and Contributors licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for full license information.
 using System.Net;
-using System.Net.Http.Headers;
-using System.Reactive.Subjects;
+using System.Runtime.CompilerServices;
+using System.Web;
+using Camelotia.Services.Apis;
+using Camelotia.Services.Apis.Yandex;
 using Camelotia.Services.Configuration;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
-using Newtonsoft.Json;
+using ReactiveUI.Primitives.Signals;
 
 namespace Camelotia.Services.Providers;
 
+/// <summary>Browses Yandex Disk through its REST API.</summary>
+[System.Diagnostics.DebuggerDisplay("YandexDiskCloud: {Parameters}")]
 public sealed class YandexDiskCloud : ICloud, IDisposable
 {
-    private const string YandexAuthTokenUrl = "https://oauth.yandex.ru/token";
-    private const string ApiMoveFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/move";
-    private const string ApiDownloadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/download?path=";
-    private const string ApiUploadFileUrl = "https://cloud-api.yandex.net/v1/disk/resources/upload?path=";
-    private const string ApiGetPathBase = "https://cloud-api.yandex.net:443/v1/disk/resources?path=";
-    private readonly ReplaySubject<bool> _isAuthorized = new(1);
-    private readonly HttpClient _http = new();
+    /// <summary>The number of folder entries each listing request asks for.</summary>
+    private const int PageSize = 200;
+
+    /// <summary>The loopback port Yandex redirects back to. Register <c>http://127.0.0.1:3000/</c> as the app's redirect URI.</summary>
+    private const int LoopbackPort = 3000;
+
+    /// <summary>The separator Yandex Disk paths use.</summary>
+    private const char Separator = '/';
+
+    /// <summary>The generated Disk API client.</summary>
+    private readonly IYandexDiskApi _disk;
+
+    /// <summary>The generated OAuth client.</summary>
+    private readonly IYandexOAuthApi _oauth;
+
+    /// <summary>Replays whether the user is signed in.</summary>
+    private readonly ReplaySignal<bool> _isAuthorized = new(1);
+
+    /// <summary>Runs the browser sign-in.</summary>
     private readonly IAuthenticator _authenticator;
+
+    /// <summary>The Yandex application settings.</summary>
     private readonly YandexDiskCloudOptions _options;
 
-    public YandexDiskCloud(CloudParameters model, IAuthenticator authenticator, YandexDiskCloudOptions options)
+    /// <summary>Initializes a new instance of the <see cref="YandexDiskCloud"/> class.</summary>
+    /// <param name="model">The saved parameters.</param>
+    /// <param name="authenticator">Runs the browser sign-in.</param>
+    /// <param name="options">The Yandex application settings.</param>
+    /// <param name="disk">The generated Disk API client.</param>
+    /// <param name="oauth">The generated OAuth client.</param>
+    public YandexDiskCloud(CloudParameters model, IAuthenticator authenticator, YandexDiskCloudOptions options, IYandexDiskApi disk, IYandexOAuthApi oauth)
     {
+        ArgumentNullException.ThrowIfNull(model);
         Parameters = model;
         _authenticator = authenticator;
         _options = options;
-        _isAuthorized.OnNext(false);
-        EnsureLoggedInIfTokenSaved();
+        _disk = disk;
+        _oauth = oauth;
+        _isAuthorized.OnNext(!string.IsNullOrWhiteSpace(model.Token));
     }
 
+    /// <inheritdoc/>
     public CloudParameters Parameters { get; }
 
+    /// <inheritdoc/>
     public long? Size => null;
 
+    /// <inheritdoc/>
     public Guid Id => Parameters.Id;
 
+    /// <inheritdoc/>
     public string Name => Parameters.Type.ToString();
 
-    public DateTime Created => Parameters.Created;
+    /// <inheritdoc/>
+    public DateTimeOffset Created => Parameters.Created;
 
+    /// <inheritdoc/>
     public IObservable<bool> IsAuthorized => _isAuthorized;
 
+    /// <inheritdoc/>
     public bool SupportsDirectAuth => false;
 
+    /// <inheritdoc/>
     public bool SupportsHostAuth => false;
 
+    /// <inheritdoc/>
     public bool SupportsOAuth => true;
 
+    /// <inheritdoc/>
     public bool CanCreateFolder => true;
 
-    public string InitialPath => Path.DirectorySeparatorChar.ToString();
+    /// <inheritdoc/>
+    public string InitialPath => "/";
 
-    public Task HostAuth(string address, int port, string login, string password) => Task.CompletedTask;
+    /// <inheritdoc/>
+    public ValueTask HostAuth(string address, int port, string login, string password, CancellationToken cancellationToken) =>
+        throw new NotSupportedException("Yandex Disk signs in through the browser.");
 
-    public Task DirectAuth(string login, string password) => Task.CompletedTask;
+    /// <inheritdoc/>
+    public ValueTask DirectAuth(string login, string password, CancellationToken cancellationToken) =>
+        throw new NotSupportedException("Yandex Disk signs in through the browser.");
 
-    public async Task<IEnumerable<FileModel>> GetFiles(string path)
+    /// <inheritdoc/>
+    public async ValueTask<IEnumerable<FileModel>> GetFiles(string path, CancellationToken cancellationToken)
     {
-        var yaPath = path.Replace("\\", "/");
-        var encodedPath = WebUtility.UrlEncode(yaPath);
-        var pathUrl = ApiGetPathBase + encodedPath;
-        using var response = await _http.GetAsync(pathUrl).ConfigureAwait(false);
-        var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-
-        var content = JsonConvert.DeserializeObject<YandexContentResponse>(json);
-        return content.Embedded.Items.Select(file => new FileModel
+        var token = RequireToken();
+        var diskPath = ToDiskPath(path);
+        var files = new List<FileModel>();
+        while (true)
         {
-            Name = file.Name,
-            IsFolder = file.Type == "dir",
-            Path = file.Path.Replace("disk:", string.Empty),
-            Modified = file.Created,
-            Size = file.Size
-        });
-    }
+            var folder = await _disk.GetResourceAsync(diskPath, PageSize, files.Count, token, cancellationToken).ConfigureAwait(false);
+            if (folder.Embedded is not { } page)
+            {
+                return files;
+            }
 
-    public Task<IEnumerable<FolderModel>> GetBreadCrumbs(string path) => throw new NotImplementedException();
+            foreach (var item in page.Items)
+            {
+                files.Add(ToFileModel(item));
+            }
 
-    public async Task DownloadFile(string from, Stream to)
-    {
-        var yaPath = from.Replace("\\", "/");
-        var encodedPath = WebUtility.UrlEncode(yaPath);
-        var pathUrl = ApiDownloadFileUrl + encodedPath;
-        using var response = await _http.GetAsync(pathUrl).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-        var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-        var content = JsonConvert.DeserializeObject<YandexFileLoadResponse>(json);
-
-        using (var file = await _http.GetAsync(content.Href).ConfigureAwait(false))
-        using (var stream = await file.Content.ReadAsStreamAsync().ConfigureAwait(false))
-            await stream.CopyToAsync(to).ConfigureAwait(false);
-
-        await to.FlushAsync().ConfigureAwait(false);
-        to.Close();
-    }
-
-    public async Task CreateFolder(string path, string name)
-    {
-        var directory = Path.Combine(path, name).Replace("\\", "/");
-        var encoded = WebUtility.UrlEncode(directory);
-        var pathUrl = ApiGetPathBase + encoded;
-        using var response = await _http.PutAsync(pathUrl, null).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-    }
-
-    public async Task RenameFile(string path, string name)
-    {
-        var directoryName = Path.GetDirectoryName(path);
-        var fromPath = WebUtility.UrlEncode(path);
-        var toPath = Path.Combine(directoryName, name);
-
-        var pathUrl = $"{ApiMoveFileUrl}?from={fromPath}&path={toPath}";
-        using var response = await _http.PostAsync(pathUrl, null).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-    }
-
-    public async Task UploadFile(string to, Stream from, string name)
-    {
-        var yaPath = Path.Combine(to, name).Replace("\\", "/");
-        var encodedPath = WebUtility.UrlEncode(yaPath);
-        var pathUrl = ApiUploadFileUrl + encodedPath;
-        using var response = await _http.GetAsync(pathUrl).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-        var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-        var content = JsonConvert.DeserializeObject<YandexFileLoadResponse>(json);
-
-        var httpContent = new StreamContent(@from);
-        using var file = await _http.PutAsync(content.Href, httpContent).ConfigureAwait(false);
-        file.EnsureSuccessStatusCode();
-    }
-
-    public async Task Delete(string path, bool isFolder)
-    {
-        var encodedPath = WebUtility.UrlEncode(path);
-        var pathUrl = ApiGetPathBase + encodedPath;
-        using var response = await _http.DeleteAsync(pathUrl).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-    }
-
-    public Task Logout()
-    {
-        Parameters.Token = null;
-        _http.DefaultRequestHeaders.Clear();
-        _isAuthorized.OnNext(false);
-        return Task.CompletedTask;
-    }
-
-    public async Task OAuth()
-    {
-        var token = await GetAuthenticationToken().ConfigureAwait(false);
-        Parameters.Token = token;
-        ApplyTokenToHeaders(token);
-        _isAuthorized.OnNext(true);
-    }
-
-    public void Dispose()
-    {
-        _http.Dispose();
-        _isAuthorized.Dispose();
-    }
-
-    private async Task<string> GetAuthenticationTokenFromCode(string code)
-    {
-        using var http = new HttpClient();
-        using var content = new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["code"] = code,
-            ["client_id"] = _options.CodeAuthClientId,
-            ["client_secret"] = _options.CodeAuthClientSecret,
-            ["grant_type"] = "authorization_code"
-        });
-        using var response = await http.PostAsync(YandexAuthTokenUrl, content).ConfigureAwait(false);
-        var token = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-        var model = JsonConvert.DeserializeObject<YandexTokenAuthResponse>(token);
-        response.EnsureSuccessStatusCode();
-        return model.AccessToken;
-    }
-
-    private Uri GetYandexAuthTokenUrl()
-    {
-        var uri = "https://oauth.yandex.ru/authorize?response_type=token" +
-                  $"&client_id={_options.HashAuthClientId}";
-        return new Uri(uri);
-    }
-
-    private Uri GetYandexAuthCodeUrl(string redirect)
-    {
-        var uri = "https://oauth.yandex.ru/authorize?response_type=code" +
-                  $"&client_id={_options.CodeAuthClientId}&redirect_url={redirect}";
-        return new Uri(uri);
-    }
-
-    private void EnsureLoggedInIfTokenSaved()
-    {
-        var token = Parameters.Token;
-        if (string.IsNullOrWhiteSpace(token)) return;
-        ApplyTokenToHeaders(token);
-        _isAuthorized.OnNext(true);
-    }
-
-    private void ApplyTokenToHeaders(string token)
-    {
-        _http.DefaultRequestHeaders.Clear();
-        _http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("OAuth", token);
-    }
-
-    private async Task<string> GetAuthenticationToken()
-    {
-        switch (_authenticator.GrantType)
-        {
-            case GrantType.AuthorizationCode:
-                var server = $"http://{IPAddress.Loopback}:{3000}/";
-                var codeUri = GetYandexAuthCodeUrl(server);
-                var code = await _authenticator.ReceiveCode(codeUri, new Uri(server)).ConfigureAwait(false);
-                return await GetAuthenticationTokenFromCode(code).ConfigureAwait(false);
-            case GrantType.AccessToken:
-                var tokenUri = GetYandexAuthTokenUrl();
-                return await _authenticator.ReceiveToken(tokenUri).ConfigureAwait(false);
-            default: throw new InvalidOperationException();
+            if (page.Items.Count == 0 || files.Count >= page.Total)
+            {
+                return files;
+            }
         }
     }
 
-    private class YandexContentItemResponse
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ValueTask<IEnumerable<FolderModel>> GetBreadCrumbs(string path, CancellationToken cancellationToken) =>
+        ValueTask.FromResult<IEnumerable<FolderModel>>([]);
+
+    /// <inheritdoc/>
+    public async ValueTask DownloadFile(string fromPath, Stream fromStream, CancellationToken cancellationToken)
     {
-        [JsonProperty("path")]
-        public string Path { get; set; }
+        ArgumentNullException.ThrowIfNull(fromStream);
+        var token = RequireToken();
+        var link = await _disk.GetDownloadLinkAsync(ToDiskPath(fromPath), token, cancellationToken).ConfigureAwait(false);
+        var content = await _disk.DownloadAsync(link.Href, token, cancellationToken).ConfigureAwait(false);
+        await using (content.ConfigureAwait(false))
+        {
+            await content.CopyToAsync(fromStream, cancellationToken).ConfigureAwait(false);
+        }
 
-        [JsonProperty("type")]
-        public string Type { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("size")]
-        public long Size { get; set; }
-
-        [JsonProperty("created")]
-        public DateTime Created { get; set; }
+        await fromStream.FlushAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private class YandexContentItemsResponse
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ValueTask CreateFolder(string path, string name, CancellationToken cancellationToken) =>
+        new(_disk.CreateFolderAsync(Combine(path, name), RequireToken(), cancellationToken));
+
+    /// <inheritdoc/>
+    public ValueTask RenameFile(string path, string name, CancellationToken cancellationToken)
     {
-        [JsonProperty("items")]
-        public IList<YandexContentItemResponse> Items { get; set; }
+        var source = ToDiskPath(path);
+        var parent = source[..(source.LastIndexOf(Separator) + 1)];
+        return new(_disk.MoveAsync(source, parent + name, RequireToken(), cancellationToken));
     }
 
-    private class YandexContentResponse
+    /// <inheritdoc/>
+    public async ValueTask UploadFile(string toPath, Stream fromStream, string name, CancellationToken cancellationToken)
     {
-        [JsonProperty("_embedded")]
-        public YandexContentItemsResponse Embedded { get; set; }
+        var link = await _disk.GetUploadLinkAsync(Combine(toPath, name), RequireToken(), cancellationToken).ConfigureAwait(false);
+        await _disk.UploadAsync(link.Href, fromStream, cancellationToken).ConfigureAwait(false);
     }
 
-    private class YandexFileLoadResponse
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ValueTask Delete(string path, bool isFolder, CancellationToken cancellationToken) =>
+        new(_disk.DeleteAsync(ToDiskPath(path), RequireToken(), cancellationToken));
+
+    /// <inheritdoc/>
+    public ValueTask Logout(CancellationToken cancellationToken)
     {
-        [JsonProperty("href")]
-        public string Href { get; set; }
+        Parameters.Token = null;
+        _isAuthorized.OnNext(false);
+        return ValueTask.CompletedTask;
     }
 
-    private class YandexTokenAuthResponse
+    /// <inheritdoc/>
+    public async ValueTask OAuth(CancellationToken cancellationToken)
     {
-        [JsonProperty("access_token")]
-        public string AccessToken { get; set; }
+        var verifier = Pkce.CreateRandomString();
+        var state = Pkce.CreateRandomString();
+        var redirect = new Uri($"http://{IPAddress.Loopback}:{LoopbackPort}/");
+        var signIn = new Uri(
+            $"https://oauth.yandex.com/authorize?response_type=code&client_id={Uri.EscapeDataString(_options.CodeAuthClientId)}"
+            + $"&redirect_uri={Uri.EscapeDataString(redirect.AbsoluteUri)}&state={state}"
+            + $"&code_challenge={Pkce.CreateChallenge(verifier)}&code_challenge_method=S256");
+
+        var received = await _authenticator.ReceiveRedirect(signIn, redirect, cancellationToken).ConfigureAwait(false);
+        var query = HttpUtility.ParseQueryString(received.Query);
+        if (query[nameof(state)] != state)
+        {
+            throw new InvalidOperationException("The sign-in reply did not match this request.");
+        }
+
+        var code = query["code"] ?? throw new InvalidOperationException(query["error_description"] ?? "Yandex did not return a sign-in code.");
+        var form = new Dictionary<string, string>
+        {
+            ["grant_type"] = "authorization_code",
+            ["code"] = code,
+            ["client_id"] = _options.CodeAuthClientId,
+            ["client_secret"] = _options.CodeAuthClientSecret,
+            ["code_verifier"] = verifier,
+        };
+        var reply = await _oauth.ExchangeCodeAsync(form, cancellationToken).ConfigureAwait(false);
+
+        Parameters.Token = reply.AccessToken;
+        _isAuthorized.OnNext(true);
     }
+
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Dispose() => _isAuthorized.Dispose();
+
+    /// <summary>Converts a Yandex resource into the model the browser shows.</summary>
+    /// <param name="item">The resource.</param>
+    /// <returns>The file model.</returns>
+    private static FileModel ToFileModel(YandexResource item)
+    {
+        var path = item.Path.Replace("disk:", string.Empty, StringComparison.Ordinal);
+        return new() { Name = item.Name, IsFolder = item.Type == "dir", Path = path, Modified = item.Modified, Size = item.Size };
+    }
+
+    /// <summary>Converts Windows separators to the Yandex Disk separator.</summary>
+    /// <param name="path">The path to convert.</param>
+    /// <returns>The disk path.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static string ToDiskPath(string path) => path.Replace('\\', Separator);
+
+    /// <summary>Joins a folder path and an entry name into a disk path.</summary>
+    /// <param name="folder">The folder path.</param>
+    /// <param name="name">The entry name.</param>
+    /// <returns>The entry's disk path.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static string Combine(string folder, string name) => $"{ToDiskPath(folder).TrimEnd(Separator)}{Separator}{name}";
+
+    /// <summary>Gets the saved access token.</summary>
+    /// <returns>The token.</returns>
+    /// <exception cref="InvalidOperationException">No user is signed in.</exception>
+    private string RequireToken() => Parameters.Token ?? throw new InvalidOperationException("Sign in to Yandex Disk first.");
 }

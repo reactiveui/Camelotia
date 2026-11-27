@@ -1,7 +1,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
-             x:Class="Camelotia.Presentation.Avalonia.Views.FolderView"             
+             x:Class="Camelotia.Presentation.Avalonia.Views.FolderView"
+             x:DataType="interfaces:IFolderViewModel"
+             xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"             
              Background="Transparent">
     <Design.DataContext>
         <designTime:DesignTimeFolderViewModel />
@@ -40,8 +42,8 @@
             <MenuItem Name="TopLevelMenu" ItemsSource="{Binding Children}">
               <MenuItem.Header>
                 <Panel>
-                  <DrawingPresenter Name="ArrowRight" IsVisible="{Binding !#TopLevelMenu.IsSubMenuOpen}" MaxHeight="16" MaxWidth="16" Drawing="{DynamicResource ChevronRight}"/>
-                  <DrawingPresenter Name="ArrowDown" IsVisible="{Binding #TopLevelMenu.IsSubMenuOpen}" MaxHeight="16" MaxWidth="16" Drawing="{DynamicResource ChevronDown}"/>
+                  <Image Name="ArrowRight" IsVisible="{Binding !#TopLevelMenu.IsSubMenuOpen}" MaxHeight="16" MaxWidth="16" Source="{DynamicResource ChevronRight}"/>
+                  <Image Name="ArrowDown" IsVisible="{Binding #TopLevelMenu.IsSubMenuOpen}" MaxHeight="16" MaxWidth="16" Source="{DynamicResource ChevronDown}"/>
                 </Panel>
               </MenuItem.Header>
               <MenuItem.Styles>

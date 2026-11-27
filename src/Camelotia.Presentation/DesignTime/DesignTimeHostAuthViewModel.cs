@@ -1,29 +1,58 @@
-using System.Reactive;
+// Copyright (c) 2019-2026 ReactiveUI and Contributors. All rights reserved.
+// ReactiveUI and Contributors licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for full license information.
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
-using ReactiveUI.Reactive;
-using ReactiveUI.Validation.Reactive.Extensions;
-using ReactiveUI.Validation.Reactive.Helpers;
+using ReactiveUI.Primitives;
+using ReactiveUI.SourceGenerators;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
 
 namespace Camelotia.Presentation.DesignTime;
 
-public class DesignTimeHostAuthViewModel : ReactiveValidationObject, IHostAuthViewModel
+/// <summary>A sample host sign-in form, with a failing validation rule, for the designer.</summary>
+[System.Diagnostics.DebuggerDisplay("DesignTimeHostAuthViewModel: {Address}:{Port}")]
+public sealed partial class DesignTimeHostAuthViewModel : ReactiveValidationObject, IHostAuthViewModel
 {
-    public DesignTimeHostAuthViewModel() => this.ValidationRule(x => x.Username, name => false, "Validation error.");
+    /// <summary>Initializes a new instance of the <see cref="DesignTimeHostAuthViewModel"/> class.</summary>
+    public DesignTimeHostAuthViewModel() => this.ValidationRule(static x => x.Username, static _ => false, "Validation error.");
 
-    public string Username { get; set; } = "Jotaro";
+    /// <inheritdoc/>
+    [Reactive]
+    public partial string Username { get; set; } = "Jotaro";
 
-    public string Password { get; set; } = "Qwerty";
+    /// <inheritdoc/>
+    [Reactive]
+    public partial string Password { get; set; } = "Qwerty";
 
-    public ReactiveCommand<Unit, Unit> Login { get; }
+    /// <inheritdoc/>
+    [Reactive]
+    public partial string Address { get; set; } = "127.0.0.1";
 
-    public bool HasErrorMessage { get; } = true;
+    /// <inheritdoc/>
+    [Reactive]
+    public partial string Port { get; set; } = "5001";
 
-    public string ErrorMessage { get; } = "Error message example.";
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> Login { get; } = DesignTimeCommands.Empty();
 
-    public bool IsBusy { get; }
+    /// <inheritdoc/>
+    public bool HasErrorMessage => true;
 
-    public string Address { get; set; } = "127.0.0.1";
+    /// <inheritdoc/>
+    public string ErrorMessage => "Error message example.";
 
-    public string Port { get; set; } = "5001";
+    /// <inheritdoc/>
+    public bool IsBusy => false;
+
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            Login.Dispose();
+        }
+
+        base.Dispose(disposing);
+    }
 }

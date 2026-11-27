@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="../.editorconfig" />
+    <File Path="../.gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="testconfig.json" />
+  </Folder>
+  <Project Path="Camelotia.Presentation.Avalonia/Camelotia.Presentation.Avalonia.csproj" />
+  <Project Path="Camelotia.Presentation.Wpf/Camelotia.Presentation.Wpf.csproj" />
+  <Project Path="Camelotia.Presentation/Camelotia.Presentation.csproj" />
+  <Project Path="Camelotia.Services/Camelotia.Services.csproj" />
+  <Project Path="Camelotia.Tests/Camelotia.Tests.csproj" />
+</Solution>

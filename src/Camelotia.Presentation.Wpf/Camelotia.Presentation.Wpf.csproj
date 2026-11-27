@@ -2,24 +2,19 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <StartupObject>Camelotia.Presentation.Wpf.Program</StartupObject>
-    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <TargetFrameworks>net10.0-windows10.0.19041.0;net11.0-windows10.0.19041.0</TargetFrameworks>
     <IncludePackageReferencesDuringMarkupCompilation>true</IncludePackageReferencesDuringMarkupCompilation>
     <UseWpf>true</UseWpf>
-    <UseWindowsForms>true</UseWindowsForms>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MahApps.Metro" Version="2.4.11" />
-    <PackageReference Include="MaterialDesignColors" Version="5.4.0" />
-    <PackageReference Include="MaterialDesignThemes" Version="5.4.0" />
-    <PackageReference Include="MaterialDesignThemes.MahApps" Version="5.4.0" />
-    <PackageReference Include="ReactiveUI.WPF.Reactive" Version="26.0.1" />
-    <PackageReference Include="Akavache.Sqlite3.Reactive" Version="13.0.0" />
-    <PackageReference Include="Akavache.SystemTextJson.Reactive" Version="13.0.0" />
-    <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.3.1" PrivateAssets="all" />
-  </ItemGroup>
-  <ItemGroup>
-    <Using Remove="System.Windows.Forms" />
+    <PackageReference Include="MahApps.Metro" />
+    <PackageReference Include="MaterialDesignColors" />
+    <PackageReference Include="MaterialDesignThemes" />
+    <PackageReference Include="MaterialDesignThemes.MahApps" />
+    <PackageReference Include="ReactiveUI.WPF" />
+    <PackageReference Include="Akavache.Sqlite3" />
+    <PackageReference Include="Akavache.SystemTextJson" />
+    <PackageReference Include="ReactiveUI.Primitives.ObservableEvents" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Camelotia.Presentation\Camelotia.Presentation.csproj" />

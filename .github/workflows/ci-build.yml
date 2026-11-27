@@ -17,9 +17,23 @@ jobs:
     with:
       configuration: Release
       productNamespacePrefix: Camelotia
-      solutionFile: Camelotia.Avalonia.sln
-      installWorkloads: true
-      # The tests are xUnit, whose host rejects the TUnit-only detailed-logging switches.
-      enableDetailedTestLogging: false
+      solutionFile: Camelotia.Avalonia.slnf
+      testProjects: Camelotia.Tests/*.csproj
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  wpf:
+    name: WPF
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Setup .NET Environment
+        uses: reactiveui/actions-common/.github/actions/dotnet-environment@main
+        with:
+          dotnet-versions: 11.0.x
+          solution-file: Camelotia.Wpf.slnf
+          stamp-version: 'false'
+      - name: Build
+        working-directory: src
+        run: dotnet build Camelotia.Wpf.slnf --configuration Release

@@ -1,85 +1,107 @@
-using System.Reactive;
-using System.Reactive.Linq;
+// Copyright (c) 2019-2026 ReactiveUI and Contributors. All rights reserved.
+// ReactiveUI and Contributors licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for full license information.
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using ReactiveUI;
-using ReactiveUI.Reactive;
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Disposables;
 using ReactiveUI.SourceGenerators;
-using ReactiveUI.Validation.Reactive.Extensions;
-using ReactiveUI.Validation.Reactive.Helpers;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
 
 namespace Camelotia.Presentation.ViewModels;
 
+/// <summary>Runs a provider's user name and password sign-in form.</summary>
+[System.Diagnostics.DebuggerDisplay("DirectAuthViewModel: {Username}")]
 public sealed partial class DirectAuthViewModel : ReactiveValidationObject, IDirectAuthViewModel
 {
+    /// <summary>Holds the subscriptions that keep the form and its saved state in step.</summary>
+    private readonly MultipleDisposable _subscriptions = new();
+
+    /// <summary>Backs <see cref="ErrorMessage"/>.</summary>
     private readonly ObservableAsPropertyHelper<string> _errorMessage;
+
+    /// <summary>Backs <see cref="HasErrorMessage"/>.</summary>
     private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
+
+    /// <summary>Backs <see cref="IsBusy"/>.</summary>
     private readonly ObservableAsPropertyHelper<bool> _isBusy;
 
+    /// <summary>Initializes a new instance of the <see cref="DirectAuthViewModel"/> class.</summary>
+    /// <param name="state">The saved form state.</param>
+    /// <param name="provider">The provider to sign in to.</param>
     public DirectAuthViewModel(DirectAuthState state, ICloud provider)
     {
-        this.ValidationRule(
-            x => x.Username,
-            name => !string.IsNullOrWhiteSpace(name),
+        ArgumentNullException.ThrowIfNull(state);
+        ArgumentNullException.ThrowIfNull(provider);
+
+        _ = this.ValidationRule(
+            static x => x.Username,
+            static name => !string.IsNullOrWhiteSpace(name),
             "User name shouldn't be null or white space.");
 
-        this.ValidationRule(
-            x => x.Password,
-            pass => !string.IsNullOrWhiteSpace(pass),
+        _ = this.ValidationRule(
+            static x => x.Password,
+            static pass => !string.IsNullOrWhiteSpace(pass),
             "Password shouldn't be null or white space.");
 
         Login = ReactiveCommand.CreateFromTask(
-            () => provider.DirectAuth(Username, Password),
+            cancellationToken => provider.DirectAuth(Username, Password, cancellationToken).AsTask(),
             this.IsValid());
 
-        _isBusy = Login
-            .IsExecuting
-            .ToProperty(this, x => x.IsBusy);
+        _isBusy = Login.IsExecuting.ToProperty(this, static x => x.IsBusy);
 
         _errorMessage = Login
             .ThrownExceptions
-            .Select(exception => exception.Message)
+            .Select(static exception => exception.Message)
             .Log(this, $"Direct auth error occured in {provider.Name}")
-            .ToProperty(this, x => x.ErrorMessage);
+            .ToProperty(this, static x => x.ErrorMessage, string.Empty);
 
         _hasErrorMessage = Login
             .ThrownExceptions
-            .Select(exception => true)
-            .Merge(Login.Select(unit => false))
-            .ToProperty(this, x => x.HasErrorMessage);
+            .Select(static _ => true)
+            .Merge(Login.Select(static _ => false))
+            .ToProperty(this, static x => x.HasErrorMessage);
 
         Username = state.Username;
         Password = state.Password;
 
-        this.WhenAnyValue(x => x.Username)
-            .Subscribe(name => state.Username = name);
-        this.WhenAnyValue(x => x.Password)
-            .Subscribe(pass => state.Password = pass);
+        _subscriptions.Add(this.WhenAnyValue(static x => x.Username).Subscribe(name => state.Username = name));
+        _subscriptions.Add(this.WhenAnyValue(static x => x.Password).Subscribe(pass => state.Password = pass));
     }
 
+    /// <inheritdoc/>
     [Reactive]
     public partial string Username { get; set; }
 
+    /// <inheritdoc/>
     [Reactive]
     public partial string Password { get; set; }
 
+    /// <inheritdoc/>
     public bool IsBusy => _isBusy.Value;
 
+    /// <inheritdoc/>
     public string ErrorMessage => _errorMessage.Value;
 
+    /// <inheritdoc/>
     public bool HasErrorMessage => _hasErrorMessage.Value;
 
-    public ReactiveCommand<Unit, Unit> Login { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> Login { get; }
 
+    /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
-            _errorMessage?.Dispose();
-            _hasErrorMessage?.Dispose();
-            _isBusy?.Dispose();
-            Login?.Dispose();
+            _subscriptions.Dispose();
+            _errorMessage.Dispose();
+            _hasErrorMessage.Dispose();
+            _isBusy.Dispose();
+            Login.Dispose();
         }
 
         base.Dispose(disposing);
