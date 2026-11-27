@@ -124,7 +124,7 @@ public sealed class CloudViewModelTests : IDisposable
         await model.SetPath.RunAsync(Elsewhere);
 
         await Assert.That(canOpen).IsTrue();
-        await Assert.That(opened).IsEqualTo(Path.Combine("/", Docs));
+        await Assert.That(opened).IsEqualTo(DocsPath);
         await Assert.That(canGoBack).IsTrue();
         await Assert.That(back).IsEqualTo("/");
         await Assert.That(model.CurrentPath).IsEqualTo(Elsewhere);
@@ -132,17 +132,30 @@ public sealed class CloudViewModelTests : IDisposable
         await Assert.That(model.SelectedFile).IsNull();
     }
 
-    /// <summary>Goes back to the provider's start folder from a top-level path.</summary>
+    /// <summary>Goes up one folder in each provider's path format, on every operating system.</summary>
+    /// <param name="initialPath">The provider's start folder.</param>
+    /// <param name="path">The current folder.</param>
+    /// <param name="expected">The folder Back moves to.</param>
     /// <returns>A task that completes when the test finishes.</returns>
     [Test]
-    public async Task Back_FallsBackToTheInitialPath()
+    [Arguments("/", "/docs/sub", DocsPath)]
+    [Arguments("/", "/docs/sub/", DocsPath)]
+    [Arguments("/", DocsPath, "/")]
+    [Arguments("", "repo/folder", "repo")]
+    [Arguments("", "repo", "")]
+    [Arguments("", "/", "")]
+    [Arguments("", "C:\\Users\\me", "C:\\Users")]
+    [Arguments("", "C:\\Users", "C:\\")]
+    [Arguments("", "C:\\", "")]
+    public async Task Back_MovesToTheParentFolder(string initialPath, string path, string expected)
     {
-        _state.CurrentPath = "/";
-        using var model = ViewModelBuilder.CreateCloudViewModel(_state, _cloud, _files);
+        using var cloud = new FakeCloud { InitialPath = initialPath };
+        cloud.SetAuthorized(true);
+        using var model = ViewModelBuilder.CreateCloudViewModel(new CloudState { CurrentPath = path }, cloud, _files);
 
         await model.Back.RunAsync(RxVoid.Default);
 
-        await Assert.That(model.CurrentPath).IsEqualTo(_cloud.InitialPath);
+        await Assert.That(model.CurrentPath).IsEqualTo(expected);
     }
 
     /// <summary>Uploads the picked file, and does nothing when the user picks nothing.</summary>

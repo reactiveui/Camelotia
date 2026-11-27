@@ -1,6 +1,7 @@
 // Copyright (c) 2019-2026 ReactiveUI and Contributors. All rights reserved.
 // ReactiveUI and Contributors licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for full license information.
+using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Extensions;
@@ -21,6 +22,9 @@ public sealed partial class CloudViewModel : ReactiveObject, ICloudViewModel, IA
 {
     /// <summary>The number of seconds between automatic refreshes.</summary>
     private const int RefreshIntervalSeconds = 30;
+
+    /// <summary>The separators a provider path can use: '/' for remote providers and '\' for the local file system on Windows.</summary>
+    private static readonly SearchValues<char> PathSeparators = SearchValues.Create("/\\");
 
     /// <summary>Holds the subscriptions and helpers that live as long as the view model.</summary>
     private readonly MultipleDisposable _disposables = new();
@@ -231,6 +235,34 @@ public sealed partial class CloudViewModel : ReactiveObject, ICloudViewModel, IA
         return enumerator.MoveNext();
     }
 
+    /// <summary>Gets the folder above a provider path.</summary>
+    /// <param name="path">The provider path. Remote providers use '/'; the local file system on Windows uses '\'.</param>
+    /// <param name="initialPath">The provider's start folder, used when the path has no parent.</param>
+    /// <returns>The parent folder.</returns>
+    /// <remarks>
+    /// <see cref="Path.GetDirectoryName(string)"/> is not used because it rewrites '/' to '\' on Windows,
+    /// which breaks the paths of every remote provider.
+    /// </remarks>
+    private static string GetParentPath(string path, string initialPath)
+    {
+        var trimmed = path.TrimEnd('/', '\\');
+        var separator = trimmed.AsSpan().LastIndexOfAny(PathSeparators);
+        if (separator < 0)
+        {
+            return initialPath;
+        }
+
+        if (separator == 0)
+        {
+            return path[..1];
+        }
+
+        var parent = trimmed[..separator];
+
+        // A Windows drive root keeps its separator, so "C:\Users" goes back to "C:\" and not to "C:".
+        return parent.EndsWith(':') ? trimmed[..(separator + 1)] : parent;
+    }
+
     /// <summary>Checks whether two listings hold equal entries in the same order.</summary>
     /// <param name="left">The first listing.</param>
     /// <param name="right">The second listing.</param>
@@ -311,12 +343,14 @@ public sealed partial class CloudViewModel : ReactiveObject, ICloudViewModel, IA
         var canOpen = this.WhenAnyValue(static x => x.SelectedFile)
             .Select(static file => file is { IsFolder: true })
             .CombineLatest(Refresh.IsExecuting, canInteract, static (folder, busy, interact) => folder && interact && !busy);
-        Open = ReactiveCommand.Create(() => Path.Combine(CurrentPath, (SelectedFile ?? throw new InvalidOperationException("Select a folder to open.")).Name), canOpen);
+
+        // Each provider lists entries with their full path in its own format, so the entry's path is the folder to open.
+        Open = ReactiveCommand.Create(() => (SelectedFile ?? throw new InvalidOperationException("Select a folder to open.")).Path, canOpen);
 
         var canGoBack = this.WhenAnyValue(static x => x.CurrentPath)
             .Select(path => path.Length > _cloud.InitialPath.Length)
             .CombineLatest(Refresh.IsExecuting, canInteract, static (valid, busy, interact) => valid && interact && !busy);
-        Back = ReactiveCommand.Create(() => Path.GetDirectoryName(CurrentPath) ?? _cloud.InitialPath, canGoBack);
+        Back = ReactiveCommand.Create(() => GetParentPath(CurrentPath, _cloud.InitialPath), canGoBack);
         SetPath = ReactiveCommand.Create<string, string>(static path => path);
 
         _disposables.Add(Open.Merge(Back).Merge(SetPath)
