@@ -7,8 +7,6 @@ using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.ViewModels;
 
-public delegate IFileViewModel FileViewModelFactory(FileModel file, ICloudViewModel provider);
-
 public sealed class FileViewModel : ReactiveObject, IFileViewModel
 {
     private readonly FileModel _file;
@@ -56,3 +54,5 @@ public sealed class FileViewModel : ReactiveObject, IFileViewModel
         }
     }
 }
+
+public delegate IFileViewModel FileViewModelFactory(FileModel file, ICloudViewModel provider);

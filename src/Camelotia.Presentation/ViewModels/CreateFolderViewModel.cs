@@ -11,8 +11,6 @@ using ReactiveUI.Validation.Reactive.Helpers;
 
 namespace Camelotia.Presentation.ViewModels;
 
-public delegate ICreateFolderViewModel CreateFolderViewModelFactory(ICloudViewModel providerViewModel);
-
 public sealed partial class CreateFolderViewModel : ReactiveValidationObject, ICreateFolderViewModel
 {
     private readonly ObservableAsPropertyHelper<string> _errorMessage;
@@ -125,3 +123,5 @@ public sealed partial class CreateFolderViewModel : ReactiveValidationObject, IC
         base.Dispose(disposing);
     }
 }
+
+public delegate ICreateFolderViewModel CreateFolderViewModelFactory(ICloudViewModel providerViewModel);

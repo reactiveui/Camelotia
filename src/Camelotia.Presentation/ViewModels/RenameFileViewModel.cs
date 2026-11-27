@@ -11,8 +11,6 @@ using ReactiveUI.Validation.Reactive.Helpers;
 
 namespace Camelotia.Presentation.ViewModels;
 
-public delegate IRenameFileViewModel RenameFileViewModelFactory(ICloudViewModel providerViewModel);
-
 public sealed partial class RenameFileViewModel : ReactiveValidationObject, IRenameFileViewModel
 {
     private readonly ObservableAsPropertyHelper<bool> _hasErrorMessage;
@@ -122,3 +120,5 @@ public sealed partial class RenameFileViewModel : ReactiveValidationObject, IRen
         base.Dispose(disposing);
     }
 }
+
+public delegate IRenameFileViewModel RenameFileViewModelFactory(ICloudViewModel providerViewModel);

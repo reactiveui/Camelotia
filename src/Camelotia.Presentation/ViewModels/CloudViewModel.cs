@@ -4,18 +4,16 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Extensions;
+using Camelotia.Presentation.Infrastructure;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Interfaces;
 using Camelotia.Services.Models;
 using ReactiveUI;
-using Camelotia.Presentation.Infrastructure;
 using ReactiveUI.Primitives.Reactive.Disposables;
 using ReactiveUI.Reactive;
 using ReactiveUI.SourceGenerators;
 
 namespace Camelotia.Presentation.ViewModels;
-
-public delegate ICloudViewModel CloudViewModelFactory(CloudState state, ICloud provider);
 
 public sealed partial class CloudViewModel : ReactiveObject, ICloudViewModel, IActivatableViewModel
 {
@@ -349,3 +347,5 @@ public sealed partial class CloudViewModel : ReactiveObject, ICloudViewModel, IA
             .DisposeWith(disposable);
     }
 }
+
+public delegate ICloudViewModel CloudViewModelFactory(CloudState state, ICloud provider);

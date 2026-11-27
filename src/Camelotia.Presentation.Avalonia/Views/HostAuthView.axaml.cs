@@ -1,6 +1,6 @@
-using ReactiveUI.Avalonia.Reactive;
-using Camelotia.Presentation.Interfaces;
 using Camelotia.Presentation.Infrastructure;
+using Camelotia.Presentation.Interfaces;
+using ReactiveUI.Avalonia.Reactive;
 using ReactiveUI.Primitives.Reactive.Disposables;
 using ReactiveUI.Reactive;
 using ReactiveUI.Validation.Reactive.Extensions;

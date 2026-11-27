@@ -1,12 +1,11 @@
 using System;
 using System.Reactive;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using ReactiveUI.Avalonia.Reactive;
 using Akavache.Reactive;
 using Akavache.Reactive.Sqlite3;
 using Akavache.Reactive.SystemTextJson;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
 using Camelotia.Presentation.AppState;
 using Camelotia.Presentation.Avalonia.Services;
 using Camelotia.Presentation.Avalonia.Views;
@@ -14,6 +13,7 @@ using Camelotia.Presentation.Infrastructure;
 using Camelotia.Presentation.ViewModels;
 using Camelotia.Services;
 using ReactiveUI;
+using ReactiveUI.Avalonia.Reactive;
 using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.Avalonia;
@@ -39,11 +39,10 @@ public class App : Application
             MinWidth = 850,
         };
 
-        AttachDevTools(window);
         window.Content = CreateView(window);
         window.Show();
 
-                base.OnFrameworkInitializationCompleted();
+        base.OnFrameworkInitializationCompleted();
     }
 
     public object CreateView(Window window)
@@ -77,12 +76,5 @@ public class App : Application
                     provider),
                 new AvaloniaFileManager(window),
                 provider));
-    }
-
-    private static void AttachDevTools(TopLevel window)
-    {
-#if DEBUG
-        window.AttachDevTools();
-#endif
     }
 }

@@ -1,10 +1,10 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using ReactiveUI.Avalonia.Reactive;
+using Camelotia.Presentation.Infrastructure;
 using Camelotia.Presentation.Interfaces;
 using ReactiveMarbles.ObservableEvents;
-using Camelotia.Presentation.Infrastructure;
+using ReactiveUI.Avalonia.Reactive;
 using ReactiveUI.Primitives.Reactive.Disposables;
 using ReactiveUI.Reactive;
 
@@ -21,7 +21,7 @@ public sealed partial class FileView : ReactiveUserControl<IFileViewModel>
                 .DoubleTapped
                 .Do(args => ViewModel.Provider.SelectedFile = ViewModel)
                 .Select(args => Unit.Default)
-                .InvokeCommand(this, x => x.ViewModel.Provider.Open)
+                .InvokeCommand(ViewModel.Provider.Open)
                 .DisposeWith(disposables);
 
             ContextMenu

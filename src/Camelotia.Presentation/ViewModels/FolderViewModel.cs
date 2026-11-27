@@ -5,8 +5,6 @@ using ReactiveUI.Reactive;
 
 namespace Camelotia.Presentation.ViewModels;
 
-public delegate IFolderViewModel FolderViewModelFactory(FolderModel folder, ICloudViewModel provider);
-
 public sealed class FolderViewModel : ReactiveObject, IFolderViewModel
 {
     private readonly FolderModel _folder;
@@ -47,3 +45,5 @@ public sealed class FolderViewModel : ReactiveObject, IFolderViewModel
         }
     }
 }
+
+public delegate IFolderViewModel FolderViewModelFactory(FolderModel folder, ICloudViewModel provider);
