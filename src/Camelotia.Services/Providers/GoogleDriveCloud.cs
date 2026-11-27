@@ -114,6 +114,12 @@ public sealed class GoogleDriveCloud : ICloud, IDisposable
         return Task.CompletedTask;
     });
 
+    public void Dispose()
+    {
+        _driveService?.Dispose();
+        _isAuthorized.Dispose();
+    }
+
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1075:Avoid empty catch clause that catches System.Exception.", Justification = "Deliberate ignore")]
     private void EnsureLoggedInIfTokenSaved() => Task.Run(async () =>
     {
@@ -184,11 +190,5 @@ public sealed class GoogleDriveCloud : ICloud, IDisposable
         }
 
         public Task ClearAsync() => Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        _driveService?.Dispose();
-        _isAuthorized.Dispose();
     }
 }

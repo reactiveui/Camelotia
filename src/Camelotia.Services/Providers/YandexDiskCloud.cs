@@ -154,6 +154,12 @@ public sealed class YandexDiskCloud : ICloud, IDisposable
         _isAuthorized.OnNext(true);
     }
 
+    public void Dispose()
+    {
+        _http.Dispose();
+        _isAuthorized.Dispose();
+    }
+
     private async Task<string> GetAuthenticationTokenFromCode(string code)
     {
         using var http = new HttpClient();
@@ -256,11 +262,5 @@ public sealed class YandexDiskCloud : ICloud, IDisposable
     {
         [JsonProperty("access_token")]
         public string AccessToken { get; set; }
-    }
-
-    public void Dispose()
-    {
-        _http.Dispose();
-        _isAuthorized.Dispose();
     }
 }
