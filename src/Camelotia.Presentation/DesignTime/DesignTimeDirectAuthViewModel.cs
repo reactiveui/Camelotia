@@ -1,25 +1,50 @@
-using System.Reactive;
+// Copyright (c) 2019-2026 ReactiveUI and Contributors. All rights reserved.
+// ReactiveUI and Contributors licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for full license information.
 using Camelotia.Presentation.Interfaces;
 using ReactiveUI;
-using ReactiveUI.Reactive;
-using ReactiveUI.Validation.Reactive.Extensions;
-using ReactiveUI.Validation.Reactive.Helpers;
+using ReactiveUI.Primitives;
+using ReactiveUI.SourceGenerators;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
 
 namespace Camelotia.Presentation.DesignTime;
 
-public class DesignTimeDirectAuthViewModel : ReactiveValidationObject, IDirectAuthViewModel
+/// <summary>A sample user name and password form, with a failing validation rule, for the designer.</summary>
+[System.Diagnostics.DebuggerDisplay("DesignTimeDirectAuthViewModel: {Username}")]
+public sealed partial class DesignTimeDirectAuthViewModel : ReactiveValidationObject, IDirectAuthViewModel
 {
-    public DesignTimeDirectAuthViewModel() => this.ValidationRule(x => x.Username, name => false, "Validation error.");
+    /// <summary>Initializes a new instance of the <see cref="DesignTimeDirectAuthViewModel"/> class.</summary>
+    public DesignTimeDirectAuthViewModel() => this.ValidationRule(static x => x.Username, static _ => false, "Validation error.");
 
-    public string Username { get; set; } = "Joseph";
+    /// <inheritdoc/>
+    [Reactive]
+    public partial string Username { get; set; } = "Joseph";
 
-    public string Password { get; set; }
+    /// <inheritdoc/>
+    [Reactive]
+    public partial string Password { get; set; } = string.Empty;
 
-    public ReactiveCommand<Unit, Unit> Login { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> Login { get; } = DesignTimeCommands.Empty();
 
-    public bool HasErrorMessage { get; } = true;
+    /// <inheritdoc/>
+    public bool HasErrorMessage => true;
 
-    public string ErrorMessage { get; } = "Error message example.";
+    /// <inheritdoc/>
+    public string ErrorMessage => "Error message example.";
 
-    public bool IsBusy { get; }
+    /// <inheritdoc/>
+    public bool IsBusy => false;
+
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            Login.Dispose();
+        }
+
+        base.Dispose(disposing);
+    }
 }

@@ -3,7 +3,8 @@
              xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
              xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
              xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
-             x:Class="Camelotia.Presentation.Avalonia.Views.ProviderView">
+             x:Class="Camelotia.Presentation.Avalonia.Views.ProviderView"
+             x:DataType="interfaces:ICloudViewModel">
     <Design.DataContext>
         <designTime:DesignTimeCloudViewModel />
     </Design.DataContext>
@@ -44,7 +45,7 @@
                         Command="{Binding Back}"
                         ToolTip.Tip="Back"
                         Classes="Primary">
-                <DrawingPresenter Height="16" Drawing="{DynamicResource ArrowUp}"/>
+                <Image Height="16" Source="{DynamicResource ArrowUp}"/>
               </Button>
                 <TextBlock Grid.Column="1"
                            IsVisible="{Binding HideBreadCrumbs}"
@@ -54,14 +55,14 @@
                            Margin="15 0" />
                 <ListBox Grid.Column="1"
                          IsVisible="{Binding ShowBreadCrumbs}"
-                         Items="{Binding BreadCrumbs}"
+                         ItemsSource="{Binding BreadCrumbs}"
                          Classes="BreadCrumb"/>          
                 <Button Grid.Column="2"
                         Command="{Binding Open}"
                         HorizontalAlignment="Stretch"
                         ToolTip.Tip="Open"
                         Classes="Primary">
-                  <DrawingPresenter Height="16" Drawing="{DynamicResource ArrowDown}"/>
+                  <Image Height="16" Source="{DynamicResource ArrowDown}"/>
                 </Button>
             </Grid>
             <Border Grid.Row="1" 
@@ -72,7 +73,7 @@
                              Background="{DynamicResource ThemeCardBrush}"
                              BorderThickness="0"
                              SelectionMode="Toggle"
-                             Items="{Binding Files}"
+                             ItemsSource="{Binding Files}"
                              IsVisible="{Binding IsReady}"
                              ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                              SelectedItem="{Binding SelectedFile, Mode=TwoWay}">

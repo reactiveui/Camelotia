@@ -1,96 +1,142 @@
-using System.Reactive;
+// Copyright (c) 2019-2026 ReactiveUI and Contributors. All rights reserved.
+// ReactiveUI and Contributors licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for full license information.
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Models;
 using ReactiveUI;
-using ReactiveUI.Reactive;
+using ReactiveUI.Primitives;
+using ReactiveUI.SourceGenerators;
 
 namespace Camelotia.Presentation.DesignTime;
 
-public class DesignTimeCloudViewModel : ReactiveObject, ICloudViewModel
+/// <summary>A sample provider browser for the designer.</summary>
+[System.Diagnostics.DebuggerDisplay("DesignTimeCloudViewModel: {Name}")]
+public sealed partial class DesignTimeCloudViewModel : ReactiveObject, ICloudViewModel, IDisposable
 {
-    public DesignTimeCloudViewModel()
-    {
-        Files =
-        [
-            new DesignTimeFileViewModel(this),
-            new DesignTimeFileViewModel(this)
-        ];
-        SelectedFile = Files.FirstOrDefault();
-    }
+    /// <summary>The sample countdown the designer shows.</summary>
+    private const int SampleRefreshSeconds = 30;
 
-    public Guid Id { get; } = Guid.NewGuid();
+    /// <summary>Backs <see cref="Auth"/>.</summary>
+    private readonly DesignTimeAuthViewModel _auth = new();
 
-    public IAuthViewModel Auth { get; } = new DesignTimeAuthViewModel();
+    /// <summary>Backs <see cref="Rename"/>.</summary>
+    private readonly DesignTimeRenameFileViewModel _rename = new();
 
-    public IRenameFileViewModel Rename { get; } = new DesignTimeRenameFileViewModel();
+    /// <summary>Backs <see cref="Folder"/>.</summary>
+    private readonly DesignTimeCreateFolderViewModel _folder = new();
 
-    public ICreateFolderViewModel Folder { get; } = new DesignTimeCreateFolderViewModel();
+    /// <summary>Gets the sample provider that parameterless design-time files belong to.</summary>
+    public static DesignTimeCloudViewModel Shared { get; } = new();
 
-    public IFileViewModel SelectedFile { get; set; }
+    /// <inheritdoc/>
+    public Guid Id { get; } = new("00000000-0000-0000-0000-000000000001");
 
-    public IEnumerable<IFileViewModel> Files { get; }
+    /// <inheritdoc/>
+    public IAuthViewModel Auth => _auth;
 
-    public ReactiveCommand<Unit, Unit> DownloadSelectedFile { get; }
+    /// <inheritdoc/>
+    public IRenameFileViewModel Rename => _rename;
 
-    public ReactiveCommand<Unit, Unit> UploadToCurrentPath { get; }
+    /// <inheritdoc/>
+    public ICreateFolderViewModel Folder => _folder;
 
-    public ReactiveCommand<Unit, Unit> DeleteSelectedFile { get; }
+    /// <inheritdoc/>
+    [Reactive]
+    public partial IFileViewModel? SelectedFile { get; set; }
 
-    public ReactiveCommand<Unit, Unit> UnselectFile { get; }
+    /// <summary>Gets two sample files. They are created on first read, so the constructor does not hand out <see langword="this"/>.</summary>
+    public IEnumerable<IFileViewModel> Files => field ??= [new DesignTimeFileViewModel(this), new DesignTimeFileViewModel(this)];
 
-    public ReactiveCommand<Unit, IEnumerable<FileModel>> Refresh { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> DownloadSelectedFile { get; } = DesignTimeCommands.Empty();
 
-    public ReactiveCommand<Unit, Unit> Logout { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> UploadToCurrentPath { get; } = DesignTimeCommands.Empty();
 
-    public ReactiveCommand<Unit, string> Back { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> DeleteSelectedFile { get; } = DesignTimeCommands.Empty();
 
-    public ReactiveCommand<Unit, string> Open { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> UnselectFile { get; } = DesignTimeCommands.Empty();
 
-    public ReactiveCommand<string, string> SetPath { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, IEnumerable<FileModel>> Refresh { get; } = DesignTimeCommands.Returning<IEnumerable<FileModel>>([]);
 
-    public bool IsCurrentPathEmpty { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> Logout { get; } = DesignTimeCommands.Empty();
 
-    public bool IsLoading { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, string> Back { get; } = DesignTimeCommands.Returning("/home");
 
-    public bool IsReady { get; } = true;
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, string> Open { get; } = DesignTimeCommands.Returning("/home/files");
 
-    public bool HasErrorMessage { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<string, string> SetPath { get; } = ReactiveCommand.Create<string, string>(static path => path);
 
-    public bool CanLogout { get; }
+    /// <inheritdoc/>
+    public bool IsCurrentPathEmpty => false;
 
-    public bool CanInteract { get; }
+    /// <inheritdoc/>
+    public bool IsLoading => false;
 
-    public bool ShowBreadCrumbs { get; } = true;
+    /// <inheritdoc/>
+    public bool IsReady => true;
 
-    public bool HideBreadCrumbs { get; }
+    /// <inheritdoc/>
+    public bool HasErrorMessage => false;
 
-    public int RefreshingIn { get; } = 30;
+    /// <inheritdoc/>
+    public bool CanLogout => false;
 
-    public string CurrentPath { get; } = "/home/files";
+    /// <inheritdoc/>
+    public bool CanInteract => false;
 
+    /// <inheritdoc/>
+    public bool ShowBreadCrumbs => true;
+
+    /// <inheritdoc/>
+    public bool HideBreadCrumbs => false;
+
+    /// <inheritdoc/>
+    public int RefreshingIn => SampleRefreshSeconds;
+
+    /// <inheritdoc/>
+    public string CurrentPath => "/home/files";
+
+    /// <inheritdoc/>
     public IEnumerable<IFolderViewModel> BreadCrumbs { get; } =
     [
-        new DesignTimeFolderViewModel(
-            "home",
-            [
-                new DesignTimeFolderViewModel("home"),
-                new DesignTimeFolderViewModel("home1"),
-                new DesignTimeFolderViewModel("home2")
-            ]),
-        new DesignTimeFolderViewModel(
-            "files",
-            [
-                new DesignTimeFolderViewModel("files"),
-                new DesignTimeFolderViewModel("files1"),
-                new DesignTimeFolderViewModel("files2")
-            ])
+        new DesignTimeFolderViewModel("home", [new DesignTimeFolderViewModel("home"), new DesignTimeFolderViewModel("home1"), new DesignTimeFolderViewModel("home2")]),
+        new DesignTimeFolderViewModel("files", [new DesignTimeFolderViewModel("files"), new DesignTimeFolderViewModel("files1"), new DesignTimeFolderViewModel("files2")]),
     ];
 
-    public string Description { get; } = "Mock file system.";
+    /// <inheritdoc/>
+    public string Description => "Mock file system.";
 
-    public DateTime Created { get; } = DateTime.Now;
+    /// <inheritdoc/>
+    public DateTimeOffset Created { get; } = new(2019, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
-    public string Name { get; } = "Awesome mock";
+    /// <inheritdoc/>
+    public string Name => "Awesome mock";
 
-    public string Size { get; } = "42MB";
+    /// <inheritdoc/>
+    public string Size => "42MB";
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        _auth.Dispose();
+        _rename.Dispose();
+        _folder.Dispose();
+        DownloadSelectedFile.Dispose();
+        UploadToCurrentPath.Dispose();
+        DeleteSelectedFile.Dispose();
+        UnselectFile.Dispose();
+        Refresh.Dispose();
+        Logout.Dispose();
+        Back.Dispose();
+        Open.Dispose();
+        SetPath.Dispose();
+    }
 }

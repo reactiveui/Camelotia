@@ -1,76 +1,73 @@
+# Camelotia
+
 <p><img src="images/horizontal.png" alt="Camelotia" height="50px"></p>
 
-[![Build](https://github.com/reactiveui/Camelotia/actions/workflows/ci-build.yml/badge.svg)](https://github.com/reactiveui/Camelotia/actions/workflows/ci-build.yml) [![Pull Requests](https://img.shields.io/github/issues-pr/reactiveui/camelotia.svg)](https://github.com/reactiveui/Camelotia/pulls) [![Issues](https://img.shields.io/github/issues/reactiveui/camelotia.svg)](https://github.com/reactiveui/Camelotia/issues) ![License](https://img.shields.io/github/license/reactiveui/camelotia.svg) ![Size](https://img.shields.io/github/repo-size/reactiveui/camelotia.svg) [![codecov](https://codecov.io/gh/reactiveui/Camelotia/branch/main/graph/badge.svg?token=dmQeHH4Us8)](https://codecov.io/gh/reactiveui/Camelotia)
+[![Build](https://github.com/reactiveui/Camelotia/actions/workflows/ci-build.yml/badge.svg)](https://github.com/reactiveui/Camelotia/actions/workflows/ci-build.yml)
+[![codecov](https://codecov.io/gh/reactiveui/Camelotia/branch/main/graph/badge.svg?token=dmQeHH4Us8)](https://codecov.io/gh/reactiveui/Camelotia)
+[![Pull Requests](https://img.shields.io/github/issues-pr/reactiveui/camelotia.svg)](https://github.com/reactiveui/Camelotia/pulls)
+[![Issues](https://img.shields.io/github/issues/reactiveui/camelotia.svg)](https://github.com/reactiveui/Camelotia/issues)
+[![License](https://img.shields.io/github/license/reactiveui/camelotia.svg)](LICENSE)
 
-Camelotia is a sample cross-platform application built with reactive extensions, [ReactiveUI](https://github.com/reactiveui/ReactiveUI), and modern .NET UI frameworks. Camelotia is a file manager for cloud storages, it currently supports Yandex Disk, Google Drive, VK Documents, GitHub, FTP, SFTP, and local file systems. The app runs on Windows, Linux, MacOS, XBox, Surface Hub and HoloLens.
+Camelotia is a file manager for cloud storage, built with [ReactiveUI](https://github.com/reactiveui/ReactiveUI) and modern .NET UI frameworks. It browses, uploads, downloads, renames and deletes files in Yandex Disk, Google Drive, VK Documents, GitHub, FTP, SFTP and the local file system.
 
-### Compiling Avalonia app
+The same view models drive an [Avalonia](https://github.com/AvaloniaUI/Avalonia) app for Windows, Linux and macOS, and a WPF app for Windows. Both target .NET 10 and .NET 11.
 
-<img src="images/UiAvalonia.png" width="550">
+| Avalonia | WPF |
+| -------- | --- |
+| <img src="images/UiAvalonia.png" width="420"> | <img src="images/UiPresentation.png" width="420"> |
 
-In order to compile .NET Standard libraries, run tests and run the <a href="https://github.com/avaloniaui">Avalonia</a> application on Windows, Linux or MacOS operating system make sure to have latest [.NET Core SDK](https://dot.net/) installed. Launch the `Camelotia.Avalonia.sln` file to browse or to edit source files. Camelotia uses [Nuke Build](https://github.com/nuke-build/nuke) to build and test the solution. Execute the following commands to run the build scripts on Linux or MacOS:
+## Build and run
+
+Install the [.NET 11 SDK](https://dot.net/). Run these commands from the `src` folder.
 
 ```sh
-# Linux or MacOS shell. Launches the Avalonia app after build.
-git clone https://github.com/worldbeater/Camelotia
-cd ./Camelotia && bash ./build.sh --interactive
+# Build the Avalonia app, the shared libraries and the tests.
+dotnet build Camelotia.Avalonia.slnf
+
+# Run the Avalonia app.
+dotnet run --project Camelotia.Presentation.Avalonia --framework net11.0
+
+# Run the tests. Add the flags after "--" to collect Cobertura coverage.
+dotnet test --project Camelotia.Tests -- --coverage --coverage-output-format cobertura
 ```
 
-On Windows, execute the following command line:
+The WPF app builds on Windows with `dotnet build Camelotia.Wpf.slnf`. Its views use plain XAML and reactive bindings, so you can copy a view and its view model into your own WPF app.
 
-```sh
-# Windows command line. Launches the Avalonia app after build.
-# Use the '--full' option to compile Android, UWP and WPF apps as well.
-# Use the '--configuration Release' option to generate app packages.
-git clone https://github.com/worldbeater/Camelotia
-cd ./Camelotia && powershell -ExecutionPolicy Unrestricted ./build.ps1 --interactive
-```
+## Signing in to each provider
 
-### Compiling Universal Windows Platform app
+| Provider | How you sign in | What to set up |
+| -------- | --------------- | -------------- |
+| Local | No sign-in. | Nothing. |
+| FTP and SFTP | Address, port, user name and password. | Nothing. The SFTP client accepts any host key. |
+| GitHub | Your user name, with a [personal access token](https://github.com/settings/tokens) as the password. | Give the token read and write access to the repositories you want to browse. |
+| Google Drive | In the browser. | The Google client ID and secret are in `GoogleDriveCloudOptions`. |
+| Yandex Disk | In the browser, with PKCE. | Register `http://127.0.0.1:3000/` as the redirect URI of the Yandex OAuth app in `YandexDiskCloudOptions`. |
+| VK Documents | In the browser, through VK ID with PKCE. | Register `http://127.0.0.1:3001/` as a trusted redirect URL of the VK ID app in `VkDocsCloudOptions`. VK must also give that app access to the documents API. |
 
-<img src="images/UiWindows.png" width="550"> 
+The browser providers open your default browser, then wait on the loopback address for the redirect. The app's settings live in `CloudConfiguration`, which the app saves with the rest of its state.
 
-<a href="https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide">Universal Windows Platform</a> Camelotia app is compatible with Windows 10-based devices, such as PCs, Xbox One and HoloLens. The app can be compiled only on latest Windows 10. Make sure to have latest [Microsoft Visual Studio](https://visualstudio.microsoft.com/) installed. Make sure the "Universal Application Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Launch the `Camelotia.Uwp.sln` solution file.
+## How it is built
 
-### Compiling Windows Presentation Foundation app
+- `Camelotia.Services` holds one `ICloud` provider for each service. The Yandex Disk and VK clients are [Refit](https://github.com/reactiveui/refit) interfaces with source-generated code and source-generated JSON, registered through `AddCloudServices()`.
+- `Camelotia.Presentation` holds the view models. They are written with [ReactiveUI.SourceGenerators](https://github.com/reactiveui/ReactiveUI.SourceGenerators), [ReactiveUI.Validation](https://github.com/reactiveui/ReactiveUI.Validation) and [DynamicData](https://github.com/reactivemarbles/DynamicData).
+- ReactiveUI's typed suspension saves the app state to [Akavache](https://github.com/reactiveui/Akavache) with System.Text.Json.
+- The tests use [TUnit](https://github.com/thomhurst/TUnit) on Microsoft.Testing.Platform. They run the real Refit, Octokit and Google clients against stubbed HTTP handlers, so no test talks to a real service.
 
-<img src="images/UiPresentation.png" width="550">
+## Technologies
 
-The app was ported to WPF to make the cloud file manager controls reusable across most popular .NET implementations, so one could easily embed parts of Camelotia into their own applications by simply copying and pasting the source files. The app is also compatible with Windows versions lower than 10, such as Windows 7 or 8. To compile the WPF app, ensure the "Desktop Development" section is checked in [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/). Then, open the `Camelotia.Wpf.sln` file in Visual Studio 2019.
-
-### Compiling Xamarin Forms app
-
-<img src="images/UiAndroid.png" width="550"> 
-
-To compile the <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/">Xamarin.Forms</a> Android application, install the appropriate Android SDK v8.1. This can be achieved by using [Visual Studio Installer](https://visualstudio.microsoft.com/ru/vs/) and selecting "Mobile Development" section there. Launch the `Camelotia.Xamarin.sln` solution file.
-
-### Technologies and Tools Used
-
-- <a href="https://reactiveui.net/">ReactiveUI</a> modern MVVM framework
-- <a href="https://github.com/reactiveui/reactiveui.validation">ReactiveUI.Validation</a> reactive validation library
-- <a href="https://reactiveui.net/docs/handbook/events/">ReactiveUI.Events</a> turning regular events into observables
-- <a href="https://github.com/reactiveui/DynamicData">DynamicData</a> reactive collections
-- <a href="https://github.com/avaloniaui">AvaloniaUI</a> cross-platform XAML-based GUI framework
-- <a href="https://github.com/worldbeater/citrus.avalonia">Citrus.Avalonia</a> bright and modern AvaloniaUI theme
-- <a href="https://github.com/reactiveui/Akavache">Akavache</a> persistent key-value store
-- <a href="https://github.com/nuke-build/nuke">Nuke</a> build automation system for C#/.NET
-- <a href="https://github.com/xunit/xunit">XUnit</a> unit testing tool for .NET
-- <a href="https://github.com/tonerdo/coverlet">Coverlet</a> code coverage analyzer
-- <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a> mocking library
-- <a href="https://github.com/fluentassertions/fluentassertions">FluentAssertions</a> assertions library
-- <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/">Xamarin.Forms</a> mobile GUI framework
-- <a href="https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide">Universal Windows Platform</a> SDKs
-- <a href="https://github.com/dotnet/reactive">Reactive Extensions</a> for .NET
-- <a href="https://github.com/octokit/octokit.net">Octokit</a> GitHub client library
-- <a href="https://github.com/robinrodricks/FluentFTP">FluentFTP</a> FTP implementation
-- <a href="https://github.com/sshnet/SSH.NET/">SSH.NET</a> SFTP implementation
-- <a href="https://github.com/vknet/vk">VkNet</a> Vkontakte SDK for .NET
-- <a href="https://github.com/googleapis/google-api-dotnet-client">Google Drive</a> client SDK for .NET
-- <a href="https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit">Material Design</a> XAML controls and styles
-- <a href="https://github.com/MahApps/MahApps.Metro">MahApps Metro</a> XAML controls and styled windows
-- <a href="https://github.com/Fody/Costura">Costura.Fody</a> which embeds references as resources
-- <a href="https://www.jetbrains.com/rider/">JetBrains Rider</a> and <a href="https://visualstudio.microsoft.com/">Microsoft Visual Studio</a> IDEs
-- <a href="https://github.com/fornever/avaloniarider">AvaloniaRider</a> plugin for visual designer support
+- [ReactiveUI](https://reactiveui.net/) and [ReactiveUI.Primitives](https://github.com/reactiveui/Primitives) for observable state, commands and view activation
+- [ReactiveUI.SourceGenerators](https://github.com/reactiveui/ReactiveUI.SourceGenerators) for reactive properties
+- [ReactiveUI.Validation](https://github.com/reactiveui/ReactiveUI.Validation) for form validation
+- [DynamicData](https://github.com/reactivemarbles/DynamicData) for reactive collections
+- [Akavache](https://github.com/reactiveui/Akavache) for the persistent key-value store
+- [Refit](https://github.com/reactiveui/refit) for the Yandex Disk and VK REST clients
+- [Avalonia](https://github.com/AvaloniaUI/Avalonia) with the Fluent theme for the cross-platform app
+- [Material Design in XAML](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit) and [MahApps.Metro](https://github.com/MahApps/MahApps.Metro) for the WPF app
+- [Octokit](https://github.com/octokit/octokit.net) for GitHub
+- [Google APIs Client Library](https://github.com/googleapis/google-api-dotnet-client) for Google Drive
+- [FluentFTP](https://github.com/robinrodricks/FluentFTP) for FTP
+- [SSH.NET](https://github.com/sshnet/SSH.NET) for SFTP
+- [TUnit](https://github.com/thomhurst/TUnit) and Microsoft.Testing.Platform for tests and coverage
 
 ## Sponsors
 

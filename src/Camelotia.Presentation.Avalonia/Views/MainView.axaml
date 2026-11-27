@@ -4,8 +4,8 @@
     xmlns:views="clr-namespace:Camelotia.Presentation.Avalonia.Views"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
-    xmlns:reactiveUi="http://reactiveui.net"
     x:Class="Camelotia.Presentation.Avalonia.Views.MainView"
+    x:DataType="interfaces:IMainViewModel"
     MinHeight="590" MinWidth="850" 
     Height="590" Width="850"
     FontFamily="Ubuntu">
@@ -13,10 +13,6 @@
         <designTime:DesignTimeMainViewModel />
     </Design.DataContext>
     <UserControl.Styles>
-        <!-- The first StyleInclude here will be replaced at runtime, 
-             see Services/AvaloniaStyleManager.cs for more info. Other
-             styles will override any styles defined before them. -->
-        <StyleInclude Source="avares://Citrus.Avalonia/Sea.xaml"/>
         <Style Selector="Button">
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Padding" Value="10" />
@@ -29,11 +25,11 @@
     <Grid Background="{DynamicResource ThemeBackgroundBrush}" ColumnDefinitions="1*,2*">
         <Grid Grid.Column="0" RowDefinitions="Auto,Auto,*,Auto">
             <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <DrawingPresenter VerticalAlignment="Top"
+                <Image VerticalAlignment="Top"
                                   Margin="20 10 0 0"
                                   Height="25"
                                   Width="30"
-                                  Drawing="{DynamicResource LogoDrawing}"/>
+                                  Source="{DynamicResource LogoDrawing}"/>
                 <TextBlock Text="Camelotia"
                            VerticalAlignment="Bottom"
                            Margin="15 14 15 10"
@@ -42,7 +38,7 @@
             <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
                 <ComboBox Grid.Column="0" 
                           Margin="12 6 12 12"
-                          Items="{Binding SupportedTypes, Mode=OneWay}"
+                          ItemsSource="{Binding SupportedTypes, Mode=OneWay}"
                           SelectedItem="{Binding SelectedSupportedType, Mode=TwoWay}" />
                 <Button Grid.Column="1"
                         BorderThickness="0"
@@ -57,17 +53,17 @@
                      BorderThickness="0"
                      IsVisible="{Binding IsReady}"
                      SelectedItem="{Binding SelectedProvider, Mode=TwoWay}"
-                     Items="{Binding Clouds, Mode=OneWay}"
+                     ItemsSource="{Binding Clouds, Mode=OneWay}"
                      Background="Transparent">
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="interfaces:ICloudViewModel">
                         <Grid ColumnDefinitions="Auto, *">
-                            <DrawingPresenter Grid.Column="0"
+                            <Image Grid.Column="0"
                                               Opacity="0.5"
                                               Margin="10 0 5 0"
                                               Height="60"
                                               Width="60"
-                                              Drawing="{DynamicResource CloudDrawing}"/>                                
+                                              Source="{DynamicResource CloudDrawing}"/>                                
                             <StackPanel Grid.Column="1" Margin="10 5">
                                 <TextBlock Text="{Binding Name}"
                                            FontSize="15" />
@@ -100,14 +96,14 @@
                          IsVisible="{Binding IsLoading}" />
         </Grid>
         <Grid Grid.Column="1">
-            <reactiveUi:TransitioningContentControl IsVisible="{Binding WelcomeScreenCollapsed, Mode=OneWay}">
-                <reactiveUi:TransitioningContentControl.PageTransition>
+            <TransitioningContentControl IsVisible="{Binding WelcomeScreenCollapsed, Mode=OneWay}">
+                <TransitioningContentControl.PageTransition>
                     <CrossFade Duration="0.75" />
-                </reactiveUi:TransitioningContentControl.PageTransition>
-                <reactiveUi:TransitioningContentControl.Content>
+                </TransitioningContentControl.PageTransition>
+                <TransitioningContentControl.Content>
                     <views:ProviderView DataContext="{Binding SelectedProvider, Mode=OneWay}" />
-                </reactiveUi:TransitioningContentControl.Content>
-            </reactiveUi:TransitioningContentControl>
+                </TransitioningContentControl.Content>
+            </TransitioningContentControl>
             <Grid IsVisible="{Binding WelcomeScreenVisible, Mode=OneWay}"
                   Background="{DynamicResource ThemeCardBrush}">
                 <StackPanel HorizontalAlignment="Center"

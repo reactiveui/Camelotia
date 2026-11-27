@@ -2,6 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
              x:Class="Camelotia.Presentation.Avalonia.Views.RenameFileView"
+             x:DataType="interfaces:IRenameFileViewModel"
+             xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
              Background="{DynamicResource ThemeCardBrush}"
              Padding="20">
     <Design.DataContext>

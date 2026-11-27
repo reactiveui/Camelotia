@@ -2,6 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
              x:Class="Camelotia.Presentation.Avalonia.Views.OAuthView"
+             x:DataType="interfaces:IOAuthViewModel"
+             xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
              Background="{DynamicResource ThemeCardBrush}">
     <Design.DataContext>
         <designTime:DesignTimeOAuthViewModel />

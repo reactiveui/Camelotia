@@ -2,6 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:designTime="clr-namespace:Camelotia.Presentation.DesignTime;assembly=Camelotia.Presentation"
              x:Class="Camelotia.Presentation.Avalonia.Views.FileView"
+             x:DataType="interfaces:IFileViewModel"
+             xmlns:interfaces="clr-namespace:Camelotia.Presentation.Interfaces;assembly=Camelotia.Presentation"
              Background="Transparent">
     <Design.DataContext>
         <designTime:DesignTimeFileViewModel />
@@ -16,18 +18,18 @@
         </ContextMenu>
     </UserControl.ContextMenu>
     <Grid Margin="10 0" ColumnDefinitions="Auto,3*,1*,1*,2*">
-        <DrawingPresenter Grid.Column="0" 
+        <Image Grid.Column="0" 
                           IsVisible="{Binding IsFolder}"
                           Width="16" 
                           Height="16"
                           Margin="0 0 10 0"
-                          Drawing="{DynamicResource FolderDrawing}"/>
-        <DrawingPresenter Grid.Column="0"
+                          Source="{DynamicResource FolderDrawing}"/>
+        <Image Grid.Column="0"
                           IsVisible="{Binding IsFile}"
                           Width="16"
                           Height="16"
                           Margin="0 0 10 0"
-                          Drawing="{DynamicResource FileDrawing}"/>
+                          Source="{DynamicResource FileDrawing}"/>
         <TextBlock Grid.Column="1"
                    Text="{Binding Name}"
                    VerticalAlignment="Center"

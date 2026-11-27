@@ -1,34 +1,37 @@
+// Copyright (c) 2019-2026 ReactiveUI and Contributors. All rights reserved.
+// ReactiveUI and Contributors licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for full license information.
 using System.Windows;
 using System.Windows.Controls;
 using Camelotia.Presentation.Interfaces;
-using Camelotia.Presentation.Infrastructure;
-using ReactiveUI.Primitives.Reactive.Disposables;
-using ReactiveUI.Reactive;
 
-namespace Camelotia.Presentation.Wpf.Views
+namespace Camelotia.Presentation.Wpf.Views;
+
+/// <summary>Shows the form that renames the selected file.</summary>
+[System.Diagnostics.DebuggerDisplay("RenameFileView")]
+public sealed partial class RenameFileView : UserControl, IViewFor<IRenameFileViewModel>
 {
-    public partial class RenameFileView : UserControl, IViewFor<IRenameFileViewModel>
+    /// <summary>Identifies the <see cref="ViewModel"/> property.</summary>
+    public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(nameof(ViewModel), typeof(IRenameFileViewModel), typeof(RenameFileView));
+
+    /// <summary>Initializes a new instance of the <see cref="RenameFileView"/> class.</summary>
+    public RenameFileView()
     {
-        public static readonly DependencyProperty ViewModelProperty = DependencyProperty
-               .Register(nameof(ViewModel), typeof(IRenameFileViewModel), typeof(RenameFileView), null);
+        InitializeComponent();
+        DataContextChanged += (_, _) => ViewModel = DataContext as IRenameFileViewModel;
+    }
 
-        public RenameFileView()
-        {
-            InitializeComponent();
-            DataContextChanged += (sender, args) => ViewModel = DataContext as IRenameFileViewModel;
-            this.WhenActivated((ContainerDisposable disposable) => { });
-        }
+    /// <inheritdoc/>
+    public IRenameFileViewModel? ViewModel
+    {
+        get => (IRenameFileViewModel?)GetValue(ViewModelProperty);
+        set => SetValue(ViewModelProperty, value);
+    }
 
-        public IRenameFileViewModel ViewModel
-        {
-            get => (IRenameFileViewModel)GetValue(ViewModelProperty);
-            set => SetValue(ViewModelProperty, value);
-        }
-
-        object IViewFor.ViewModel
-        {
-            get => ViewModel;
-            set => ViewModel = (IRenameFileViewModel)value;
-        }
+    /// <inheritdoc/>
+    object? IViewFor.ViewModel
+    {
+        get => ViewModel;
+        set => ViewModel = (IRenameFileViewModel?)value;
     }
 }

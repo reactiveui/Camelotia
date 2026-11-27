@@ -1,41 +1,78 @@
+// Copyright (c) 2019-2026 ReactiveUI and Contributors. All rights reserved.
+// ReactiveUI and Contributors licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for full license information.
 using System.Collections.ObjectModel;
-using System.Reactive;
 using Camelotia.Presentation.Interfaces;
 using Camelotia.Services.Models;
 using ReactiveUI;
-using ReactiveUI.Reactive;
+using ReactiveUI.Primitives;
+using ReactiveUI.SourceGenerators;
 
 namespace Camelotia.Presentation.DesignTime;
 
-public class DesignTimeMainViewModel : ReactiveObject, IMainViewModel
+/// <summary>A sample provider list for the designer.</summary>
+[System.Diagnostics.DebuggerDisplay("DesignTimeMainViewModel: {SelectedSupportedType}")]
+public sealed partial class DesignTimeMainViewModel : ReactiveObject, IMainViewModel, IDisposable
 {
-    public ReadOnlyObservableCollection<ICloudViewModel> Clouds { get; } =
-        new(
-            new ObservableCollection<ICloudViewModel>(
-                [
-                    new DesignTimeCloudViewModel(),
-                    new DesignTimeCloudViewModel()
-                ]));
+    /// <summary>Backs the first item of <see cref="Clouds"/>.</summary>
+    private readonly DesignTimeCloudViewModel _first = new();
 
-    public ICloudViewModel SelectedProvider { get; set; } = new DesignTimeCloudViewModel();
+    /// <summary>Backs the second item of <see cref="Clouds"/>.</summary>
+    private readonly DesignTimeCloudViewModel _second = new();
 
+    /// <summary>Initializes a new instance of the <see cref="DesignTimeMainViewModel"/> class.</summary>
+    public DesignTimeMainViewModel()
+    {
+        Clouds = new(new ObservableCollection<ICloudViewModel>([_first, _second]));
+        SelectedProvider = _first;
+    }
+
+    /// <inheritdoc/>
+    public ReadOnlyObservableCollection<ICloudViewModel> Clouds { get; }
+
+    /// <inheritdoc/>
+    [Reactive]
+    public partial ICloudViewModel? SelectedProvider { get; set; }
+
+    /// <inheritdoc/>
     public IEnumerable<CloudType> SupportedTypes { get; } = [CloudType.Ftp, CloudType.Sftp];
 
-    public CloudType SelectedSupportedType { get; set; } = CloudType.Sftp;
+    /// <inheritdoc/>
+    [Reactive]
+    public partial CloudType SelectedSupportedType { get; set; } = CloudType.Sftp;
 
-    public bool WelcomeScreenCollapsed { get; } = true;
+    /// <inheritdoc/>
+    public bool WelcomeScreenCollapsed => true;
 
-    public bool WelcomeScreenVisible { get; }
+    /// <inheritdoc/>
+    public bool WelcomeScreenVisible => false;
 
-    public ReactiveCommand<Unit, Unit> Unselect { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> Unselect { get; } = DesignTimeCommands.Empty();
 
-    public ReactiveCommand<Unit, Unit> Refresh { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> Refresh { get; } = DesignTimeCommands.Empty();
 
-    public ReactiveCommand<Unit, Unit> Remove { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> Remove { get; } = DesignTimeCommands.Empty();
 
-    public ReactiveCommand<Unit, Unit> Add { get; }
+    /// <inheritdoc/>
+    public ReactiveCommand<RxVoid, RxVoid> Add { get; } = DesignTimeCommands.Empty();
 
-    public bool IsLoading { get; }
+    /// <inheritdoc/>
+    public bool IsLoading => false;
 
-    public bool IsReady { get; } = true;
+    /// <inheritdoc/>
+    public bool IsReady => true;
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        _first.Dispose();
+        _second.Dispose();
+        Unselect.Dispose();
+        Refresh.Dispose();
+        Remove.Dispose();
+        Add.Dispose();
+    }
 }

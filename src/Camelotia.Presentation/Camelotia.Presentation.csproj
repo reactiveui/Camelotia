@@ -10,9 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReactiveUI.Reactive" Version="26.0.1" />
-    <PackageReference Include="ReactiveUI.Validation.Reactive" Version="8.1.0" />
-    <PackageReference Include="ReactiveUI.SourceGenerators" Version="4.2.0" PrivateAssets="all" />
+    <PackageReference Include="DynamicData" />
+    <PackageReference Include="ReactiveUI" />
+    <PackageReference Include="ReactiveUI.Validation" />
+    <PackageReference Include="ReactiveUI.SourceGenerators" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>
