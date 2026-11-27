@@ -1,0 +1,28 @@
+# Every text file is stored and checked out with LF, on every platform.
+#
+# Without this, a Windows checkout with core.autocrlf=true rewrites LF to CRLF
+# on the way to disk. The line-ending analyzer then fails the whole build on the
+# Windows leg while the Linux and macOS legs pass, because the files on disk no
+# longer match what is in the repository. `eol=lf` pins the checkout, so the
+# working tree matches the index everywhere.
+#
+# The .editorconfig already sets end_of_line = lf for editors; this is the same
+# rule for git, which editors do not control.
+* text=auto eol=lf
+
+# Never normalise binary content — a stray LF-to-CRLF pass corrupts it.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.snk binary
+*.pfx binary
+*.dll binary
+*.exe binary
+*.zip binary
+*.nupkg binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
