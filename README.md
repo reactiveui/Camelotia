@@ -1,12 +1,12 @@
-# Camelotia
+[![Build](https://github.com/reactiveui/Camelotia/actions/workflows/ci-build.yml/badge.svg)](https://github.com/reactiveui/Camelotia/actions/workflows/ci-build.yml) [![Code Coverage](https://codecov.io/gh/reactiveui/Camelotia/branch/main/graph/badge.svg)](https://codecov.io/gh/reactiveui/Camelotia)
+[![#yourfirstpr](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](https://reactiveui.net/contribute) [![](https://img.shields.io/badge/chat-slack-blue.svg)](https://reactiveui.net/slack)
 
-<p><img src="images/horizontal.png" alt="Camelotia" height="50px"></p>
+<br />
+<a href="https://github.com/reactiveui/Camelotia">
+  <img width="160" src="https://raw.githubusercontent.com/reactiveui/Camelotia/main/images/vertical.png" alt="Camelotia">
+</a>
 
-[![Build](https://github.com/reactiveui/Camelotia/actions/workflows/ci-build.yml/badge.svg)](https://github.com/reactiveui/Camelotia/actions/workflows/ci-build.yml)
-[![codecov](https://codecov.io/gh/reactiveui/Camelotia/branch/main/graph/badge.svg?token=dmQeHH4Us8)](https://codecov.io/gh/reactiveui/Camelotia)
-[![Pull Requests](https://img.shields.io/github/issues-pr/reactiveui/camelotia.svg)](https://github.com/reactiveui/Camelotia/pulls)
-[![Issues](https://img.shields.io/github/issues/reactiveui/camelotia.svg)](https://github.com/reactiveui/Camelotia/issues)
-[![License](https://img.shields.io/github/license/reactiveui/camelotia.svg)](LICENSE)
+# Camelotia: A cloud storage file manager built with ReactiveUI
 
 Camelotia is a file manager for cloud storage, built with [ReactiveUI](https://github.com/reactiveui/ReactiveUI) and modern .NET UI frameworks. It browses, uploads, downloads, renames and deletes files in Yandex Disk, Google Drive, VK Documents, GitHub, FTP, SFTP and the local file system.
 
@@ -68,6 +68,17 @@ The browser providers open your default browser, then wait on the loopback addre
 - [FluentFTP](https://github.com/robinrodricks/FluentFTP) for FTP
 - [SSH.NET](https://github.com/sshnet/SSH.NET) for SFTP
 - [TUnit](https://github.com/thomhurst/TUnit) and Microsoft.Testing.Platform for tests and coverage
+
+## Contribute
+
+Camelotia is developed under an OSI-approved open source license, making it freely usable and distributable, even for commercial use. We welcome contributors of all experience levels.
+
+- Answer questions on StackOverflow: https://stackoverflow.com/questions/tagged/reactiveui
+- Share knowledge and mentor the next generation of developers
+- Donations: https://reactiveui.net/donate and Corporate Sponsorships: https://reactiveui.net/sponsorship
+- Ask your employer to support open-source: https://github.com/github/balanced-employee-ip-agreement
+- Improve documentation and examples
+- Contribute features and bugfixes via PRs
 
 ## Sponsors
 
