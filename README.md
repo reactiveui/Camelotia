@@ -1,12 +1,15 @@
-[![Build](https://github.com/reactiveui/Camelotia/actions/workflows/ci-build.yml/badge.svg)](https://github.com/reactiveui/Camelotia/actions/workflows/ci-build.yml) [![Code Coverage](https://codecov.io/gh/reactiveui/Camelotia/branch/main/graph/badge.svg)](https://codecov.io/gh/reactiveui/Camelotia)
-[![#yourfirstpr](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](https://reactiveui.net/contribute) [![](https://img.shields.io/badge/chat-slack-blue.svg)](https://reactiveui.net/slack)
+<div align="center">
 
-<br />
-<a href="https://github.com/reactiveui/Camelotia">
-  <img width="160" src="https://raw.githubusercontent.com/reactiveui/Camelotia/main/images/vertical.png" alt="Camelotia">
-</a>
+<a href="https://github.com/reactiveui/Camelotia"><img src="https://raw.githubusercontent.com/reactiveui/Camelotia/main/images/vertical.png" alt="Camelotia" width="128"></a>
 
 # Camelotia: A cloud storage file manager built with ReactiveUI
+
+[![Build](https://img.shields.io/github/actions/workflow/status/reactiveui/Camelotia/ci-build.yml?branch=main&label=build&logo=githubactions&logoColor=white)](https://github.com/reactiveui/Camelotia/actions/workflows/ci-build.yml)
+[![Coverage](https://img.shields.io/codecov/c/github/reactiveui/Camelotia?label=coverage&logo=codecov&logoColor=white)](https://codecov.io/gh/reactiveui/Camelotia)
+[![License](https://img.shields.io/github/license/reactiveui/Camelotia?color=blue)](https://github.com/reactiveui/Camelotia/blob/main/LICENSE)
+[![Discussions](https://img.shields.io/badge/discussions-ask%20a%20question-8A2BE2?logo=github&logoColor=white)](https://github.com/reactiveui/Camelotia/discussions)
+
+</div>
 
 Camelotia is a file manager for cloud storage, built with [ReactiveUI](https://github.com/reactiveui/ReactiveUI) and modern .NET UI frameworks. It browses, uploads, downloads, renames and deletes files in Yandex Disk, Google Drive, VK Documents, GitHub, FTP, SFTP and the local file system.
 
@@ -71,14 +74,28 @@ The browser providers open your default browser, then wait on the loopback addre
 
 ## Contribute
 
-Camelotia is developed under an OSI-approved open source license, making it freely usable and distributable, even for commercial use. We welcome contributors of all experience levels.
+Camelotia is part of [ReactiveUI](https://github.com/reactiveui) and is released under the [MIT license](https://github.com/reactiveui/Camelotia/blob/main/LICENSE). We welcome contributions of every size, from bug reports and documentation to features and tests.
 
-- Answer questions on StackOverflow: https://stackoverflow.com/questions/tagged/reactiveui
-- Share knowledge and mentor the next generation of developers
-- Donations: https://reactiveui.net/donate and Corporate Sponsorships: https://reactiveui.net/sponsorship
-- Ask your employer to support open-source: https://github.com/github/balanced-employee-ip-agreement
-- Improve documentation and examples
-- Contribute features and bugfixes via PRs
+- **Questions:** ask in [GitHub Discussions](https://github.com/reactiveui/Camelotia/discussions).
+- **Bugs and feature requests:** open a [GitHub issue](https://github.com/reactiveui/Camelotia/issues/new/choose).
+- **Larger changes:** open an issue or discussion first, so we can agree on the approach before you start.
+- **Contributor guide:** read [reactiveui.net/contribute](https://www.reactiveui.net/contribute/) for [building and testing](https://www.reactiveui.net/contribute/building-and-testing/) and [pull requests](https://www.reactiveui.net/contribute/pull-requests/).
+
+### Coding standards
+
+Every pull request must meet these standards. The build checks most of them.
+
+- Follow the [ReactiveUI C# style guide](https://www.reactiveui.net/contribute/software-style-guide/code-style/).
+- The repository's `.editorconfig` and the StyleSharp, PerformanceSharp and SecuritySharp analyzers run on every build. Fix each finding in the code. Do not suppress it or relax the `.editorconfig`.
+- Add tests for every bug fix and new feature.
+- Document public APIs with XML documentation comments.
+- Write commit messages in the [Conventional Commits](https://www.reactiveui.net/contribute/software-style-guide/commit-message-convention/) format.
+- Follow the [Code of Conduct](https://github.com/reactiveui/.github/blob/main/CODE_OF_CONDUCT.md).
+
+### Support the project
+
+- Sponsor the maintainers on GitHub Sponsors: [reactivemarbles](https://github.com/sponsors/reactivemarbles), [glennawatson](https://github.com/sponsors/glennawatson) and [chrispulman](https://github.com/sponsors/chrispulman).
+- Ask your employer to support open source, for example with the [balanced employee IP agreement](https://github.com/github/balanced-employee-ip-agreement).
 
 ## Sponsors
 
